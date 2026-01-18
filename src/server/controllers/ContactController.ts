@@ -1,0 +1,49 @@
+import { Request, Response } from 'express';
+import { IContactForm } from '../../shared/interfaces';
+import { sanitizeObject } from '../utils/sanitize';
+import { EmailService } from '../services/EmailService';
+
+export class ContactController {
+  public submit = async (req: Request, res: Response): Promise<void> => {
+    try {
+      // Sanitize input to prevent XSS
+      const formData: IContactForm = sanitizeObject(req.body);
+
+      // Basic validation
+      if (!formData.name || !formData.email || !formData.message) {
+        res.status(400).json({
+          success: false,
+          error: 'Name, email, and message are required fields.',
+        });
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        res.status(400).json({
+          success: false,
+          error: 'Please provide a valid email address.',
+        });
+        return;
+      }
+
+      // Send email notification (non-blocking - won't fail the request if email fails)
+      EmailService.sendContactNotification(formData).catch((error) => {
+        console.error('Email notification error (non-blocking):', error);
+      });
+
+      res.json({
+        success: true,
+        message: 'Thank you for your inquiry. We will get back to you soon.',
+      });
+    } catch (error) {
+      const err = error as Error;
+      console.error('Contact form error:', err);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to submit contact form. Please try again later.',
+      });
+    }
+  };
+}

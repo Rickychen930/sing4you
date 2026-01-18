@@ -1,0 +1,57 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@shared': path.resolve(__dirname, './src/shared'),
+      '@client': path.resolve(__dirname, './src/client'),
+    },
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+      '/sitemap.xml': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
+  },
+  build: {
+    outDir: 'dist/client',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'helmet-vendor': ['react-helmet-async'],
+          'axios-vendor': ['axios'],
+          // Admin pages chunk (separate from public)
+          'admin-pages': [
+            './src/client/pages/admin/DashboardPage',
+            './src/client/pages/admin/HeroManagementPage',
+            './src/client/pages/admin/SectionsManagementPage',
+            './src/client/pages/admin/PerformancesManagementPage',
+            './src/client/pages/admin/TestimonialsManagementPage',
+            './src/client/pages/admin/BlogManagementPage',
+            './src/client/pages/admin/SEOManagementPage',
+            './src/client/pages/admin/CategoriesManagementPage',
+            './src/client/pages/admin/VariationsManagementPage',
+          ],
+        },
+      },
+    },
+    // Optimize chunk size
+    chunkSizeWarningLimit: 1000,
+    // Enable source maps for production debugging (optional)
+    sourcemap: process.env.NODE_ENV === 'production' ? false : true,
+  },
+})
