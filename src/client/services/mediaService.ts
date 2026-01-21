@@ -49,7 +49,7 @@ export class MediaService {
         credentials: 'include',
         body: formData,
       });
-    } catch (error) {
+    } catch {
       // Handle connection refused error
       const errorMessage = import.meta.env.DEV
         ? 'Tidak dapat terhubung ke server. Pastikan server berjalan di http://localhost:3001'

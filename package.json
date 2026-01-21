@@ -8,7 +8,7 @@
     "dev:client": "vite",
     "dev:server": "tsx watch src/server/index.ts",
     "build": "tsc -b && vite build",
-    "build:server": "tsc -p tsconfig.server.json && node scripts/fix-imports.js",
+    "build:server": "tsc -p tsconfig.server.json && node --input-type=module -e \"import fs from 'fs';import path from 'path';import{fileURLToPath as f}from 'url';const d=path.dirname(f(import.meta.url));function fix(f){let c=fs.readFileSync(f,'utf8'),m=c.replace(/from\\s+['\\\"](\\\\.\\\\.?\\/[^'\\\"]+)(?<!\\.js)['\\\"]/g,(a,b)=>b.endsWith('.js')||b.endsWith('.json')?a:a.replace(b,b+'.js'));if(m!==c)fs.writeFileSync(f,m);}function dir(d){fs.readdirSync(d).forEach(e=>{const p=path.join(d,e);if(fs.statSync(p).isDirectory())dir(p);else if(e.endsWith('.js'))fix(p);});}dir(path.join(process.cwd(),'dist','server'));console.log('✅ Fixed import extensions');\"",
     "lint": "eslint .",
     "preview": "vite preview",
     "start:server": "node dist/server/index.js",
