@@ -486,26 +486,32 @@ const seedDatabase = async (): Promise<void> => {
     console.log('✅ SEO Settings created');
 
     // 9. Admin User (only if no admin exists)
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      console.error('❌ Please set ADMIN_PASSWORD in .env file!');
+      process.exit(1);
+    }
+    
     const existingAdmin = await AdminUserModel.getModel().findOne({ email: 'admin@christinasings4u.com.au' });
     if (!existingAdmin) {
       console.log('📝 Creating default admin user...');
       // Don't hash password here - the pre-save hook in AdminUserModel will handle it
       await AdminUserModel.getModel().create({
         email: 'admin@christinasings4u.com.au',
-        password: 'admin123', // Plain password - will be hashed by pre-save hook
+        password: adminPassword, // Plain password - will be hashed by pre-save hook
         name: 'Admin User',
       });
-      console.log('✅ Admin user created (email: admin@christinasings4u.com.au, password: admin123)');
+      console.log('✅ Admin user created (email: admin@christinasings4u.com.au)');
     } else {
       console.log('ℹ️  Admin user already exists');
       // Fix password if it was double-hashed (common issue)
-      // This will reset password to 'admin123' and hash it correctly
+      // This will reset password and hash it correctly
       const adminUser = await AdminUserModel.getModel().findOne({ email: 'admin@christinasings4u.com.au' });
       if (adminUser) {
         console.log('🔧 Resetting admin password to fix double-hashing issue...');
-        adminUser.password = 'admin123'; // Will be hashed correctly by pre-save hook
+        adminUser.password = adminPassword; // Will be hashed correctly by pre-save hook
         await adminUser.save();
-        console.log('✅ Admin password reset to: admin123 (correctly hashed)');
+        console.log('✅ Admin password reset (correctly hashed)');
       }
     }
 
