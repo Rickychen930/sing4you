@@ -91,8 +91,8 @@ export const SectionsManagementPage: React.FC = () => {
       toast.success('Section deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to delete section';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete section';
       setError(errorMsg);
       toast.error(errorMsg);
       setDeleteConfirm({ isOpen: false, id: null });
@@ -118,8 +118,8 @@ export const SectionsManagementPage: React.FC = () => {
       }
       await loadSections();
       handleCreate(); // Reset form
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to save section';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to save section';
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {

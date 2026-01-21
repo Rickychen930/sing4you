@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo, useCallback } from 'react';
+import React, { useEffect, useRef, memo, useCallback, useMemo } from 'react';
 
 /**
  * ConfettiEffect Component
@@ -64,17 +64,17 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
   const startTimeRef = useRef<number | null>(null);
   const triggerRef = useRef<boolean | number>(trigger);
 
-  // Default colors matching the theme (gold and purple)
-  const defaultColors = colors || [
+  // Calculate particle count based on intensity
+  const particleCount = count || (intensity === 'high' ? 150 : intensity === 'medium' ? 100 : 50);
+
+  // Default colors matching the theme (gold and purple) - memoized to prevent re-creation
+  const defaultColors = useMemo(() => colors || [
     'rgba(255, 194, 51,', // gold-400
     'rgba(232, 168, 34,', // gold-500
     'rgba(126, 34, 206,', // musical-600
     'rgba(158, 34, 206,', // musical-500
     'rgba(255, 215, 0,',  // gold-300
-  ];
-
-  // Calculate particle count based on intensity
-  const particleCount = count || (intensity === 'high' ? 150 : intensity === 'medium' ? 100 : 50);
+  ], [colors]);
 
   // Check for reduced motion preference
   const prefersReducedMotion = useCallback(() => {

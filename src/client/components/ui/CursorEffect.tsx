@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 
 /**
  * CursorEffect Component
@@ -40,14 +40,14 @@ export const CursorEffect: React.FC<CursorEffectProps> = ({
   const animationFrameRef = useRef<number | null>(null);
   const lastParticleTimeRef = useRef<number>(0);
 
-  // Default colors matching the theme (gold and purple)
-  const defaultColors = colors || [
+  // Default colors matching the theme (gold and purple) - memoized to prevent re-creation
+  const defaultColors = useMemo(() => colors || [
     'rgba(255, 194, 51,', // gold-400
     'rgba(232, 168, 34,', // gold-500
     'rgba(126, 34, 206,', // musical-600
     'rgba(158, 34, 206,', // musical-500
     'rgba(255, 215, 0,',  // gold-300
-  ];
+  ], [colors]);
 
   // Particle settings based on intensity
   const particleSettings = {
@@ -116,7 +116,9 @@ export const CursorEffect: React.FC<CursorEffectProps> = ({
     }
   }, [prefersReducedMotion, disableOnMobile, isMobile, settings.count, createParticle]);
 
-  // Animation loop
+  // Animation loop - use ref to store function for recursive calls
+  const animateRef = useRef<() => void>();
+  
   const animate = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -178,8 +180,15 @@ export const CursorEffect: React.FC<CursorEffectProps> = ({
       return false;
     });
 
-    animationFrameRef.current = requestAnimationFrame(animate);
+    if (animateRef.current) {
+      animationFrameRef.current = requestAnimationFrame(animateRef.current);
+    }
   }, [settings.decay]);
+  
+  // Update ref in effect to avoid updating during render
+  useEffect(() => {
+    animateRef.current = animate;
+  }, [animate]);
 
   // Setup canvas and event listeners
   useEffect(() => {

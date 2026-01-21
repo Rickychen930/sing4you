@@ -91,8 +91,8 @@ export const PerformancesManagementPage: React.FC = () => {
       toast.success('Performance deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to delete performance';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete performance';
       setError(errorMsg);
       toast.error(errorMsg);
       setDeleteConfirm({ isOpen: false, id: null });
@@ -118,8 +118,8 @@ export const PerformancesManagementPage: React.FC = () => {
       }
       await loadPerformances();
       handleCreate();
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to save performance';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to save performance';
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {

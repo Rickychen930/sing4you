@@ -72,7 +72,7 @@ class ApiClient {
                 return this.client.request(axiosError.config);
               }
             }
-          } catch (refreshError) {
+          } catch {
             // Clear token and redirect to login on refresh failure
             localStorage.removeItem('accessToken');
             // Only redirect if not already on login page

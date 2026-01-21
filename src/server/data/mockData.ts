@@ -302,6 +302,7 @@ export const mockPerformancesBase: Array<Omit<IPerformance, 'date'> & { daysOffs
 export const mockPerformances: IPerformance[] = mockPerformancesBase.map(p => {
   const date = new Date();
   date.setDate(date.getDate() + p.daysOffset);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { daysOffset, ...performance } = p;
   return { ...performance, date };
 });

@@ -111,7 +111,7 @@ const startServer = async (): Promise<void> => {
           )
         ]);
         console.log('✅ Connected to MongoDB');
-      } catch (dbError) {
+      } catch {
         console.error('❌ Failed to connect to MongoDB');
         console.warn('📦 Using mock data for development');
         console.warn('   All API endpoints will work with in-memory mock data');

@@ -4,7 +4,7 @@ import type { IMedia } from '../../shared/interfaces';
 const mediaSchema = new Schema<IMedia>(
   {
     variationId: {
-      type: Schema.Types.ObjectId as any,
+      type: Schema.Types.ObjectId as unknown as Schema.Types.ObjectId,
       ref: 'Variation',
       required: true,
     },

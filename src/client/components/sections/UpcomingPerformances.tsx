@@ -3,7 +3,6 @@ import type { IPerformance } from '../../../shared/interfaces';
 import { performanceService } from '../../services/performanceService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { PerformanceCard } from '../ui/PerformanceCard';
-import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { EmptyState } from '../ui/EmptyState';
 
 export const UpcomingPerformances: React.FC = memo(() => {

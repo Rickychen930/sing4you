@@ -8,7 +8,6 @@ import { categoryService } from '../../services/categoryService';
 import { useToastStore } from '../../stores/toastStore';
 import { SEO } from '../../components/ui/SEO';
 import type { ICategory } from '../../../shared/interfaces';
-import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export const VariationsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();

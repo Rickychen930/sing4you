@@ -64,7 +64,7 @@ export const ContactPage: React.FC = () => {
 
     if (formData.phone && formData.phone.trim()) {
       // Basic phone validation - allow various formats
-      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+      const phoneRegex = /^[\d\s\-+()]+$/;
       if (!phoneRegex.test(formData.phone)) {
         newErrors.phone = 'Please provide a valid phone number';
       }

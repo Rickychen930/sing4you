@@ -78,6 +78,7 @@ export interface IContactForm {
   message: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface IApiResponse<T = any> {
   success: boolean;
   data?: T;

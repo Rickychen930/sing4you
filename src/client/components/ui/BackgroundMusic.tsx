@@ -70,7 +70,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   // Setup audio element
   useEffect(() => {
     const audio = new Audio();
-    audio.volume = currentVolume;
+    audio.volume = volume;
     audio.loop = loop;
     audio.preload = 'auto';
 
@@ -78,7 +78,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     audio.addEventListener('play', () => setIsPlaying(true));
     audio.addEventListener('pause', () => setIsPlaying(false));
     audio.addEventListener('ended', () => setIsPlaying(false));
-    audio.addEventListener('error', (e) => {
+    audio.addEventListener('error', () => {
       // Hanya log warning di development mode
       if (process.env.NODE_ENV === 'development') {
         console.warn('Audio file not found or failed to load:', defaultSrc);
@@ -132,7 +132,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
         });
       }
     };
-  }, [defaultSrc, loop, autoPlay, handleUserInteraction]);
+  }, [defaultSrc, loop, autoPlay, handleUserInteraction, volume]);
 
   // Update volume
   useEffect(() => {

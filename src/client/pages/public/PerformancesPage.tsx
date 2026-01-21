@@ -4,7 +4,6 @@ import { performanceService } from '../../services/performanceService';
 import { PerformanceCard } from '../../components/ui/PerformanceCard';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { SEO } from '../../components/ui/SEO';
-import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 

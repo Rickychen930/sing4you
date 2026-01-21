@@ -17,6 +17,7 @@ export const sanitizeString = (input: string): string => {
     .trim();
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sanitizeObject = <T extends Record<string, any>>(obj: T): T => {
   const sanitized = { ...obj };
 

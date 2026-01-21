@@ -117,7 +117,7 @@ export class AuthService {
   public verifyAccessToken(token: string): ITokenPayload {
     try {
       return jwt.verify(token, JWT_SECRET) as ITokenPayload;
-    } catch (error) {
+    } catch {
       throw new Error('Invalid or expired token');
     }
   }
@@ -125,7 +125,7 @@ export class AuthService {
   public verifyRefreshToken(token: string): ITokenPayload {
     try {
       return jwt.verify(token, JWT_REFRESH_SECRET) as ITokenPayload;
-    } catch (error) {
+    } catch {
       throw new Error('Invalid or expired refresh token');
     }
   }

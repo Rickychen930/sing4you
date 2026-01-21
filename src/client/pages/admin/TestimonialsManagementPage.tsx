@@ -85,8 +85,8 @@ export const TestimonialsManagementPage: React.FC = () => {
       toast.success('Testimonial deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to delete testimonial';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete testimonial';
       setError(errorMsg);
       toast.error(errorMsg);
       setDeleteConfirm({ isOpen: false, id: null });
@@ -140,8 +140,8 @@ export const TestimonialsManagementPage: React.FC = () => {
       }
       await loadTestimonials();
       handleCreate();
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to save testimonial';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to save testimonial';
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {

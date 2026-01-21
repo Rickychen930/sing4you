@@ -31,7 +31,8 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
     const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200;
     
     if (isVisible) {
-      setIsInView(true);
+      // Use setTimeout to avoid setState in effect
+      setTimeout(() => setIsInView(true), 0);
       return;
     }
 

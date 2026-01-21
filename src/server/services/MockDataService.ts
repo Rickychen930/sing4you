@@ -150,6 +150,7 @@ export class MockDataService {
       daysOffset = daysFromNow > 0 ? daysFromNow : 30;
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { date, ...restData } = data;
     this.performancesBase[index] = {
       ...this.performancesBase[index],

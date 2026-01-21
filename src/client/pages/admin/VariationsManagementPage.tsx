@@ -113,8 +113,8 @@ export const VariationsManagementPage: React.FC = () => {
       toast.success('Variation deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to delete variation';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete variation';
       setError(errorMsg);
       toast.error(errorMsg);
       setDeleteConfirm({ isOpen: false, id: null });
@@ -140,8 +140,8 @@ export const VariationsManagementPage: React.FC = () => {
       }
       await loadData();
       handleCreate(); // Reset form
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to save variation';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to save variation';
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {

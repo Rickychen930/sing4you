@@ -6,7 +6,6 @@ import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { Input } from '../../components/ui/Input';
-import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Link } from 'react-router-dom';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { categoryService } from '../../services/categoryService';

@@ -67,6 +67,13 @@ const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) 
 };
 
 // Component untuk handle scroll reveal initialization on route change
+// Loading fallback component - declared outside render
+const LoadingFallback: React.FC = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60">
+    <LoadingSpinner size="lg" />
+  </div>
+);
+
 const ScrollRevealHandler: React.FC = () => {
   const location = useLocation();
 
@@ -96,13 +103,6 @@ function App() {
 
   const toasts = useToastStore((state) => state.toasts);
   const removeToast = useToastStore((state) => state.removeToast);
-
-  // Loading fallback for Suspense - memoized to prevent re-creation
-  const LoadingFallback = React.useMemo(() => () => (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60">
-      <LoadingSpinner size="lg" />
-    </div>
-  ), []);
 
   return (
     <ErrorBoundary>

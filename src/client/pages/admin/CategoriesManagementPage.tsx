@@ -81,8 +81,8 @@ export const CategoriesManagementPage: React.FC = () => {
       toast.success('Category deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to delete category';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete category';
       setError(errorMsg);
       toast.error(errorMsg);
       setDeleteConfirm({ isOpen: false, id: null });
@@ -132,8 +132,8 @@ export const CategoriesManagementPage: React.FC = () => {
       }
       await loadCategories();
       handleCreate(); // Reset form
-    } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to save category';
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to save category';
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {

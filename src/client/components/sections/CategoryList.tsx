@@ -3,10 +3,8 @@ import type { ICategory } from '../../../shared/interfaces';
 import { categoryService } from '../../services/categoryService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
-import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { EmptyState } from '../ui/EmptyState';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../ui/Button';
 
 interface CategoryListProps {
   title?: string;

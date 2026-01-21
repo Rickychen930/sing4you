@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { VariationDetail } from '../../components/sections/VariationDetail';
 import { SEO } from '../../components/ui/SEO';
-import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { BackButton } from '../../components/ui/BackButton';
 import { CTASection } from '../../components/ui/CTASection';

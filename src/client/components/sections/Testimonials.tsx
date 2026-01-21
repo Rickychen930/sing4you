@@ -3,7 +3,6 @@ import type { ITestimonial } from '../../../shared/interfaces';
 import { testimonialService } from '../../services/testimonialService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { TestimonialCard } from '../ui/TestimonialCard';
-import { LoadingSpinner } from '../ui/LoadingSpinner';
 
 export const Testimonials: React.FC = memo(() => {
   const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);

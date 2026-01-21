@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo, useCallback } from 'react';
+import React, { useEffect, useRef, memo, useCallback, useMemo } from 'react';
 
 /**
  * FireworkEffect Component
@@ -86,14 +86,14 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
   const startTimeRef = useRef<number | null>(null);
   const triggerRef = useRef<boolean | number>(trigger);
 
-  // Default colors matching the theme (gold and purple)
-  const defaultColors = colors || [
+  // Default colors matching the theme (gold and purple) - memoized to prevent re-creation
+  const defaultColors = useMemo(() => colors || [
     'rgba(255, 194, 51,', // gold-400
     'rgba(232, 168, 34,', // gold-500
     'rgba(126, 34, 206,', // musical-600
     'rgba(158, 34, 206,', // musical-500
     'rgba(255, 215, 0,',  // gold-300
-  ];
+  ], [colors]);
 
   // Check for reduced motion preference
   const prefersReducedMotion = useCallback(() => {
@@ -103,8 +103,7 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
   const createParticle = useCallback((
     x: number,
     y: number,
-    color: string,
-    hue: number
+    color: string
   ): Particle => {
     const angle = Math.random() * Math.PI * 2;
     const speed = (Math.random() * 3 + 2) * (intensity === 'high' ? 1.5 : intensity === 'medium' ? 1 : 0.7);
@@ -128,15 +127,14 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
     startX: number,
     startY: number,
     targetY: number,
-    color: string,
-    hue: number
+    color: string
   ): Firework => {
     const particleCount = intensity === 'high' ? 80 : intensity === 'medium' ? 60 : 40;
     const particles: Particle[] = [];
 
     // Create particles for explosion
     for (let i = 0; i < particleCount; i++) {
-      particles.push(createParticle(startX, startY, color, hue));
+      particles.push(createParticle(startX, startY, color));
     }
 
     return {
@@ -147,7 +145,7 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
       particles,
       exploded: false,
       color,
-      hue,
+      hue: 0,
     };
   }, [intensity, createParticle]);
 
@@ -190,9 +188,8 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
         const targetY = canvas.height * (0.2 + Math.random() * 0.3);
         const colorIndex = Math.floor(Math.random() * defaultColors.length);
         const color = defaultColors[colorIndex];
-        const hue = colorIndex * 60; // For color variation
 
-        const firework = createFirework(x, y, targetY, color, hue);
+        const firework = createFirework(x, y, targetY, color);
         fireworksRef.current.push(firework);
       }, delay);
     }

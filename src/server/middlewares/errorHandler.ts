@@ -9,7 +9,7 @@ export const errorHandler = (
   err: AppError | Error,
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction // eslint-disable-line @typescript-eslint/no-unused-vars
 ): void => {
   // Don't log client errors (4xx) in production, only log server errors (5xx)
   const statusCode = res.statusCode !== 200 ? res.statusCode : (err as AppError).statusCode || 500;
