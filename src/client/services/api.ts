@@ -4,7 +4,7 @@ import type { IApiResponse } from '../../shared/interfaces';
 // In development, use relative URL to leverage Vite proxy
 // In production, use the configured API URL or default to same origin
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.DEV ? '' : '');
+  (import.meta.env.DEV ? '' : (typeof window !== 'undefined' ? window.location.origin : ''));
 
 interface AxiosErrorResponse {
   response?: {
@@ -95,6 +95,15 @@ class ApiClient {
       return response.data.data as T;
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorResponse;
+      
+      // Handle connection refused error
+      if (axiosError.response === undefined) {
+        const errorMessage = import.meta.env.DEV
+          ? 'Tidak dapat terhubung ke server. Pastikan server berjalan di http://localhost:3001'
+          : 'Tidak dapat terhubung ke server. Silakan coba lagi nanti.';
+        throw new Error(errorMessage);
+      }
+      
       if (axiosError.response?.data?.error) {
         throw new Error(axiosError.response.data.error);
       }
@@ -111,6 +120,15 @@ class ApiClient {
       return response.data.data as T;
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorResponse;
+      
+      // Handle connection refused error
+      if (axiosError.response === undefined) {
+        const errorMessage = import.meta.env.DEV
+          ? 'Tidak dapat terhubung ke server. Pastikan server berjalan di http://localhost:3001'
+          : 'Tidak dapat terhubung ke server. Silakan coba lagi nanti.';
+        throw new Error(errorMessage);
+      }
+      
       if (axiosError.response?.data?.error) {
         throw new Error(axiosError.response.data.error);
       }
@@ -127,6 +145,15 @@ class ApiClient {
       return response.data.data as T;
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorResponse;
+      
+      // Handle connection refused error
+      if (axiosError.response === undefined) {
+        const errorMessage = import.meta.env.DEV
+          ? 'Tidak dapat terhubung ke server. Pastikan server berjalan di http://localhost:3001'
+          : 'Tidak dapat terhubung ke server. Silakan coba lagi nanti.';
+        throw new Error(errorMessage);
+      }
+      
       if (axiosError.response?.data?.error) {
         throw new Error(axiosError.response.data.error);
       }
@@ -143,6 +170,15 @@ class ApiClient {
       return response.data.data as T;
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorResponse;
+      
+      // Handle connection refused error
+      if (axiosError.response === undefined) {
+        const errorMessage = import.meta.env.DEV
+          ? 'Tidak dapat terhubung ke server. Pastikan server berjalan di http://localhost:3001'
+          : 'Tidak dapat terhubung ke server. Silakan coba lagi nanti.';
+        throw new Error(errorMessage);
+      }
+      
       if (axiosError.response?.data?.error) {
         throw new Error(axiosError.response.data.error);
       }

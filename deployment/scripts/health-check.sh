@@ -39,8 +39,14 @@ fi
 check "Nginx running" "systemctl is-active --quiet nginx"
 check "Nginx config valid" "nginx -t"
 
-# Check backend API
-check "Backend API responding" "curl -f http://localhost:3001/api/hero > /dev/null 2>&1"
+# Check backend API (try health endpoint first, fallback to hero)
+if curl -f -s http://localhost:3001/api/health > /dev/null 2>&1; then
+    echo -e "Backend API responding (health): ${GREEN}✓${NC}"
+elif curl -f -s http://localhost:3001/api/hero > /dev/null 2>&1; then
+    echo -e "Backend API responding (hero): ${GREEN}✓${NC}"
+else
+    echo -e "Backend API responding: ${RED}✗${NC}"
+fi
 
 # Check SSL certificate
 check "SSL certificate valid" "certbot certificates | grep -q 'christina-sings4you.com.au'"

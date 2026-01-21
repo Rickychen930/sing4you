@@ -130,6 +130,11 @@ const startServer = async (): Promise<void> => {
     const server = app.listen(PORT, host, () => {
       console.log(`✅ Server running on http://${host}:${PORT}`);
       console.log(`📡 API available at http://${host}:${PORT}/api`);
+      
+      // Send ready signal to PM2 (if using PM2)
+      if (process.send) {
+        process.send('ready');
+      }
     });
 
     // Handle server errors gracefully

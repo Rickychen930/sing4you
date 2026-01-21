@@ -16,6 +16,15 @@ import { rateLimiter, authRateLimiter } from '../middlewares/rateLimiter';
 
 const router = express.Router();
 
+// Health check endpoint
+router.get('/api/health', (_req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Server is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Public routes
 const heroController = new HeroController();
 const sectionController = new SectionController();

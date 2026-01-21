@@ -220,12 +220,18 @@ jobs:
       - name: Health check
         run: |
           echo "Waiting for application to start..."
-          sleep 15
+          sleep 20  # Give server more time to start
           MAX_RETRIES=5
           RETRY_COUNT=0
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            # Try health endpoint first (simpler, more reliable)
+            if curl -f -s https://${{ secrets.SITE_URL }}/api/health > /dev/null 2>&1; then
+              echo "✅ Health check passed using /api/health endpoint!"
+              exit 0
+            fi
+            # Fallback to /api/hero
             if curl -f -s https://${{ secrets.SITE_URL }}/api/hero > /dev/null 2>&1; then
-              echo "✅ Health check passed!"
+              echo "✅ Health check passed using /api/hero endpoint!"
               exit 0
             fi
             RETRY_COUNT=$((RETRY_COUNT + 1))
@@ -233,6 +239,9 @@ jobs:
             sleep 5
           done
           echo "❌ Health check failed after $MAX_RETRIES attempts"
+          echo "Troubleshooting:"
+          echo "1. Check server logs: ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 logs christina-sings4you-api --lines 20'"
+          echo "2. Check if server is running: ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 list'"
           exit 1
 
       - name: Deployment notification

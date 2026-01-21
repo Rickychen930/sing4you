@@ -106,8 +106,18 @@ if command -v pm2 &> /dev/null; then
         pm2 start deployment/pm2/ecosystem.config.cjs --env production || error "Failed to start PM2 process"
     fi
     
+    # Wait a bit for PM2 to start processes
+    sleep 3
+    
     pm2 save || warning "Failed to save PM2 process list"
+    
+    # Show PM2 status
+    log "PM2 Process Status:"
     pm2 list
+    
+    # Show recent logs to help debug
+    log "Recent PM2 logs (last 10 lines):"
+    pm2 logs christina-sings4you-api --lines 10 --nostream || warning "Could not retrieve PM2 logs"
 else
     # Fallback to systemd
     log "PM2 not found, trying systemd..."
@@ -125,25 +135,57 @@ nginx -t && systemctl reload nginx || error "Nginx reload failed"
 
 # Health check
 log "Performing health check..."
-sleep 5
+log "Waiting for server to be ready..."
+sleep 10  # Give server more time to start
+
 MAX_RETRIES=5
 RETRY_COUNT=0
 HEALTH_CHECK_PASSED=false
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    if curl -f http://localhost:3001/api/hero > /dev/null 2>&1; then
+    # Try health endpoint first (simpler, more reliable)
+    if curl -f -s http://localhost:3001/api/health > /dev/null 2>&1; then
         HEALTH_CHECK_PASSED=true
+        log "Health check passed using /api/health endpoint!"
         break
     fi
+    
+    # Fallback to /api/hero if health endpoint not available
+    if curl -f -s http://localhost:3001/api/hero > /dev/null 2>&1; then
+        HEALTH_CHECK_PASSED=true
+        log "Health check passed using /api/hero endpoint!"
+        break
+    fi
+    
     RETRY_COUNT=$((RETRY_COUNT + 1))
+    
+    # Get more details about the failure
     log "Health check attempt $RETRY_COUNT/$MAX_RETRIES failed, retrying..."
-    sleep 2
+    
+    # Check if server is listening on port 3001
+    if ! netstat -tuln | grep -q ":3001 "; then
+        log "Warning: Port 3001 is not listening. Server may not have started."
+    fi
+    
+    # Check PM2 logs for errors
+    if command -v pm2 &> /dev/null; then
+        log "Recent PM2 logs:"
+        pm2 logs christina-sings4you-api --lines 5 --nostream || true
+    fi
+    
+    sleep 3  # Increased wait time between retries
 done
 
 if [ "$HEALTH_CHECK_PASSED" = true ]; then
-    log "Health check passed!"
+    log "✅ Health check passed!"
 else
     error "Health check failed after $MAX_RETRIES attempts! Check logs for details."
+    log "Troubleshooting:"
+    log "1. Check PM2 logs: pm2 logs christina-sings4you-api"
+    log "2. Check if port 3001 is listening: netstat -tuln | grep 3001"
+    log "3. Check server logs in: $APP_DIR/logs/"
+    log "4. Verify .env file exists and has correct values"
+    exit 1
 fi
 
 log "Deployment completed successfully!"

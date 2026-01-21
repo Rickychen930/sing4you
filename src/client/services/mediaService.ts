@@ -38,17 +38,27 @@ export class MediaService {
     const uploadUrl = API_BASE_URL 
       ? `${API_BASE_URL}/api/admin/media/upload`
       : '/api/admin/media/upload';
-    const response = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        Authorization: token ? `Bearer ${token}` : '',
-      },
-      credentials: 'include',
-      body: formData,
-    });
+    
+    let response: Response;
+    try {
+      response = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+        },
+        credentials: 'include',
+        body: formData,
+      });
+    } catch (error) {
+      // Handle connection refused error
+      const errorMessage = import.meta.env.DEV
+        ? 'Tidak dapat terhubung ke server. Pastikan server berjalan di http://localhost:3001'
+        : 'Tidak dapat terhubung ke server. Silakan coba lagi nanti.';
+      throw new Error(errorMessage);
+    }
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || 'Failed to upload file');
     }
 
