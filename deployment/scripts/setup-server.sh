@@ -79,9 +79,12 @@ mkdir -p /var/log/pm2
 mkdir -p /backup/christina-sings4you
 
 # Set permissions
+log "Setting permissions..."
 chown -R www-data:www-data /var/www/christina-sings4you
 chown -R www-data:www-data /var/log/pm2
+chown -R root:root /backup/christina-sings4you
 chmod -R 755 /var/www/christina-sings4you
+chmod 755 /backup/christina-sings4you
 
 # Create log rotation for PM2
 log "Setting up log rotation..."

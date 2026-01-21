@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { ErrorBoundary } from './client/components/ui/ErrorBoundary';
 import { ToastContainer } from './client/components/ui/Toast';
 import { LoadingSpinner } from './client/components/ui/LoadingSpinner';
