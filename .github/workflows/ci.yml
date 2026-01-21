@@ -43,10 +43,4 @@ jobs:
         run: npm run build:server
 
       - name: Check for sensitive data
-        run: |
-          echo "Checking for sensitive data in code..."
-          if grep -r "password\|secret\|key" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" src/ | grep -v "//\|/\*\|JWT_SECRET\|JWT_REFRESH_SECRET\|process.env" | grep -v "\.env"; then
-            echo "⚠️  Warning: Potential sensitive data found in code"
-            exit 1
-          fi
-          echo "✅ No sensitive data found"
+        run: bash ./.github/scripts/check-sensitive-data.sh
