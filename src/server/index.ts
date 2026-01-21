@@ -127,9 +127,22 @@ const startServer = async (): Promise<void> => {
 
     // Listen on all interfaces in production, localhost in development
     const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
-    app.listen(PORT, host, () => {
+    const server = app.listen(PORT, host, () => {
       console.log(`✅ Server running on http://${host}:${PORT}`);
       console.log(`📡 API available at http://${host}:${PORT}/api`);
+    });
+
+    // Handle server errors gracefully
+    server.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use.`);
+        console.error(`   Please stop the process using port ${PORT} or change the PORT in .env`);
+        console.error(`   To find the process: lsof -ti:${PORT}`);
+        console.error(`   To kill it: kill -9 $(lsof -ti:${PORT})`);
+      } else {
+        console.error('❌ Server error:', error);
+      }
+      process.exit(1);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

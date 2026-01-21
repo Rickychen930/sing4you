@@ -22,7 +22,7 @@ const categorySchema = new Schema<ICategory>(
 );
 
 categorySchema.index({ order: 1 });
-categorySchema.index({ name: 1 });
+// name already has unique: true, so no need for separate index
 
 export class CategoryModel {
   private static model: Model<ICategory>;

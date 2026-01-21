@@ -37,7 +37,7 @@ const variationSchema = new Schema<IVariation>(
 );
 
 variationSchema.index({ categoryId: 1, order: 1 });
-variationSchema.index({ slug: 1 });
+// slug already has unique: true, so no need for separate index
 
 export class VariationModel {
   private static model: Model<IVariation>;
