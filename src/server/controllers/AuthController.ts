@@ -49,7 +49,14 @@ export class AuthController {
       });
     } catch (error) {
       const err = error as Error;
-      res.status(401).json({ success: false, error: err.message });
+      // Log error for debugging (only in development)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Login error:', err.message);
+      }
+      res.status(401).json({ 
+        success: false, 
+        error: err.message || 'Invalid credentials' 
+      });
     }
   };
 

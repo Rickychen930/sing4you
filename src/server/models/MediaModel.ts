@@ -7,7 +7,7 @@ const mediaSchema = new Schema<IMedia>(
       type: Schema.Types.ObjectId,
       ref: 'Variation',
       required: true,
-    },
+    } as any, // Type assertion needed because IMedia defines variationId as string, but schema uses ObjectId
     type: {
       type: String,
       enum: ['image', 'video'],

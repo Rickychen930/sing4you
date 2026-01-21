@@ -73,11 +73,19 @@ export class AuthService {
     // Real database authentication
     const user = await AdminUserModel.findByEmail(email);
     if (!user) {
+      // Log for debugging in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Login attempt failed: User not found for email: ${email}`);
+      }
       throw new Error('Invalid credentials');
     }
 
     const isPasswordValid = await AdminUserModel.comparePassword(password, user.password);
     if (!isPasswordValid) {
+      // Log for debugging in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Login attempt failed: Invalid password for email: ${email}`);
+      }
       throw new Error('Invalid credentials');
     }
 

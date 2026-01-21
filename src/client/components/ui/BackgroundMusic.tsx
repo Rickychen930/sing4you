@@ -79,20 +79,13 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     audio.addEventListener('pause', () => setIsPlaying(false));
     audio.addEventListener('ended', () => setIsPlaying(false));
     audio.addEventListener('error', () => {
-      // Hanya log warning di development mode
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('Audio file not found or failed to load:', defaultSrc);
-      }
       // Jika file tidak ditemukan, sembunyikan kontrol dengan graceful
       // User bisa menambahkan file di /public/music/90s-background.mp3
       // atau memberikan URL melalui prop src
       setIsAvailable(false);
       setIsPlaying(false);
-      if (audioRef.current) {
-        audioRef.current = null;
-      }
-      // Tidak menampilkan error yang mengganggu, hanya log di console
-      // Kontrol akan otomatis tersembunyi karena isAvailable = false
+      // Jangan log error di console untuk menghindari spam
+      // File audio adalah opsional, jadi tidak perlu error message
     });
     audio.addEventListener('volumechange', () => {
       setCurrentVolume(audio.volume);
