@@ -2,12 +2,24 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 import { Database } from './config/database.js';
 import { CloudinaryConfig } from './config/cloudinary.js';
 import routes from './routes/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
-dotenv.config();
+// Get current directory in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load .env file from project root (not from dist/server)
+// In production, dist/server/index.js needs to load .env from /var/www/christina-sings4you/.env
+const envPath = process.env.NODE_ENV === 'production' 
+  ? resolve('/var/www/christina-sings4you/.env')
+  : resolve(__dirname, '../../.env');
+
+dotenv.config({ path: envPath });
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;

@@ -11,6 +11,8 @@ module.exports = {
       cwd: '/var/www/christina-sings4you',
       instances: 2, // Use 2 instances for load balancing (adjust based on CPU cores)
       exec_mode: 'cluster',
+      // Load environment variables from .env file
+      env_file: '/var/www/christina-sings4you/.env',
       env: {
         NODE_ENV: 'production',
         PORT: 3001,
