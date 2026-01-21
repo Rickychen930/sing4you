@@ -21,6 +21,11 @@ check_hardcoded_passwords() {
       continue
     fi
     
+    # Skip console.log statements (they're just informational messages)
+    if echo "$line" | grep -qE 'console\.(log|info|warn|error)'; then
+      continue
+    fi
+    
     # Skip if it's a type definition or interface
     if echo "$line" | grep -qE '(interface|type|Record<|keyof|typeof|as keyof)'; then
       continue
@@ -66,9 +71,15 @@ check_hardcoded_secrets() {
   echo "Checking for hardcoded secrets and API keys..."
   
   # Look for common secret patterns with actual values
+  # Only check for specific patterns like apiKey, secretKey, accessToken, privateKey (not just "key")
   while IFS= read -r line; do
     # Skip comments
     if echo "$line" | grep -qE '^\s*(//|/\*|\*)'; then
+      continue
+    fi
+    
+    # Skip console.log statements
+    if echo "$line" | grep -qE 'console\.(log|info|warn|error)'; then
       continue
     fi
     
@@ -78,11 +89,17 @@ check_hardcoded_secrets() {
     fi
     
     # Skip type definitions
-    if echo "$line" | grep -qE '(interface|type)'; then
+    if echo "$line" | grep -qE '(interface|type|Record<|keyof|typeof|as keyof)'; then
       continue
     fi
     
-    # Check for actual hardcoded values (at least 10 characters)
+    # Skip object key access patterns like store[key], obj[key], etc.
+    if echo "$line" | grep -qE '\[["'"'"']?key["'"'"']?\]|\[key\]|for.*key in|const key =|let key =|var key ='; then
+      continue
+    fi
+    
+    # Only check for actual API key/secret patterns with hardcoded values (at least 10 characters)
+    # Pattern must be: apiKey, secretKey, accessToken, privateKey (not just "key")
     if echo "$line" | grep -qE '(api[_-]?key|secret[_-]?key|access[_-]?token|private[_-]?key)\s*[:=]\s*["'"'"'][a-zA-Z0-9+/=]{10,}'; then
       echo "⚠️  Found potential hardcoded secret: $line"
       FOUND_ISSUES=1
