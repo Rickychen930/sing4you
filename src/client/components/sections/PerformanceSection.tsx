@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import type { ISection } from '../../../shared/interfaces';
 import { sectionService } from '../../services/sectionService';
 import { SectionWrapper } from '../ui/SectionWrapper';
@@ -12,7 +12,7 @@ interface PerformanceSectionProps {
   subtitle?: string;
 }
 
-export const PerformanceSection: React.FC<PerformanceSectionProps> = ({
+export const PerformanceSection: React.FC<PerformanceSectionProps> = memo(({
   type,
   title,
   subtitle,
@@ -28,7 +28,9 @@ export const PerformanceSection: React.FC<PerformanceSectionProps> = ({
           : await sectionService.getAll();
         setSections(data);
       } catch (error) {
-        console.error('Error loading sections:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading sections:', error);
+        }
       } finally {
         setLoading(false);
       }
@@ -81,4 +83,12 @@ export const PerformanceSection: React.FC<PerformanceSectionProps> = ({
       </div>
     </SectionWrapper>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.type === nextProps.type &&
+    prevProps.title === nextProps.title &&
+    prevProps.subtitle === nextProps.subtitle
+  );
+});
+
+PerformanceSection.displayName = 'PerformanceSection';

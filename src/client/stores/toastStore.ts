@@ -30,30 +30,18 @@ export const useToastStore = create<ToastStore>((set) => ({
   },
 
   success: (message: string) => {
-    const id = Math.random().toString(36).substring(7);
-    set((state) => ({
-      toasts: [...state.toasts, { id, message, type: 'success' }],
-    }));
+    useToastStore.getState().showToast(message, 'success');
   },
 
   error: (message: string) => {
-    const id = Math.random().toString(36).substring(7);
-    set((state) => ({
-      toasts: [...state.toasts, { id, message, type: 'error' }],
-    }));
+    useToastStore.getState().showToast(message, 'error');
   },
 
   info: (message: string) => {
-    const id = Math.random().toString(36).substring(7);
-    set((state) => ({
-      toasts: [...state.toasts, { id, message, type: 'info' }],
-    }));
+    useToastStore.getState().showToast(message, 'info');
   },
 
   warning: (message: string) => {
-    const id = Math.random().toString(36).substring(7);
-    set((state) => ({
-      toasts: [...state.toasts, { id, message, type: 'warning' }],
-    }));
+    useToastStore.getState().showToast(message, 'warning');
   },
 }));

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '../../utils/helpers';
 
@@ -12,7 +12,7 @@ interface BreadcrumbProps {
   className?: string;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className }) => {
   if (items.length === 0) return null;
 
   return (
@@ -49,7 +49,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
               ) : item.path ? (
                 <Link
                   to={item.path}
-                  className="text-gray-400 hover:text-gold-400 transition-colors duration-300 hover:underline"
+                  className="text-gray-400 hover:text-gold-400 transition-colors duration-300 hover:underline focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1"
                 >
                   {item.label}
                 </Link>
@@ -62,4 +62,12 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
       </ol>
     </nav>
   );
-};
+}, (prevProps, nextProps) => {
+  if (prevProps.items.length !== nextProps.items.length) return false;
+  return prevProps.items.every((item, index) => 
+    item.label === nextProps.items[index]?.label &&
+    item.path === nextProps.items[index]?.path
+  ) && prevProps.className === nextProps.className;
+});
+
+Breadcrumb.displayName = 'Breadcrumb';

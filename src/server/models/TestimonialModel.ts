@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { ITestimonial } from '../../shared/interfaces';
+import type { ITestimonial } from '../../shared/interfaces';
 
 const testimonialSchema = new Schema<ITestimonial>(
   {

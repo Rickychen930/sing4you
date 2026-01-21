@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IPerformance } from '../../shared/interfaces';
+import type { IPerformance } from '../../shared/interfaces';
 
 const performanceSchema = new Schema<IPerformance>(
   {

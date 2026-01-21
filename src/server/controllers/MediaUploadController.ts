@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import multer from 'multer';
 import { CloudinaryConfig } from '../config/cloudinary';
-import { v2 as cloudinary } from 'cloudinary';
+import { getRequiredStringParam } from '../utils/requestHelpers';
 
 // Configure multer for memory storage (Cloudinary requires buffer)
 const storage = multer.memoryStorage();
@@ -10,7 +10,7 @@ const upload = multer({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, file, cb) => {
     // Accept images and videos
     const allowedMimes = [
       'image/jpeg',
@@ -104,15 +104,7 @@ export class MediaUploadController {
 
   public delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { publicId } = req.params;
-
-      if (!publicId) {
-        res.status(400).json({
-          success: false,
-          error: 'Public ID is required.',
-        });
-        return;
-      }
+      const publicId = getRequiredStringParam(req, 'publicId');
 
       // Check if Cloudinary is configured
       if (!process.env.CLOUDINARY_CLOUD_NAME) {

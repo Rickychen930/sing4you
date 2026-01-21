@@ -5,20 +5,26 @@ import { PerformanceCard } from '../../components/ui/PerformanceCard';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { SkeletonList } from '../../components/ui/Skeleton';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 
 export const PerformancesPage: React.FC = () => {
   const [performances, setPerformances] = useState<IPerformance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadPerformances = async () => {
       try {
+        setError(null);
         const data = await performanceService.getAll();
         setPerformances(data);
       } catch (error) {
-        console.error('Error loading performances:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load performances';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading performances:', error);
+        }
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -47,13 +53,31 @@ export const PerformancesPage: React.FC = () => {
         className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25"
       >
         {loading ? (
-          <SkeletonList count={6} />
-        ) : performances.length === 0 ? (
-          <div className="text-center py-12 sm:py-16">
-            <div className="text-6xl sm:text-7xl mb-4 opacity-50">🎵</div>
-            <h3 className="text-xl sm:text-2xl font-elegant font-bold text-gray-200 mb-3">No performances scheduled</h3>
-            <p className="text-base sm:text-lg text-gray-400 mb-6">Check back soon for upcoming events and performances!</p>
+          <div className="flex justify-center py-12">
+            <LoadingSpinner size="lg" />
           </div>
+        ) : error ? (
+          <EmptyState
+            icon="⚠️"
+            title="Unable to load performances"
+            description={error}
+            action={{
+              label: "Try Again",
+              onClick: () => window.location.reload(),
+              variant: "primary"
+            }}
+          />
+        ) : performances.length === 0 ? (
+          <EmptyState
+            icon="🎵"
+            title="No performances scheduled"
+            description="Check back soon for upcoming events and performances! You can also contact us to book a performance."
+            action={{
+              label: "Contact Us",
+              to: "/contact",
+              variant: "primary"
+            }}
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
             {performances.map((performance, index) => (

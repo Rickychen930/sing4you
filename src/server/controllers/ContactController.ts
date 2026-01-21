@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { IContactForm } from '../../shared/interfaces';
+import type { Request, Response } from 'express';
+import type { IContactForm } from '../../shared/interfaces';
 import { sanitizeObject } from '../utils/sanitize';
 import { EmailService } from '../services/EmailService';
 

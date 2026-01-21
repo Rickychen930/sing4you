@@ -9,7 +9,7 @@ import { Layout } from './client/components/layout/Layout';
 import { useAuthStore } from './client/stores/authStore';
 
 // Lazy load public pages for better code splitting
-const HomePage = lazy(() => import('./client/pages/public/HomePage').then(m => ({ default: m.HomePage })));
+const HomePage = lazy(() => import('./client/pages/public/HomePage'));
 const AboutPage = lazy(() => import('./client/pages/public/AboutPage').then(m => ({ default: m.AboutPage })));
 const PerformancesPage = lazy(() => import('./client/pages/public/PerformancesPage').then(m => ({ default: m.PerformancesPage })));
 const BlogPage = lazy(() => import('./client/pages/public/BlogPage').then(m => ({ default: m.BlogPage })));
@@ -52,10 +52,10 @@ const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) 
 
   if (isChecking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gold-600 mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-200 text-sm">Memeriksa autentikasi...</p>
         </div>
       </div>
     );
@@ -80,7 +80,7 @@ function App() {
 
   // Loading fallback for Suspense - memoized to prevent re-creation
   const LoadingFallback = React.useMemo(() => () => (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60">
       <LoadingSpinner size="lg" />
     </div>
   ), []);

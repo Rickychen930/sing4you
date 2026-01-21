@@ -9,10 +9,10 @@ export const NotFoundPage: React.FC = () => {
     <Layout>
       <SEO title="404 - Page Not Found | Christina Sings4U" />
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 py-12 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 pointer-events-none opacity-10">
-          <div className="absolute top-1/4 left-1/4 text-9xl text-gold-400 animate-float font-musical">♪</div>
-          <div className="absolute bottom-1/4 right-1/4 text-8xl text-musical-400 animate-float font-musical" style={{ animationDelay: '2s' }}>♫</div>
+        {/* Decorative elements - Reduced for better performance */}
+        <div className="absolute inset-0 pointer-events-none opacity-8">
+          <div className="absolute top-1/4 left-1/4 text-7xl sm:text-9xl text-gold-400/60 animate-float font-musical">♪</div>
+          <div className="absolute bottom-1/4 right-1/4 text-6xl sm:text-8xl text-musical-400/60 animate-float font-musical" style={{ animationDelay: '2s' }}>♫</div>
         </div>
         
         <div className="max-w-lg w-full text-center relative z-10">
@@ -33,7 +33,13 @@ export const NotFoundPage: React.FC = () => {
                 Go to Homepage
               </Button>
             </Link>
-            <Button variant="outline" size="lg" onClick={() => window.history.back()} className="w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => window.history.back()} 
+              className="w-full sm:w-auto min-h-[52px]"
+              aria-label="Go back to previous page"
+            >
               Go Back
             </Button>
           </div>

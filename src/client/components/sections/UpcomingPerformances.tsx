@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import type { IPerformance } from '../../../shared/interfaces';
 import { performanceService } from '../../services/performanceService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { PerformanceCard } from '../ui/PerformanceCard';
-import { SkeletonList } from '../ui/Skeleton';
+import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { EmptyState } from '../ui/EmptyState';
 
-export const UpcomingPerformances: React.FC = () => {
+export const UpcomingPerformances: React.FC = memo(() => {
   const [performances, setPerformances] = useState<IPerformance[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +16,9 @@ export const UpcomingPerformances: React.FC = () => {
         const data = await performanceService.getUpcoming();
         setPerformances(data);
       } catch (error) {
-        console.error('Error loading performances:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading performances:', error);
+        }
       } finally {
         setLoading(false);
       }
@@ -32,14 +35,16 @@ export const UpcomingPerformances: React.FC = () => {
       className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative overflow-hidden"
     >
       {loading ? (
-        <SkeletonList count={3} />
-      ) : performances.length === 0 ? (
-        <div className="text-center py-12 sm:py-16">
-          <div className="text-6xl sm:text-7xl mb-4 opacity-50">🎭</div>
-          <h3 className="text-xl sm:text-2xl font-elegant font-bold text-gray-200 mb-3">No upcoming performances</h3>
-          <p className="text-base sm:text-lg text-gray-400">Check back soon for updates on upcoming events!</p>
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="lg" />
         </div>
-        ) : (
+      ) : performances.length === 0 ? (
+        <EmptyState
+          icon="🎭"
+          title="No upcoming performances"
+          description="Check back soon for updates on upcoming events!"
+        />
+      ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {performances.map((performance, index) => (
             <div
@@ -54,4 +59,6 @@ export const UpcomingPerformances: React.FC = () => {
       )}
     </SectionWrapper>
   );
-};
+});
+
+UpcomingPerformances.displayName = 'UpcomingPerformances';

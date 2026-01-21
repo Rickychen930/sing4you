@@ -6,7 +6,8 @@ import { Card, CardBody } from '../../components/ui/Card';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { SkeletonList } from '../../components/ui/Skeleton';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { LazyImage } from '../../components/ui/LazyImage';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { formatAustralianDate } from '../../../shared/utils/date';
 import { truncate } from '../../utils/helpers';
@@ -14,14 +15,20 @@ import { truncate } from '../../utils/helpers';
 export const BlogPage: React.FC = () => {
   const [posts, setPosts] = useState<IBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
+        setError(null);
         const data = await blogService.getPublished();
         setPosts(data);
       } catch (error) {
-        console.error('Error loading blog posts:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load blog posts';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading blog posts:', error);
+        }
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -50,13 +57,26 @@ export const BlogPage: React.FC = () => {
         className="bg-gradient-to-br from-jazz-900/20 via-musical-900/15 to-jazz-800/20"
       >
         {loading ? (
-          <SkeletonList count={6} />
-        ) : posts.length === 0 ? (
-          <div className="text-center py-12 sm:py-16">
-            <div className="text-5xl sm:text-6xl mb-4 opacity-50">📝</div>
-            <p className="text-lg sm:text-xl font-semibold text-gray-200 mb-2">No blog posts available at the moment.</p>
-            <p className="text-base sm:text-lg text-gray-400">Check back soon for updates!</p>
+          <div className="flex justify-center py-12">
+            <LoadingSpinner size="lg" />
           </div>
+        ) : error ? (
+          <EmptyState
+            icon="⚠️"
+            title="Unable to load blog posts"
+            description={error}
+            action={{
+              label: "Try Again",
+              onClick: () => window.location.reload(),
+              variant: "primary"
+            }}
+          />
+        ) : posts.length === 0 ? (
+          <EmptyState
+            icon="📝"
+            title="No blog posts available"
+            description="Check back soon for new stories, insights, and updates!"
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
             {posts.map((post, index) => (
@@ -68,23 +88,18 @@ export const BlogPage: React.FC = () => {
               >
                 <Card hover className="h-full flex flex-col overflow-hidden">
                   {post.coverImage && (
-                    <div className="relative overflow-hidden">
-                      <img
+                    <div className="relative overflow-hidden h-48 sm:h-56 lg:h-64">
+                      <LazyImage
                         src={post.coverImage}
                         alt={post.title}
-                        className="w-full h-48 sm:h-56 lg:h-64 object-cover transition-all duration-500 group-hover:scale-110 border-b-2 border-gold-900/40 image-fade-in"
-                        loading="lazy"
-                        onLoad={(e) => {
-                          e.currentTarget.classList.add('opacity-100');
-                          e.currentTarget.classList.remove('opacity-0');
-                        }}
-                        style={{ opacity: 0 }}
+                        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 border-b-2 border-gold-900/40"
+                        fadeIn
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                     </div>
                   )}
                   <CardBody className="flex-grow p-5 sm:p-6 lg:p-7 flex flex-col">
-                    <h3 className="text-xl sm:text-2xl font-elegant font-bold mb-3 line-clamp-2 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-300 bg-clip-text text-transparent">
+                    <h3 className="text-xl sm:text-2xl font-elegant font-bold mb-3 line-clamp-2 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                       {post.title}
                     </h3>
                     <p className="text-base sm:text-lg text-gray-200 mb-5 sm:mb-6 line-clamp-3 font-normal leading-relaxed flex-grow">

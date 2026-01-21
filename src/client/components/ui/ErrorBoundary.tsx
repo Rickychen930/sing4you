@@ -1,4 +1,5 @@
-import React, { Component, ReactNode } from 'react';
+import React, { Component } from 'react';
+import type { ReactNode } from 'react';
 import { Card, CardBody, CardHeader } from './Card';
 import { Button } from './Button';
 
@@ -37,7 +38,12 @@ export class ErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: null,
     });
+    // Use navigate instead of direct href for better UX
     window.location.href = '/';
+  };
+
+  handleReload = () => {
+    window.location.reload();
   };
 
   render() {
@@ -49,13 +55,14 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/50 via-gold-900/40 to-musical-900/50 px-4 py-12 relative overflow-hidden">
           <Card className="max-w-md w-full">
-            <CardHeader className="p-4 sm:p-6">
-              <h1 className="text-2xl font-elegant font-bold text-center bg-gradient-to-r from-jazz-900 to-musical-800 bg-clip-text text-transparent">
+            <CardHeader className="p-4 sm:p-6 text-center">
+              <div className="text-6xl mb-4 opacity-60" aria-hidden="true">⚠️</div>
+              <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                 Oops! Something went wrong
               </h1>
             </CardHeader>
             <CardBody className="p-4 sm:p-6">
-              <p className="text-gray-300 mb-4 text-center font-light">
+              <p className="text-gray-300 mb-4 text-center font-light leading-relaxed">
                 We apologize for the inconvenience. Please try refreshing the page or returning to the homepage.
               </p>
               {process.env.NODE_ENV === 'development' && this.state.error && (
@@ -68,11 +75,19 @@ export class ErrorBoundary extends Component<Props, State> {
                   </pre>
                 </details>
               )}
-              <div className="flex gap-2 justify-center">
-                <Button variant="primary" onClick={this.handleReset}>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button 
+                  variant="primary" 
+                  onClick={this.handleReset}
+                  className="w-full sm:w-auto min-h-[44px]"
+                >
                   Go to Homepage
                 </Button>
-                <Button variant="outline" onClick={() => window.location.reload()}>
+                <Button 
+                  variant="outline" 
+                  onClick={this.handleReload}
+                  className="w-full sm:w-auto min-h-[44px]"
+                >
                   Refresh Page
                 </Button>
               </div>

@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { CategoryService } from '../services/CategoryService';
+import { getRequiredStringParam } from '../utils/requestHelpers';
 
 export class CategoryController {
   private categoryService: CategoryService;
@@ -8,7 +9,7 @@ export class CategoryController {
     this.categoryService = new CategoryService();
   }
 
-  public getAll = async (req: Request, res: Response): Promise<void> => {
+  public getAll = async (_req: Request, res: Response): Promise<void> => {
     try {
       const categories = await this.categoryService.getAll();
       res.json({ success: true, data: categories });
@@ -20,7 +21,8 @@ export class CategoryController {
 
   public getById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const category = await this.categoryService.getById(req.params.id);
+      const id = getRequiredStringParam(req, 'id');
+      const category = await this.categoryService.getById(id);
       res.json({ success: true, data: category });
     } catch (error) {
       const err = error as Error;
@@ -40,7 +42,8 @@ export class CategoryController {
 
   public update = async (req: Request, res: Response): Promise<void> => {
     try {
-      const category = await this.categoryService.update(req.params.id, req.body);
+      const id = getRequiredStringParam(req, 'id');
+      const category = await this.categoryService.update(id, req.body);
       res.json({ success: true, data: category });
     } catch (error) {
       const err = error as Error;
@@ -50,7 +53,8 @@ export class CategoryController {
 
   public delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      await this.categoryService.delete(req.params.id);
+      const id = getRequiredStringParam(req, 'id');
+      await this.categoryService.delete(id);
       res.json({ success: true, message: 'Category deleted successfully' });
     } catch (error) {
       const err = error as Error;

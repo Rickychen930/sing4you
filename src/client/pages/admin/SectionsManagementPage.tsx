@@ -7,6 +7,7 @@ import { Textarea } from '../../components/ui/Textarea';
 import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { sectionService } from '../../services/sectionService';
 import { useToastStore } from '../../stores/toastStore';
 import type { ISection } from '../../../shared/interfaces';
@@ -28,6 +29,10 @@ export const SectionsManagementPage: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
+    isOpen: false,
+    id: null,
+  });
 
   useEffect(() => {
     loadSections();
@@ -38,8 +43,11 @@ export const SectionsManagementPage: React.FC = () => {
       const data = await sectionService.getAll();
       setSections(data);
     } catch (error) {
-      setError('Failed to load sections');
-      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load sections';
+      setError(errorMessage);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading sections:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -58,7 +66,8 @@ export const SectionsManagementPage: React.FC = () => {
   };
 
   const handleEdit = (section: ISection) => {
-    setEditingId(section._id!);
+    if (!section._id) return;
+    setEditingId(section._id);
     setFormData({
       title: section.title,
       slug: section.slug,
@@ -69,19 +78,29 @@ export const SectionsManagementPage: React.FC = () => {
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this section?')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirm({ isOpen: true, id });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.id) return;
 
     try {
-      await sectionService.delete(id);
+      await sectionService.delete(deleteConfirm.id);
       await loadSections();
       toast.success('Section deleted successfully!');
       setError('');
+      setDeleteConfirm({ isOpen: false, id: null });
     } catch (error: any) {
       const errorMsg = error?.message || 'Failed to delete section';
       setError(errorMsg);
       toast.error(errorMsg);
+      setDeleteConfirm({ isOpen: false, id: null });
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false, id: null });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,7 +139,7 @@ export const SectionsManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Sections Management | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen py-12 px-4">
           <div className="max-w-7xl mx-auto flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
@@ -132,10 +151,10 @@ export const SectionsManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Sections Management | Admin" />
-      <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Sections Management
             </h1>
             <div className="flex gap-2">
@@ -149,7 +168,7 @@ export const SectionsManagementPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md text-sm">
+            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -158,7 +177,7 @@ export const SectionsManagementPage: React.FC = () => {
             <div className="lg:col-span-1">
               <Card>
                 <CardHeader className="p-4 sm:p-6">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Section' : 'New Section'}
                   </h2>
                 </CardHeader>
@@ -177,13 +196,18 @@ export const SectionsManagementPage: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                     />
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-200 mb-1">
                         Type
                       </label>
                       <select
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
+                        className="w-full px-4 py-2 border border-gold-900/50 rounded-lg bg-jazz-900/60 text-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-colors"
                         value={formData.type}
-                        onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (['solo', 'duo', 'trio', 'band', 'wedding', 'corporate', 'other'].includes(value)) {
+                            setFormData({ ...formData, type: value as ISection['type'] });
+                          }
+                        }}
                         required
                       >
                         <option value="solo">Solo</option>
@@ -234,13 +258,13 @@ export const SectionsManagementPage: React.FC = () => {
                     <CardBody className="p-4 sm:p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          <h3 className="text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
                             {section.title}
                           </h3>
-                          <p className="text-sm text-gray-500 mb-2">
+                          <p className="text-sm text-gray-400 mb-2">
                             Type: {section.type} | Slug: {section.slug}
                           </p>
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-sm text-gray-300 line-clamp-2">
                             {section.description}
                           </p>
                           {section.priceRange && (
@@ -260,8 +284,8 @@ export const SectionsManagementPage: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => handleDelete(section._id!)}
+                            className="text-red-400 hover:text-red-300"
+                            onClick={() => section._id && handleDeleteClick(section._id)}
                           >
                             Delete
                           </Button>
@@ -275,6 +299,16 @@ export const SectionsManagementPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Section"
+        message="Are you sure you want to delete this section? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </Layout>
   );
 };

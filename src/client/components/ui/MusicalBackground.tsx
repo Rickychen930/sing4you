@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 
 interface MusicalBackgroundProps {
   intensity?: 'low' | 'medium' | 'high';
 }
 
-export const MusicalBackground: React.FC<MusicalBackgroundProps> = ({ intensity = 'medium' }) => {
+export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ intensity = 'medium' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -122,4 +122,8 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = ({ intensity 
       style={{ opacity: 0.4 }}
     />
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.intensity === nextProps.intensity;
+});
+
+MusicalBackground.displayName = 'MusicalBackground';

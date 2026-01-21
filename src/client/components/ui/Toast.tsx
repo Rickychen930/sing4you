@@ -56,15 +56,17 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
         variants[toast.type]
       )}
       role="alert"
+      aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
+      aria-atomic="true"
     >
-      <div className="flex-shrink-0">{icons[toast.type]}</div>
+      <div className="flex-shrink-0" aria-hidden="true">{icons[toast.type]}</div>
       <p className="flex-1 text-sm sm:text-base font-semibold leading-relaxed">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
-        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1 rounded-full hover:bg-white/10"
-        aria-label="Close toast"
+        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent min-w-[32px] min-h-[32px] flex items-center justify-center"
+        aria-label={`Close ${toast.type} notification`}
       >
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
       </button>
@@ -81,7 +83,12 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose 
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-20 sm:top-24 right-4 sm:right-6 z-50 space-y-3 max-w-md w-[calc(100%-2rem)] sm:w-auto">
+    <div 
+      className="fixed top-20 sm:top-24 right-4 sm:right-6 z-50 space-y-3 max-w-md w-[calc(100%-2rem)] sm:w-auto"
+      role="region"
+      aria-label="Notifications"
+      aria-live="polite"
+    >
       {toasts.map((toast) => (
         <ToastComponent key={toast.id} toast={toast} onClose={onClose} />
       ))}

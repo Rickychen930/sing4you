@@ -1,10 +1,10 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IMedia } from '../../shared/interfaces';
+import type { IMedia } from '../../shared/interfaces';
 
 const mediaSchema = new Schema<IMedia>(
   {
     variationId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'Variation',
       required: true,
     },

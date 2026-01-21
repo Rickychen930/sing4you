@@ -29,29 +29,39 @@ export const HeroManagementPage: React.FC = () => {
       setSettings(data);
     } catch (error) {
       setError('Failed to load hero settings');
-      console.error(error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading hero settings:', error);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string) => {
     if (!settings) return;
     
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
-      setSettings({
-        ...settings,
-        [parent]: {
-          ...(settings[parent as keyof IHeroSettings] as any),
-          [child]: value,
-        },
-      });
+      const parentKey = parent as keyof IHeroSettings;
+      const parentValue = settings[parentKey];
+      
+      if (parentValue && typeof parentValue === 'object' && !Array.isArray(parentValue)) {
+        setSettings({
+          ...settings,
+          [parentKey]: {
+            ...parentValue,
+            [child]: value,
+          } as typeof parentValue,
+        });
+      }
     } else {
-      setSettings({
-        ...settings,
-        [field]: value,
-      });
+      const key = field as keyof IHeroSettings;
+      if (key in settings && typeof settings[key] === 'string') {
+        setSettings({
+          ...settings,
+          [key]: value,
+        });
+      }
     }
   };
 
@@ -79,7 +89,7 @@ export const HeroManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Hero Settings | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
@@ -92,9 +102,9 @@ export const HeroManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Hero Settings | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center text-red-600">Failed to load settings</div>
+            <div className="text-center text-red-400">Failed to load settings</div>
           </div>
         </div>
       </Layout>
@@ -104,10 +114,10 @@ export const HeroManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Hero Settings | Admin" />
-      <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Hero Settings
             </h1>
             <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')}>
@@ -116,7 +126,7 @@ export const HeroManagementPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md text-sm">
+            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -124,7 +134,7 @@ export const HeroManagementPage: React.FC = () => {
           <form onSubmit={handleSubmit}>
             <Card className="mb-6">
               <CardHeader className="p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Basic Information</h2>
+                <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Basic Information</h2>
               </CardHeader>
               <CardBody className="p-4 sm:p-6 space-y-4">
                 <Input
@@ -161,7 +171,7 @@ export const HeroManagementPage: React.FC = () => {
 
             <Card className="mb-6">
               <CardHeader className="p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">WhatsApp CTA</h2>
+                <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">WhatsApp CTA</h2>
               </CardHeader>
               <CardBody className="p-4 sm:p-6 space-y-4">
                 <Input
@@ -186,7 +196,7 @@ export const HeroManagementPage: React.FC = () => {
 
             <Card className="mb-6">
               <CardHeader className="p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Email CTA</h2>
+                <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Email CTA</h2>
               </CardHeader>
               <CardBody className="p-4 sm:p-6 space-y-4">
                 <Input

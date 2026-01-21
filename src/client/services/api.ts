@@ -1,7 +1,10 @@
-import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from 'axios';
+import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
 import type { IApiResponse } from '../../shared/interfaces';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// In development, use relative URL to leverage Vite proxy
+// In production, use the configured API URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.DEV ? '' : 'http://localhost:3001');
 
 interface AxiosErrorResponse {
   response?: {
@@ -40,11 +43,21 @@ class ApiClient {
       (response) => response,
       async (error: unknown) => {
         const axiosError = error as AxiosErrorResponse;
-        if (axiosError.response?.status === 401) {
-          // Try to refresh token
+        const requestUrl = axiosError.config?.url || '';
+        
+        // Don't try to refresh token for auth endpoints (login, refresh, logout)
+        const isAuthEndpoint = requestUrl.includes('/auth/login') || 
+                              requestUrl.includes('/auth/refresh') || 
+                              requestUrl.includes('/auth/logout');
+        
+        if (axiosError.response?.status === 401 && !isAuthEndpoint) {
+          // Try to refresh token only for non-auth endpoints
           try {
+            const refreshUrl = API_BASE_URL 
+              ? `${API_BASE_URL}/api/admin/auth/refresh`
+              : '/api/admin/auth/refresh';
             const refreshResponse = await axios.post<IApiResponse<{ accessToken: string }>>(
-              `${API_BASE_URL}/api/admin/auth/refresh`,
+              refreshUrl,
               {},
               { withCredentials: true }
             );
@@ -60,8 +73,12 @@ class ApiClient {
               }
             }
           } catch (refreshError) {
+            // Clear token and redirect to login on refresh failure
             localStorage.removeItem('accessToken');
-            window.location.href = '/admin/login';
+            // Only redirect if not already on login page
+            if (!window.location.pathname.includes('/admin/login')) {
+              window.location.href = '/admin/login';
+            }
           }
         }
         return Promise.reject(error);

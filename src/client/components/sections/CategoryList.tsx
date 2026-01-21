@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo, useCallback } from 'react';
 import type { ICategory } from '../../../shared/interfaces';
 import { categoryService } from '../../services/categoryService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { EmptyState } from '../ui/EmptyState';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/Button';
 
 interface CategoryListProps {
   title?: string;
@@ -12,22 +14,28 @@ interface CategoryListProps {
   onCategorySelect?: (categoryId: string) => void;
 }
 
-export const CategoryList: React.FC<CategoryListProps> = ({
+export const CategoryList: React.FC<CategoryListProps> = memo(({
   title = 'Categories',
   subtitle,
   onCategorySelect,
 }) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadCategories = async () => {
       try {
+        setError(null);
         const data = await categoryService.getAll();
         setCategories(data);
       } catch (error) {
-        console.error('Error loading categories:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load categories';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading categories:', error);
+        }
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -36,13 +44,13 @@ export const CategoryList: React.FC<CategoryListProps> = ({
     loadCategories();
   }, []);
 
-  const handleCategoryClick = (categoryId: string) => {
+  const handleCategoryClick = useCallback((categoryId: string) => {
     if (onCategorySelect) {
       onCategorySelect(categoryId);
     } else {
       navigate(`/categories/${categoryId}`);
     }
-  };
+  }, [onCategorySelect, navigate]);
 
   if (loading) {
     return (
@@ -54,16 +62,31 @@ export const CategoryList: React.FC<CategoryListProps> = ({
     );
   }
 
+  if (error) {
+    return (
+      <SectionWrapper title={title} subtitle={subtitle}>
+        <EmptyState
+          icon="⚠️"
+          title="Unable to load categories"
+          description={error}
+          action={{
+            label: "Try Again",
+            onClick: () => window.location.reload(),
+            variant: "primary"
+          }}
+        />
+      </SectionWrapper>
+    );
+  }
+
   if (categories.length === 0) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="text-center py-12">
-          <div className="max-w-md mx-auto">
-            <div className="text-6xl mb-4 opacity-50">🎵</div>
-            <p className="text-gray-400 text-lg mb-2">No categories available yet.</p>
-            <p className="text-gray-500 text-sm">Categories will appear here once they are added.</p>
-          </div>
-        </div>
+        <EmptyState
+          icon="🎵"
+          title="No categories available"
+          description="Categories will appear here once they are added. Check back soon!"
+        />
       </SectionWrapper>
     );
   }
@@ -77,7 +100,20 @@ export const CategoryList: React.FC<CategoryListProps> = ({
             className="animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
-            <Card className="h-full cursor-pointer" hover onClick={() => handleCategoryClick(category._id!)}>
+            <Card 
+              className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900" 
+              hover 
+              onClick={() => category._id && handleCategoryClick(category._id)}
+              onKeyDown={(e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && category._id) {
+                  e.preventDefault();
+                  handleCategoryClick(category._id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`View ${category.name} category`}
+            >
               <CardBody className="p-6 sm:p-8 text-center">
                 <h3 className="text-2xl sm:text-3xl font-elegant font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                   {category.name}
@@ -94,4 +130,12 @@ export const CategoryList: React.FC<CategoryListProps> = ({
       </div>
     </SectionWrapper>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.title === nextProps.title &&
+    prevProps.subtitle === nextProps.subtitle &&
+    prevProps.onCategorySelect === nextProps.onCategorySelect
+  );
+});
+
+CategoryList.displayName = 'CategoryList';

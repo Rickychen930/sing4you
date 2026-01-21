@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import type { ITestimonial } from '../../../shared/interfaces';
 import { testimonialService } from '../../services/testimonialService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { TestimonialCard } from '../ui/TestimonialCard';
+import { LoadingSpinner } from '../ui/LoadingSpinner';
 
-export const Testimonials: React.FC = () => {
+export const Testimonials: React.FC = memo(() => {
   const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,7 +15,9 @@ export const Testimonials: React.FC = () => {
         const data = await testimonialService.getAll();
         setTestimonials(data);
       } catch (error) {
-        console.error('Error loading testimonials:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading testimonials:', error);
+        }
       } finally {
         setLoading(false);
       }
@@ -23,8 +26,22 @@ export const Testimonials: React.FC = () => {
     loadTestimonials();
   }, []);
 
-  if (loading || testimonials.length === 0) {
-    return null;
+  if (loading) {
+    return (
+      <SectionWrapper
+        title="What Our Clients Say"
+        subtitle="Read testimonials from our satisfied clients"
+        className="bg-gradient-to-br from-musical-900/30 via-jazz-900/20 to-gold-900/20 relative overflow-hidden"
+      >
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="lg" />
+        </div>
+      </SectionWrapper>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return null; // Don't show section if no testimonials
   }
 
   return (
@@ -46,4 +63,6 @@ export const Testimonials: React.FC = () => {
       </div>
     </SectionWrapper>
   );
-};
+});
+
+Testimonials.displayName = 'Testimonials';

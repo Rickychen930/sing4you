@@ -1,6 +1,6 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { IAdminUser } from '../../shared/interfaces';
+import type { IAdminUser } from '../../shared/interfaces';
 
 const adminUserSchema = new Schema<IAdminUser>(
   {

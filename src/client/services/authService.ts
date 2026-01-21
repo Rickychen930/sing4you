@@ -16,18 +16,29 @@ export interface LoginResponse {
 
 export class AuthService {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    const response = await apiClient.post<LoginResponse>('/api/admin/auth/login', credentials);
-    if (response.accessToken) {
-      localStorage.setItem('accessToken', response.accessToken);
+    try {
+      const response = await apiClient.post<LoginResponse>('/api/admin/auth/login', credentials);
+      // Ensure token is stored
+      if (response.accessToken) {
+        localStorage.setItem('accessToken', response.accessToken);
+      } else {
+        throw new Error('No access token received from server');
+      }
+      return response;
+    } catch (error) {
+      // Clear token on error
+      localStorage.removeItem('accessToken');
+      throw error;
     }
-    return response;
   }
 
   async logout(): Promise<void> {
     try {
       await apiClient.post('/api/admin/auth/logout');
     } catch (error) {
-      console.error('Logout error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Logout error:', error);
+      }
     } finally {
       localStorage.removeItem('accessToken');
     }

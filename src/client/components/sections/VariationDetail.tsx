@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo, useMemo } from 'react';
 import type { IVariation, IMedia } from '../../../shared/interfaces';
 import { variationService } from '../../services/variationService';
 import { mediaService } from '../../services/mediaService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { EmptyState } from '../ui/EmptyState';
 import { MediaGallery } from '../ui/MediaGallery';
 import { DescriptionSection } from './DescriptionSection';
 
@@ -14,7 +15,7 @@ interface VariationDetailProps {
   subtitle?: string;
 }
 
-export const VariationDetail: React.FC<VariationDetailProps> = ({
+export const VariationDetail: React.FC<VariationDetailProps> = memo(({
   variationId,
   title,
   subtitle,
@@ -22,10 +23,12 @@ export const VariationDetail: React.FC<VariationDetailProps> = ({
   const [variation, setVariation] = useState<IVariation | null>(null);
   const [media, setMedia] = useState<IMedia[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadVariationData = async () => {
       try {
+        setError(null);
         const [variationData, mediaData] = await Promise.all([
           variationService.getById(variationId),
           mediaService.getByVariationId(variationId),
@@ -33,7 +36,11 @@ export const VariationDetail: React.FC<VariationDetailProps> = ({
         setVariation(variationData);
         setMedia(mediaData);
       } catch (error) {
-        console.error('Error loading variation:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load variation';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading variation:', error);
+        }
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -54,21 +61,24 @@ export const VariationDetail: React.FC<VariationDetailProps> = ({
     );
   }
 
-  if (!variation) {
+  if (error || !variation) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="text-center py-12">
-          <div className="max-w-md mx-auto">
-            <div className="text-6xl mb-4 opacity-50">🎭</div>
-            <p className="text-gray-400 text-lg mb-2">Variation not found.</p>
-            <p className="text-gray-500 text-sm">The variation you're looking for doesn't exist or has been removed.</p>
-          </div>
-        </div>
+        <EmptyState
+          icon="🎭"
+          title={error ? "Unable to load variation" : "Variation not found"}
+          description={error || "The variation you're looking for doesn't exist or has been removed."}
+          action={error ? {
+            label: "Try Again",
+            onClick: () => window.location.reload(),
+            variant: "primary"
+          } : undefined}
+        />
       </SectionWrapper>
     );
   }
 
-  const mediaUrls = media.map((m) => m.url);
+  const mediaUrls = useMemo(() => media.map((m) => m.url), [media]);
 
   return (
     <SectionWrapper title={title || variation.name} subtitle={subtitle}>
@@ -99,4 +109,12 @@ export const VariationDetail: React.FC<VariationDetailProps> = ({
       </div>
     </SectionWrapper>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.variationId === nextProps.variationId &&
+    prevProps.title === nextProps.title &&
+    prevProps.subtitle === nextProps.subtitle
+  );
+});
+
+VariationDetail.displayName = 'VariationDetail';

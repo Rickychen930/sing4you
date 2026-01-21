@@ -20,8 +20,8 @@ const getJWTRefreshSecret = (): string => {
 
 const JWT_SECRET = getJWTSecret();
 const JWT_REFRESH_SECRET = getJWTRefreshSecret();
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
-const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
+const JWT_EXPIRES_IN: string = process.env.JWT_EXPIRES_IN || '1h';
+const JWT_REFRESH_EXPIRES_IN: string = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
 
 export interface ITokenPayload {
   userId: string;
@@ -40,8 +40,12 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
+    if (!user._id) {
+      throw new Error('User ID is missing');
+    }
+
     const payload: ITokenPayload = {
-      userId: user._id!.toString(),
+      userId: user._id.toString(),
       email: user.email,
     };
 
@@ -52,7 +56,7 @@ export class AuthService {
       accessToken,
       refreshToken,
       user: {
-        id: user._id!.toString(),
+        id: user._id.toString(),
         email: user.email,
         name: user.name,
       },
@@ -60,11 +64,13 @@ export class AuthService {
   }
 
   public generateAccessToken(payload: ITokenPayload): string {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const options: jwt.SignOptions = { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
+    return jwt.sign(payload, JWT_SECRET, options);
   }
 
   public generateRefreshToken(payload: ITokenPayload): string {
-    return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_EXPIRES_IN });
+    const options: jwt.SignOptions = { expiresIn: JWT_REFRESH_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
+    return jwt.sign(payload, JWT_REFRESH_SECRET, options);
   }
 
   public verifyAccessToken(token: string): ITokenPayload {
@@ -86,12 +92,12 @@ export class AuthService {
   public async refreshAccessToken(refreshToken: string): Promise<string> {
     const payload = this.verifyRefreshToken(refreshToken);
     const user = await AdminUserModel.findById(payload.userId);
-    if (!user) {
+    if (!user || !user._id) {
       throw new Error('User not found');
     }
 
     return this.generateAccessToken({
-      userId: user._id!.toString(),
+      userId: user._id.toString(),
       email: user.email,
     });
   }

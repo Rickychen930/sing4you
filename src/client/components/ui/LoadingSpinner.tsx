@@ -1,24 +1,37 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { cn } from '../../utils/helpers';
 
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   fullScreen?: boolean;
+  text?: string;
+  variant?: 'default' | 'minimal' | 'dots';
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = memo(({
   size = 'md',
   className,
   fullScreen = false,
+  text,
+  variant = 'default',
 }) => {
   const sizes = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',
     lg: 'w-12 h-12',
+    xl: 'w-16 h-16',
   };
 
-  const spinner = (
+  const spinner = variant === 'dots' ? (
+    <div className={cn('flex items-center justify-center gap-2', className)}>
+      <div className="flex gap-1.5">
+        <div className="w-2 h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+        <div className="w-2 h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+        <div className="w-2 h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+      </div>
+    </div>
+  ) : variant === 'minimal' ? (
     <div className={cn('flex items-center justify-center', className)}>
       <div className="relative">
         <svg
@@ -26,6 +39,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
+          aria-label="Loading"
         >
           <circle
             className="opacity-25"
@@ -41,22 +55,73 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <div className={cn('absolute inset-0 bg-gradient-to-r from-gold-600/40 to-musical-600/40 rounded-full blur-md', sizes[size])}></div>
+      </div>
+    </div>
+  ) : (
+    <div className={cn('flex items-center justify-center', className)} aria-label="Loading">
+      <div className="relative">
+        {/* Main spinner */}
+        <svg
+          className={cn('animate-spin text-gold-500 spinner-glow', sizes[size])}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        {/* Enhanced glow effect */}
+        <div className={cn('absolute inset-0 bg-gradient-to-r from-gold-600/40 via-gold-500/50 to-musical-600/40 rounded-full blur-md animate-pulse-glow', sizes[size])}></div>
+        {/* Outer ring glow */}
+        <div className={cn('absolute -inset-2 bg-gradient-to-r from-gold-500/20 to-musical-500/20 rounded-full blur-lg animate-pulse', sizes[size])}></div>
       </div>
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gold-900/30 pointer-events-none" />
+      <div 
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 relative overflow-hidden"
+        role="status"
+        aria-live="polite"
+        aria-label={text || "Loading"}
+      >
+        {/* Animated background elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gold-900/30 pointer-events-none animate-gradient"></div>
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gold-500/10 rounded-full blur-3xl animate-musical-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-musical-500/10 rounded-full blur-3xl animate-musical-pulse" style={{ animationDelay: '1s' }}></div>
+        
         <div className="relative z-10 flex flex-col items-center gap-4">
           {spinner}
-          <p className="text-gold-300 text-lg font-medium animate-pulse">Loading...</p>
+          {text && (
+            <p className="text-gold-300 text-lg font-medium animate-pulse">{text}</p>
+          )}
         </div>
       </div>
     );
   }
 
   return spinner;
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.size === nextProps.size &&
+    prevProps.className === nextProps.className &&
+    prevProps.fullScreen === nextProps.fullScreen &&
+    prevProps.text === nextProps.text &&
+    prevProps.variant === nextProps.variant
+  );
+});
+
+LoadingSpinner.displayName = 'LoadingSpinner';

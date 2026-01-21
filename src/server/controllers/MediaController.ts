@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { MediaService } from '../services/MediaService';
+import { getRequiredStringParam } from '../utils/requestHelpers';
 
 export class MediaController {
   private mediaService: MediaService;
@@ -8,7 +9,7 @@ export class MediaController {
     this.mediaService = new MediaService();
   }
 
-  public getAll = async (req: Request, res: Response): Promise<void> => {
+  public getAll = async (_req: Request, res: Response): Promise<void> => {
     try {
       const media = await this.mediaService.getAll();
       res.json({ success: true, data: media });
@@ -20,7 +21,8 @@ export class MediaController {
 
   public getById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const media = await this.mediaService.getById(req.params.id);
+      const id = getRequiredStringParam(req, 'id');
+      const media = await this.mediaService.getById(id);
       res.json({ success: true, data: media });
     } catch (error) {
       const err = error as Error;
@@ -30,7 +32,8 @@ export class MediaController {
 
   public getByVariationId = async (req: Request, res: Response): Promise<void> => {
     try {
-      const media = await this.mediaService.getByVariationId(req.params.variationId);
+      const variationId = getRequiredStringParam(req, 'variationId');
+      const media = await this.mediaService.getByVariationId(variationId);
       res.json({ success: true, data: media });
     } catch (error) {
       const err = error as Error;
@@ -50,7 +53,8 @@ export class MediaController {
 
   public update = async (req: Request, res: Response): Promise<void> => {
     try {
-      const media = await this.mediaService.update(req.params.id, req.body);
+      const id = getRequiredStringParam(req, 'id');
+      const media = await this.mediaService.update(id, req.body);
       res.json({ success: true, data: media });
     } catch (error) {
       const err = error as Error;
@@ -60,7 +64,8 @@ export class MediaController {
 
   public delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      await this.mediaService.delete(req.params.id);
+      const id = getRequiredStringParam(req, 'id');
+      await this.mediaService.delete(id);
       res.json({ success: true, message: 'Media deleted successfully' });
     } catch (error) {
       const err = error as Error;

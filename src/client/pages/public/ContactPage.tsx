@@ -3,6 +3,7 @@ import type { IContactForm } from '../../../shared/interfaces';
 import { contactService } from '../../services/contactService';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
 import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
@@ -48,6 +49,8 @@ export const ContactPage: React.FC = () => {
 
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters long';
     }
 
     if (!formData.email.trim()) {
@@ -59,13 +62,36 @@ export const ContactPage: React.FC = () => {
       }
     }
 
+    if (formData.phone && formData.phone.trim()) {
+      // Basic phone validation - allow various formats
+      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+      if (!phoneRegex.test(formData.phone)) {
+        newErrors.phone = 'Please provide a valid phone number';
+      }
+    }
+
     if (!formData.message.trim()) {
       newErrors.message = 'Message is required';
     } else if (formData.message.trim().length < 10) {
       newErrors.message = 'Message must be at least 10 characters long';
+    } else if (formData.message.trim().length > 2000) {
+      newErrors.message = 'Message must be less than 2000 characters';
     }
 
     setErrors(newErrors);
+    
+    // Focus on first error field
+    if (Object.keys(newErrors).length > 0) {
+      const firstErrorField = Object.keys(newErrors)[0] as keyof IContactForm;
+      const errorElement = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
+      if (errorElement) {
+        setTimeout(() => {
+          errorElement.focus();
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    }
+    
     return Object.keys(newErrors).length === 0;
   };
 
@@ -121,24 +147,24 @@ export const ContactPage: React.FC = () => {
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20">
         <div className="max-w-3xl mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-8 sm:mb-10">
-            <div className="text-center p-6 sm:p-8 bg-gradient-to-br from-gold-900/50 to-jazz-900/60 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-gold-500/30 hover:scale-[1.03] border-2 border-gold-900/50 backdrop-blur-md group">
-              <div className="text-3xl mb-3 text-gold-400 group-hover:scale-110 transition-transform duration-300">📱</div>
+            <div className="text-center p-6 sm:p-8 bg-gradient-to-br from-gold-900/50 to-jazz-900/60 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-gold-500/30 hover:scale-[1.02] border-2 border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900">
+              <div className="text-3xl mb-3 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">📱</div>
               <h3 className="text-lg sm:text-xl font-bold text-gold-200 mb-3">WhatsApp</h3>
               <a
                 href={generateWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block"
+                className="text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-2 py-1 min-h-[44px] flex items-center justify-center mx-auto"
               >
                 Message us on WhatsApp
               </a>
             </div>
-            <div className="text-center p-6 sm:p-8 bg-gradient-to-br from-gold-900/50 to-jazz-900/60 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-gold-500/30 hover:scale-[1.03] border-2 border-gold-900/50 backdrop-blur-md group">
-              <div className="text-3xl mb-3 text-gold-400 group-hover:scale-110 transition-transform duration-300">✉️</div>
+            <div className="text-center p-6 sm:p-8 bg-gradient-to-br from-gold-900/50 to-jazz-900/60 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-gold-500/30 hover:scale-[1.02] border-2 border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900">
+              <div className="text-3xl mb-3 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">✉️</div>
               <h3 className="text-lg sm:text-xl font-bold text-gold-200 mb-3">Email</h3>
               <a
                 href={generateMailtoLink()}
-                className="text-base sm:text-lg text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block"
+                className="text-base sm:text-lg text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-2 py-1 min-h-[44px] flex items-center justify-center mx-auto"
               >
                 Send us an email
               </a>
@@ -173,26 +199,25 @@ export const ContactPage: React.FC = () => {
               value={formData.phone}
               onChange={handleChange}
               placeholder="+61 400 000 000"
+              error={errors.phone}
+              helperText="Include country code for international numbers"
             />
-            <div>
-              <label className="block text-sm font-semibold text-gray-200 mb-2">
-                Event Type
-              </label>
-              <select
-                name="eventType"
-                value={formData.eventType}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gold-900/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 transition-all duration-300 bg-jazz-900/70 text-gray-100 backdrop-blur-sm hover:border-gold-800/70 hover:bg-jazz-900/80 focus:bg-jazz-900/90"
-              >
-                <option value="">Select event type</option>
-                <option value="wedding">Wedding</option>
-                <option value="corporate">Corporate</option>
-                <option value="private">Private</option>
-                <option value="concert">Concert</option>
-                <option value="festival">Festival</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
+            <Select
+              label="Event Type"
+              name="eventType"
+              value={formData.eventType}
+              onChange={handleChange}
+              options={[
+                { value: '', label: 'Select event type' },
+                { value: 'wedding', label: 'Wedding' },
+                { value: 'corporate', label: 'Corporate' },
+                { value: 'private', label: 'Private' },
+                { value: 'concert', label: 'Concert' },
+                { value: 'festival', label: 'Festival' },
+                { value: 'other', label: 'Other' },
+              ]}
+              error={errors.eventType}
+            />
             <Input
               label="Event Date"
               name="eventDate"
@@ -216,6 +241,8 @@ export const ContactPage: React.FC = () => {
               onChange={handleChange}
               error={errors.message}
               placeholder="Tell us about your event, preferred dates, location, and any special requests..."
+              maxLength={2000}
+              helperText={`${formData.message.length}/2000 characters`}
             />
             {submitStatus === 'success' && (
               <div className="p-5 bg-green-900/50 text-green-100 rounded-xl border-2 border-green-700/50 backdrop-blur-md shadow-lg">

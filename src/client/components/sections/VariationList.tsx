@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo, useCallback } from 'react';
 import type { IVariation } from '../../../shared/interfaces';
 import { variationService } from '../../services/variationService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { EmptyState } from '../ui/EmptyState';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/Button';
 
 interface VariationListProps {
   categoryId: string;
@@ -13,7 +15,7 @@ interface VariationListProps {
   onVariationSelect?: (variationId: string) => void;
 }
 
-export const VariationList: React.FC<VariationListProps> = ({
+export const VariationList: React.FC<VariationListProps> = memo(({
   categoryId,
   title,
   subtitle,
@@ -21,15 +23,21 @@ export const VariationList: React.FC<VariationListProps> = ({
 }) => {
   const [variations, setVariations] = useState<IVariation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadVariations = async () => {
       try {
+        setError(null);
         const data = await variationService.getByCategoryId(categoryId);
         setVariations(data);
       } catch (error) {
-        console.error('Error loading variations:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load variations';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading variations:', error);
+        }
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -40,13 +48,13 @@ export const VariationList: React.FC<VariationListProps> = ({
     }
   }, [categoryId]);
 
-  const handleVariationClick = (variationId: string) => {
+  const handleVariationClick = useCallback((variationId: string) => {
     if (onVariationSelect) {
       onVariationSelect(variationId);
     } else {
       navigate(`/variations/${variationId}`);
     }
-  };
+  }, [onVariationSelect, navigate]);
 
   if (loading) {
     return (
@@ -58,16 +66,31 @@ export const VariationList: React.FC<VariationListProps> = ({
     );
   }
 
+  if (error) {
+    return (
+      <SectionWrapper title={title} subtitle={subtitle}>
+        <EmptyState
+          icon="⚠️"
+          title="Unable to load variations"
+          description={error}
+          action={{
+            label: "Try Again",
+            onClick: () => window.location.reload(),
+            variant: "primary"
+          }}
+        />
+      </SectionWrapper>
+    );
+  }
+
   if (variations.length === 0) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="text-center py-12">
-          <div className="max-w-md mx-auto">
-            <div className="text-6xl mb-4 opacity-50">🎤</div>
-            <p className="text-gray-400 text-lg mb-2">No variations available for this category yet.</p>
-            <p className="text-gray-500 text-sm">Variations will appear here once they are added.</p>
-          </div>
-        </div>
+        <EmptyState
+          icon="🎤"
+          title="No variations available"
+          description="Variations for this category will appear here once they are added. Check back soon!"
+        />
       </SectionWrapper>
     );
   }
@@ -81,7 +104,20 @@ export const VariationList: React.FC<VariationListProps> = ({
             className="animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
-            <Card className="h-full cursor-pointer" hover onClick={() => handleVariationClick(variation._id!)}>
+            <Card 
+              className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900" 
+              hover 
+              onClick={() => variation._id && handleVariationClick(variation._id)}
+              onKeyDown={(e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && variation._id) {
+                  e.preventDefault();
+                  handleVariationClick(variation._id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`View ${variation.name} variation details`}
+            >
               <CardBody className="p-6 sm:p-8">
                 <h3 className="text-xl sm:text-2xl font-elegant font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                   {variation.name}
@@ -96,4 +132,13 @@ export const VariationList: React.FC<VariationListProps> = ({
       </div>
     </SectionWrapper>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.categoryId === nextProps.categoryId &&
+    prevProps.title === nextProps.title &&
+    prevProps.subtitle === nextProps.subtitle &&
+    prevProps.onVariationSelect === nextProps.onVariationSelect
+  );
+});
+
+VariationList.displayName = 'VariationList';

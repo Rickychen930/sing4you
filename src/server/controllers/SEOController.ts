@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { SEOService } from '../services/SEOService';
 
 export class SEOController {
@@ -8,7 +8,7 @@ export class SEOController {
     this.seoService = new SEOService();
   }
 
-  public getSettings = async (req: Request, res: Response): Promise<void> => {
+  public getSettings = async (_req: Request, res: Response): Promise<void> => {
     try {
       const settings = await this.seoService.getSettings();
       res.json({ success: true, data: settings });

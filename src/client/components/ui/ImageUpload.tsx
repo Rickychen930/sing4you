@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, memo, useCallback } from 'react';
 import { mediaService } from '../../services/mediaService';
 import { useToastStore } from '../../stores/toastStore';
 import { cn } from '../../utils/helpers';
@@ -14,7 +14,7 @@ interface ImageUploadProps {
   showPreview?: boolean;
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({
+export const ImageUpload: React.FC<ImageUploadProps> = memo(({
   value,
   onChange,
   label = 'Image',
@@ -28,7 +28,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toast = useToastStore((state) => state);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -93,19 +93,19 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         fileInputRef.current.value = '';
       }
     }
-  };
+  }, [maxSizeMB, toast, value, onChange]);
 
-  const handleRemove = () => {
+  const handleRemove = useCallback(() => {
     onChange('');
     setPreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  };
+  }, [onChange]);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     fileInputRef.current?.click();
-  };
+  }, []);
 
   return (
     <div className={cn('w-full', className)}>
@@ -171,12 +171,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             type="button"
             onClick={handleClick}
             disabled={isUploading}
+            aria-label={value ? "Change image" : "Upload image"}
             className={cn(
               'px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium',
               'text-gray-200 bg-jazz-900/60 hover:bg-gradient-to-r hover:from-gold-900/30 hover:to-gold-800/30',
               'focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 focus:ring-offset-2',
               'disabled:opacity-50 disabled:cursor-not-allowed',
-              'transition-all duration-300'
+              'transition-all duration-300 min-h-[44px]'
             )}
           >
             {isUploading ? (
@@ -196,7 +197,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               <button
                 type="button"
                 onClick={handleRemove}
-                className="text-red-400 hover:text-red-300 underline font-medium transition-colors"
+                aria-label="Remove current image"
+                className="text-red-400 hover:text-red-300 underline font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1"
               >
                 remove
               </button>
@@ -217,4 +219,16 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       </div>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.value === nextProps.value &&
+    prevProps.label === nextProps.label &&
+    prevProps.className === nextProps.className &&
+    prevProps.accept === nextProps.accept &&
+    prevProps.maxSizeMB === nextProps.maxSizeMB &&
+    prevProps.showPreview === nextProps.showPreview &&
+    prevProps.onChange === nextProps.onChange
+  );
+});
+
+ImageUpload.displayName = 'ImageUpload';

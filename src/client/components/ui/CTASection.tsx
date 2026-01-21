@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from './Button';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
@@ -12,22 +12,28 @@ interface CTASectionProps {
   className?: string;
 }
 
-export const CTASection: React.FC<CTASectionProps> = ({
+export const CTASection: React.FC<CTASectionProps> = memo(({
   title = "Ready to Make Your Event Unforgettable?",
   description = "Let's discuss how we can create the perfect musical experience for your special occasion.",
   showContactButtons = true,
   className,
 }) => {
+  const handleWhatsApp = useCallback(() => {
+    window.open(generateWhatsAppLink(undefined, undefined), '_blank');
+  }, []);
+
+  const handleEmail = useCallback(() => {
+    window.location.href = generateMailtoLink();
+  }, []);
   return (
     <section className={cn('py-12 sm:py-16 lg:py-20 relative overflow-hidden', className)}>
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-gold-900/20 via-jazz-900/30 to-musical-900/20"></div>
       
-      {/* Decorative elements */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        <div className="absolute top-10 left-10 text-6xl text-gold-400 animate-float font-musical">♪</div>
-        <div className="absolute bottom-10 right-10 text-5xl text-musical-400 animate-float font-musical" style={{ animationDelay: '1s' }}>♫</div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-8xl text-gold-500/20 animate-pulse font-musical">♬</div>
+      {/* Decorative elements - Reduced for better performance */}
+      <div className="absolute inset-0 pointer-events-none opacity-8">
+        <div className="absolute top-10 left-10 text-5xl sm:text-6xl text-gold-400/60 animate-float font-musical">♪</div>
+        <div className="absolute bottom-10 right-10 text-4xl sm:text-5xl text-musical-400/60 animate-float font-musical" style={{ animationDelay: '1s' }}>♫</div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -44,7 +50,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
               <Button
                 variant="primary"
                 size="lg"
-                onClick={() => window.open(generateWhatsAppLink(undefined, undefined), '_blank')}
+                onClick={handleWhatsApp}
                 className="w-full sm:w-auto"
               >
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -55,7 +61,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
               <Button
                 variant="outline"
                 size="lg"
-                onClick={() => window.location.href = generateMailtoLink()}
+                onClick={handleEmail}
                 className="w-full sm:w-auto border-2 border-white/90 text-white hover:bg-white/15 hover:border-white backdrop-blur-md shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -69,7 +75,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
           <div className="mt-8 sm:mt-10">
             <Link
               to="/contact"
-              className="inline-block text-sm sm:text-base text-gold-400 hover:text-gold-300 transition-colors duration-300 underline hover:no-underline font-medium"
+              className="inline-block text-sm sm:text-base text-gold-400 hover:text-gold-300 transition-colors duration-300 underline hover:no-underline font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1"
             >
               Or fill out our contact form →
             </Link>
@@ -78,4 +84,13 @@ export const CTASection: React.FC<CTASectionProps> = ({
       </div>
     </section>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.title === nextProps.title &&
+    prevProps.description === nextProps.description &&
+    prevProps.showContactButtons === nextProps.showContactButtons &&
+    prevProps.className === nextProps.className
+  );
+});
+
+CTASection.displayName = 'CTASection';

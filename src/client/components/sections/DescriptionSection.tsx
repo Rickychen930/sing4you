@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { cn } from '../../utils/helpers';
 
 interface DescriptionSectionProps {
@@ -6,7 +6,7 @@ interface DescriptionSectionProps {
   className?: string;
 }
 
-export const DescriptionSection: React.FC<DescriptionSectionProps> = ({
+export const DescriptionSection: React.FC<DescriptionSectionProps> = memo(({
   description,
   className,
 }) => {
@@ -22,4 +22,11 @@ export const DescriptionSection: React.FC<DescriptionSectionProps> = ({
       </div>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.description === nextProps.description &&
+    prevProps.className === nextProps.className
+  );
+});
+
+DescriptionSection.displayName = 'DescriptionSection';

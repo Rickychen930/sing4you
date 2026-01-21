@@ -7,6 +7,7 @@ import { Textarea } from '../../components/ui/Textarea';
 import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { categoryService } from '../../services/categoryService';
 import { useToastStore } from '../../stores/toastStore';
 import type { ICategory } from '../../../shared/interfaces';
@@ -24,6 +25,11 @@ export const CategoriesManagementPage: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof ICategory, string>>>({});
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
+    isOpen: false,
+    id: null,
+  });
 
   useEffect(() => {
     loadCategories();
@@ -35,7 +41,9 @@ export const CategoriesManagementPage: React.FC = () => {
       setCategories(data);
     } catch (error) {
       setError('Failed to load categories');
-      console.error(error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading categories:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -51,7 +59,8 @@ export const CategoriesManagementPage: React.FC = () => {
   };
 
   const handleEdit = (category: ICategory) => {
-    setEditingId(category._id!);
+    if (!category._id) return;
+    setEditingId(category._id);
     setFormData({
       name: category.name,
       description: category.description || '',
@@ -59,25 +68,59 @@ export const CategoriesManagementPage: React.FC = () => {
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this category? This will also delete all variations in this category.')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirm({ isOpen: true, id });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.id) return;
 
     try {
-      await categoryService.delete(id);
+      await categoryService.delete(deleteConfirm.id);
       await loadCategories();
       toast.success('Category deleted successfully!');
       setError('');
+      setDeleteConfirm({ isOpen: false, id: null });
     } catch (error: any) {
       const errorMsg = error?.message || 'Failed to delete category';
       setError(errorMsg);
       toast.error(errorMsg);
+      setDeleteConfirm({ isOpen: false, id: null });
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false, id: null });
+  };
+
+  const validateForm = (): boolean => {
+    const errors: Partial<Record<keyof ICategory, string>> = {};
+
+    if (!formData.name?.trim()) {
+      errors.name = 'Category name is required';
+    } else if (formData.name.trim().length < 2) {
+      errors.name = 'Category name must be at least 2 characters long';
+    }
+
+    if (formData.description && formData.description.trim().length > 500) {
+      errors.description = 'Description must be less than 500 characters';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
     setError('');
+    setFormErrors({});
+
+    if (!validateForm()) {
+      toast.error('Please correct the errors in the form');
+      return;
+    }
+
+    setSaving(true);
 
     try {
       if (editingId) {
@@ -102,7 +145,7 @@ export const CategoriesManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Categories Management | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen py-12 px-4">
           <div className="max-w-7xl mx-auto flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
@@ -114,10 +157,10 @@ export const CategoriesManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Categories Management | Admin" />
-      <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Categories Management
             </h1>
             <div className="flex gap-2">
@@ -131,7 +174,7 @@ export const CategoriesManagementPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md text-sm">
+            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -140,7 +183,7 @@ export const CategoriesManagementPage: React.FC = () => {
             <div className="lg:col-span-1">
               <Card>
                 <CardHeader className="p-4 sm:p-6">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Category' : 'New Category'}
                   </h2>
                 </CardHeader>
@@ -150,20 +193,35 @@ export const CategoriesManagementPage: React.FC = () => {
                       label="Name"
                       required
                       value={formData.name || ''}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (formErrors.name) {
+                          setFormErrors({ ...formErrors, name: undefined });
+                        }
+                      }}
                       placeholder="e.g., Solo, Duo, PocketRocker"
+                      error={formErrors.name}
                     />
                     <Textarea
                       label="Description (optional)"
                       rows={3}
                       value={formData.description || ''}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, description: e.target.value });
+                        if (formErrors.description) {
+                          setFormErrors({ ...formErrors, description: undefined });
+                        }
+                      }}
+                      error={formErrors.description}
+                      maxLength={500}
+                      helperText={`${formData.description?.length || 0}/500 characters`}
                     />
                     <Input
                       label="Order"
                       type="number"
                       value={formData.order?.toString() || '0'}
                       onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                      helperText="Display order (lower numbers appear first)"
                     />
                     <div className="flex gap-2">
                       <Button type="submit" isLoading={saving} variant="primary" className="flex-1">
@@ -191,14 +249,14 @@ export const CategoriesManagementPage: React.FC = () => {
                     <CardBody className="p-4 sm:p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          <h3 className="text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
                             {category.name}
                           </h3>
-                          <p className="text-sm text-gray-500 mb-2">
+                          <p className="text-sm text-gray-400 mb-2">
                             Order: {category.order || 0}
                           </p>
                           {category.description && (
-                            <p className="text-sm text-gray-600 line-clamp-2">
+                            <p className="text-sm text-gray-300 line-clamp-2">
                               {category.description}
                             </p>
                           )}
@@ -214,8 +272,8 @@ export const CategoriesManagementPage: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => handleDelete(category._id!)}
+                            className="text-red-400 hover:text-red-300"
+                            onClick={() => category._id && handleDeleteClick(category._id)}
                           >
                             Delete
                           </Button>
@@ -229,6 +287,16 @@ export const CategoriesManagementPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Category"
+        message="Are you sure you want to delete this category? This will also delete all variations in this category. This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </Layout>
   );
 };

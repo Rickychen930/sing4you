@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { VariationService } from '../services/VariationService';
+import { getRequiredStringParam } from '../utils/requestHelpers';
 
 export class VariationController {
   private variationService: VariationService;
@@ -8,7 +9,7 @@ export class VariationController {
     this.variationService = new VariationService();
   }
 
-  public getAll = async (req: Request, res: Response): Promise<void> => {
+  public getAll = async (_req: Request, res: Response): Promise<void> => {
     try {
       const variations = await this.variationService.getAll();
       res.json({ success: true, data: variations });
@@ -20,7 +21,8 @@ export class VariationController {
 
   public getById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const variation = await this.variationService.getById(req.params.id);
+      const id = getRequiredStringParam(req, 'id');
+      const variation = await this.variationService.getById(id);
       res.json({ success: true, data: variation });
     } catch (error) {
       const err = error as Error;
@@ -30,7 +32,8 @@ export class VariationController {
 
   public getByCategoryId = async (req: Request, res: Response): Promise<void> => {
     try {
-      const variations = await this.variationService.getByCategoryId(req.params.categoryId);
+      const categoryId = getRequiredStringParam(req, 'categoryId');
+      const variations = await this.variationService.getByCategoryId(categoryId);
       res.json({ success: true, data: variations });
     } catch (error) {
       const err = error as Error;
@@ -40,7 +43,8 @@ export class VariationController {
 
   public getBySlug = async (req: Request, res: Response): Promise<void> => {
     try {
-      const variation = await this.variationService.getBySlug(req.params.slug);
+      const slug = getRequiredStringParam(req, 'slug');
+      const variation = await this.variationService.getBySlug(slug);
       res.json({ success: true, data: variation });
     } catch (error) {
       const err = error as Error;
@@ -60,7 +64,8 @@ export class VariationController {
 
   public update = async (req: Request, res: Response): Promise<void> => {
     try {
-      const variation = await this.variationService.update(req.params.id, req.body);
+      const id = getRequiredStringParam(req, 'id');
+      const variation = await this.variationService.update(id, req.body);
       res.json({ success: true, data: variation });
     } catch (error) {
       const err = error as Error;
@@ -70,7 +75,8 @@ export class VariationController {
 
   public delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      await this.variationService.delete(req.params.id);
+      const id = getRequiredStringParam(req, 'id');
+      await this.variationService.delete(id);
       res.json({ success: true, message: 'Variation deleted successfully' });
     } catch (error) {
       const err = error as Error;

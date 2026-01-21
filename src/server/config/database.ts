@@ -20,15 +20,19 @@ export class Database {
     }
 
     // Connection options for MongoDB Atlas
+    // Note: For mongodb+srv, TLS is automatically enabled by MongoDB driver
     const options: mongoose.ConnectOptions = {
-      serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of 30s
+      serverSelectionTimeoutMS: 30000, // Timeout after 30s
       socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+      connectTimeoutMS: 30000, // Connection timeout
       maxPoolSize: 10, // Maintain up to 10 socket connections
-      minPoolSize: 5, // Maintain at least 5 socket connections
+      minPoolSize: 2, // Maintain at least 2 socket connections
       retryWrites: true,
       w: 'majority',
-      // SSL/TLS options for MongoDB Atlas
-      // Note: For mongodb+srv, TLS is automatically enabled
+      // Additional connection stability options
+      heartbeatFrequencyMS: 10000,
+      // Buffer commands if connection is lost
+      bufferCommands: true,
     };
 
     for (let attempt = 1; attempt <= retries; attempt++) {
@@ -40,7 +44,17 @@ export class Database {
         return;
       } catch (error) {
         const err = error as Error;
+        const isSSLError = err.message.includes('SSL') || err.message.includes('TLS');
+        
         console.error(`❌ MongoDB connection attempt ${attempt} failed:`, err.message);
+        
+        if (isSSLError) {
+          console.error('🔒 SSL/TLS Error detected. This might be due to:');
+          console.error('   - Network firewall blocking SSL connections');
+          console.error('   - Outdated OpenSSL version');
+          console.error('   - MongoDB Atlas SSL certificate issues');
+          console.error('   - VPN or proxy interfering with SSL handshake');
+        }
         
         if (attempt === retries) {
           console.error('❌ Failed to connect to MongoDB after all retry attempts');
@@ -48,9 +62,14 @@ export class Database {
           console.warn('💡 Troubleshooting tips:');
           console.warn('   1. Check your internet connection');
           console.warn('   2. Verify MongoDB Atlas cluster is running');
-          console.warn('   3. Check MongoDB Atlas Network Access settings');
-          console.warn('   4. Verify connection string and credentials');
+          console.warn('   3. Check MongoDB Atlas Network Access settings (whitelist your IP)');
+          console.warn('   4. Verify connection string and credentials in .env file');
           console.warn('   5. Try connecting from MongoDB Compass to test connection');
+          if (isSSLError) {
+            console.warn('   6. Check if you\'re behind a corporate firewall/VPN');
+            console.warn('   7. Try updating Node.js and npm to latest versions');
+            console.warn('   8. Consider using MongoDB connection string without SSL (not recommended for production)');
+          }
           this.isConnected = false;
           return;
         }

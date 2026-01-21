@@ -37,7 +37,7 @@ const seedDatabase = async (): Promise<void> => {
 
     // 1. Hero Settings
     console.log('📝 Seeding Hero Settings...');
-    const heroSettings = await HeroSettingsModel.getModel().create({
+    await HeroSettingsModel.getModel().create({
       title: 'Christina Sings4U',
       subtitle: 'Professional Singer for Your Special Occasions',
       backgroundImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&h=1080&fit=crop',
@@ -216,7 +216,7 @@ A professional singer demonstrates attention to detail and adds sophistication t
         publishedAt: new Date('2024-01-10'),
       },
       {
-        title: 'Sydney's Best Wedding Venues for Music Performances',
+        title: "Sydney's Best Wedding Venues for Music Performances",
         slug: 'sydney-best-wedding-venues',
         content: `
 # Sydney's Best Wedding Venues for Music Performances
@@ -241,7 +241,7 @@ What could be more perfect than having your wedding at one of the world's most f
 
     // 6. SEO Settings
     console.log('📝 Seeding SEO Settings...');
-    const seoSettings = await SEOSettingsModel.getModel().create({
+    await SEOSettingsModel.getModel().create({
       defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
       defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
       defaultImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=630&fit=crop',

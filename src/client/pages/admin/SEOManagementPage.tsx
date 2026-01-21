@@ -29,7 +29,9 @@ export const SEOManagementPage: React.FC = () => {
       setSettings(data);
     } catch (error) {
       setError('Failed to load SEO settings');
-      console.error(error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading SEO settings:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -58,7 +60,7 @@ export const SEOManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="SEO Settings | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen py-12 px-4">
           <div className="max-w-4xl mx-auto flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
@@ -71,9 +73,9 @@ export const SEOManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="SEO Settings | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen py-12 px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center text-red-600">Failed to load settings</div>
+            <div className="text-center text-red-400">Failed to load settings</div>
           </div>
         </div>
       </Layout>
@@ -83,10 +85,10 @@ export const SEOManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="SEO Settings | Admin" />
-      <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               SEO Settings
             </h1>
             <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')}>
@@ -95,7 +97,7 @@ export const SEOManagementPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md text-sm">
+            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -103,7 +105,7 @@ export const SEOManagementPage: React.FC = () => {
           <form onSubmit={handleSubmit}>
             <Card>
               <CardHeader className="p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                   Default SEO Settings
                 </h2>
               </CardHeader>

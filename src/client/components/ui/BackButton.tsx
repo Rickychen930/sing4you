@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './Button';
 import { cn } from '../../utils/helpers';
@@ -10,7 +10,7 @@ interface BackButtonProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
 }
 
-export const BackButton: React.FC<BackButtonProps> = ({
+export const BackButton: React.FC<BackButtonProps> = memo(({
   to,
   label = 'Back',
   className,
@@ -18,13 +18,13 @@ export const BackButton: React.FC<BackButtonProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (to) {
       navigate(to);
     } else {
       navigate(-1);
     }
-  };
+  }, [to, navigate]);
 
   return (
     <Button
@@ -51,4 +51,13 @@ export const BackButton: React.FC<BackButtonProps> = ({
       {label}
     </Button>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.to === nextProps.to &&
+    prevProps.label === nextProps.label &&
+    prevProps.className === nextProps.className &&
+    prevProps.variant === nextProps.variant
+  );
+});
+
+BackButton.displayName = 'BackButton';

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ImageUpload } from '../../components/ui/ImageUpload';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { blogService } from '../../services/blogService';
 import { useToastStore } from '../../stores/toastStore';
 import type { IBlogPost } from '../../../shared/interfaces';
@@ -31,24 +32,30 @@ export const BlogManagementPage: React.FC = () => {
   const [tagInput, setTagInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
+    isOpen: false,
+    id: null,
+  });
 
   useEffect(() => {
     loadPosts();
   }, []);
 
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       const data = await blogService.getAll();
       setPosts(data);
     } catch (error) {
       setError('Failed to load blog posts');
-      console.error(error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading blog posts:', error);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     setEditingId(null);
     setFormData({
       title: '',
@@ -63,7 +70,8 @@ export const BlogManagementPage: React.FC = () => {
   };
 
   const handleEdit = (post: IBlogPost) => {
-    setEditingId(post._id!);
+    if (!post._id) return;
+    setEditingId(post._id);
     setFormData({
       title: post.title,
       slug: post.slug,
@@ -76,19 +84,29 @@ export const BlogManagementPage: React.FC = () => {
     setTagInput('');
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this blog post?')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirm({ isOpen: true, id });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.id) return;
 
     try {
-      await blogService.delete(id);
+      await blogService.delete(deleteConfirm.id);
       await loadPosts();
       toast.success('Blog post deleted successfully!');
       setError('');
+      setDeleteConfirm({ isOpen: false, id: null });
     } catch (error: any) {
       const errorMsg = error?.message || 'Failed to delete blog post';
       setError(errorMsg);
       toast.error(errorMsg);
+      setDeleteConfirm({ isOpen: false, id: null });
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false, id: null });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,36 +133,36 @@ export const BlogManagementPage: React.FC = () => {
     }
   };
 
-  const handleTitleChange = (value: string) => {
-    setFormData({
-      ...formData,
+  const handleTitleChange = useCallback((value: string) => {
+    setFormData((prev) => ({
+      ...prev,
       title: value,
       slug: slugify(value),
-    });
-  };
+    }));
+  }, []);
 
-  const handleAddTag = () => {
+  const handleAddTag = useCallback(() => {
     if (tagInput.trim() && !formData.tags?.includes(tagInput.trim())) {
-      setFormData({
-        ...formData,
-        tags: [...(formData.tags || []), tagInput.trim()],
-      });
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...(prev.tags || []), tagInput.trim()],
+      }));
       setTagInput('');
     }
-  };
+  }, [tagInput, formData.tags]);
 
-  const handleRemoveTag = (tag: string) => {
-    setFormData({
-      ...formData,
-      tags: formData.tags?.filter((t) => t !== tag) || [],
-    });
-  };
+  const handleRemoveTag = useCallback((tag: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags?.filter((t) => t !== tag) || [],
+    }));
+  }, []);
 
   if (loading) {
     return (
       <Layout isAdmin>
         <SEO title="Blog Management | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen py-12 px-4">
           <div className="max-w-7xl mx-auto flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
@@ -156,10 +174,10 @@ export const BlogManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Blog Management | Admin" />
-      <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Blog Management
             </h1>
             <div className="flex gap-2">
@@ -173,7 +191,7 @@ export const BlogManagementPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md text-sm">
+            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -182,7 +200,7 @@ export const BlogManagementPage: React.FC = () => {
             <div className="lg:col-span-1">
               <Card>
                 <CardHeader className="p-4 sm:p-6">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Post' : 'New Post'}
                   </h2>
                 </CardHeader>
@@ -220,7 +238,7 @@ export const BlogManagementPage: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                     />
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-200 mb-1">
                         Tags
                       </label>
                       <div className="flex gap-2 mb-2">
@@ -294,10 +312,10 @@ export const BlogManagementPage: React.FC = () => {
                     <CardBody className="p-4 sm:p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          <h3 className="text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
                             {post.title}
                           </h3>
-                          <p className="text-sm text-gray-500 mb-2">
+                          <p className="text-sm text-gray-400 mb-2">
                             Category: {post.category} | Slug: {post.slug}
                           </p>
                           {post.publishedAt ? (
@@ -305,21 +323,21 @@ export const BlogManagementPage: React.FC = () => {
                               Published: {new Date(post.publishedAt).toLocaleDateString()}
                             </p>
                           ) : (
-                            <p className="text-xs text-gray-500 mb-2">Draft</p>
+                            <p className="text-xs text-gray-400 mb-2">Draft</p>
                           )}
                           {post.tags && post.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mb-2">
                               {post.tags.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs"
+                                  className="px-2 py-1 bg-musical-900/50 text-musical-300 rounded text-xs border border-musical-700/50"
                                 >
                                   {tag}
                                 </span>
                               ))}
                             </div>
                           )}
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-sm text-gray-300 line-clamp-2">
                             {post.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
                           </p>
                         </div>
@@ -334,8 +352,8 @@ export const BlogManagementPage: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => handleDelete(post._id!)}
+                            className="text-red-400 hover:text-red-300"
+                            onClick={() => post._id && handleDeleteClick(post._id)}
                           >
                             Delete
                           </Button>
@@ -349,6 +367,16 @@ export const BlogManagementPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Blog Post"
+        message="Are you sure you want to delete this blog post? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </Layout>
   );
 };

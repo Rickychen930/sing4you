@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { SitemapGenerator } from '../utils/sitemap';
 
 export class SitemapController {
-  public generate = async (req: Request, res: Response): Promise<void> => {
+  public generate = async (_req: Request, res: Response): Promise<void> => {
     try {
       const xml = await SitemapGenerator.generate();
       res.set('Content-Type', 'application/xml');

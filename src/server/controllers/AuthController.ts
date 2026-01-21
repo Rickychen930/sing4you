@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { AuthService } from '../services/AuthService';
 
 export class AuthController {
@@ -69,7 +69,7 @@ export class AuthController {
     }
   };
 
-  public logout = async (req: Request, res: Response): Promise<void> => {
+  public logout = async (_req: Request, res: Response): Promise<void> => {
     res.clearCookie('refreshToken');
     res.json({ success: true, message: 'Logged out successfully' });
   };

@@ -1,7 +1,9 @@
 import { apiClient } from './api';
 import type { IMedia } from '../../shared/interfaces';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// In development, use relative URL to leverage Vite proxy
+// In production, use the configured API URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export class MediaService {
   async getAll(): Promise<IMedia[]> {
@@ -33,7 +35,10 @@ export class MediaService {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${API_BASE_URL}/api/admin/media/upload`, {
+    const uploadUrl = API_BASE_URL 
+      ? `${API_BASE_URL}/api/admin/media/upload`
+      : '/api/admin/media/upload';
+    const response = await fetch(uploadUrl, {
       method: 'POST',
       headers: {
         Authorization: token ? `Bearer ${token}` : '',

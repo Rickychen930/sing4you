@@ -5,6 +5,8 @@ import { blogService } from '../../services/blogService';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { LazyImage } from '../../components/ui/LazyImage';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { Button } from '../../components/ui/Button';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { BackButton } from '../../components/ui/BackButton';
@@ -15,16 +17,22 @@ export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<IBlogPost | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadPost = async () => {
       if (!slug) return;
 
       try {
+        setError(null);
         const data = await blogService.getBySlug(slug);
         setPost(data);
       } catch (error) {
-        console.error('Error loading blog post:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load blog post';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading blog post:', error);
+        }
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -43,19 +51,19 @@ export const BlogDetailPage: React.FC = () => {
     );
   }
 
-  if (!post) {
+  if (error || !post) {
     return (
       <SectionWrapper className="pt-8 sm:pt-12 bg-gradient-to-br from-jazz-900/20 via-gold-900/15 to-jazz-900/20">
-        <div className="text-center py-12 sm:py-16">
-          <div className="text-6xl sm:text-7xl mb-4 opacity-50">📄</div>
-          <h2 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-200 mb-3">Blog post not found</h2>
-          <p className="text-base sm:text-lg text-gray-400 mb-6">The blog post you're looking for doesn't exist or has been removed.</p>
-          <Link to="/blog" className="inline-block">
-            <Button variant="primary" size="lg">
-              Back to Blog
-            </Button>
-          </Link>
-        </div>
+        <EmptyState
+          icon="📄"
+          title={error ? "Unable to load blog post" : "Blog post not found"}
+          description={error || "The blog post you're looking for doesn't exist or has been removed."}
+          action={{
+            label: "Back to Blog",
+            to: "/blog",
+            variant: "primary"
+          }}
+        />
       </SectionWrapper>
     );
   }
@@ -86,17 +94,12 @@ export const BlogDetailPage: React.FC = () => {
       <SectionWrapper className="bg-gradient-to-br from-jazz-900/20 via-gold-900/15 to-jazz-900/20">
         <article className="max-w-4xl mx-auto px-4 sm:px-6">
           {post.coverImage && (
-            <div className="mb-8 sm:mb-10 rounded-2xl overflow-hidden shadow-2xl border-2 border-gold-900/40">
-              <img
+            <div className="mb-8 sm:mb-10 rounded-2xl overflow-hidden shadow-2xl border-2 border-gold-900/40 h-64 sm:h-80 md:h-96 lg:h-[500px]">
+              <LazyImage
                 src={post.coverImage}
                 alt={post.title}
-                className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] object-cover image-fade-in"
-                loading="eager"
-                onLoad={(e) => {
-                  e.currentTarget.classList.add('opacity-100');
-                  e.currentTarget.classList.remove('opacity-0');
-                }}
-                style={{ opacity: 0 }}
+                className="w-full h-full object-cover"
+                fadeIn
               />
             </div>
           )}

@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IVariation } from '../../shared/interfaces';
+import type { IVariation } from '../../shared/interfaces';
 
 const variationSchema = new Schema<IVariation>(
   {

@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { ISEOSettings } from '../../shared/interfaces';
+import type { ISEOSettings } from '../../shared/interfaces';
 
 const seoSettingsSchema = new Schema<ISEOSettings>(
   {

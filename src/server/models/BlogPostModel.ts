@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IBlogPost } from '../../shared/interfaces';
+import type { IBlogPost } from '../../shared/interfaces';
 
 const blogPostSchema = new Schema<IBlogPost>(
   {

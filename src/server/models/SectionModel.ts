@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { ISection } from '../../shared/interfaces';
+import type { ISection } from '../../shared/interfaces';
 
 const sectionSchema = new Schema<ISection>(
   {

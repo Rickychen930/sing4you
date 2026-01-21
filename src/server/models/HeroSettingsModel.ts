@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IHeroSettings } from '../../shared/interfaces';
+import type { IHeroSettings } from '../../shared/interfaces';
 
 const heroSettingsSchema = new Schema<IHeroSettings>(
   {

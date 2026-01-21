@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { VariationDetail } from '../../components/sections/VariationDetail';
 import { SEO } from '../../components/ui/SEO';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { BackButton } from '../../components/ui/BackButton';
 import { CTASection } from '../../components/ui/CTASection';
@@ -16,6 +17,7 @@ export const VariationDetailPage: React.FC = () => {
   const toast = useToastStore((state) => state);
   const [variation, setVariation] = useState<IVariation | null>(null);
   const [category, setCategory] = useState<ICategory | null>(null);
+  const [loading, setLoading] = useState(true);
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christinasings4u.com.au';
 
   useEffect(() => {
@@ -26,20 +28,39 @@ export const VariationDetailPage: React.FC = () => {
     }
 
     const loadData = async () => {
+      setLoading(true);
       try {
         const variationData = await variationService.getById(variationId);
         setVariation(variationData);
         
-        const categoryId = typeof variationData.categoryId === 'string' 
-          ? variationData.categoryId 
-          : (variationData.categoryId as any)?._id;
+        // Safely extract categoryId
+        let categoryId: string | undefined;
+        if (typeof variationData.categoryId === 'string') {
+          categoryId = variationData.categoryId;
+        } else if (variationData.categoryId && typeof variationData.categoryId === 'object' && '_id' in variationData.categoryId && variationData.categoryId._id) {
+          categoryId = String(variationData.categoryId._id);
+        }
         
         if (categoryId) {
-          const categoryData = await categoryService.getById(categoryId);
-          setCategory(categoryData);
+          try {
+            const categoryData = await categoryService.getById(categoryId);
+            setCategory(categoryData);
+          } catch (categoryError) {
+            if (process.env.NODE_ENV === 'development') {
+              console.error('Error loading category:', categoryError);
+            }
+            // Category loading failure is not critical, continue without it
+          }
         }
       } catch (error) {
-        console.error('Error loading variation:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load variation';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading variation:', error);
+        }
+        toast.error(errorMessage);
+        navigate('/categories');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -50,10 +71,30 @@ export const VariationDetailPage: React.FC = () => {
     return null;
   }
 
+  if (loading) {
+    return (
+      <>
+        <SEO
+          title="Loading Variation | Christina Sings4U"
+          description="Loading performance variation..."
+          url={`${siteUrl}/variations/${variationId}`}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+          <div className="flex justify-center py-12">
+            <div className="text-center">
+              <LoadingSpinner size="lg" />
+              <p className="mt-4 text-gray-300">Loading variation...</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
     { label: 'Categories', path: '/categories' },
-    ...(category ? [{ label: category.name, path: `/categories/${category._id}` }] : []),
+    ...(category && category._id ? [{ label: category.name, path: `/categories/${category._id}` }] : []),
     ...(variation ? [{ label: variation.name }] : []),
   ];
 

@@ -12,13 +12,15 @@ interface PerformanceCardProps {
 
 export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performance, className }) => {
   return (
-    <Card className={cn('h-full flex flex-col', className)} hover>
+    <Card className={cn('h-full flex flex-col group', className)} hover>
       <CardBody className="p-5 sm:p-6 lg:p-7 relative flex-grow flex flex-col">
-        <div className="absolute top-3 right-3 text-2xl sm:text-3xl text-gold-900/30 animate-float font-musical pointer-events-none">♫</div>
+        {/* Subtle musical notes - Reduced for better performance */}
+        <div className="absolute top-3 right-3 text-xl sm:text-2xl text-gold-900/20 group-hover:text-gold-500/40 transition-colors duration-500 animate-float font-musical pointer-events-none">♫</div>
+        <div className="absolute bottom-3 left-3 text-lg sm:text-xl text-musical-900/20 group-hover:text-musical-500/30 transition-colors duration-500 animate-float font-musical pointer-events-none" style={{ animationDelay: '1s' }}>♪</div>
+        
         <div className="relative z-10 flex-grow flex flex-col">
-          <h3 className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-300 bg-clip-text text-transparent relative">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-500">
             {performance.eventName}
-            <span className="absolute -top-2 -right-8 text-xl sm:text-2xl opacity-40 animate-float font-musical">♪</span>
           </h3>
           <div className="space-y-3 sm:space-y-4 text-sm sm:text-base flex-grow">
             <div className="flex items-start gap-3">

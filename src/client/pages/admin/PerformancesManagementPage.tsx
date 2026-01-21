@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { performanceService } from '../../services/performanceService';
 import { useToastStore } from '../../stores/toastStore';
 import type { IPerformance } from '../../../shared/interfaces';
@@ -27,6 +28,10 @@ export const PerformancesManagementPage: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
+    isOpen: false,
+    id: null,
+  });
 
   useEffect(() => {
     loadPerformances();
@@ -38,7 +43,9 @@ export const PerformancesManagementPage: React.FC = () => {
       setPerformances(data);
     } catch (error) {
       setError('Failed to load performances');
-      console.error(error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading performances:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -58,7 +65,8 @@ export const PerformancesManagementPage: React.FC = () => {
   };
 
   const handleEdit = (performance: IPerformance) => {
-    setEditingId(performance._id!);
+    if (!performance._id) return;
+    setEditingId(performance._id);
     setFormData({
       eventName: performance.eventName,
       venueName: performance.venueName,
@@ -70,19 +78,29 @@ export const PerformancesManagementPage: React.FC = () => {
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this performance?')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirm({ isOpen: true, id });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.id) return;
 
     try {
-      await performanceService.delete(id);
+      await performanceService.delete(deleteConfirm.id);
       await loadPerformances();
       toast.success('Performance deleted successfully!');
       setError('');
+      setDeleteConfirm({ isOpen: false, id: null });
     } catch (error: any) {
       const errorMsg = error?.message || 'Failed to delete performance';
       setError(errorMsg);
       toast.error(errorMsg);
+      setDeleteConfirm({ isOpen: false, id: null });
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false, id: null });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,7 +131,7 @@ export const PerformancesManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Performances Management | Admin" />
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen py-12 px-4">
           <div className="max-w-7xl mx-auto flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
@@ -125,10 +143,10 @@ export const PerformancesManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Performances Management | Admin" />
-      <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Performances Management
             </h1>
             <div className="flex gap-2">
@@ -142,7 +160,7 @@ export const PerformancesManagementPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md text-sm">
+            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -151,7 +169,7 @@ export const PerformancesManagementPage: React.FC = () => {
             <div className="lg:col-span-1">
               <Card>
                 <CardHeader className="p-4 sm:p-6">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Performance' : 'New Performance'}
                   </h2>
                 </CardHeader>
@@ -226,16 +244,16 @@ export const PerformancesManagementPage: React.FC = () => {
                     <CardBody className="p-4 sm:p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          <h3 className="text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
                             {performance.eventName}
                           </h3>
-                          <p className="text-sm text-gray-600 mb-1">
+                          <p className="text-sm text-gray-300 mb-1">
                             <span className="font-semibold">Venue:</span> {performance.venueName}
                           </p>
-                          <p className="text-sm text-gray-600 mb-1">
+                          <p className="text-sm text-gray-300 mb-1">
                             <span className="font-semibold">Location:</span> {performance.city}, {performance.state}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-gray-300">
                             <span className="font-semibold">Date:</span> {new Date(performance.date).toLocaleDateString()} at {performance.time}
                           </p>
                           {performance.ticketLink && (
@@ -260,8 +278,8 @@ export const PerformancesManagementPage: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => handleDelete(performance._id!)}
+                            className="text-red-400 hover:text-red-300"
+                            onClick={() => performance._id && handleDeleteClick(performance._id)}
                           >
                             Delete
                           </Button>
@@ -275,6 +293,16 @@ export const PerformancesManagementPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Performance"
+        message="Are you sure you want to delete this performance? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </Layout>
   );
 };

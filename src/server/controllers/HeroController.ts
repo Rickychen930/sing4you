@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { HeroService } from '../services/HeroService';
 
 export class HeroController {
@@ -8,7 +8,7 @@ export class HeroController {
     this.heroService = new HeroService();
   }
 
-  public getSettings = async (req: Request, res: Response): Promise<void> => {
+  public getSettings = async (_req: Request, res: Response): Promise<void> => {
     try {
       const settings = await this.heroService.getSettings();
       res.json({ success: true, data: settings });

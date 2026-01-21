@@ -36,7 +36,7 @@ export const AboutPage: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <Card className="mb-8">
             <CardBody className="p-6 sm:p-8">
-              <h2 className="text-2xl sm:text-3xl font-elegant font-bold mb-6 bg-gradient-to-r from-gold-300 to-gold-100 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-elegant font-bold mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                 My Story
               </h2>
               <div className="space-y-4 text-gray-300 leading-relaxed">
@@ -57,7 +57,7 @@ export const AboutPage: React.FC = () => {
 
       <SectionWrapper id="about-services">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-elegant font-bold mb-8 text-center bg-gradient-to-r from-gold-300 to-gold-100 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-elegant font-bold mb-8 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
             What I Offer
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -99,7 +99,7 @@ export const AboutPage: React.FC = () => {
 
       <SectionWrapper id="about-cta">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-elegant font-bold mb-6 bg-gradient-to-r from-gold-300 to-gold-100 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-elegant font-bold mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
             Let's Create Something Beautiful Together
           </h2>
           <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">

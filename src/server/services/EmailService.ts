@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { IContactForm } from '../../shared/interfaces';
+import type { IContactForm } from '../../shared/interfaces';
 
 export class EmailService {
   private static transporter: nodemailer.Transporter | null = null;

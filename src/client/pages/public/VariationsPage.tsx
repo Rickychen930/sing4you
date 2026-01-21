@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { VariationList } from '../../components/sections/VariationList';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { BackButton } from '../../components/ui/BackButton';
+import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { categoryService } from '../../services/categoryService';
 import { useToastStore } from '../../stores/toastStore';
 import { SEO } from '../../components/ui/SEO';
-import { useEffect, useState } from 'react';
 import type { ICategory } from '../../../shared/interfaces';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { SectionWrapper } from '../../components/ui/SectionWrapper';
 
 export const VariationsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -32,8 +31,11 @@ export const VariationsPage: React.FC = () => {
         const data = await categoryService.getById(categoryId);
         setCategory(data);
       } catch (error) {
-        console.error('Error loading category:', error);
-        toast.error('Failed to load category');
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load category';
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading category:', error);
+        }
+        toast.error(errorMessage);
         navigate('/categories');
       } finally {
         setLoading(false);
@@ -61,7 +63,23 @@ export const VariationsPage: React.FC = () => {
   }
 
   if (!category) {
-    return null;
+    return (
+      <>
+        <SEO
+          title="Category Not Found | Christina Sings4U"
+          description="The category you're looking for doesn't exist."
+          url={`${siteUrl}/categories/${categoryId}`}
+        />
+        <SectionWrapper>
+          <div className="text-center py-12 sm:py-16">
+            <div className="text-6xl sm:text-7xl mb-4 opacity-50">🎵</div>
+            <h2 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-200 mb-3">Category not found</h2>
+            <p className="text-base sm:text-lg text-gray-400 mb-6">The category you're looking for doesn't exist or has been removed.</p>
+            <BackButton to="/categories" variant="primary" label="Back to Categories" />
+          </div>
+        </SectionWrapper>
+      </>
+    );
   }
 
   const breadcrumbItems = [

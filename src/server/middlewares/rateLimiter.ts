@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 interface RateLimitStore {
   [key: string]: {
@@ -23,7 +23,7 @@ const getClientIp = (req: Request): string => {
 };
 
 // Cleanup old entries periodically (prevents memory leak)
-const cleanupInterval = setInterval(() => {
+setInterval(() => {
   const now = Date.now();
   for (const key in store) {
     if (store[key].resetTime < now) {
