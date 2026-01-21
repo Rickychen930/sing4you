@@ -11,8 +11,7 @@ module.exports = {
       cwd: '/var/www/christina-sings4you',
       instances: 2, // Use 2 instances for load balancing (adjust based on CPU cores)
       exec_mode: 'cluster',
-      // Load environment variables from .env file
-      env_file: '/var/www/christina-sings4you/.env',
+      // Environment variables
       env: {
         NODE_ENV: 'production',
         PORT: 3001,
@@ -21,7 +20,7 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3001,
       },
-      // Logging
+      // Logging - create directory if it doesn't exist
       error_file: '/var/log/pm2/christina-sings4you-error.log',
       out_file: '/var/log/pm2/christina-sings4you-out.log',
       log_file: '/var/log/pm2/christina-sings4you-combined.log',
@@ -49,20 +48,22 @@ module.exports = {
       
       // Instance vars
       instance_var: 'INSTANCE_ID',
+      
+      // Interpreter
+      interpreter: 'node',
     },
   ],
 
   deploy: {
     production: {
-      // NOTE: Update these values with your actual deployment settings
-      // Consider using environment variables or a separate config file for sensitive data
       user: 'root',
-      host: process.env.DEPLOY_HOST || 'YOUR_SERVER_IP', // Use environment variable
+      host: '76.13.96.198',
       ref: 'origin/master',
-      repo: process.env.DEPLOY_REPO || 'git@github.com:YOUR_USERNAME/sing4you.git', // Use environment variable
+      repo: 'git@github.com:YOUR_USERNAME/sing4you.git', // Update with your actual repo
       path: '/var/www/christina-sings4you',
-      'post-deploy': 'npm install && npm run build && npm run build:server && pm2 reload ecosystem.config.cjs --env production',
-      'pre-setup': '',
+      'post-deploy': 'npm ci --production && npm run build && npm run build:server && pm2 reload ecosystem.config.cjs --env production',
+      'pre-setup': 'mkdir -p /var/www/christina-sings4you && mkdir -p /var/log/pm2',
+      'pre-deploy-local': 'echo "Deploying to production server..."',
     },
   },
 };

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script untuk inisialisasi awal server
-# Membuat direktori dan setup dasar sebelum deployment
-# Usage: sudo ./init-server.sh
+# Complete server initialization script for christina-sings4you.com.au
+# This script sets up the entire server environment
+# Usage: Run this script on the server as root
 
 set -e
 
@@ -35,79 +35,141 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 APP_DIR="/var/www/christina-sings4you"
-LOG_DIR="/var/log/pm2"
-BACKUP_DIR="/backup/christina-sings4you"
 
-log "Initializing server for christina-sings4you.com.au..."
+log "Starting server initialization for christina-sings4you.com.au..."
+
+# Update system
+log "Updating system packages..."
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+apt-get upgrade -y -qq
+
+# Install essential packages
+log "Installing essential packages..."
+apt-get install -y -qq \
+    curl \
+    wget \
+    git \
+    build-essential \
+    software-properties-common \
+    ufw \
+    fail2ban \
+    htop \
+    nano \
+    unzip
+
+# Install Node.js 20.x (required for Vite 7+)
+if ! command -v node &> /dev/null; then
+    log "Installing Node.js 20.x..."
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+    apt-get install -y -qq nodejs
+    log "✅ Node.js installed: $(node --version)"
+else
+    NODE_VERSION=$(node --version)
+    NODE_MAJOR=$(echo "$NODE_VERSION" | cut -d'.' -f1 | sed 's/v//')
+    if [ "$NODE_MAJOR" -lt 20 ]; then
+        warning "Node.js version $NODE_VERSION is too old. Vite 7+ requires Node.js 20.19+ or 22.12+"
+        log "Upgrading to Node.js 20.x..."
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        apt-get install -y -qq nodejs
+        log "✅ Node.js upgraded to: $(node --version)"
+    else
+        log "Node.js already installed: $NODE_VERSION"
+    fi
+fi
+
+# Install Nginx
+if ! command -v nginx &> /dev/null; then
+    log "Installing Nginx..."
+    apt-get install -y -qq nginx
+    systemctl enable nginx
+    systemctl start nginx
+    log "✅ Nginx installed and started"
+else
+    log "Nginx already installed"
+fi
+
+# Install PM2
+if ! command -v pm2 &> /dev/null; then
+    log "Installing PM2..."
+    npm install -g pm2@latest
+    pm2 startup systemd -u root --hp /root
+    log "✅ PM2 installed and configured"
+else
+    log "PM2 already installed"
+fi
 
 # Create application directory
-log "Creating application directory: $APP_DIR"
+log "Creating application directory..."
 mkdir -p "$APP_DIR"
-chown -R www-data:www-data "$APP_DIR"
-chmod -R 755 "$APP_DIR"
-log "✓ Application directory created"
+chmod 755 "$APP_DIR"
 
-# Create log directory
-log "Creating log directory: $LOG_DIR"
-mkdir -p "$LOG_DIR"
-chown -R www-data:www-data "$LOG_DIR"
-chmod -R 755 "$LOG_DIR"
-log "✓ Log directory created"
+# Create log directories
+log "Creating log directories..."
+mkdir -p /var/log/pm2
+mkdir -p "$APP_DIR/logs"
+chmod 755 /var/log/pm2
+chmod 755 "$APP_DIR/logs"
 
-# Create backup directory
-log "Creating backup directory: $BACKUP_DIR"
-mkdir -p "$BACKUP_DIR"
-chown -R root:root "$BACKUP_DIR"
-chmod 755 "$BACKUP_DIR"
-log "✓ Backup directory created"
+# Setup firewall
+log "Configuring firewall..."
+ufw --force enable
+ufw allow 22/tcp    # SSH
+ufw allow 80/tcp    # HTTP
+ufw allow 443/tcp   # HTTPS
+ufw allow 3001/tcp  # API (optional, if needed externally)
+log "✅ Firewall configured"
 
-# Create .env file placeholder
+# Setup fail2ban
+log "Configuring fail2ban..."
+systemctl enable fail2ban
+systemctl start fail2ban
+log "✅ Fail2ban configured"
+
+# Create .env template if it doesn't exist
 if [ ! -f "$APP_DIR/.env" ]; then
-    log "Creating .env file template..."
-    cat > "$APP_DIR/.env" << 'EOF'
-# Production Environment Variables
-# Update with your actual values
-
-NODE_ENV=production
+    log "Creating .env template..."
+    cat > "$APP_DIR/.env.template" << 'ENVEOF'
+# Server Configuration
 PORT=3001
+NODE_ENV=production
 CLIENT_URL=https://christina-sings4you.com.au
 SITE_URL=https://christina-sings4you.com.au
 
-# MongoDB Configuration
-MONGODB_URI=mongodb+srv://sings4you:YOUR_PASSWORD@sings4you.qahkyi2.mongodb.net/christinasings4u?retryWrites=true&w=majority
+# Database Configuration
+MONGODB_URI=mongodb+srv://sings4you:<db_password>@sings4you.qahkyi2.mongodb.net/christinasings4u
 
 # JWT Configuration
-# Generate secrets with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-JWT_SECRET=CHANGE_THIS_TO_A_SECURE_RANDOM_STRING
-JWT_REFRESH_SECRET=CHANGE_THIS_TO_A_SECURE_RANDOM_STRING
+JWT_SECRET=your-secret-key-change-in-production
+JWT_REFRESH_SECRET=your-refresh-secret-key-change-in-production
 JWT_EXPIRES_IN=1h
 JWT_REFRESH_EXPIRES_IN=7d
 
-# Cloudinary (Optional)
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-
-# SMTP (Optional)
-SMTP_HOST=
-SMTP_PORT=587
-SMTP_USER=
-SMTP_PASS=
-SMTP_FROM=
-EOF
-    chmod 600 "$APP_DIR/.env"
-    chown www-data:www-data "$APP_DIR/.env"
-    log "✓ .env file template created"
-    warning "⚠️  IMPORTANT: Update $APP_DIR/.env with your actual values!"
-else
-    log "✓ .env file already exists"
+# Cloudinary Configuration (Optional)
+CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+ENVEOF
+    chmod 600 "$APP_DIR/.env.template"
+    warning ".env.template created. Please copy it to .env and fill in the values:"
+    warning "  cp $APP_DIR/.env.template $APP_DIR/.env"
+    warning "  nano $APP_DIR/.env"
 fi
 
-log ""
-log "Server initialization completed!"
+log "✅ Server initialization completed!"
 log ""
 info "Next steps:"
-info "1. Upload application files to $APP_DIR"
-info "2. Update $APP_DIR/.env with your actual values"
-info "3. Run: sudo ./deployment/scripts/setup-server.sh (for full server setup)"
-info "4. Or run: sudo ./deployment/scripts/deploy.sh (if files already uploaded)"
+info "1. Copy .env.template to .env and configure:"
+info "   cp $APP_DIR/.env.template $APP_DIR/.env"
+info "   nano $APP_DIR/.env"
+info ""
+info "2. Deploy your application:"
+info "   Use deploy-to-server.sh script from your local machine"
+info ""
+info "3. Setup Nginx configuration:"
+info "   See deployment/nginx/ directory for configuration files"
+info ""
+info "4. Start the application with PM2:"
+info "   cd $APP_DIR"
+info "   pm2 start deployment/pm2/ecosystem.config.cjs --env production"
+info "   pm2 save"

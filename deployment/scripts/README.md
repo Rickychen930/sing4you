@@ -4,7 +4,71 @@ Koleksi script untuk deployment dan maintenance aplikasi christina-sings4you.com
 
 ## 📋 Daftar Script
 
-### 1. setup-server.sh
+### 1. init-server.sh ⭐ NEW
+**Tujuan**: Setup lengkap server dari awal (hanya sekali)  
+**Usage**: `sudo ./init-server.sh` (di server)  
+**Fungsi**:
+- Update system packages
+- Install Node.js (LTS)
+- Install Nginx
+- Install PM2
+- Setup firewall (UFW)
+- Setup fail2ban
+- Create application directories
+- Create .env template
+
+**Kapan digunakan**: Hanya sekali saat pertama kali setup server baru.
+
+---
+
+### 2. setup-pm2.sh ⭐ NEW
+**Tujuan**: Setup PM2 di server  
+**Usage**: `sudo ./setup-pm2.sh` (di server)  
+**Fungsi**:
+- Install PM2 globally (jika belum)
+- Create log directories
+- Setup PM2 startup script
+- Save PM2 process list
+
+**Kapan digunakan**: Setelah init-server atau jika PM2 belum di-setup.
+
+---
+
+### 3. deploy-to-server.sh ⭐ NEW
+**Tujuan**: Deploy dari local machine ke server (Recommended)  
+**Usage**: `./deploy-to-server.sh [server_ip] [server_user]`  
+**Fungsi**:
+- Build aplikasi di local (frontend + backend)
+- Create deployment package
+- Upload ke server via SCP
+- Extract dan install dependencies
+- Setup PM2
+- Start/restart aplikasi
+- Health check
+
+**Kapan digunakan**: **Recommended** untuk deployment rutin dari local machine.
+
+**Example**:
+```bash
+./deploy-to-server.sh 76.13.96.198 root
+```
+
+---
+
+### 4. check-pm2-status.sh ⭐ NEW
+**Tujuan**: Check PM2 status di remote server  
+**Usage**: `./check-pm2-status.sh [server_ip] [server_user]`  
+**Fungsi**:
+- Check PM2 process list
+- Show process details
+- Show recent logs
+- Show system resources
+
+**Kapan digunakan**: Untuk monitoring dan troubleshooting.
+
+---
+
+### 5. setup-server.sh
 **Tujuan**: Setup awal server (hanya sekali)  
 **Usage**: `sudo ./setup-server.sh`  
 **Fungsi**:
@@ -106,6 +170,37 @@ Koleksi script untuk deployment dan maintenance aplikasi christina-sings4you.com
 
 ### Deployment Pertama Kali
 
+**Opsi A: Menggunakan Script Baru (Recommended)**
+
+```bash
+# 1. Setup server (hanya sekali)
+ssh root@76.13.96.198
+bash /tmp/init-server.sh
+# Atau upload dulu: scp deployment/scripts/init-server.sh root@76.13.96.198:/tmp/
+
+# 2. Setup environment variables
+ssh root@76.13.96.198
+cd /var/www/christina-sings4you
+cp .env.template .env
+nano .env  # Isi dengan nilai sebenarnya
+
+# 3. Deploy aplikasi dari local
+cd /path/to/sing4you
+./deployment/scripts/deploy-to-server.sh
+
+# 4. Setup Nginx
+ssh root@76.13.96.198
+cp /var/www/christina-sings4you/deployment/nginx/christina-sings4you.com.au.conf /etc/nginx/sites-available/
+ln -s /etc/nginx/sites-available/christina-sings4you.com.au.conf /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx
+
+# 5. Setup SSL (optional)
+certbot --nginx -d christina-sings4you.com.au -d www.christina-sings4you.com.au
+```
+
+**Opsi B: Manual Setup**
+
 ```bash
 # 1. Setup server (hanya sekali)
 ssh root@76.13.96.198
@@ -131,14 +226,21 @@ sudo ./deployment/scripts/deploy.sh production
 
 ### Deployment Rutin (Update)
 
-**Opsi A: Dari Local Machine (Recommended)**
+**Opsi A: Menggunakan deploy-to-server.sh (Recommended) ⭐**
+```bash
+# Dari local machine
+cd /path/to/sing4you
+./deployment/scripts/deploy-to-server.sh
+```
+
+**Opsi B: Menggunakan deploy-from-local.sh**
 ```bash
 # Dari local machine
 cd /path/to/sing4you
 ./deployment/scripts/deploy-from-local.sh production
 ```
 
-**Opsi B: Di Server**
+**Opsi C: Di Server**
 ```bash
 # SSH ke server
 ssh root@76.13.96.198
@@ -209,6 +311,15 @@ ssh-copy-id root@76.13.96.198
 ## 📚 Dokumentasi Lengkap
 
 Lihat dokumentasi lengkap di:
+- `DEPLOYMENT_QUICK_START.md` ⭐ - Quick start guide (Bahasa Indonesia)
 - `DEPLOY_INDONESIA.md` - Panduan lengkap (Bahasa Indonesia)
 - `DEPLOYMENT_GUIDE.md` - Complete guide (English)
 - `DEPLOY_CHECKLIST.md` - Checklist deployment
+
+## 🆕 Script Baru
+
+Script-script baru yang sudah dibuat:
+- ✅ `init-server.sh` - Setup server lengkap
+- ✅ `setup-pm2.sh` - Setup PM2
+- ✅ `deploy-to-server.sh` - Deploy dari local ke server
+- ✅ `check-pm2-status.sh` - Check PM2 status remote
