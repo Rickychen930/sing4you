@@ -32,7 +32,7 @@ export default defineConfig({
         manualChunks: {
           // Vendor chunks
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'helmet-vendor': ['react-helmet-async'],
+          'helmet-vendor': ['@dr.pogodin/react-helmet'],
           'axios-vendor': ['axios'],
           // Admin pages chunk (separate from public)
           'admin-pages': [

@@ -7,7 +7,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = memo(forwardRef<HTMLButtonElement, ButtonProps>(({
+export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(({
   children,
   variant = 'primary',
   size = 'md',
@@ -17,13 +17,13 @@ export const Button: React.FC<ButtonProps> = memo(forwardRef<HTMLButtonElement, 
   type = 'button',
   ...props
 }, ref) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-jazz-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none relative overflow-hidden group transform active:scale-[0.98]';
+  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus-ring-advanced disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none relative overflow-hidden group transform active:scale-[0.98]';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 focus:ring-gold-500 hover:scale-[1.02] shadow-[0_4px_14px_rgba(255,194,51,0.4)] hover:shadow-[0_8px_24px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.2)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700 before:ease-in-out after:absolute after:inset-0 after:rounded-xl after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-300 after:bg-gradient-to-r after:from-gold-400/20 after:via-transparent after:to-gold-400/20',
-    secondary: 'bg-gradient-to-r from-jazz-800 via-musical-700 to-jazz-800 text-white hover:from-jazz-700 hover:via-musical-600 hover:to-jazz-700 focus:ring-musical-600 hover:scale-[1.02] shadow-[0_4px_14px_rgba(126,34,206,0.3)] hover:shadow-[0_8px_24px_rgba(126,34,206,0.4),0_0_0_1px_rgba(126,34,206,0.2)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700',
-    outline: 'border-2 border-gold-500/70 text-gold-300 bg-jazz-900/30 backdrop-blur-sm hover:bg-gradient-to-r hover:from-gold-900/60 hover:via-gold-800/50 hover:to-gold-900/60 focus:ring-gold-500 hover:border-gold-400 hover:text-gold-200 hover:shadow-[0_4px_16px_rgba(255,194,51,0.3),0_0_0_1px_rgba(255,194,51,0.1)] hover:scale-[1.02]',
-    ghost: 'text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-gold-800/40 focus:ring-gold-500 hover:text-gold-200 hover:scale-[1.02] hover:shadow-[0_2px_8px_rgba(255,194,51,0.2)]',
+    primary: 'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 hover:scale-[1.05] shadow-[0_4px_14px_rgba(255,194,51,0.5)] hover:shadow-[0_12px_32px_rgba(255,194,51,0.6),0_0_0_1px_rgba(255,194,51,0.3),0_0_30px_rgba(255,194,51,0.4)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700 before:ease-in-out after:absolute after:inset-0 after:rounded-xl after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-300 after:bg-gradient-to-r after:from-gold-400/25 after:via-transparent after:to-gold-400/25 hover-lift-advanced neon-glow',
+    secondary: 'bg-gradient-to-r from-jazz-800 via-musical-700 to-jazz-800 text-white hover:from-jazz-700 hover:via-musical-600 hover:to-jazz-700 hover:scale-[1.05] shadow-[0_4px_14px_rgba(126,34,206,0.4)] hover:shadow-[0_12px_32px_rgba(126,34,206,0.5),0_0_0_1px_rgba(126,34,206,0.3),0_0_30px_rgba(126,34,206,0.4)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700 hover-lift-advanced neon-glow-purple',
+    outline: 'border-2 border-gold-500/80 text-gold-300 glass-effect hover:bg-gradient-to-r hover:from-gold-900/70 hover:via-gold-800/60 hover:to-gold-900/70 hover:border-gold-400 hover:text-gold-200 hover:shadow-[0_6px_20px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.2),0_0_25px_rgba(255,194,51,0.3)] hover:scale-[1.05] hover-lift-advanced',
+    ghost: 'text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/60 hover:to-gold-800/50 hover:text-gold-200 hover:scale-[1.05] hover:shadow-[0_4px_12px_rgba(255,194,51,0.3)] hover-lift-advanced',
   };
 
   const sizes = {
@@ -42,19 +42,32 @@ export const Button: React.FC<ButtonProps> = memo(forwardRef<HTMLButtonElement, 
       aria-disabled={disabled || isLoading}
       {...props}
     >
-      {/* Enhanced shimmer effect */}
+      {/* Enhanced shimmer effect with advanced animation */}
       <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden rounded-xl">
-        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
+        <span className="absolute inset-0 shimmer-advanced"></span>
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
       </span>
       
       {variant === 'primary' && (
         <>
           <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <span className="absolute top-2 right-2 text-xs text-white/80 font-musical animate-float">♪</span>
-            <span className="absolute bottom-2 left-2 text-xs text-white/60 font-musical animate-float" style={{ animationDelay: '0.5s' }}>♫</span>
+            <span className="absolute top-2 right-2 text-sm text-white/90 font-musical animate-float-advanced glow-pulse-advanced">♪</span>
+            <span className="absolute bottom-2 left-2 text-sm text-white/70 font-musical animate-float-advanced glow-pulse-advanced" style={{ animationDelay: '0.5s' }}>♫</span>
+            <span className="absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 text-xs text-white/50 font-musical animate-float-advanced" style={{ animationDelay: '1s' }}>♬</span>
           </span>
-          {/* Enhanced glow effect on hover */}
-          <span className="absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl blur-md bg-gradient-to-r from-gold-400/40 via-gold-500/50 to-gold-400/40"></span>
+          {/* Enhanced multi-layer glow effect on hover */}
+          <span className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl blur-lg bg-gradient-to-r from-gold-400/50 via-gold-500/60 to-gold-400/50"></span>
+          <span className="absolute -inset-4 opacity-0 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none rounded-xl blur-xl bg-gradient-to-r from-gold-500/30 via-musical-500/30 to-gold-500/30"></span>
+        </>
+      )}
+      
+      {variant === 'secondary' && (
+        <>
+          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <span className="absolute top-2 right-2 text-sm text-white/90 font-musical animate-float-advanced glow-pulse-advanced">♫</span>
+            <span className="absolute bottom-2 left-2 text-sm text-white/70 font-musical animate-float-advanced glow-pulse-advanced" style={{ animationDelay: '0.5s' }}>♪</span>
+          </span>
+          <span className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl blur-lg bg-gradient-to-r from-musical-500/50 via-musical-600/60 to-musical-500/50"></span>
         </>
       )}
       

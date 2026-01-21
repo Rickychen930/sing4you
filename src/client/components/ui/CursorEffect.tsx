@@ -117,7 +117,7 @@ export const CursorEffect: React.FC<CursorEffectProps> = ({
   }, [prefersReducedMotion, disableOnMobile, isMobile, settings.count, createParticle]);
 
   // Animation loop - use ref to store function for recursive calls
-  const animateRef = useRef<() => void>();
+  const animateRef = useRef<() => void>(() => {});
   
   const animate = useCallback(() => {
     const canvas = canvasRef.current;

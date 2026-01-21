@@ -4,10 +4,10 @@ import type { IMedia } from '../../shared/interfaces';
 const mediaSchema = new Schema<IMedia>(
   {
     variationId: {
-      type: Schema.Types.ObjectId as unknown as Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Variation',
       required: true,
-    },
+    } as any,
     type: {
       type: String,
       enum: ['image', 'video'],

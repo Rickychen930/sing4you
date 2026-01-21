@@ -1,5 +1,11 @@
-// Shared constants
+/**
+ * Shared Constants
+ * 
+ * Centralized constants for the entire application.
+ * Re-export all constants from their respective modules.
+ */
 
+// Application Constants
 export const SECTION_TYPES = [
   'solo',
   'duo',
@@ -40,3 +46,12 @@ export const PAGE_TITLES = {
   ADMIN_LOGIN: 'Admin Login | Christina Sings4U',
   ADMIN_DASHBOARD: 'Admin Dashboard | Christina Sings4U',
 } as const;
+
+// Re-export color constants
+export * from './colors';
+
+// Re-export animation constants
+export * from './animations';
+
+// Re-export design token constants
+export * from './design-tokens';

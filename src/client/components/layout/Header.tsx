@@ -71,37 +71,42 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   }
 
   return (
-    <header className="bg-jazz-900/98 backdrop-blur-xl shadow-elegant fixed w-full top-0 z-50 border-b border-gold-900/40 relative overflow-hidden transition-all duration-300">
-      {/* Musical decorative elements - Subtle */}
-      <div className="absolute inset-0 pointer-events-none opacity-5">
-        <div className="absolute top-1/2 left-10 text-2xl sm:text-3xl text-gold-400/60 animate-float font-musical">♪</div>
-        <div className="absolute top-1/2 right-10 text-xl sm:text-2xl text-musical-400/60 animate-float font-musical" style={{ animationDelay: '1.5s' }}>♫</div>
+    <header className="glass-effect-strong shadow-elegant fixed w-full top-0 z-50 border-b border-gold-900/50 relative overflow-hidden transition-all duration-300">
+      {/* Enhanced musical decorative elements */}
+      <div className="absolute inset-0 pointer-events-none opacity-8">
+        <div className="absolute top-1/2 left-10 text-2xl sm:text-3xl text-gold-400/70 animate-float-advanced font-musical glow-pulse-advanced">♪</div>
+        <div className="absolute top-1/2 right-10 text-xl sm:text-2xl text-musical-400/70 animate-float-advanced font-musical glow-pulse-advanced" style={{ animationDelay: '1.5s' }}>♫</div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg text-gold-500/40 animate-float-advanced font-musical" style={{ animationDelay: '0.75s' }}>♬</div>
       </div>
       
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-900/5 to-transparent pointer-events-none" />
+      {/* Enhanced gradient overlay with shimmer */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-900/8 to-transparent pointer-events-none shimmer-advanced opacity-30" />
+      
+      {/* Particle effect background */}
+      <div className="absolute inset-0 particle-bg opacity-20 pointer-events-none" />
       
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center h-16 lg:h-20">
           <Link 
             to="/" 
-            className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-400 via-gold-300 to-gold-200 bg-clip-text text-transparent hover:from-gold-300 hover:via-gold-200 hover:to-gold-100 transition-all duration-500 transform hover:scale-105 relative group"
+            className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold gradient-text-animated hover:scale-110 transition-all duration-500 transform relative group scale-on-hover"
             aria-label="Home - Christina Sings4U"
           >
-            <span className="relative z-10">Christina Sings4U</span>
-            <span className="absolute -top-1 -right-2 text-xs opacity-0 group-hover:opacity-60 transition-opacity duration-300 font-musical">♪</span>
+            <span className="relative z-10 glow-pulse-advanced">Christina Sings4U</span>
+            <span className="absolute -top-1 -right-2 text-xs opacity-0 group-hover:opacity-80 transition-opacity duration-300 font-musical animate-float-advanced neon-glow">♪</span>
+            <span className="absolute -bottom-1 -left-2 text-xs opacity-0 group-hover:opacity-60 transition-opacity duration-300 font-musical animate-float-advanced neon-glow-purple" style={{ animationDelay: '0.5s' }}>♫</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
             <Link
               to="/"
-              className="px-3 py-2 text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/20 link-underline magnetic-hover"
+              className="px-3 py-2 text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 link-underline magnetic-hover-advanced hover-lift-advanced"
               aria-label="Navigate to home page"
             >
               <span className="relative z-10">Home</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full" />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shimmer-advanced" />
               <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <span className="absolute top-1 right-1 text-xs text-gold-500/60 font-musical animate-float">♪</span>
+                <span className="absolute top-1 right-1 text-xs text-gold-500/80 font-musical animate-float-advanced glow-pulse-advanced">♪</span>
               </span>
             </Link>
             <Link

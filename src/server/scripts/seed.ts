@@ -7,6 +7,8 @@ import { TestimonialModel } from '../models/TestimonialModel';
 import { SEOSettingsModel } from '../models/SEOSettingsModel';
 import { AdminUserModel } from '../models/AdminUserModel';
 import { CategoryModel } from '../models/CategoryModel';
+import { VariationModel } from '../models/VariationModel';
+import { MediaModel } from '../models/MediaModel';
 import bcrypt from 'bcryptjs';
 
 dotenv.config();
@@ -24,6 +26,9 @@ const seedDatabase = async (): Promise<void> => {
     const database = Database.getInstance();
     await database.connect(dbUri);
     console.log('✅ Connected to MongoDB');
+    
+    // Wait a bit to ensure connection is stable
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Clear existing data (optional - comment out if you want to keep existing data)
     console.log('🗑️  Clearing existing data...');
@@ -32,6 +37,8 @@ const seedDatabase = async (): Promise<void> => {
     await PerformanceModel.getModel().deleteMany({});
     await TestimonialModel.getModel().deleteMany({});
     await SEOSettingsModel.getModel().deleteMany({});
+    await MediaModel.getModel().deleteMany({});
+    await VariationModel.getModel().deleteMany({});
     await CategoryModel.getModel().deleteMany({});
     // Don't delete admin users
 
@@ -198,7 +205,277 @@ const seedDatabase = async (): Promise<void> => {
     ]);
     console.log(`✅ Created ${categories.length} categories`);
 
-    // 7. SEO Settings
+    // 6. Variations (linked to Categories)
+    console.log('📝 Seeding Variations...');
+    const variations = await VariationModel.getModel().create([
+      // Solo Performances variations
+      {
+        categoryId: categories[0]._id,
+        name: 'Acoustic Solo',
+        shortDescription: 'Intimate acoustic performances with guitar accompaniment.',
+        longDescription: 'Perfect for small gatherings and intimate settings. Christina performs beautiful acoustic renditions of your favorite songs with live guitar accompaniment. Ideal for cocktail parties, private dinners, and cozy events.',
+        slug: 'acoustic-solo',
+        order: 1,
+      },
+      {
+        categoryId: categories[0]._id,
+        name: 'Jazz Standards',
+        shortDescription: 'Classic jazz standards and timeless favorites.',
+        longDescription: 'Experience the elegance of jazz with Christina\'s renditions of classic standards. From "Summertime" to "Fly Me to the Moon", these timeless favorites bring sophistication to any event.',
+        slug: 'jazz-standards-solo',
+        order: 2,
+      },
+      {
+        categoryId: categories[0]._id,
+        name: 'Contemporary Pop',
+        shortDescription: 'Modern pop hits and chart-topping favorites.',
+        longDescription: 'From Adele to Ed Sheeran, Christina brings contemporary pop hits to life with her powerful and emotive voice. Perfect for events that want a modern, energetic vibe.',
+        slug: 'contemporary-pop-solo',
+        order: 3,
+      },
+      // Duo Performances variations
+      {
+        categoryId: categories[1]._id,
+        name: 'Vocal Duet',
+        shortDescription: 'Beautiful harmonies with a second vocalist.',
+        longDescription: 'Two voices creating magical harmonies. Perfect for events that want the richness of multiple voices while maintaining an intimate feel. Great for ceremonies and special moments.',
+        slug: 'vocal-duet',
+        order: 1,
+      },
+      {
+        categoryId: categories[1]._id,
+        name: 'Singer & Guitarist',
+        shortDescription: 'Vocals paired with live guitar accompaniment.',
+        longDescription: 'Christina performs alongside a talented guitarist, creating a full and rich sound perfect for both intimate and larger gatherings. The combination of voice and guitar brings warmth and authenticity to any event.',
+        slug: 'singer-guitarist-duo',
+        order: 2,
+      },
+      // Wedding Ceremonies variations
+      {
+        categoryId: categories[2]._id,
+        name: 'Ceremony Performance',
+        shortDescription: 'Beautiful songs for your wedding ceremony.',
+        longDescription: 'Make your wedding ceremony unforgettable with carefully selected songs performed live. From the processional to the recessional, Christina will help create the perfect musical backdrop for your special day.',
+        slug: 'wedding-ceremony',
+        order: 1,
+      },
+      {
+        categoryId: categories[2]._id,
+        name: 'Reception Entertainment',
+        shortDescription: 'Live music for your wedding reception.',
+        longDescription: 'Keep your guests entertained throughout the reception with live performances. From background music during dinner to upbeat songs for dancing, Christina adapts to create the perfect atmosphere for your celebration.',
+        slug: 'wedding-reception',
+        order: 2,
+      },
+      {
+        categoryId: categories[2]._id,
+        name: 'Full Wedding Package',
+        shortDescription: 'Complete musical coverage for your entire wedding day.',
+        longDescription: 'The ultimate wedding experience. Christina performs at both your ceremony and reception, ensuring seamless musical coverage throughout your entire special day. Includes consultation to select the perfect songs for each moment.',
+        slug: 'full-wedding-package',
+        order: 3,
+      },
+      // Corporate Events variations
+      {
+        categoryId: categories[3]._id,
+        name: 'Product Launch',
+        shortDescription: 'Professional performances for product launches.',
+        longDescription: 'Add excitement and energy to your product launch with live musical performances. Christina can perform during presentations, networking sessions, or as featured entertainment to make your event memorable.',
+        slug: 'product-launch',
+        order: 1,
+      },
+      {
+        categoryId: categories[3]._id,
+        name: 'Corporate Gala',
+        shortDescription: 'Elegant entertainment for corporate galas and dinners.',
+        longDescription: 'Elevate your corporate gala with sophisticated live performances. Perfect for award ceremonies, annual dinners, and formal corporate events where you want to impress clients and employees.',
+        slug: 'corporate-gala',
+        order: 2,
+      },
+      {
+        categoryId: categories[3]._id,
+        name: 'Networking Event',
+        shortDescription: 'Background music for corporate networking events.',
+        longDescription: 'Create the perfect atmosphere for networking with live background music. Christina provides elegant, non-intrusive performances that enhance conversation while adding a touch of sophistication to your event.',
+        slug: 'networking-event',
+        order: 3,
+      },
+      // PocketRocker variations
+      {
+        categoryId: categories[4]._id,
+        name: 'Compact Setup',
+        shortDescription: 'Portable performance setup for smaller venues.',
+        longDescription: 'Perfect for venues with limited space. The PocketRocker setup includes everything needed for a professional performance in a compact, portable format. Ideal for cafes, small restaurants, and intimate venues.',
+        slug: 'compact-setup',
+        order: 1,
+      },
+      {
+        categoryId: categories[4]._id,
+        name: 'Intimate Acoustic',
+        shortDescription: 'Acoustic performances for intimate settings.',
+        longDescription: 'A stripped-down, intimate acoustic performance perfect for small gatherings. No large equipment needed - just beautiful vocals and acoustic accompaniment that creates an authentic, personal experience.',
+        slug: 'intimate-acoustic',
+        order: 2,
+      },
+    ]);
+    console.log(`✅ Created ${variations.length} variations`);
+
+    // 7. Media (linked to Variations)
+    console.log('📝 Seeding Media...');
+    const mediaItems = [];
+    
+    // Media for Acoustic Solo
+    mediaItems.push(
+      {
+        variationId: variations[0]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+        order: 1,
+      },
+      {
+        variationId: variations[0]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop',
+        order: 2,
+      }
+    );
+
+    // Media for Jazz Standards
+    mediaItems.push(
+      {
+        variationId: variations[1]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Contemporary Pop
+    mediaItems.push(
+      {
+        variationId: variations[2]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Vocal Duet
+    mediaItems.push(
+      {
+        variationId: variations[3]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Singer & Guitarist
+    mediaItems.push(
+      {
+        variationId: variations[4]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Wedding Ceremony
+    mediaItems.push(
+      {
+        variationId: variations[5]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
+        order: 1,
+      },
+      {
+        variationId: variations[5]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=800&h=600&fit=crop',
+        order: 2,
+      }
+    );
+
+    // Media for Wedding Reception
+    mediaItems.push(
+      {
+        variationId: variations[6]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Full Wedding Package
+    mediaItems.push(
+      {
+        variationId: variations[7]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=800&h=600&fit=crop',
+        order: 1,
+      },
+      {
+        variationId: variations[7]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop',
+        order: 2,
+      }
+    );
+
+    // Media for Product Launch
+    mediaItems.push(
+      {
+        variationId: variations[8]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Corporate Gala
+    mediaItems.push(
+      {
+        variationId: variations[9]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Networking Event
+    mediaItems.push(
+      {
+        variationId: variations[10]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Compact Setup
+    mediaItems.push(
+      {
+        variationId: variations[11]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    // Media for Intimate Acoustic
+    mediaItems.push(
+      {
+        variationId: variations[12]._id,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop',
+        order: 1,
+      }
+    );
+
+    const createdMedia = await MediaModel.getModel().create(mediaItems);
+    console.log(`✅ Created ${createdMedia.length} media items`);
+
+    // 8. SEO Settings
     console.log('📝 Seeding SEO Settings...');
     await SEOSettingsModel.getModel().create({
       defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
@@ -208,7 +485,7 @@ const seedDatabase = async (): Promise<void> => {
     });
     console.log('✅ SEO Settings created');
 
-    // 8. Admin User (only if no admin exists)
+    // 9. Admin User (only if no admin exists)
     const existingAdmin = await AdminUserModel.getModel().findOne();
     if (!existingAdmin) {
       console.log('📝 Creating default admin user...');
@@ -230,6 +507,8 @@ const seedDatabase = async (): Promise<void> => {
     console.log(`   - Upcoming Performances: ${performances.length}`);
     console.log(`   - Testimonials: ${testimonials.length}`);
     console.log(`   - Categories: ${categories.length}`);
+    console.log(`   - Variations: ${variations.length}`);
+    console.log(`   - Media Items: ${createdMedia.length}`);
     console.log(`   - SEO Settings: 1`);
     console.log('\n🌐 You can now view the website at http://localhost:5173');
 

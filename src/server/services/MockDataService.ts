@@ -124,7 +124,12 @@ export class MockDataService {
     const newPerformanceBase = {
       _id: Date.now().toString(),
       daysOffset: daysFromNow > 0 ? daysFromNow : 30,
-      ...data,
+      eventName: data.eventName || '',
+      venueName: data.venueName || '',
+      city: data.city || '',
+      state: data.state || '',
+      time: data.time || '19:00',
+      ticketLink: data.ticketLink,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
