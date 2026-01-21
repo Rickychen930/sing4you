@@ -131,7 +131,7 @@ fi
 # Restart services
 log "Restarting services..."
 if command -v pm2 &> /dev/null; then
-    pm2 restart christina-sings4you-api || pm2 start deployment/pm2/ecosystem.config.js --env production
+    pm2 restart christina-sings4you-api || pm2 start deployment/pm2/ecosystem.config.cjs --env production
     pm2 save
 else
     systemctl start christina-sings4you || error "Failed to start service"

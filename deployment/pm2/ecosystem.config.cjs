@@ -59,7 +59,7 @@ module.exports = {
       ref: 'origin/master',
       repo: process.env.DEPLOY_REPO || 'git@github.com:YOUR_USERNAME/sing4you.git', // Use environment variable
       path: '/var/www/christina-sings4you',
-      'post-deploy': 'npm install && npm run build && npm run build:server && pm2 reload ecosystem.config.js --env production',
+      'post-deploy': 'npm install && npm run build && npm run build:server && pm2 reload ecosystem.config.cjs --env production',
       'pre-setup': '',
     },
   },

@@ -53,7 +53,7 @@ info "2. Required Files"
 check ".env file exists" "[ -f /var/www/christina-sings4you/.env ]"
 check "package.json exists" "[ -f /var/www/christina-sings4you/package.json ]"
 check "Nginx config exists" "[ -f /var/www/christina-sings4you/deployment/nginx/christina-sings4you.com.au.conf ]"
-check "PM2 config exists" "[ -f /var/www/christina-sings4you/deployment/pm2/ecosystem.config.js ]"
+check "PM2 config exists" "[ -f /var/www/christina-sings4you/deployment/pm2/ecosystem.config.cjs ]"
 
 # 3. Software checks
 info ""

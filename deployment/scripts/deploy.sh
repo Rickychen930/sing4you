@@ -96,12 +96,27 @@ log "Restarting services..."
 # Check if using PM2
 if command -v pm2 &> /dev/null; then
     log "Restarting with PM2..."
-    pm2 restart christina-sings4you-api || pm2 start deployment/pm2/ecosystem.config.js --env production
-    pm2 save
+    
+    # Check if process exists
+    if pm2 list | grep -q "christina-sings4you-api"; then
+        log "Process exists, restarting..."
+        pm2 restart christina-sings4you-api --update-env || error "Failed to restart PM2 process"
+    else
+        log "Process not found, starting new instance..."
+        pm2 start deployment/pm2/ecosystem.config.cjs --env production || error "Failed to start PM2 process"
+    fi
+    
+    pm2 save || warning "Failed to save PM2 process list"
+    pm2 list
 else
     # Fallback to systemd
-    log "Restarting with systemd..."
-    systemctl restart christina-sings4you || error "Failed to restart service"
+    log "PM2 not found, trying systemd..."
+    if systemctl is-active --quiet christina-sings4you; then
+        systemctl restart christina-sings4you || error "Failed to restart systemd service"
+    else
+        log "Systemd service not active, starting..."
+        systemctl start christina-sings4you || error "Failed to start systemd service"
+    fi
 fi
 
 # Reload Nginx

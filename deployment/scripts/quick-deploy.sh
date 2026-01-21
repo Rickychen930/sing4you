@@ -49,7 +49,7 @@ npm run build:server || exit 1
 # Restart PM2
 if command -v pm2 &> /dev/null; then
     log "Restarting PM2..."
-    pm2 restart christina-sings4you-api || pm2 start deployment/pm2/ecosystem.config.js --env production
+    pm2 restart christina-sings4you-api || pm2 start deployment/pm2/ecosystem.config.cjs --env production
     pm2 save
 else
     log "Restarting systemd service..."
