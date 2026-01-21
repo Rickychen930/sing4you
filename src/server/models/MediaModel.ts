@@ -7,7 +7,7 @@ const mediaSchema = new Schema<IMedia>(
       type: Schema.Types.ObjectId,
       ref: 'Variation',
       required: true,
-    } as any,
+    },
     type: {
       type: String,
       enum: ['image', 'video'],
