@@ -63,13 +63,27 @@ fi
 log "Installing dependencies..."
 npm ci --production --no-audit --no-fund || error "Failed to install dependencies"
 
-# Build frontend
-log "Building frontend..."
-npm run build || error "Frontend build failed"
-
-# Build backend
-log "Building backend..."
-npm run build:server || error "Backend build failed"
+# Check if build files exist (from CI/CD)
+if [ -d "dist" ] && [ -d "dist/client" ] && [ -d "dist/server" ]; then
+    log "Build files found from CI/CD, skipping build..."
+else
+    warning "Build files not found, attempting to build on server..."
+    # Install dev dependencies for building
+    log "Installing dev dependencies for build..."
+    npm ci --no-audit --no-fund || error "Failed to install dev dependencies"
+    
+    # Build frontend
+    log "Building frontend..."
+    npm run build || error "Frontend build failed"
+    
+    # Build backend
+    log "Building backend..."
+    npm run build:server || error "Backend build failed"
+    
+    # Remove dev dependencies after build to save space
+    log "Removing dev dependencies..."
+    npm prune --production || warning "Failed to remove dev dependencies"
+fi
 
 # Set permissions
 log "Setting permissions..."

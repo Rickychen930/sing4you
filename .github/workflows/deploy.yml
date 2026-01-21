@@ -68,24 +68,80 @@ jobs:
           name: build-files
           path: dist/
 
-      - name: Install dependencies (production only)
-        run: npm ci --production --no-audit --no-fund
-
-      - name: Build backend (if not in artifacts)
+      - name: Verify build artifacts
         run: |
-          if [ ! -d "dist/server" ]; then
-            npm run build:server
+          echo "Checking build artifacts..."
+          if [ ! -d "dist/client" ]; then
+            echo "❌ Error: dist/client not found in artifacts"
+            exit 1
           fi
-        continue-on-error: true
+          if [ ! -d "dist/server" ]; then
+            echo "❌ Error: dist/server not found in artifacts"
+            exit 1
+          fi
+          echo "✅ Build artifacts verified"
+          ls -lah dist/
+          echo ""
+          echo "Client files:"
+          ls -lah dist/client/ | head -10
+          echo ""
+          echo "Server files:"
+          ls -lah dist/server/ | head -10
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Test SSH connection
+        run: |
+          echo "Testing SSH connection..."
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo 'SSH connection successful'" || {
+            echo "❌ SSH connection failed!"
+            echo ""
+            echo "Possible issues:"
+            echo "1. Public key not added to server ~/.ssh/authorized_keys"
+            echo "2. Wrong username (SERVER_USER)"
+            echo "3. Wrong host (SERVER_HOST)"
+            echo "4. SSH key mismatch"
+            echo ""
+            echo "To fix:"
+            echo "1. Get public key: cat ~/.ssh/github_actions_deploy.pub"
+            echo "2. Add to server: echo 'PUBLIC_KEY' >> ~/.ssh/authorized_keys"
+            echo "3. Set permissions: chmod 600 ~/.ssh/authorized_keys"
+            exit 1
+          }
+          echo "✅ SSH connection successful!"
+
       - name: Add server to known hosts
         run: |
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          if [ -z "${{ secrets.SERVER_HOST }}" ]; then
+            echo "❌ Error: SERVER_HOST secret is not set"
+            exit 1
+          fi
+          echo "Adding ${{ secrets.SERVER_HOST }} to known_hosts..."
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || {
+            echo "⚠️  Warning: Failed to add host to known_hosts, continuing anyway..."
+          }
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.SERVER_HOST }}" ]; then
+            echo "❌ Error: SERVER_HOST secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SERVER_USER }}" ]; then
+            echo "❌ Error: SERVER_USER secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "❌ Error: SSH_PRIVATE_KEY secret is not set"
+            exit 1
+          fi
+          echo "✅ All required secrets are set"
 
       - name: Create .env file on server
         run: |
@@ -115,14 +171,43 @@ jobs:
 
       - name: Sync files to server
         run: |
+          echo "Syncing files to server..."
           rsync -avz --delete \
             --exclude='node_modules' \
             --exclude='.git' \
             --exclude='.env' \
             --exclude='*.log' \
             --exclude='.DS_Store' \
+            --exclude='src/' \
+            --exclude='*.ts' \
+            --exclude='*.tsx' \
+            --exclude='tsconfig*.json' \
+            --exclude='vite.config.ts' \
+            --exclude='tailwind.config.js' \
+            --exclude='postcss.config.js' \
+            --exclude='eslint.config.js' \
+            --include='dist/' \
+            --include='dist/**' \
+            --include='package.json' \
+            --include='package-lock.json' \
+            --include='deployment/' \
+            --include='deployment/**' \
             -e ssh \
             ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/christina-sings4you/
+          
+          echo "✅ Files synced successfully"
+          
+          # Verify dist directory exists on server
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'VERIFY'
+            cd /var/www/christina-sings4you
+            if [ -d "dist/client" ] && [ -d "dist/server" ]; then
+              echo "✅ Build files verified on server"
+              ls -lah dist/
+            else
+              echo "❌ Build files not found on server!"
+              exit 1
+            fi
+          VERIFY
 
       - name: Run deployment script on server
         run: |

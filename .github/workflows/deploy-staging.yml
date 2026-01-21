@@ -39,9 +39,46 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Test SSH connection
+        run: |
+          echo "Testing SSH connection..."
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo 'SSH connection successful'" || {
+            echo "❌ SSH connection failed!"
+            echo ""
+            echo "Possible issues:"
+            echo "1. Public key not added to server ~/.ssh/authorized_keys"
+            echo "2. Wrong username (SERVER_USER)"
+            echo "3. Wrong host (SERVER_HOST)"
+            echo "4. SSH key mismatch"
+            exit 1
+          }
+          echo "✅ SSH connection successful!"
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.SERVER_HOST }}" ]; then
+            echo "❌ Error: SERVER_HOST secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SERVER_USER }}" ]; then
+            echo "❌ Error: SERVER_USER secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "❌ Error: SSH_PRIVATE_KEY secret is not set"
+            exit 1
+          fi
+          echo "✅ All required secrets are set"
+
       - name: Add server to known hosts
         run: |
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          echo "Adding ${{ secrets.SERVER_HOST }} to known_hosts..."
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || {
+            echo "⚠️  Warning: Failed to add host to known_hosts, continuing anyway..."
+          }
+          chmod 600 ~/.ssh/known_hosts
 
       - name: Sync files to server
         run: |
