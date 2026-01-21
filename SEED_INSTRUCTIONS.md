@@ -1,48 +1,48 @@
-# Seeding Database dengan Dummy Data
+# Seeding Database with Dummy Data
 
-File ini menjelaskan cara menambahkan dummy data ke database untuk melihat tampilan website.
+This file explains how to add dummy data to the database to view the website.
 
-## Cara Menjalankan Seeding
+## How to Run Seeding
 
-### 1. Pastikan MongoDB sudah dikonfigurasi
+### 1. Ensure MongoDB is configured
 
-Pastikan file `.env` sudah ada dan berisi `MONGODB_URI` dengan password yang benar:
+Make sure the `.env` file exists and contains `MONGODB_URI` with the correct password:
 
 ```env
 MONGODB_URI=mongodb+srv://sings4you:YOUR_PASSWORD@sings4you.qahkyi2.mongodb.net/christinasings4u
 ```
 
-### 2. Jalankan script seeding
+### 2. Run the seeding script
 
 ```bash
 npm run seed
 ```
 
-Script ini akan:
-- ✅ Membuat Hero Settings dengan data default
-- ✅ Membuat 4 Performance Sections (Solo, Duo, Wedding, Corporate)
-- ✅ Membuat 3 Upcoming Performances
-- ✅ Membuat 5 Testimonials
-- ✅ Membuat 3 Blog Posts
-- ✅ Membuat SEO Settings default
-- ✅ Membuat Admin User (jika belum ada)
+This script will:
+- ✅ Create Hero Settings with default data
+- ✅ Create 4 Performance Sections (Solo, Duo, Wedding, Corporate)
+- ✅ Create 3 Upcoming Performances
+- ✅ Create 5 Testimonials
+- ✅ Create 3 Blog Posts
+- ✅ Create default SEO Settings
+- ✅ Create Admin User (if not exists)
 
-### 3. Login sebagai Admin
+### 3. Login as Admin
 
-Setelah seeding, Anda bisa login ke admin dashboard:
+After seeding, you can login to the admin dashboard:
 
 - **URL**: http://localhost:5173/admin/login
 - **Email**: `admin@christinasings4u.com.au`
 - **Password**: `admin123`
 
-⚠️ **PENTING**: Ganti password admin setelah login pertama kali!
+⚠️ **IMPORTANT**: Change the admin password after first login!
 
-## Data yang Dibuat
+## Data Created
 
 ### Hero Settings
 - Title: "Christina Sings4U"
 - Subtitle: "Professional Singer for Your Special Occasions"
-- Background image dari Unsplash
+- Background image from Unsplash
 
 ### Performance Sections
 1. **Solo Performances** - $500 - $1,500
@@ -56,32 +56,32 @@ Setelah seeding, Anda bisa login ke admin dashboard:
 - Corporate Gala Dinner (Mar 1, 2024)
 
 ### Testimonials
-5 testimonials dari berbagai event types (Wedding, Corporate, Birthday, Anniversary)
+5 testimonials from various event types (Wedding, Corporate, Birthday, Anniversary)
 
 ### Blog Posts
-3 blog posts dengan konten lengkap:
+3 blog posts with complete content:
 - Top 10 Wedding Songs for 2024
 - The Importance of Live Music at Corporate Events
 - Sydney's Best Wedding Venues for Music Performances
 
-## Catatan
+## Notes
 
-- Script akan **menghapus semua data yang ada** sebelum membuat data baru (untuk menghindari duplikasi)
-- Jika ingin menambah data tanpa menghapus yang lama, edit file `src/server/scripts/seed.ts` dan comment bagian `deleteMany`
-- Semua data menggunakan placeholder images dari Unsplash
-- Pastikan server **tidak running** saat seeding, atau seed saat development mode aktif
+- The script will **delete all existing data** before creating new data (to avoid duplication)
+- If you want to add data without deleting the old ones, edit the file `src/server/scripts/seed.ts` and comment out the `deleteMany` section
+- All data uses placeholder images from Unsplash
+- Make sure the server is **not running** during seeding, or seed when development mode is active
 
 ## Troubleshooting
 
 ### Error: MONGODB_URI not configured
-Pastikan file `.env` ada di root project dan berisi `MONGODB_URI` dengan format yang benar.
+Make sure the `.env` file exists in the project root and contains `MONGODB_URI` with the correct format.
 
 ### Error: Cannot connect to MongoDB
-1. Pastikan password di `MONGODB_URI` sudah benar
-2. Pastikan IP Anda sudah di-whitelist di MongoDB Atlas
-3. Pastikan network access di MongoDB Atlas sudah dikonfigurasi
+1. Make sure the password in `MONGODB_URI` is correct
+2. Make sure your IP is whitelisted in MongoDB Atlas
+3. Make sure network access in MongoDB Atlas is configured
 
-### Data tidak muncul di website
-1. Pastikan backend server running (`npm run dev:server` atau `npm run dev`)
-2. Hard refresh browser (Ctrl+Shift+R atau Cmd+Shift+R)
-3. Cek console browser untuk error
+### Data does not appear on the website
+1. Make sure the backend server is running (`npm run dev:server` or `npm run dev`)
+2. Hard refresh the browser (Ctrl+Shift+R or Cmd+Shift+R)
+3. Check the browser console for errors

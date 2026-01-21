@@ -83,7 +83,8 @@ A complete, production-ready full-stack website for a professional singer portfo
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ and npm
+- Node.js 20.19+ or 22.12+ (required for Vite 7+)
+- npm 10+ 
 - MongoDB (local or cloud instance)
 
 ### Installation

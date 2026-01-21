@@ -179,6 +179,18 @@ ssh "$SERVER_USER@$SERVER_IP" << EOF
     chmod -R 755 $APP_DIR
     chmod 600 $APP_DIR/.env 2>/dev/null || true
     
+    # Check Node.js version on server
+    NODE_VERSION=\$(node --version | sed 's/v//')
+    NODE_MAJOR=\$(echo "\$NODE_VERSION" | cut -d'.' -f1)
+    NODE_MINOR=\$(echo "\$NODE_VERSION" | cut -d'.' -f2)
+    
+    if [ "\$NODE_MAJOR" -lt 20 ] || ([ "\$NODE_MAJOR" -eq 20 ] && [ "\$NODE_MINOR" -lt 19 ]); then
+        echo "⚠️  Warning: Node.js version \$NODE_VERSION is too old. Upgrading to Node.js 20.x..."
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        apt-get install -y -qq nodejs
+        echo "✅ Node.js upgraded to: \$(node --version)"
+    fi
+    
     # Setup PM2 if not already running
     if ! command -v pm2 &> /dev/null; then
         echo "Installing PM2..."

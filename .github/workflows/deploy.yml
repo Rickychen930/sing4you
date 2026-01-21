@@ -33,10 +33,64 @@ jobs:
         continue-on-error: true # Don't fail on lint errors, but show them
 
       - name: Build frontend
-        run: npm run build
+        run: |
+          echo "🔨 Building frontend..."
+          npm run build
+          echo "✅ Frontend build completed"
+
+      - name: Verify frontend build
+        run: |
+          echo "🔍 Verifying frontend build..."
+          if [ ! -d "dist/client" ]; then
+            echo "❌ Error: dist/client directory not found"
+            exit 1
+          fi
+          if [ ! -f "dist/client/index.html" ]; then
+            echo "❌ Error: dist/client/index.html not found"
+            exit 1
+          fi
+          echo "✅ Frontend build verified"
+          echo "Frontend files:"
+          ls -lah dist/client/ | head -15
+          echo ""
+          echo "Frontend build size:"
+          du -sh dist/client/
 
       - name: Build backend
-        run: npm run build:server
+        run: |
+          echo "🔨 Building backend..."
+          npm run build:server
+          echo "✅ Backend build completed"
+
+      - name: Verify backend build
+        run: |
+          echo "🔍 Verifying backend build..."
+          if [ ! -d "dist/server" ]; then
+            echo "❌ Error: dist/server directory not found"
+            exit 1
+          fi
+          if [ ! -f "dist/server/index.js" ]; then
+            echo "❌ Error: dist/server/index.js not found"
+            exit 1
+          fi
+          echo "✅ Backend build verified"
+          echo "Backend files:"
+          ls -lah dist/server/ | head -15
+          echo ""
+          echo "Backend build size:"
+          du -sh dist/server/
+
+      - name: Verify complete build structure
+        run: |
+          echo "🔍 Verifying complete build structure..."
+          echo "Dist directory structure:"
+          tree -L 3 dist/ || find dist/ -maxdepth 3 -type d | sort
+          echo ""
+          echo "✅ Both frontend and backend builds are ready"
+          echo ""
+          echo "Build summary:"
+          echo "- Frontend: dist/client/ ($(du -sh dist/client/ | cut -f1))"
+          echo "- Backend: dist/server/ ($(du -sh dist/server/ | cut -f1))"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -44,6 +98,8 @@ jobs:
           name: build-files
           path: |
             dist/
+            package.json
+            package-lock.json
           retention-days: 1
 
   deploy:
@@ -66,27 +122,66 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-files
-          path: dist/
+          path: ./
 
       - name: Verify build artifacts
         run: |
-          echo "Checking build artifacts..."
+          echo "🔍 Checking downloaded build artifacts..."
+          echo "Current directory structure:"
+          ls -lah | head -20
+          echo ""
+          
+          if [ ! -d "dist" ]; then
+            echo "❌ Error: dist directory not found in artifacts"
+            exit 1
+          fi
+          
           if [ ! -d "dist/client" ]; then
             echo "❌ Error: dist/client not found in artifacts"
+            echo "Available in dist/:"
+            ls -lah dist/ || echo "dist/ is empty or doesn't exist"
             exit 1
           fi
+          
           if [ ! -d "dist/server" ]; then
             echo "❌ Error: dist/server not found in artifacts"
+            echo "Available in dist/:"
+            ls -lah dist/ || echo "dist/ is empty or doesn't exist"
             exit 1
           fi
-          echo "✅ Build artifacts verified"
+          
+          echo "✅ Build artifacts structure verified"
+          echo ""
+          echo "📦 Dist directory contents:"
           ls -lah dist/
           echo ""
-          echo "Client files:"
-          ls -lah dist/client/ | head -10
+          echo "🌐 Frontend (client) files:"
+          ls -lah dist/client/ | head -15
           echo ""
-          echo "Server files:"
-          ls -lah dist/server/ | head -10
+          echo "Frontend index.html check:"
+          if [ -f "dist/client/index.html" ]; then
+            echo "✅ dist/client/index.html exists"
+            head -5 dist/client/index.html
+          else
+            echo "⚠️  Warning: dist/client/index.html not found"
+          fi
+          echo ""
+          echo "⚙️  Backend (server) files:"
+          ls -lah dist/server/ | head -15
+          echo ""
+          echo "Backend index.js check:"
+          if [ -f "dist/server/index.js" ]; then
+            echo "✅ dist/server/index.js exists"
+            head -10 dist/server/index.js
+          else
+            echo "❌ Error: dist/server/index.js not found"
+            exit 1
+          fi
+          echo ""
+          echo "📊 Build sizes:"
+          du -sh dist/client/ dist/server/
+          echo ""
+          echo "✅ All build artifacts verified successfully"
 
       - name: Validate required secrets
         run: |
@@ -247,7 +342,10 @@ jobs:
 
       - name: Sync files to server
         run: |
-          echo "Syncing files to server..."
+          echo "📤 Syncing files to server..."
+          echo "Syncing frontend and backend build files..."
+          
+          # Sync with explicit includes for better control
           rsync -avz --delete \
             --exclude='node_modules' \
             --exclude='.git' \
@@ -262,80 +360,298 @@ jobs:
             --exclude='tailwind.config.js' \
             --exclude='postcss.config.js' \
             --exclude='eslint.config.js' \
+            --exclude='.github/' \
+            --exclude='*.md' \
             --include='dist/' \
-            --include='dist/**' \
+            --include='dist/client/' \
+            --include='dist/client/**' \
+            --include='dist/server/' \
+            --include='dist/server/**' \
             --include='package.json' \
             --include='package-lock.json' \
             --include='deployment/' \
             --include='deployment/**' \
+            --exclude='*' \
             -e "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -o ServerAliveInterval=60 -o ServerAliveCountMax=3" \
             ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/christina-sings4you/
           
           echo "✅ Files synced successfully"
           
-          # Verify dist directory exists on server
+          # Verify dist directory exists on server with detailed checks
+          echo "🔍 Verifying synced files on server..."
           ssh -o StrictHostKeyChecking=no \
               -o ConnectTimeout=30 \
               -o ServerAliveInterval=60 \
               -o ServerAliveCountMax=3 \
               ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'VERIFY'
             cd /var/www/christina-sings4you
-            if [ -d "dist/client" ] && [ -d "dist/server" ]; then
-              echo "✅ Build files verified on server"
-              ls -lah dist/
-            else
-              echo "❌ Build files not found on server!"
+            
+            echo "Checking dist directory..."
+            if [ ! -d "dist" ]; then
+              echo "❌ Error: dist directory not found on server!"
               exit 1
             fi
+            
+            echo "Checking frontend (client) build..."
+            if [ ! -d "dist/client" ]; then
+              echo "❌ Error: dist/client directory not found on server!"
+              exit 1
+            fi
+            if [ ! -f "dist/client/index.html" ]; then
+              echo "❌ Error: dist/client/index.html not found on server!"
+              exit 1
+            fi
+            echo "✅ Frontend build verified"
+            echo "Frontend files count: $(find dist/client -type f | wc -l)"
+            du -sh dist/client/
+            
+            echo ""
+            echo "Checking backend (server) build..."
+            if [ ! -d "dist/server" ]; then
+              echo "❌ Error: dist/server directory not found on server!"
+              exit 1
+            fi
+            if [ ! -f "dist/server/index.js" ]; then
+              echo "❌ Error: dist/server/index.js not found on server!"
+              exit 1
+            fi
+            echo "✅ Backend build verified"
+            echo "Backend files count: $(find dist/server -type f | wc -l)"
+            du -sh dist/server/
+            
+            echo ""
+            echo "Checking package.json..."
+            if [ ! -f "package.json" ]; then
+              echo "⚠️  Warning: package.json not found on server"
+            else
+              echo "✅ package.json found"
+            fi
+            
+            echo ""
+            echo "Checking deployment scripts..."
+            if [ ! -d "deployment/scripts" ]; then
+              echo "⚠️  Warning: deployment/scripts not found on server"
+            else
+              echo "✅ deployment/scripts found"
+            fi
+            
+            echo ""
+            echo "📊 Summary of synced files:"
+            echo "Total dist size: $(du -sh dist/ | cut -f1)"
+            ls -lah dist/
+            echo ""
+            echo "✅ All build files verified on server"
           VERIFY
+
+      - name: Pre-deployment verification
+        run: |
+          echo "🔍 Pre-deployment verification..."
+          ssh -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=30 \
+              -o ServerAliveInterval=60 \
+              -o ServerAliveCountMax=3 \
+              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'PRE_CHECK'
+            cd /var/www/christina-sings4you
+            
+            echo "Checking Node.js version..."
+            node --version || echo "⚠️  Node.js not found"
+            npm --version || echo "⚠️  npm not found"
+            
+            echo ""
+            echo "Checking PM2..."
+            pm2 --version || echo "⚠️  PM2 not found"
+            
+            echo ""
+            echo "Checking Nginx..."
+            nginx -v || echo "⚠️  Nginx not found"
+            
+            echo ""
+            echo "Checking MongoDB connection (if .env exists)..."
+            if [ -f ".env" ]; then
+              echo "✅ .env file exists"
+            else
+              echo "⚠️  .env file not found (will be created during deployment)"
+            fi
+            
+            echo ""
+            echo "✅ Pre-deployment checks completed"
+          PRE_CHECK
 
       - name: Run deployment script on server
         run: |
+          echo "🚀 Running deployment script on server..."
           ssh -o StrictHostKeyChecking=no \
               -o ConnectTimeout=30 \
               -o ServerAliveInterval=60 \
               -o ServerAliveCountMax=3 \
               ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
           cd /var/www/christina-sings4you
+          
+          # Ensure deployment script is executable
+          if [ ! -f "deployment/scripts/deploy.sh" ]; then
+            echo "❌ Error: deployment/scripts/deploy.sh not found!"
+            exit 1
+          fi
+          
           chmod +x deployment/scripts/deploy.sh
+          
+          # Run deployment script
+          echo "Executing deployment script..."
           sudo ./deployment/scripts/deploy.sh production
+          
+          echo "✅ Deployment script completed"
           EOF
 
       - name: Health check
         run: |
+          echo "🏥 Starting health checks..."
           echo "Waiting for application to start..."
           sleep 20  # Give server more time to start
+          
           MAX_RETRIES=5
           RETRY_COUNT=0
+          HEALTH_CHECK_PASSED=false
+          
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            # Try health endpoint first (simpler, more reliable)
-            if curl -f -s https://${{ secrets.SITE_URL }}/api/health > /dev/null 2>&1; then
-              echo "✅ Health check passed using /api/health endpoint!"
-              exit 0
-            fi
-            # Fallback to /api/hero
-            if curl -f -s https://${{ secrets.SITE_URL }}/api/hero > /dev/null 2>&1; then
-              echo "✅ Health check passed using /api/hero endpoint!"
-              exit 0
-            fi
             RETRY_COUNT=$((RETRY_COUNT + 1))
-            echo "Health check attempt $RETRY_COUNT/$MAX_RETRIES failed, retrying..."
-            sleep 5
+            echo ""
+            echo "Health check attempt $RETRY_COUNT/$MAX_RETRIES..."
+            
+            # Check backend API health endpoint
+            echo "Checking backend API (/api/health)..."
+            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/health > /dev/null 2>&1; then
+              echo "✅ Backend health check passed!"
+              HEALTH_CHECK_PASSED=true
+              break
+            fi
+            
+            # Fallback: Check backend API with /api/hero endpoint
+            echo "Checking backend API (/api/hero)..."
+            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/hero > /dev/null 2>&1; then
+              echo "✅ Backend API is responding!"
+              HEALTH_CHECK_PASSED=true
+              break
+            fi
+            
+            # Check frontend (homepage)
+            echo "Checking frontend (homepage)..."
+            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/ > /dev/null 2>&1; then
+              echo "✅ Frontend is accessible!"
+              # Still need backend check
+            fi
+            
+            if [ "$HEALTH_CHECK_PASSED" = false ]; then
+              echo "❌ Health check attempt $RETRY_COUNT failed"
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "Waiting 5 seconds before retry..."
+                sleep 5
+              fi
+            fi
           done
-          echo "❌ Health check failed after $MAX_RETRIES attempts"
-          echo "Troubleshooting:"
-          echo "1. Check server logs: ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 logs christina-sings4you-api --lines 20'"
-          echo "2. Check if server is running: ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 list'"
-          exit 1
+          
+          if [ "$HEALTH_CHECK_PASSED" = true ]; then
+            echo ""
+            echo "✅ Health check passed!"
+            echo ""
+            echo "Verifying both frontend and backend..."
+            
+            # Final verification
+            echo "Frontend check:"
+            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/ > /dev/null 2>&1; then
+              echo "  ✅ Frontend is accessible"
+            else
+              echo "  ⚠️  Frontend check failed (may need more time)"
+            fi
+            
+            echo "Backend API check:"
+            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/health > /dev/null 2>&1 || \
+               curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/hero > /dev/null 2>&1; then
+              echo "  ✅ Backend API is responding"
+            else
+              echo "  ⚠️  Backend API check failed"
+            fi
+            
+            exit 0
+          else
+            echo ""
+            echo "❌ Health check failed after $MAX_RETRIES attempts"
+            echo ""
+            echo "Troubleshooting steps:"
+            echo "1. Check PM2 status:"
+            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 list'"
+            echo ""
+            echo "2. Check PM2 logs:"
+            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 logs christina-sings4you-api --lines 30'"
+            echo ""
+            echo "3. Check if server is listening on port 3001:"
+            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'netstat -tuln | grep 3001'"
+            echo ""
+            echo "4. Check Nginx status:"
+            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'systemctl status nginx'"
+            echo ""
+            echo "5. Check Nginx error logs:"
+            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'tail -20 /var/log/nginx/error.log'"
+            echo ""
+            echo "6. Verify .env file exists and has correct values"
+            echo ""
+            exit 1
+          fi
 
-      - name: Deployment notification
+      - name: Deployment summary
         if: success()
         run: |
-          echo "✅ Deployment successful!"
-          echo "🌐 Application is live at: https://${{ secrets.SITE_URL }}"
+          echo ""
+          echo "═══════════════════════════════════════════════════════════"
+          echo "✅ DEPLOYMENT SUCCESSFUL!"
+          echo "═══════════════════════════════════════════════════════════"
+          echo ""
+          echo "🌐 Application URL: https://${{ secrets.SITE_URL }}"
+          echo "📅 Deployment time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "🔀 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo ""
+          echo "📦 Deployed components:"
+          echo "  ✅ Frontend (React/Vite) - dist/client/"
+          echo "  ✅ Backend (Express/Node.js) - dist/server/"
+          echo ""
+          echo "🔗 Quick links:"
+          echo "  - Homepage: https://${{ secrets.SITE_URL }}/"
+          echo "  - API Health: https://${{ secrets.SITE_URL }}/api/health"
+          echo "  - Admin Panel: https://${{ secrets.SITE_URL }}/admin"
+          echo ""
+          echo "📊 Server status:"
+          ssh -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=30 \
+              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'STATUS'
+            echo "PM2 Status:"
+            pm2 list || echo "PM2 not available"
+            echo ""
+            echo "Nginx Status:"
+            systemctl status nginx --no-pager -l || echo "Nginx status check failed"
+          STATUS
+          echo ""
+          echo "═══════════════════════════════════════════════════════════"
 
       - name: Deployment failure notification
         if: failure()
         run: |
-          echo "❌ Deployment failed!"
+          echo ""
+          echo "═══════════════════════════════════════════════════════════"
+          echo "❌ DEPLOYMENT FAILED!"
+          echo "═══════════════════════════════════════════════════════════"
+          echo ""
+          echo "📅 Failure time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "🔀 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo ""
           echo "Please check the logs above for details."
+          echo ""
+          echo "Common issues to check:"
+          echo "  1. Build errors (check build-and-test job)"
+          echo "  2. SSH connection issues"
+          echo "  3. Server deployment script errors"
+          echo "  4. Health check failures"
+          echo "  5. Missing environment variables"
+          echo ""
+          echo "For more help, check the troubleshooting guide in the repository."
+          echo "═══════════════════════════════════════════════════════════"

@@ -40,11 +40,8 @@ ssh root@72.61.214.25
 # Make sure configuration file exists on server
 cd /var/www/christina-sings4you
 
-# Copy nginx configuration file (use HTTP-only first if SSL not ready)
-sudo cp deployment/nginx/christina-sings4you.com.au.http-only.conf /etc/nginx/sites-available/christina-sings4you.com.au
-
-# Or if SSL is ready, use the one with SSL:
-# sudo cp deployment/nginx/christina-sings4you.com.au.conf /etc/nginx/sites-available/christina-sings4you.com.au
+# Copy nginx configuration file
+sudo cp deployment/nginx/christina-sings4you.com.au.conf /etc/nginx/sites-available/christina-sings4you.com.au
 ```
 
 **Enable site:**
@@ -72,42 +69,7 @@ sudo systemctl reload nginx
 sudo systemctl status nginx
 ```
 
-### Step 3: Setup SSL (Let's Encrypt)
-
-**After DNS has propagated and nginx is configured:**
-
-```bash
-# Install certbot (if not already installed)
-sudo apt install -y certbot python3-certbot-nginx
-
-# Setup SSL certificate
-sudo certbot --nginx -d christina-sings4you.com.au -d www.christina-sings4you.com.au
-
-# Follow instructions:
-# - Enter email for notifications
-# - Agree to terms of service
-# - Choose redirect HTTP to HTTPS (recommended)
-```
-
-**After SSL is installed, update nginx config:**
-
-```bash
-# Copy config dengan SSL
-sudo cp /var/www/christina-sings4you/deployment/nginx/christina-sings4you.com.au.conf /etc/nginx/sites-available/christina-sings4you.com.au
-
-# Test dan reload
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-**Setup auto-renewal:**
-```bash
-# Test renewal
-sudo certbot renew --dry-run
-
-# Certbot automatically sets up cron job for auto-renewal
-```
-
-### Step 4: Verify
+### Step 3: Verify
 
 **Check DNS propagation:**
 ```bash
@@ -169,19 +131,6 @@ sudo ufw status
 sudo netstat -tuln | grep -E ':(80|443)'
 ```
 
-### SSL certificate error
-
-```bash
-# Check certificate
-sudo certbot certificates
-
-# Renew manually if needed
-sudo certbot renew
-
-# Check nginx SSL config
-sudo nginx -t
-```
-
 ### Application not accessible
 
 ```bash
@@ -214,7 +163,6 @@ curl http://localhost:3001/api/health
 - [ ] Nginx reloaded (`systemctl reload nginx`)
 - [ ] Application is running (PM2 or systemd)
 - [ ] Port 80 and 443 are open in firewall
-- [ ] SSL certificate installed (if using HTTPS)
 - [ ] Domain accessible from browser
 
 ## 🚀 Quick Setup Script
@@ -226,7 +174,7 @@ Buat script untuk automate setup nginx:
 # setup-nginx.sh
 
 APP_DIR="/var/www/christina-sings4you"
-NGINX_CONF="$APP_DIR/deployment/nginx/christina-sings4you.com.au.http-only.conf"
+NGINX_CONF="$APP_DIR/deployment/nginx/christina-sings4you.com.au.conf"
 NGINX_AVAILABLE="/etc/nginx/sites-available/christina-sings4you.com.au"
 NGINX_ENABLED="/etc/nginx/sites-enabled/christina-sings4you.com.au"
 
@@ -243,7 +191,6 @@ sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl reload nginx
 
 echo "✅ Nginx configured successfully!"
-echo "Next: Setup SSL with: sudo certbot --nginx -d christina-sings4you.com.au -d www.christina-sings4you.com.au"
 ```
 
 Simpan sebagai `deployment/scripts/setup-nginx.sh` dan jalankan:

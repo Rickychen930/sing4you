@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Setup Nginx configuration script
-# Usage: sudo ./setup-nginx.sh [http-only|ssl]
+# Usage: sudo ./setup-nginx.sh
 
 set -e
 
@@ -32,21 +32,16 @@ fi
 APP_DIR="/var/www/christina-sings4you"
 NGINX_AVAILABLE="/etc/nginx/sites-available/christina-sings4you.com.au"
 NGINX_ENABLED="/etc/nginx/sites-enabled/christina-sings4you.com.au"
-MODE=${1:-http-only}
+# MODE removed - always use SSL config
 
 # Check if app directory exists
 if [ ! -d "$APP_DIR" ]; then
     error "Application directory not found: $APP_DIR"
 fi
 
-# Determine which config file to use
-if [ "$MODE" = "ssl" ]; then
-    NGINX_CONF="$APP_DIR/deployment/nginx/christina-sings4you.com.au.conf"
-    log "Using SSL configuration"
-else
-    NGINX_CONF="$APP_DIR/deployment/nginx/christina-sings4you.com.au.http-only.conf"
-    log "Using HTTP-only configuration"
-fi
+# Use SSL configuration (default)
+NGINX_CONF="$APP_DIR/deployment/nginx/christina-sings4you.com.au.conf"
+log "Using SSL configuration"
 
 # Check if config file exists
 if [ ! -f "$NGINX_CONF" ]; then
@@ -101,21 +96,12 @@ log "Configuration file: $NGINX_AVAILABLE"
 log "Enabled site: $NGINX_ENABLED"
 log ""
 
-if [ "$MODE" = "http-only" ]; then
-    log "Next steps:"
-    log "1. Verify DNS is pointing to this server (72.61.214.25)"
-    log "2. Wait for DNS propagation (check with: dig christina-sings4you.com.au)"
-    log "3. Test HTTP access: http://christina-sings4you.com.au"
-    log "4. Setup SSL: sudo certbot --nginx -d christina-sings4you.com.au -d www.christina-sings4you.com.au"
-    log "5. After SSL is installed, run: sudo ./setup-nginx.sh ssl"
-else
-    log "SSL configuration is active!"
-    log "Make sure SSL certificates are installed at:"
-    log "  /etc/letsencrypt/live/christina-sings4you.com.au/fullchain.pem"
-    log "  /etc/letsencrypt/live/christina-sings4you.com.au/privkey.pem"
-    log ""
-    log "Test HTTPS access: https://christina-sings4you.com.au"
-fi
+log "SSL configuration is active!"
+log "Make sure SSL certificates are installed at:"
+log "  /etc/letsencrypt/live/christina-sings4you.com.au/fullchain.pem"
+log "  /etc/letsencrypt/live/christina-sings4you.com.au/privkey.pem"
+log ""
+log "Test HTTPS access: https://christina-sings4you.com.au"
 
 log ""
 log "To check nginx status: sudo systemctl status nginx"

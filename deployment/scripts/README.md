@@ -68,7 +68,50 @@ Koleksi script untuk deployment dan maintenance aplikasi christina-sings4you.com
 
 ---
 
-### 5. setup-server.sh
+### 5. update-nginx-pm2.sh ⭐ NEW
+**Tujuan**: Update Nginx dan PM2 dari local machine  
+**Usage**: `./update-nginx-pm2.sh [server_ip] [server_user]`  
+**Fungsi**:
+- Update system packages
+- Update Nginx ke versi terbaru
+- Update PM2 ke versi terbaru
+- Test dan reload Nginx
+- Save PM2 process list
+
+**Kapan digunakan**: Untuk update Nginx dan PM2 secara rutin dari local machine.
+
+---
+
+### 6. update-nginx-pm2-on-server.sh ⭐ NEW
+**Tujuan**: Update Nginx dan PM2 langsung di server  
+**Usage**: `sudo ./update-nginx-pm2-on-server.sh` (di server)  
+**Fungsi**:
+- Update system packages
+- Update Nginx ke versi terbaru
+- Update PM2 ke versi terbaru
+- Test dan reload Nginx
+- Save PM2 process list
+- Show detailed status
+
+**Kapan digunakan**: Untuk update Nginx dan PM2 langsung di server.
+
+---
+
+### 7. setup-nginx-config.sh ⭐ NEW
+**Tujuan**: Setup/update Nginx configuration  
+**Usage**: `sudo ./setup-nginx-config.sh` (di server)  
+**Fungsi**:
+- Copy Nginx config ke sites-available
+- Create symlink di sites-enabled
+- Backup existing config
+- Test configuration
+- Reload Nginx
+
+**Kapan digunakan**: Untuk setup atau update Nginx configuration.
+
+---
+
+### 8. setup-server.sh
 **Tujuan**: Setup awal server (hanya sekali)  
 **Usage**: `sudo ./setup-server.sh`  
 **Fungsi**:
