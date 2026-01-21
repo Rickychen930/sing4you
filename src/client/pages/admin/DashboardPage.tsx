@@ -178,7 +178,7 @@ export const DashboardPage: React.FC = () => {
                   </span>
                 </Button>
               </Link>
-              <Button variant="secondary" onClick={handleLogout} size="sm" className="w-full sm:w-auto">
+              <Button variant="secondary" onClick={handleLogoutClick} size="sm" className="w-full sm:w-auto">
                 Logout
               </Button>
             </div>
