@@ -1,1032 +1,555 @@
-name: Deploy to Production
+name: Deploy Full Stack App to VPS
 
 on:
   push:
-    branches:
-      - master
-      - main
-  workflow_dispatch: # Allow manual trigger
-
-env:
-  NODE_VERSION: '20.x'
+    branches: [main]
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run linter
-        run: npm run lint
-        continue-on-error: true # Don't fail on lint errors, but show them
-
-      - name: Build frontend
+      - name: Setup SSH
         run: |
-          echo "🔨 Building frontend..."
-          npm run build
-          echo "✅ Frontend build completed"
-
-      - name: Verify frontend build
-        run: |
-          echo "🔍 Verifying frontend build..."
-          if [ ! -d "dist/client" ]; then
-            echo "❌ Error: dist/client directory not found"
+          # Validate required secrets
+          if [ -z "${{ secrets.TARGET_DIR }}" ]; then
+            echo "❌ ERROR: TARGET_DIR secret is not set!"
             exit 1
           fi
-          if [ ! -f "dist/client/index.html" ]; then
-            echo "❌ Error: dist/client/index.html not found"
-            exit 1
-          fi
-          echo "✅ Frontend build verified"
-          echo "Frontend files:"
-          ls -lah dist/client/ | head -15
-          echo ""
-          echo "Frontend build size:"
-          du -sh dist/client/
-
-      - name: Build backend
-        run: |
-          echo "🔨 Building backend..."
-          npm run build:server
-          echo "✅ Backend build completed"
-
-      - name: Verify backend build
-        run: |
-          echo "🔍 Verifying backend build..."
-          if [ ! -d "dist/server" ]; then
-            echo "❌ Error: dist/server directory not found"
-            exit 1
-          fi
-          if [ ! -f "dist/server/index.js" ]; then
-            echo "❌ Error: dist/server/index.js not found"
-            exit 1
-          fi
-          echo "✅ Backend build verified"
-          echo "Backend files:"
-          ls -lah dist/server/ | head -15
-          echo ""
-          echo "Backend build size:"
-          du -sh dist/server/
-
-      - name: Verify complete build structure
-        run: |
-          echo "🔍 Verifying complete build structure..."
-          echo "Dist directory structure:"
-          tree -L 3 dist/ || find dist/ -maxdepth 3 -type d | sort
-          echo ""
-          echo "✅ Both frontend and backend builds are ready"
-          echo ""
-          echo "Build summary:"
-          echo "- Frontend: dist/client/ ($(du -sh dist/client/ | cut -f1))"
-          echo "- Backend: dist/server/ ($(du -sh dist/server/ | cut -f1))"
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-files
-          path: |
-            dist/
-            package.json
-            package-lock.json
-          retention-days: 1
-
-  deploy:
-    name: Deploy to Server
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files
-          path: ./
-
-      - name: Verify build artifacts
-        run: |
-          echo "🔍 Checking downloaded build artifacts..."
-          echo "Current directory structure:"
-          ls -lah | head -20
-          echo ""
-          
-          if [ ! -d "dist" ]; then
-            echo "❌ Error: dist directory not found in artifacts"
-            exit 1
-          fi
-          
-          if [ ! -d "dist/client" ]; then
-            echo "❌ Error: dist/client not found in artifacts"
-            echo "Available in dist/:"
-            ls -lah dist/ || echo "dist/ is empty or doesn't exist"
-            exit 1
-          fi
-          
-          if [ ! -d "dist/server" ]; then
-            echo "❌ Error: dist/server not found in artifacts"
-            echo "Available in dist/:"
-            ls -lah dist/ || echo "dist/ is empty or doesn't exist"
-            exit 1
-          fi
-          
-          echo "✅ Build artifacts structure verified"
-          echo ""
-          echo "📦 Dist directory contents:"
-          ls -lah dist/
-          echo ""
-          echo "🌐 Frontend (client) files:"
-          ls -lah dist/client/ | head -15
-          echo ""
-          echo "Frontend index.html check:"
-          if [ -f "dist/client/index.html" ]; then
-            echo "✅ dist/client/index.html exists"
-            head -5 dist/client/index.html
-          else
-            echo "⚠️  Warning: dist/client/index.html not found"
-          fi
-          echo ""
-          echo "⚙️  Backend (server) files:"
-          ls -lah dist/server/ | head -15
-          echo ""
-          echo "Backend index.js check:"
-          if [ -f "dist/server/index.js" ]; then
-            echo "✅ dist/server/index.js exists"
-            head -10 dist/server/index.js
-          else
-            echo "❌ Error: dist/server/index.js not found"
-            exit 1
-          fi
-          echo ""
-          echo "📊 Build sizes:"
-          du -sh dist/client/ dist/server/
-          echo ""
-          echo "✅ All build artifacts verified successfully"
-
-      - name: Validate required secrets
-        run: |
-          if [ -z "${{ secrets.SERVER_HOST }}" ]; then
-            echo "❌ Error: SERVER_HOST secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.SERVER_USER }}" ]; then
-            echo "❌ Error: SERVER_USER secret is not set"
+          if [ -z "${{ secrets.BACKEND_TARGET_DIR }}" ]; then
+            echo "❌ ERROR: BACKEND_TARGET_DIR secret is not set!"
             exit 1
           fi
           if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "❌ Error: SSH_PRIVATE_KEY secret is not set"
+            echo "❌ ERROR: SSH_PRIVATE_KEY secret is not set!"
             exit 1
           fi
-          echo "✅ All required secrets are set"
-          echo "Server: ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}"
-
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Configure SSH
-        run: |
-          echo "Configuring SSH..."
+          if [ -z "${{ secrets.SERVER_HOST }}" ]; then
+            echo "❌ ERROR: SERVER_HOST secret is not set!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SERVER_USER }}" ]; then
+            echo "❌ ERROR: SERVER_USER secret is not set!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_PORT }}" ]; then
+            echo "❌ ERROR: SSH_PORT secret is not set!"
+            exit 1
+          fi
+          
+          echo "🔧 Setting up SSH..."
+          echo "Host: ${{ secrets.SERVER_HOST }}"
+          echo "User: ${{ secrets.SERVER_USER }}"
+          echo "Port: ${{ secrets.SSH_PORT }}"
+          
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           
-          # Write private key to file
-          if [ -n "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "Setting up SSH private key..."
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
-            echo "✅ SSH private key saved"
-          else
-            echo "❌ Error: SSH_PRIVATE_KEY secret is empty"
+          # Write SSH key with proper formatting
+          # Store secret in variable first to preserve all newlines
+          SSH_KEY="${{ secrets.SSH_PRIVATE_KEY }}"
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Ensure file ends with newline (SSH requires this)
+          if [ -s ~/.ssh/deploy_key ] && [ "$(tail -c 1 ~/.ssh/deploy_key | wc -l)" -eq 0 ]; then
+            echo "" >> ~/.ssh/deploy_key
+          fi
+          
+          # Verify key format and structure
+          echo "🔍 Verifying SSH key format..."
+          KEY_FILE=~/.ssh/deploy_key
+          
+          if [ ! -f "$KEY_FILE" ]; then
+            echo "❌ ERROR: SSH key file was not created!"
             exit 1
           fi
           
-          # Add server to known_hosts first
-          if [ -n "${{ secrets.SERVER_HOST }}" ]; then
-            echo "Adding ${{ secrets.SERVER_HOST }} to known_hosts..."
-            ssh-keyscan -H -p ${SSH_PORT:-22} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>&1 || {
-              echo "⚠️  Warning: Failed to add host to known_hosts, will try with StrictHostKeyChecking=no"
-            }
-            chmod 600 ~/.ssh/known_hosts
+          # Check for BEGIN marker
+          if ! grep -q "BEGIN.*PRIVATE KEY" "$KEY_FILE"; then
+            echo "❌ ERROR: SSH key is missing BEGIN marker!"
+            echo "First 100 chars: $(head -c 100 "$KEY_FILE")"
+            exit 1
           fi
           
-          # Create SSH config for better connection handling
-          cat >> ~/.ssh/config << EOF
-          Host deploy-server
-            HostName ${{ secrets.SERVER_HOST }}
-            User ${{ secrets.SERVER_USER }}
-            Port ${SSH_PORT:-22}
-            IdentityFile ~/.ssh/deploy_key
-            StrictHostKeyChecking no
-            UserKnownHostsFile ~/.ssh/known_hosts
-            ConnectTimeout 30
-            ServerAliveInterval 60
-            ServerAliveCountMax 3
-            TCPKeepAlive yes
-          EOF
-          chmod 600 ~/.ssh/config
+          # Check for END marker
+          if ! grep -q "END.*PRIVATE KEY" "$KEY_FILE"; then
+            echo "❌ ERROR: SSH key is missing END marker!"
+            echo "Last 100 chars: $(tail -c 100 "$KEY_FILE")"
+            exit 1
+          fi
           
-          # Test SSH key format
-          echo "Verifying SSH key format..."
-          if ssh-keygen -l -f ~/.ssh/deploy_key > /dev/null 2>&1; then
+          # Check key file size (should be reasonable, not empty or too small)
+          KEY_SIZE=$(wc -c < "$KEY_FILE")
+          if [ "$KEY_SIZE" -lt 100 ]; then
+            echo "❌ ERROR: SSH key file is too small ($KEY_SIZE bytes). Key may be corrupted!"
+            exit 1
+          fi
+          
+          # Validate key format with ssh-keygen
+          if ssh-keygen -l -f "$KEY_FILE" > /dev/null 2>&1; then
             echo "✅ SSH key format is valid"
-            ssh-keygen -l -f ~/.ssh/deploy_key
+            ssh-keygen -l -f "$KEY_FILE"
           else
-            echo "❌ Error: SSH key format is invalid"
-            echo "First 50 characters of key (for debugging):"
-            head -c 50 ~/.ssh/deploy_key
-            exit 1
+            echo "⚠️  WARNING: ssh-keygen validation failed, but continuing..."
+            echo "Key may need passphrase or may be in different format"
           fi
           
-          echo "✅ SSH configured"
-
-      - name: Comprehensive SSH Diagnostics
-        run: |
-          echo "═══════════════════════════════════════════════════════════"
-          echo "🔍 COMPREHENSIVE SSH DIAGNOSTICS"
-          echo "═══════════════════════════════════════════════════════════"
-          echo ""
+          # Add server to known_hosts
+          echo "🔑 Adding server to known_hosts..."
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+          chmod 644 ~/.ssh/known_hosts
           
-          SERVER_HOST="${{ secrets.SERVER_HOST }}"
-          SERVER_USER="${{ secrets.SERVER_USER }}"
-          SSH_PORT="${SSH_PORT:-22}"
+          # Setup SSH agent and add key
+          echo "🔐 Setting up SSH agent..."
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/deploy_key 2>&1 || {
+            echo "⚠️  WARNING: Failed to add key to ssh-agent (may need passphrase)"
+          }
           
-          echo "Target: ${SERVER_USER}@${SERVER_HOST}:${SSH_PORT}"
-          echo ""
+          echo "✅ SSH key configured"
+          echo "🧪 Testing SSH connection..."
           
-          # Initialize diagnostics results
-          DIAGNOSTICS_PASSED=true
-          
-          # 1. Check hostname/IP address format
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "1️⃣  Checking hostname/IP address..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          if [ -z "$SERVER_HOST" ]; then
-            echo "❌ SERVER_HOST is empty!"
-            DIAGNOSTICS_PASSED=false
-          else
-            echo "✅ SERVER_HOST is set: $SERVER_HOST"
-            
-            # Check if it's an IP or hostname
-            if [[ $SERVER_HOST =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-              echo "   Format: IP address"
-              # Validate IP ranges
-              IFS='.' read -ra ADDR <<< "$SERVER_HOST"
-              for i in "${ADDR[@]}"; do
-                if [ "$i" -gt 255 ]; then
-                  echo "   ⚠️  Warning: Invalid IP address (octet > 255)"
-                  DIAGNOSTICS_PASSED=false
-                fi
-              done
-            else
-              echo "   Format: Hostname/Domain"
-            fi
-          fi
-          
-          if [ -z "$SERVER_USER" ]; then
-            echo "❌ SERVER_USER is empty!"
-            DIAGNOSTICS_PASSED=false
-          else
-            echo "✅ SERVER_USER is set: $SERVER_USER"
-          fi
-          echo ""
-          
-          # 2. Check network connectivity (ping)
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "2️⃣  Checking network connectivity (ping)..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          if ping -c 3 -W 5 "$SERVER_HOST" > /dev/null 2>&1; then
-            echo "✅ Server is reachable via ping"
-            ping -c 3 "$SERVER_HOST" | head -5
-          else
-            echo "❌ Server is NOT reachable via ping"
-            echo "   This could indicate:"
-            echo "   - Wrong hostname/IP address"
-            echo "   - Server is down"
-            echo "   - Network connectivity issues"
-            echo "   - Firewall blocking ICMP (ping) - this is normal for some servers"
-            DIAGNOSTICS_PASSED=false
-          fi
-          echo ""
-          
-          # 3. Check SSH port connectivity (nc/telnet)
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "3️⃣  Checking SSH port ${SSH_PORT} connectivity..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          if command -v nc > /dev/null 2>&1; then
-            if timeout 5 nc -zv "$SERVER_HOST" "$SSH_PORT" 2>&1; then
-              echo "✅ Port ${SSH_PORT} is open and accepting connections"
-            else
-              echo "❌ Port ${SSH_PORT} is NOT accessible"
-              echo "   This could indicate:"
-              echo "   - Firewall blocking port ${SSH_PORT}"
-              echo "   - SSH service not running on server"
-              echo "   - Wrong port number"
-              DIAGNOSTICS_PASSED=false
-            fi
-          else
-            echo "⚠️  'nc' (netcat) not available, skipping port check"
-            echo "   Testing with SSH connection instead..."
-          fi
-          echo ""
-          
-          # 4. Check SSH service status (if we can connect)
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "4️⃣  Checking SSH service status..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          # Try to connect and check SSH service
-          SSH_OUTPUT=$(timeout 10 ssh -i ~/.ssh/deploy_key \
-            -o StrictHostKeyChecking=no \
-            -o ConnectTimeout=10 \
-            -o BatchMode=yes \
-            -o PasswordAuthentication=no \
-            "$SERVER_USER@$SERVER_HOST" \
-            "systemctl is-active sshd 2>/dev/null || systemctl is-active ssh 2>/dev/null || service ssh status 2>/dev/null | head -1 || echo 'unknown'" 2>&1)
-          
-          if echo "$SSH_OUTPUT" | grep -q "active\|running"; then
-            echo "✅ SSH service appears to be running"
-            echo "   Status: $SSH_OUTPUT"
-          elif echo "$SSH_OUTPUT" | grep -q "Connection refused\|Connection timed out\|No route to host"; then
-            echo "❌ Cannot check SSH service - connection failed"
-            echo "   Error: $SSH_OUTPUT"
-            DIAGNOSTICS_PASSED=false
-          else
-            echo "⚠️  Could not determine SSH service status"
-            echo "   Output: $SSH_OUTPUT"
-            echo "   (This might be okay if SSH is running but service command differs)"
-          fi
-          echo ""
-          
-          # 5. Check SSH key format and validity
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "5️⃣  Checking SSH private key format..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          if [ -f ~/.ssh/deploy_key ]; then
-            if ssh-keygen -l -f ~/.ssh/deploy_key > /dev/null 2>&1; then
-              echo "✅ SSH private key format is valid"
-              KEY_INFO=$(ssh-keygen -l -f ~/.ssh/deploy_key)
-              echo "   $KEY_INFO"
-              
-              # Extract public key for verification
-              echo ""
-              echo "   Public key (for server verification):"
-              PUBLIC_KEY=$(ssh-keygen -y -f ~/.ssh/deploy_key 2>/dev/null)
-              if [ -n "$PUBLIC_KEY" ]; then
-                echo "   $PUBLIC_KEY"
-                echo ""
-                echo "   💡 To add this key to server, run on server:"
-                echo "      echo '$PUBLIC_KEY' >> ~/.ssh/authorized_keys"
-                echo "      chmod 600 ~/.ssh/authorized_keys"
-                echo "      chmod 700 ~/.ssh"
-              else
-                echo "   ⚠️  Could not extract public key"
-              fi
-            else
-              echo "❌ SSH private key format is INVALID"
-              echo "   Key should start with: -----BEGIN"
-              DIAGNOSTICS_PASSED=false
-            fi
-          else
-            echo "❌ SSH private key file not found!"
-            DIAGNOSTICS_PASSED=false
-          fi
-          echo ""
-          
-          # 6. Check if public key is in server's authorized_keys
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "6️⃣  Checking if public key is in server's authorized_keys..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          PUBLIC_KEY=$(ssh-keygen -y -f ~/.ssh/deploy_key 2>/dev/null)
-          if [ -n "$PUBLIC_KEY" ]; then
-            # Extract key fingerprint for comparison
-            LOCAL_FINGERPRINT=$(ssh-keygen -l -f ~/.ssh/deploy_key | awk '{print $2}')
-            
-            # Try to check authorized_keys on server
-            SERVER_KEYS=$(timeout 10 ssh -i ~/.ssh/deploy_key \
-              -o StrictHostKeyChecking=no \
+          # Test connection with detailed output
+          ssh -v -o StrictHostKeyChecking=no \
               -o ConnectTimeout=10 \
-              -o BatchMode=yes \
-              "$SERVER_USER@$SERVER_HOST" \
-              "cat ~/.ssh/authorized_keys 2>/dev/null | grep -v '^#' | grep -v '^$'" 2>&1)
-            
-            if echo "$SERVER_KEYS" | grep -q "Connection refused\|Connection timed out\|Permission denied\|Host key verification failed"; then
-              echo "⚠️  Cannot check authorized_keys - connection failed"
-              echo "   This is expected if key is not yet added"
-              echo "   Error: $(echo "$SERVER_KEYS" | head -3)"
-            elif echo "$SERVER_KEYS" | grep -q "$PUBLIC_KEY\|$LOCAL_FINGERPRINT"; then
-              echo "✅ Public key appears to be in server's authorized_keys"
-            elif [ -n "$SERVER_KEYS" ] && [ "$SERVER_KEYS" != "Permission denied" ]; then
-              echo "❌ Public key NOT found in server's authorized_keys"
-              echo ""
-              echo "   To fix this, run on server:"
-              echo "   mkdir -p ~/.ssh"
-              echo "   chmod 700 ~/.ssh"
-              echo "   echo '$PUBLIC_KEY' >> ~/.ssh/authorized_keys"
-              echo "   chmod 600 ~/.ssh/authorized_keys"
-              DIAGNOSTICS_PASSED=false
-            else
-              echo "⚠️  Could not verify authorized_keys"
-              echo "   This might be okay if using password auth or different key location"
-            fi
-          else
-            echo "⚠️  Could not extract public key for verification"
-          fi
-          echo ""
-          
-          # 7. Check GitHub Actions IP ranges (informational)
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "7️⃣  Checking GitHub Actions IP information..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "Current runner IP information:"
-          curl -s ifconfig.me 2>/dev/null && echo " (external IP)" || echo "Could not determine IP"
-          echo ""
-          echo "⚠️  Note: GitHub Actions uses dynamic IPs"
-          echo "   If server firewall restricts by IP, you may need to:"
-          echo "   1. Allow GitHub Actions IP ranges:"
-          echo "      https://api.github.com/meta (check 'actions' IPs)"
-          echo "   2. Or configure server to allow all IPs (less secure)"
-          echo "   3. Or use SSH key-based auth without IP restrictions"
-          echo ""
-          
-          # 8. Test SSH connection with detailed output
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "8️⃣  Testing SSH connection..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          CONNECTION_TEST=$(timeout 15 ssh -i ~/.ssh/deploy_key \
-            -o StrictHostKeyChecking=no \
-            -o ConnectTimeout=10 \
-            -o BatchMode=yes \
-            -o PasswordAuthentication=no \
-            "$SERVER_USER@$SERVER_HOST" \
-            "echo 'SSH_CONNECTION_SUCCESS'" 2>&1)
-          
-          if echo "$CONNECTION_TEST" | grep -q "SSH_CONNECTION_SUCCESS"; then
-            echo "✅ SSH connection test PASSED!"
-            echo "   Connection is working correctly"
-          elif echo "$CONNECTION_TEST" | grep -q "Permission denied"; then
-            echo "❌ SSH connection FAILED: Permission denied"
-            echo "   This usually means:"
-            echo "   - Public key not in ~/.ssh/authorized_keys"
-            echo "   - Wrong SSH key"
-            echo "   - Incorrect file permissions on server"
-            echo "   Error details:"
-            echo "$CONNECTION_TEST" | head -5
-            DIAGNOSTICS_PASSED=false
-          elif echo "$CONNECTION_TEST" | grep -q "Connection refused"; then
-            echo "❌ SSH connection FAILED: Connection refused"
-            echo "   This usually means:"
-            echo "   - SSH service not running"
-            echo "   - Wrong port number"
-            echo "   - Firewall blocking the connection"
-            DIAGNOSTICS_PASSED=false
-          elif echo "$CONNECTION_TEST" | grep -q "Connection timed out"; then
-            echo "❌ SSH connection FAILED: Connection timed out"
-            echo "   This usually means:"
-            echo "   - Firewall blocking port ${SSH_PORT}"
-            echo "   - Network connectivity issues"
-            echo "   - Server not responding"
-            DIAGNOSTICS_PASSED=false
-          elif echo "$CONNECTION_TEST" | grep -q "No route to host"; then
-            echo "❌ SSH connection FAILED: No route to host"
-            echo "   This usually means:"
-            echo "   - Wrong hostname/IP address"
-            echo "   - Network routing issues"
-            DIAGNOSTICS_PASSED=false
-          else
-            echo "⚠️  SSH connection test returned unexpected result:"
-            echo "$CONNECTION_TEST" | head -10
-            DIAGNOSTICS_PASSED=false
-          fi
-          echo ""
-          
-          # Summary
-          echo "═══════════════════════════════════════════════════════════"
-          echo "📊 DIAGNOSTICS SUMMARY"
-          echo "═══════════════════════════════════════════════════════════"
-          if [ "$DIAGNOSTICS_PASSED" = true ]; then
-            echo "✅ All diagnostics passed! SSH connection should work."
-          else
-            echo "❌ Some diagnostics failed. Please review the issues above."
-            echo ""
-            echo "Common fixes:"
-            echo "1. Firewall blocking port ${SSH_PORT}:"
-            echo "   - Check server firewall: sudo ufw status (Ubuntu/Debian)"
-            echo "   - Allow SSH: sudo ufw allow ${SSH_PORT}/tcp"
-            echo "   - Or: sudo iptables -A INPUT -p tcp --dport ${SSH_PORT} -j ACCEPT"
-            echo ""
-            echo "2. SSH service not running:"
-            echo "   - Start SSH: sudo systemctl start sshd (or ssh)"
-            echo "   - Enable on boot: sudo systemctl enable sshd"
-            echo ""
-            echo "3. Wrong hostname/IP:"
-            echo "   - Verify SERVER_HOST secret is correct"
-            echo "   - Test with: ping $SERVER_HOST"
-            echo ""
-            echo "4. Public key not added:"
-            echo "   - Extract: ssh-keygen -y -f ~/.ssh/deploy_key"
-            echo "   - Add to server: echo 'PUBLIC_KEY' >> ~/.ssh/authorized_keys"
-            echo "   - Set permissions: chmod 600 ~/.ssh/authorized_keys"
-            echo ""
-            echo "5. GitHub Actions IP restrictions:"
-            echo "   - Check server firewall allows GitHub Actions IPs"
-            echo "   - Or configure SSH to allow key-based auth from any IP"
-            echo ""
-            echo "6. Network connectivity:"
-            echo "   - Verify server is online: ping $SERVER_HOST"
-            echo "   - Check DNS resolution if using hostname"
-          fi
-          echo "═══════════════════════════════════════════════════════════"
-          echo ""
-          
-          # Don't fail the workflow here, just report - let the actual connection test handle failures
-          if [ "$DIAGNOSTICS_PASSED" = false ]; then
-            echo "⚠️  Continuing to connection test despite diagnostic failures..."
-          fi
-
-      - name: Test SSH connection
-        run: |
-          echo "═══════════════════════════════════════════════════════════"
-          echo "🔌 TESTING SSH CONNECTION"
-          echo "═══════════════════════════════════════════════════════════"
-          echo ""
-          echo "Note: If this fails, check the 'Comprehensive SSH Diagnostics' step above"
-          echo "for detailed information about what might be wrong."
-          echo ""
-          echo "Testing SSH connection..."
-          echo "Target: ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}"
-          echo "Port: ${SSH_PORT:-22}"
-          
-          MAX_RETRIES=3
-          RETRY_COUNT=0
-          CONNECTION_SUCCESS=false
-          
-          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            RETRY_COUNT=$((RETRY_COUNT + 1))
-            echo ""
-            echo "Attempt $RETRY_COUNT/$MAX_RETRIES..."
-            
-            # Try with verbose output on first attempt for debugging
-            if [ $RETRY_COUNT -eq 1 ]; then
-              echo "Testing connection (verbose mode)..."
-              ssh -i ~/.ssh/deploy_key \
-                  -v -o StrictHostKeyChecking=no \
-                  -o ConnectTimeout=30 \
-                  -o ServerAliveInterval=60 \
-                  -o ServerAliveCountMax=3 \
-                  -o TCPKeepAlive=yes \
-                  ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
-                  "echo 'SSH connection successful'" 2>&1 | head -30 || true
-            fi
-            
-            # Actual connection test
-            if ssh -i ~/.ssh/deploy_key \
-                -o StrictHostKeyChecking=no \
-                -o ConnectTimeout=30 \
-                -o ServerAliveInterval=60 \
-                -o ServerAliveCountMax=3 \
-                -o TCPKeepAlive=yes \
-                ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
-                "echo 'SSH connection successful'" 2>&1; then
-              CONNECTION_SUCCESS=true
-              echo "✅ SSH connection successful!"
-              break
-            else
-              echo "❌ Connection attempt $RETRY_COUNT failed"
-              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-                echo "Waiting 5 seconds before retry..."
-                sleep 5
-              fi
-            fi
-          done
-          
-          if [ "$CONNECTION_SUCCESS" = false ]; then
-            echo ""
-            echo "═══════════════════════════════════════════════════════════"
-            echo "❌ SSH CONNECTION FAILED AFTER $MAX_RETRIES ATTEMPTS!"
-            echo "═══════════════════════════════════════════════════════════"
-            echo ""
-            echo "📋 Please review the 'Comprehensive SSH Diagnostics' step above"
-            echo "   for detailed information about each potential issue."
-            echo ""
-            echo "Quick troubleshooting checklist:"
-            echo ""
-            echo "1. ✅ Firewall blocking port ${SSH_PORT:-22}"
-            echo "   → Check server firewall: sudo ufw status"
-            echo "   → Allow SSH: sudo ufw allow ${SSH_PORT:-22}/tcp"
-            echo ""
-            echo "2. ✅ SSH service not running"
-            echo "   → Check status: sudo systemctl status sshd"
-            echo "   → Start service: sudo systemctl start sshd"
-            echo ""
-            echo "3. ✅ Wrong hostname/IP address"
-            echo "   → Verify SERVER_HOST secret: ${{ secrets.SERVER_HOST }}"
-            echo "   → Test connectivity: ping ${{ secrets.SERVER_HOST }}"
-            echo ""
-            echo "4. ✅ Network connectivity issues"
-            echo "   → Check if server is online"
-            echo "   → Verify DNS resolution (if using hostname)"
-            echo ""
-            echo "5. ✅ Server not allowing connections from GitHub Actions IPs"
-            echo "   → Check firewall rules"
-            echo "   → Allow GitHub Actions IP ranges (see diagnostics above)"
-            echo ""
-            echo "6. ✅ Public key not added to server's ~/.ssh/authorized_keys"
-            echo "   → Extract public key: ssh-keygen -y -f ~/.ssh/deploy_key"
-            echo "   → Add to server:"
-            echo "     mkdir -p ~/.ssh"
-            echo "     chmod 700 ~/.ssh"
-            echo "     echo 'PUBLIC_KEY' >> ~/.ssh/authorized_keys"
-            echo "     chmod 600 ~/.ssh/authorized_keys"
-            echo ""
-            echo "For more details, check the diagnostics output above."
-            echo "═══════════════════════════════════════════════════════════"
-            exit 1
-          fi
-
-      - name: Create .env file on server
-        run: |
-          ssh -i ~/.ssh/deploy_key \
-              -o StrictHostKeyChecking=no \
-              -o ConnectTimeout=30 \
-              -o ServerAliveInterval=60 \
-              -o ServerAliveCountMax=3 \
-              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
-          cat > /var/www/christina-sings4you/.env << 'ENVFILE'
-          NODE_ENV=production
-          PORT=3001
-          CLIENT_URL=${{ secrets.CLIENT_URL }}
-          SITE_URL=${{ secrets.SITE_URL }}
-          MONGODB_URI=${{ secrets.MONGODB_URI }}
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
-          JWT_EXPIRES_IN=1h
-          JWT_REFRESH_EXPIRES_IN=7d
-          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME || '' }}
-          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY || '' }}
-          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET || '' }}
-          SMTP_HOST=${{ secrets.SMTP_HOST || '' }}
-          SMTP_PORT=${{ secrets.SMTP_PORT || '587' }}
-          SMTP_USER=${{ secrets.SMTP_USER || '' }}
-          SMTP_PASS=${{ secrets.SMTP_PASS || '' }}
-          SMTP_FROM=${{ secrets.SMTP_FROM || '' }}
-          ENVFILE
-          chmod 600 /var/www/christina-sings4you/.env
-          chown www-data:www-data /var/www/christina-sings4you/.env
-          EOF
-
-      - name: Sync files to server
-        run: |
-          echo "📤 Syncing files to server..."
-          echo "Syncing frontend and backend build files..."
-          
-          # Sync with explicit includes for better control
-          rsync -avz --delete \
-            --exclude='node_modules' \
-            --exclude='.git' \
-            --exclude='.env' \
-            --exclude='*.log' \
-            --exclude='.DS_Store' \
-            --exclude='src/' \
-            --exclude='*.ts' \
-            --exclude='*.tsx' \
-            --exclude='tsconfig*.json' \
-            --exclude='vite.config.ts' \
-            --exclude='tailwind.config.js' \
-            --exclude='postcss.config.js' \
-            --exclude='eslint.config.js' \
-            --exclude='.github/' \
-            --exclude='*.md' \
-            --include='dist/' \
-            --include='dist/client/' \
-            --include='dist/client/**' \
-            --include='dist/server/' \
-            --include='dist/server/**' \
-            --include='package.json' \
-            --include='package-lock.json' \
-            --include='deployment/' \
-            --include='deployment/**' \
-            --exclude='*' \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o ConnectTimeout=30 -o ServerAliveInterval=60 -o ServerAliveCountMax=3" \
-            ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/christina-sings4you/
-          
-          echo "✅ Files synced successfully"
-          
-          # Verify dist directory exists on server with detailed checks
-          echo "🔍 Verifying synced files on server..."
-          ssh -i ~/.ssh/deploy_key \
-              -o StrictHostKeyChecking=no \
-              -o ConnectTimeout=30 \
-              -o ServerAliveInterval=60 \
-              -o ServerAliveCountMax=3 \
-              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'VERIFY'
-            cd /var/www/christina-sings4you
-            
-            echo "Checking dist directory..."
-            if [ ! -d "dist" ]; then
-              echo "❌ Error: dist directory not found on server!"
-              exit 1
-            fi
-            
-            echo "Checking frontend (client) build..."
-            if [ ! -d "dist/client" ]; then
-              echo "❌ Error: dist/client directory not found on server!"
-              exit 1
-            fi
-            if [ ! -f "dist/client/index.html" ]; then
-              echo "❌ Error: dist/client/index.html not found on server!"
-              exit 1
-            fi
-            echo "✅ Frontend build verified"
-            echo "Frontend files count: $(find dist/client -type f | wc -l)"
-            du -sh dist/client/
-            
-            echo ""
-            echo "Checking backend (server) build..."
-            if [ ! -d "dist/server" ]; then
-              echo "❌ Error: dist/server directory not found on server!"
-              exit 1
-            fi
-            if [ ! -f "dist/server/index.js" ]; then
-              echo "❌ Error: dist/server/index.js not found on server!"
-              exit 1
-            fi
-            echo "✅ Backend build verified"
-            echo "Backend files count: $(find dist/server -type f | wc -l)"
-            du -sh dist/server/
-            
-            echo ""
-            echo "Checking package.json..."
-            if [ ! -f "package.json" ]; then
-              echo "⚠️  Warning: package.json not found on server"
-            else
-              echo "✅ package.json found"
-            fi
-            
-            echo ""
-            echo "Checking deployment scripts..."
-            if [ ! -d "deployment/scripts" ]; then
-              echo "⚠️  Warning: deployment/scripts not found on server"
-            else
-              echo "✅ deployment/scripts found"
-            fi
-            
-            echo ""
-            echo "Checking server utility scripts (seed, createAdmin)..."
-            if [ -d "dist/server/scripts" ]; then
-              echo "✅ dist/server/scripts found"
-              echo "Available utility scripts:"
-              ls -lah dist/server/scripts/ || echo "  (scripts directory is empty)"
-              echo ""
-              echo "💡 To run seed script on server:"
-              echo "   cd /var/www/christina-sings4you && node dist/server/scripts/seed.js"
-              echo ""
-              echo "💡 To run createAdmin script on server:"
-              echo "   cd /var/www/christina-sings4you && node dist/server/scripts/createAdmin.js"
-            else
-              echo "⚠️  Warning: dist/server/scripts not found (utility scripts not available)"
-            fi
-            
-            echo ""
-            echo "📊 Summary of synced files:"
-            echo "Total dist size: $(du -sh dist/ | cut -f1)"
-            ls -lah dist/
-            echo ""
-            echo "✅ All build files verified on server"
-          VERIFY
-
-      - name: Pre-deployment verification
-        run: |
-          echo "🔍 Pre-deployment verification..."
-          ssh -i ~/.ssh/deploy_key \
-              -o StrictHostKeyChecking=no \
-              -o ConnectTimeout=30 \
-              -o ServerAliveInterval=60 \
-              -o ServerAliveCountMax=3 \
-              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'PRE_CHECK'
-            cd /var/www/christina-sings4you
-            
-            echo "Checking Node.js version..."
-            node --version || echo "⚠️  Node.js not found"
-            npm --version || echo "⚠️  npm not found"
-            
-            echo ""
-            echo "Checking PM2..."
-            pm2 --version || echo "⚠️  PM2 not found"
-            
-            echo ""
-            echo "Checking Nginx..."
-            nginx -v || echo "⚠️  Nginx not found"
-            
-            echo ""
-            echo "Checking MongoDB connection (if .env exists)..."
-            if [ -f ".env" ]; then
-              echo "✅ .env file exists"
-            else
-              echo "⚠️  .env file not found (will be created during deployment)"
-            fi
-            
-            echo ""
-            echo "✅ Pre-deployment checks completed"
-          PRE_CHECK
-
-      - name: Run deployment script on server
-        run: |
-          echo "🚀 Running deployment script on server..."
-          ssh -i ~/.ssh/deploy_key \
-              -o StrictHostKeyChecking=no \
-              -o ConnectTimeout=30 \
-              -o ServerAliveInterval=60 \
-              -o ServerAliveCountMax=3 \
-              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-          cd /var/www/christina-sings4you
-          
-          # Ensure deployment script is executable
-          if [ ! -f "deployment/scripts/deploy.sh" ]; then
-            echo "❌ Error: deployment/scripts/deploy.sh not found!"
-            exit 1
-          fi
-          
-          chmod +x deployment/scripts/deploy.sh
-          
-          # Run deployment script
-          echo "Executing deployment script..."
-          sudo ./deployment/scripts/deploy.sh production
-          
-          echo "✅ Deployment script completed"
-          EOF
-
-      - name: Health check
-        run: |
-          echo "🏥 Starting health checks..."
-          echo "Waiting for application to start..."
-          sleep 20  # Give server more time to start
-          
-          MAX_RETRIES=5
-          RETRY_COUNT=0
-          HEALTH_CHECK_PASSED=false
-          
-          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            RETRY_COUNT=$((RETRY_COUNT + 1))
-            echo ""
-            echo "Health check attempt $RETRY_COUNT/$MAX_RETRIES..."
-            
-            # Check backend API health endpoint
-            echo "Checking backend API (/api/health)..."
-            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/health > /dev/null 2>&1; then
-              echo "✅ Backend health check passed!"
-              HEALTH_CHECK_PASSED=true
-              break
-            fi
-            
-            # Fallback: Check backend API with /api/hero endpoint
-            echo "Checking backend API (/api/hero)..."
-            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/hero > /dev/null 2>&1; then
-              echo "✅ Backend API is responding!"
-              HEALTH_CHECK_PASSED=true
-              break
-            fi
-            
-            # Check frontend (homepage)
-            echo "Checking frontend (homepage)..."
-            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/ > /dev/null 2>&1; then
-              echo "✅ Frontend is accessible!"
-              # Still need backend check
-            fi
-            
-            if [ "$HEALTH_CHECK_PASSED" = false ]; then
-              echo "❌ Health check attempt $RETRY_COUNT failed"
-              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-                echo "Waiting 5 seconds before retry..."
-                sleep 5
-              fi
-            fi
-          done
-          
-          if [ "$HEALTH_CHECK_PASSED" = true ]; then
-            echo ""
-            echo "✅ Health check passed!"
-            echo ""
-            echo "Verifying both frontend and backend..."
-            
-            # Final verification
-            echo "Frontend check:"
-            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/ > /dev/null 2>&1; then
-              echo "  ✅ Frontend is accessible"
-            else
-              echo "  ⚠️  Frontend check failed (may need more time)"
-            fi
-            
-            echo "Backend API check:"
-            if curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/health > /dev/null 2>&1 || \
-               curl -f -s -m 10 https://${{ secrets.SITE_URL }}/api/hero > /dev/null 2>&1; then
-              echo "  ✅ Backend API is responding"
-            else
-              echo "  ⚠️  Backend API check failed"
-            fi
-            
-            exit 0
-          else
-            echo ""
-            echo "❌ Health check failed after $MAX_RETRIES attempts"
+              -p ${{ secrets.SSH_PORT }} \
+              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+              "echo '✅ SSH connection successful'" 2>&1 || {
+            echo "❌ SSH connection test failed!"
             echo ""
             echo "Troubleshooting steps:"
-            echo "1. Check PM2 status:"
-            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 list'"
+            echo "1. Verify public key is in ~/.ssh/authorized_keys on server"
+            echo "2. Check username: ${{ secrets.SERVER_USER }}"
+            echo "3. Check host: ${{ secrets.SERVER_HOST }}"
+            echo "4. Check port: ${{ secrets.SSH_PORT }}"
+            echo "5. Verify SSH_PRIVATE_KEY format in GitHub Secrets"
             echo ""
-            echo "2. Check PM2 logs:"
-            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'pm2 logs christina-sings4you-api --lines 30'"
-            echo ""
-            echo "3. Check if server is listening on port 3001:"
-            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'netstat -tuln | grep 3001'"
-            echo ""
-            echo "4. Check Nginx status:"
-            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'systemctl status nginx'"
-            echo ""
-            echo "5. Check Nginx error logs:"
-            echo "   ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'tail -20 /var/log/nginx/error.log'"
-            echo ""
-            echo "6. Verify .env file exists and has correct values"
-            echo ""
+            echo "To add public key to server, run on server:"
+            echo "  mkdir -p ~/.ssh && chmod 700 ~/.ssh"
+            echo "  echo 'PUBLIC_KEY_HERE' >> ~/.ssh/authorized_keys"
+            echo "  chmod 600 ~/.ssh/authorized_keys"
             exit 1
-          fi
+          }
 
-      - name: Deployment summary
-        if: success()
+      # ✅ Build Frontend
+      - name: Create .env.production for frontend
         run: |
-          echo ""
-          echo "═══════════════════════════════════════════════════════════"
-          echo "✅ DEPLOYMENT SUCCESSFUL!"
-          echo "═══════════════════════════════════════════════════════════"
-          echo ""
-          echo "🌐 Application URL: https://${{ secrets.SITE_URL }}"
-          echo "📅 Deployment time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          echo "🔀 Branch: ${{ github.ref_name }}"
-          echo "📝 Commit: ${{ github.sha }}"
-          echo ""
-          echo "📦 Deployed components:"
-          echo "  ✅ Frontend (React/Vite) - dist/client/"
-          echo "  ✅ Backend (Express/Node.js) - dist/server/"
-          echo ""
-          echo "🔗 Quick links:"
-          echo "  - Homepage: https://${{ secrets.SITE_URL }}/"
-          echo "  - API Health: https://${{ secrets.SITE_URL }}/api/health"
-          echo "  - Admin Panel: https://${{ secrets.SITE_URL }}/admin"
-          echo ""
-          echo "📊 Server status:"
-          ssh -i ~/.ssh/deploy_key \
-              -o StrictHostKeyChecking=no \
-              -o ConnectTimeout=30 \
-              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'STATUS'
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env.production
+
+      - name: Build React app
+        run: npm run build
+
+      # ✅ Build Backend
+      - name: Build backend server
+        run: npm run build:server
+
+      # ✅ Prepare directories on VPS
+      - name: Prepare VPS directories
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 120s
+          command_timeout: 10m
+          use_insecure_cipher: false
+          debug: true
+          script: |
+            set -e
+            FRONTEND_TARGET="${{ secrets.TARGET_DIR }}"
+            BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
+            RELEASES="$FRONTEND_TARGET/_releases"
+            TS="$(date +%Y%m%d-%H%M%S)"
+            NEW="$RELEASES/$TS"
+
+            # Create parent directories first
+            mkdir -p "$(dirname "$FRONTEND_TARGET")" 2>/dev/null || true
+            mkdir -p "$(dirname "$BACKEND_TARGET")" 2>/dev/null || true
+            
+            # Frontend directories with explicit permissions
+            echo "Creating frontend directories..."
+            mkdir -p "$FRONTEND_TARGET"
+            mkdir -p "$RELEASES"
+            mkdir -p "$NEW"
+            mkdir -p "$FRONTEND_TARGET/_incoming"
+            chmod -R 755 "$FRONTEND_TARGET" || true
+            chmod 777 "$FRONTEND_TARGET/_incoming" || true
+            # Try to set ownership (may fail if not root, that's ok)
+            chown -R "$(whoami):$(whoami)" "$FRONTEND_TARGET" 2>/dev/null || true
+
+            # Backend directories with explicit permissions
+            echo "Creating backend directories..."
+            mkdir -p "$BACKEND_TARGET"
+            mkdir -p "$BACKEND_TARGET/dist"
+            mkdir -p "$BACKEND_TARGET/server"
+            mkdir -p "$BACKEND_TARGET/uploads"
+            mkdir -p "$BACKEND_TARGET/_incoming_backend"
+            chmod -R 755 "$BACKEND_TARGET" || true
+            chmod 777 "$BACKEND_TARGET/_incoming_backend" || true
+            # Try to set ownership (may fail if not root, that's ok)
+            chown -R "$(whoami):$(whoami)" "$BACKEND_TARGET" 2>/dev/null || true
+
+            # Verify directories are writable
+            if [ ! -w "$FRONTEND_TARGET/_incoming" ]; then
+              echo "⚠️  Warning: $FRONTEND_TARGET/_incoming may not be writable"
+              ls -ld "$FRONTEND_TARGET/_incoming" || true
+            fi
+            
+            if [ ! -w "$BACKEND_TARGET/_incoming_backend" ]; then
+              echo "⚠️  Warning: $BACKEND_TARGET/_incoming_backend may not be writable"
+              ls -ld "$BACKEND_TARGET/_incoming_backend" || true
+            fi
+
+            echo "✅ Frontend release dir: $NEW"
+            echo "✅ Backend target: $BACKEND_TARGET"
+            echo "✅ All directories created"
+
+      # ✅ Upload Frontend build (using SCP like the working workflow)
+      - name: Upload frontend build to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 180s
+          command_timeout: 20m
+          use_insecure_cipher: false
+          source: "build/**"
+          target: "${{ secrets.TARGET_DIR }}/_incoming"
+          overwrite: true
+
+      # ✅ Ensure backend directories exist before upload
+      - name: Ensure backend upload directories exist
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 2m
+          use_insecure_cipher: false
+          script: |
+            set -e
+            BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
+            
+            if [ -z "$BACKEND_TARGET" ]; then
+              echo "❌ ERROR: BACKEND_TARGET_DIR secret is not set!"
+              echo "Please configure BACKEND_TARGET_DIR in GitHub Secrets"
+              exit 1
+            fi
+            
+            echo "Creating directories at: $BACKEND_TARGET"
+            mkdir -p "$BACKEND_TARGET/_incoming_backend"
+            mkdir -p "$BACKEND_TARGET"
+            chmod -R 755 "$BACKEND_TARGET" || true
+            echo "✅ Backend directories ready"
+
+      # ✅ Upload Backend dist (using SCP like the working workflow)
+      - name: Upload backend dist to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 180s
+          command_timeout: 20m
+          use_insecure_cipher: false
+          source: "dist/**"
+          target: "${{ secrets.BACKEND_TARGET_DIR }}/_incoming_backend"
+          overwrite: true
+
+      # ✅ Upload package.json and package-lock.json for dependency installation
+      - name: Upload package files for dependency installation
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 2m
+          use_insecure_cipher: false
+          source: "package.json,package-lock.json"
+          target: "${{ secrets.BACKEND_TARGET_DIR }}"
+          overwrite: true
+
+      - name: Upload ecosystem.config.js via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 5m
+          use_insecure_cipher: false
+          script: |
+            set -e
+            BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
+            mkdir -p "$BACKEND_TARGET"
+            cat > "$BACKEND_TARGET/ecosystem.config.js" << EOF
+            module.exports = {
+              apps: [
+                {
+                  name: "giftforyou-api",
+                  script: "dist/server/server.js",
+                  cwd: "${BACKEND_TARGET}",
+                  instances: 1,
+                  exec_mode: "fork",
+                  env_file: "server/.env",
+                  env: {
+                    NODE_ENV: "production",
+                    PORT: 4000,
+                  },
+                  error_file: "./logs/pm2-error.log",
+                  out_file: "./logs/pm2-out.log",
+                  log_date_format: "YYYY-MM-DD HH:mm:ss Z",
+                  merge_logs: true,
+                  autorestart: true,
+                  max_restarts: 10,
+                  min_uptime: "10s",
+                  max_memory_restart: "500M",
+                  watch: false,
+                  ignore_watch: ["node_modules", "logs", "uploads"],
+                },
+              ],
+            };
+            EOF
+            chmod 644 "$BACKEND_TARGET/ecosystem.config.js"
+            echo "✅ ecosystem.config.js uploaded with cwd: ${BACKEND_TARGET}"
+
+      # ✅ Activate Frontend Release
+      - name: Activate frontend release (atomic)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 120s
+          command_timeout: 10m
+          use_insecure_cipher: false
+          script: |
+            set -e
+            FRONTEND_TARGET="${{ secrets.TARGET_DIR }}"
+            RELEASES="$FRONTEND_TARGET/_releases"
+            INCOMING="$FRONTEND_TARGET/_incoming/build"
+            TS="$(date +%Y%m%d-%H%M%S)"
+            NEW="$RELEASES/$TS"
+            CURRENT="$FRONTEND_TARGET/current"
+            BUILD_ROOT="$FRONTEND_TARGET/build"
+
+            if [ ! -d "$INCOMING" ]; then
+              echo "ERROR: Incoming frontend build not found at $INCOMING"
+              ls -la "$FRONTEND_TARGET/_incoming" || true
+              exit 1
+            fi
+
+            mkdir -p "$NEW"
+            cp -a "$INCOMING"/. "$NEW"/
+
+            # atomic switch
+            rm -f "$CURRENT"
+            ln -s "$NEW" "$CURRENT"
+
+            # Keep nginx root in sync
+            if [ -e "$BUILD_ROOT" ] || [ -L "$BUILD_ROOT" ]; then
+              rm -rf "$BUILD_ROOT"
+            fi
+            ln -s "$NEW" "$BUILD_ROOT"
+
+            chmod -R 755 "$NEW"
+            rm -rf "$FRONTEND_TARGET/_incoming"
+
+            echo "✅ Frontend activated"
+            echo "Current -> $(readlink $CURRENT)"
+            echo "BuildRoot -> $(readlink $BUILD_ROOT)"
+
+      # ✅ Deploy Backend
+      - name: Deploy backend and restart PM2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 180s
+          command_timeout: 15m
+          use_insecure_cipher: false
+          script: |
+            set -e
+            BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
+            INCOMING_BACKEND="$BACKEND_TARGET/_incoming_backend/dist"
+            DIST_DIR="$BACKEND_TARGET/dist"
+
+            # Handle different upload structures
+            if [ -d "$BACKEND_TARGET/_incoming_backend/dist/dist" ]; then
+              # If nested dist/dist structure
+              INCOMING_BACKEND="$BACKEND_TARGET/_incoming_backend/dist/dist"
+            elif [ -d "$BACKEND_TARGET/_incoming_backend/dist" ]; then
+              # Normal structure
+              INCOMING_BACKEND="$BACKEND_TARGET/_incoming_backend/dist"
+            else
+              # Check if dist is directly in _incoming_backend
+              if [ -d "$BACKEND_TARGET/_incoming_backend/server" ] || [ -f "$BACKEND_TARGET/_incoming_backend/server/server.js" ]; then
+                INCOMING_BACKEND="$BACKEND_TARGET/_incoming_backend"
+              fi
+            fi
+            ENV_FILE="$BACKEND_TARGET/server/.env"
+            ENV_PROD_FILE="$BACKEND_TARGET/.env.production"
+
+            echo "=== Backend Deployment ==="
+
+            # Check if incoming backend exists
+            if [ ! -d "$INCOMING_BACKEND" ]; then
+              echo "ERROR: Incoming backend dist not found at $INCOMING_BACKEND"
+              ls -la "$BACKEND_TARGET/_incoming_backend" || true
+              exit 1
+            fi
+
+            # Backup current dist (optional, for rollback)
+            if [ -d "$DIST_DIR" ]; then
+              echo "Backing up current dist..."
+              BACKUP_DIR="$BACKEND_TARGET/dist.backup.$(date +%Y%m%d-%H%M%S)"
+              cp -a "$DIST_DIR" "$BACKUP_DIR" || true
+              echo "Backup created at: $BACKUP_DIR"
+            fi
+
+            # Remove old dist and copy new one
+            echo "Deploying new backend dist..."
+            rm -rf "$DIST_DIR"
+            mkdir -p "$DIST_DIR"
+            cp -a "$INCOMING_BACKEND"/. "$DIST_DIR"/
+
+            # Ensure .env file exists (create from secrets if needed, or keep existing)
+            if [ ! -f "$ENV_FILE" ] && [ -f "$ENV_PROD_FILE" ]; then
+              echo "Copying .env.production to server/.env..."
+              mkdir -p "$BACKEND_TARGET/server"
+              cp "$ENV_PROD_FILE" "$ENV_FILE"
+            fi
+
+            # Verify critical files
+            if [ ! -f "$DIST_DIR/server/server.js" ]; then
+              echo "ERROR: server.js not found in dist!"
+              exit 1
+            fi
+
+            echo "✅ Backend files deployed"
+
+            # Install dependencies if package.json exists
+            echo "=== Installing Dependencies ==="
+            if [ -f "$BACKEND_TARGET/package.json" ]; then
+              echo "package.json found, installing dependencies..."
+              cd "$BACKEND_TARGET"
+              npm install --production
+              if [ $? -eq 0 ]; then
+                echo "✅ Dependencies installed successfully"
+              else
+                echo "⚠️  Warning: npm install failed, but continuing..."
+              fi
+            else
+              echo "⚠️  Warning: package.json not found, skipping dependency installation"
+              echo "⚠️  You may need to install dependencies manually"
+            fi
+
+            # Stop old PM2 process if running
+            echo "=== PM2 Management ==="
+            pm2 stop giftforyou-api || true
+            pm2 delete giftforyou-api || true
+
+            # Kill any process on port 4000 (safety measure)
+            echo "Checking for processes on port 4000..."
+            PORT_PID=$(lsof -ti:4000 || true)
+            if [ ! -z "$PORT_PID" ]; then
+              echo "Killing process $PORT_PID on port 4000..."
+              kill -9 $PORT_PID || true
+              sleep 2
+            fi
+
+            # Start PM2 with proper environment
+            echo "Starting PM2 process..."
+            cd "$BACKEND_TARGET"
+
+            # Use ecosystem.config.js if exists, otherwise start directly
+            if [ -f "ecosystem.config.js" ]; then
+              pm2 start ecosystem.config.js
+            elif [ -f "server/.env" ]; then
+              pm2 start dist/server/server.js \
+                --name giftforyou-api \
+                --env-file server/.env \
+                --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                --merge-logs
+            elif [ -f ".env.production" ]; then
+              pm2 start dist/server/server.js \
+                --name giftforyou-api \
+                --env-file .env.production \
+                --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                --merge-logs
+            else
+              # Fallback: start without env-file (assumes env vars are set in system)
+              pm2 start dist/server/server.js \
+                --name giftforyou-api \
+                --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                --merge-logs
+            fi
+
+            # Save PM2 configuration
+            pm2 save
+
+            # Cleanup incoming backend
+            rm -rf "$BACKEND_TARGET/_incoming_backend"
+
+            echo "✅ Backend deployment complete"
+
+      # ✅ Verify Deployment
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 2m
+          use_insecure_cipher: false
+          script: |
+            set -e
+            echo "=== Verification ==="
+
+            # Check PM2 status
             echo "PM2 Status:"
-            pm2 list || echo "PM2 not available"
-            echo ""
-            echo "Nginx Status:"
-            systemctl status nginx --no-pager -l || echo "Nginx status check failed"
-          STATUS
-          echo ""
-          echo "═══════════════════════════════════════════════════════════"
+            pm2 status || true
+            pm2 logs giftforyou-api --lines 20 --nostream || true
 
-      - name: Deployment failure notification
-        if: failure()
-        run: |
-          echo ""
-          echo "═══════════════════════════════════════════════════════════"
-          echo "❌ DEPLOYMENT FAILED!"
-          echo "═══════════════════════════════════════════════════════════"
-          echo ""
-          echo "📅 Failure time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          echo "🔀 Branch: ${{ github.ref_name }}"
-          echo "📝 Commit: ${{ github.sha }}"
-          echo ""
-          echo "Please check the logs above for details."
-          echo ""
-          echo "Common issues to check:"
-          echo "  1. Build errors (check build-and-test job)"
-          echo "  2. SSH connection issues"
-          echo "  3. Server deployment script errors"
-          echo "  4. Health check failures"
-          echo "  5. Missing environment variables"
-          echo ""
-          echo "For more help, check the troubleshooting guide in the repository."
-          echo "═══════════════════════════════════════════════════════════"
+            # Check backend health
+            echo -e "\nBackend Health Check:"
+            sleep 3
+            curl -f http://localhost:4000/api/health || echo "⚠️ Health check failed (may need more time)"
+
+            # Check frontend
+            echo -e "\nFrontend Check:"
+            if [ -L "${{ secrets.TARGET_DIR }}/current" ]; then
+              echo "✅ Frontend symlink exists"
+              ls -la "${{ secrets.TARGET_DIR }}/current" | head -5
+            else
+              echo "⚠️ Frontend symlink not found"
+            fi
+
+            echo -e "\n✅ Deployment verification complete"
