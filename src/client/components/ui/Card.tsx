@@ -22,27 +22,33 @@ export const Card: React.FC<CardProps> = memo(({
       role={role}
       aria-label={ariaLabel}
       className={cn(
-        'bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-xl overflow-hidden border border-gold-900/40 relative backdrop-blur-md card-entrance',
-        'before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-transparent before:to-gold-900/15 before:pointer-events-none before:rounded-2xl before:transition-all before:duration-500',
+        'bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl overflow-hidden border border-gold-900/50 relative backdrop-blur-md card-entrance',
+        'before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-transparent before:to-gold-900/20 before:pointer-events-none before:rounded-2xl before:transition-all before:duration-500',
         'after:absolute after:inset-0 after:opacity-0 after:transition-all after:duration-500 after:rounded-2xl',
-        hover && 'card-hover-lift transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-gold-500/30 hover:border-gold-600/70 hover:before:to-gold-800/40 hover:after:opacity-100 hover:after:bg-gradient-to-br hover:after:from-gold-900/20 hover:after:via-musical-900/20 hover:after:to-transparent hover:ring-2 hover:ring-gold-500/50 magnetic-hover',
-        !hover && 'transition-all duration-300 hover:shadow-lg',
+        // Enhanced shadow system
+        'shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,194,51,0.1)_inset]',
+        hover && 'card-hover-lift transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(126,34,206,0.2),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-gold-500/60 hover:before:to-gold-800/50 hover:after:opacity-100 hover:after:bg-gradient-to-br hover:after:from-gold-900/25 hover:after:via-musical-900/25 hover:after:to-transparent hover:ring-2 hover:ring-gold-500/40 hover:ring-offset-2 hover:ring-offset-jazz-900 magnetic-hover',
+        !hover && 'transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]',
         className
       )}
-      style={{
-        boxShadow: hover 
-          ? '0 25px 70px rgba(255, 194, 51, 0.2), 0 15px 40px rgba(126, 34, 206, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)' 
-          : '0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
-      }}
       {...props}
     >
-      {/* Subtle musical accent on hover - Reduced for better performance */}
+      {/* Enhanced musical accent on hover */}
       {hover && (
-        <div className="absolute top-3 right-3 text-xl text-gold-500/0 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-60 hover:opacity-60 animate-float">
-          ♪
-        </div>
+        <>
+          <div className="absolute top-3 right-3 text-xl text-gold-500/0 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 hover:opacity-70 animate-float">
+            ♪
+          </div>
+          <div className="absolute bottom-3 left-3 text-lg text-musical-500/0 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-50 hover:opacity-50 animate-float" style={{ animationDelay: '1s' }}>
+            ♫
+          </div>
+        </>
       )}
-      <div className="relative z-10 h-full">
+      {/* Subtle glow effect on hover */}
+      {hover && (
+        <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 hover:opacity-20 transition-opacity duration-500 blur-xl pointer-events-none -z-10" />
+      )}
+      <div className="relative z-30 h-full">
         {children}
       </div>
     </div>

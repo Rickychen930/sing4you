@@ -17,46 +17,40 @@ export const Footer: React.FC = memo(() => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 lg:gap-16">
           <div>
-            <h3 className="text-2xl sm:text-3xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Christina Sings4U
             </h3>
-            <p className="text-base sm:text-lg text-gray-300 leading-relaxed max-w-sm">
+            <p className="text-base sm:text-lg text-gray-200 leading-relaxed max-w-sm">
               Elegant live vocals for your special moments in Sydney, NSW.
             </p>
           </div>
 
           <div>
-            <h4 className="text-lg sm:text-xl font-bold mb-4 sm:mb-5 text-gold-200">Quick Links</h4>
-            <ul className="space-y-3 text-base sm:text-lg">
+            <h4 className="text-lg sm:text-xl lg:text-2xl font-bold mb-5 sm:mb-6 text-gold-200">Quick Links</h4>
+            <ul className="space-y-4 text-base sm:text-lg">
               <li>
-                <Link to="/" className="text-gray-300 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
-                  <span className="text-gold-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                <Link to="/" className="text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
+                  <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">→</span>
                   <span>Home</span>
                 </Link>
               </li>
               <li>
-                <Link to="/categories" className="text-gray-300 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
-                  <span className="text-gold-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                  <span>Categories</span>
+                <Link to="/categories" className="text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
+                  <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">→</span>
+                  <span>Services</span>
                 </Link>
               </li>
               <li>
-                <Link to="/performances" className="text-gray-300 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
-                  <span className="text-gold-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                <Link to="/performances" className="text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
+                  <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">→</span>
                   <span>Performances</span>
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-gray-300 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
-                  <span className="text-gold-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                  <span>Blog</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-300 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
-                  <span className="text-gold-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                <Link to="/contact" className="text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group">
+                  <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">→</span>
                   <span>Contact</span>
                 </Link>
               </li>
@@ -64,25 +58,25 @@ export const Footer: React.FC = memo(() => {
           </div>
 
           <div>
-            <h4 className="text-lg sm:text-xl font-bold mb-4 sm:mb-5 text-gold-200">Contact</h4>
-            <ul className="space-y-3 text-base sm:text-lg">
+            <h4 className="text-lg sm:text-xl lg:text-2xl font-bold mb-5 sm:mb-6 text-gold-200">Contact</h4>
+            <ul className="space-y-4 text-base sm:text-lg">
               <li>
                 <a
                   href={generateWhatsAppLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group"
+                  className="text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group"
                 >
-                  <span className="text-gold-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                  <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">→</span>
                   <span>WhatsApp</span>
                 </a>
               </li>
               <li>
                 <a
                   href={generateMailtoLink()}
-                  className="text-gray-300 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group"
+                  className="text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium hover:translate-x-2 inline-flex items-center gap-2 group"
                 >
-                  <span className="text-gold-600 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                  <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">→</span>
                   <span>Email</span>
                 </a>
               </li>

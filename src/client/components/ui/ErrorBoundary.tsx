@@ -53,40 +53,48 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/50 via-gold-900/40 to-musical-900/50 px-4 py-12 relative overflow-hidden">
-          <Card className="max-w-md w-full">
-            <CardHeader className="p-4 sm:p-6 text-center">
-              <div className="text-6xl mb-4 opacity-60" aria-hidden="true">⚠️</div>
-              <h1 className="text-2xl sm:text-3xl font-elegant font-bold text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 py-12 relative overflow-hidden">
+          {/* Decorative background elements */}
+          <div className="absolute inset-0 pointer-events-none opacity-10">
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl animate-musical-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-musical-500/20 rounded-full blur-3xl animate-musical-pulse" style={{ animationDelay: '1s' }}></div>
+          </div>
+          
+          <Card className="max-w-lg w-full relative z-10">
+            <CardHeader className="p-6 sm:p-8 text-center">
+              <div className="text-7xl sm:text-8xl mb-6 opacity-70 animate-float" aria-hidden="true">⚠️</div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                 Oops! Something went wrong
               </h1>
             </CardHeader>
-            <CardBody className="p-4 sm:p-6">
-              <p className="text-gray-300 mb-4 text-center font-light leading-relaxed">
+            <CardBody className="p-6 sm:p-8">
+              <p className="text-base sm:text-lg text-gray-200 mb-6 text-center font-light leading-relaxed">
                 We apologize for the inconvenience. Please try refreshing the page or returning to the homepage.
               </p>
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mb-4">
-                  <summary className="text-sm text-jazz-600 cursor-pointer mb-2 font-medium">
+                <details className="mb-6">
+                  <summary className="text-sm text-gold-400 cursor-pointer mb-3 font-semibold hover:text-gold-300 transition-colors">
                     Error Details (Development Only)
                   </summary>
-                  <pre className="text-xs bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 p-3 rounded-lg overflow-auto max-h-40 border border-gold-900/30 text-gray-300">
+                  <pre className="text-xs bg-gradient-to-br from-jazz-900/90 to-jazz-800/90 p-4 rounded-xl overflow-auto max-h-48 border border-gold-900/40 text-gray-300 font-mono leading-relaxed">
                     {this.state.error.toString()}
                   </pre>
                 </details>
               )}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   variant="primary" 
                   onClick={this.handleReset}
-                  className="w-full sm:w-auto min-h-[44px]"
+                  size="lg"
+                  className="w-full sm:w-auto"
                 >
                   Go to Homepage
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={this.handleReload}
-                  className="w-full sm:w-auto min-h-[44px]"
+                  size="lg"
+                  className="w-full sm:w-auto"
                 >
                   Refresh Page
                 </Button>

@@ -120,7 +120,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               className="px-3 py-2 text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/20 link-underline magnetic-hover"
               aria-label="Navigate to categories page"
             >
-              <span className="relative z-10">Categories</span>
+              <span className="relative z-10">Services</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full" />
               <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                 <span className="absolute top-1 right-1 text-xs text-gold-500/60 font-musical animate-float" style={{ animationDelay: '0.4s' }}>♪</span>
@@ -135,17 +135,6 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full" />
               <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                 <span className="absolute top-1 right-1 text-xs text-gold-500/60 font-musical animate-float" style={{ animationDelay: '0.6s' }}>♬</span>
-              </span>
-            </Link>
-            <Link
-              to="/blog"
-              className="px-3 py-2 text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/20 link-underline magnetic-hover"
-              aria-label="Navigate to blog page"
-            >
-              <span className="relative z-10">Blog</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full" />
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <span className="absolute top-1 right-1 text-xs text-gold-500/60 font-musical animate-float" style={{ animationDelay: '0.8s' }}>♩</span>
               </span>
             </Link>
             <Link
@@ -260,7 +249,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               onClick={closeMobileMenu}
               role="menuitem"
             >
-              Categories
+              Services
             </Link>
             <Link
               to="/performances"
@@ -269,14 +258,6 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               role="menuitem"
             >
               Performances
-            </Link>
-            <Link
-              to="/blog"
-              className="block text-gray-200 hover:text-gold-400 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 px-4 py-2.5 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900"
-              onClick={closeMobileMenu}
-              role="menuitem"
-            >
-              Blog
             </Link>
             <Link
               to="/contact"

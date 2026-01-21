@@ -146,25 +146,29 @@ export const ContactPage: React.FC = () => {
       </div>
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20">
         <div className="max-w-3xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-8 sm:mb-10">
-            <div className="text-center p-6 sm:p-8 bg-gradient-to-br from-gold-900/50 to-jazz-900/60 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-gold-500/30 hover:scale-[1.02] border-2 border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900">
-              <div className="text-3xl mb-3 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">📱</div>
-              <h3 className="text-lg sm:text-xl font-bold text-gold-200 mb-3">WhatsApp</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
+            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(126,34,206,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+              {/* Glow effect on hover */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl pointer-events-none"></div>
+              <div className="text-4xl sm:text-5xl mb-4 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">📱</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gold-200 mb-4">WhatsApp</h3>
               <a
                 href={generateWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-2 py-1 min-h-[44px] flex items-center justify-center mx-auto"
+                className="text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 py-2 min-h-[44px] flex items-center justify-center mx-auto relative z-10"
               >
                 Message us on WhatsApp
               </a>
             </div>
-            <div className="text-center p-6 sm:p-8 bg-gradient-to-br from-gold-900/50 to-jazz-900/60 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-gold-500/30 hover:scale-[1.02] border-2 border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900">
-              <div className="text-3xl mb-3 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">✉️</div>
-              <h3 className="text-lg sm:text-xl font-bold text-gold-200 mb-3">Email</h3>
+            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(126,34,206,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+              {/* Glow effect on hover */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl pointer-events-none"></div>
+              <div className="text-4xl sm:text-5xl mb-4 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">✉️</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gold-200 mb-4">Email</h3>
               <a
                 href={generateMailtoLink()}
-                className="text-base sm:text-lg text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-2 py-1 min-h-[44px] flex items-center justify-center mx-auto"
+                className="text-base sm:text-lg text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 py-2 min-h-[44px] flex items-center justify-center mx-auto relative z-10"
               >
                 Send us an email
               </a>
@@ -245,18 +249,32 @@ export const ContactPage: React.FC = () => {
               helperText={`${formData.message.length}/2000 characters`}
             />
             {submitStatus === 'success' && (
-              <div className="p-5 bg-green-900/50 text-green-100 rounded-xl border-2 border-green-700/50 backdrop-blur-md shadow-lg">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">✓</span>
-                  <p className="font-semibold">Thank you for your inquiry! We will get back to you soon.</p>
+              <div className="p-6 bg-gradient-to-br from-green-900/60 to-green-800/50 text-green-100 rounded-xl border border-green-700/60 backdrop-blur-md shadow-[0_8px_24px_rgba(34,197,94,0.3)] animate-fade-in">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-700/50 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-lg mb-1">Message sent successfully!</p>
+                    <p className="text-green-200/90">Thank you for your inquiry! We will get back to you soon.</p>
+                  </div>
                 </div>
               </div>
             )}
             {submitStatus === 'error' && (
-              <div className="p-5 bg-red-900/50 text-red-100 rounded-xl border-2 border-red-700/50 backdrop-blur-md shadow-lg">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">⚠</span>
-                  <p className="font-semibold">There was an error submitting your form. Please try again.</p>
+              <div className="p-6 bg-gradient-to-br from-red-900/60 to-red-800/50 text-red-100 rounded-xl border border-red-700/60 backdrop-blur-md shadow-[0_8px_24px_rgba(239,68,68,0.3)] animate-fade-in">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-700/50 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-lg mb-1">Submission failed</p>
+                    <p className="text-red-200/90">There was an error submitting your form. Please try again.</p>
+                  </div>
                 </div>
               </div>
             )}

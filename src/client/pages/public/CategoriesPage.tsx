@@ -3,7 +3,7 @@ import { CategoryList } from '../../components/sections/CategoryList';
 import { SEO } from '../../components/ui/SEO';
 
 export const CategoriesPage: React.FC = () => {
-  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christinasings4u.com.au';
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
 
   return (
     <>

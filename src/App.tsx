@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from './client/components/ui/ErrorBoundary';
 import { ToastContainer } from './client/components/ui/Toast';
@@ -7,13 +7,12 @@ import { LoadingSpinner } from './client/components/ui/LoadingSpinner';
 import { useToastStore } from './client/stores/toastStore';
 import { Layout } from './client/components/layout/Layout';
 import { useAuthStore } from './client/stores/authStore';
+import { initScrollReveal } from './client/utils/scrollRevealInit';
 
 // Lazy load public pages for better code splitting
 const HomePage = lazy(() => import('./client/pages/public/HomePage'));
 const AboutPage = lazy(() => import('./client/pages/public/AboutPage').then(m => ({ default: m.AboutPage })));
 const PerformancesPage = lazy(() => import('./client/pages/public/PerformancesPage').then(m => ({ default: m.PerformancesPage })));
-const BlogPage = lazy(() => import('./client/pages/public/BlogPage').then(m => ({ default: m.BlogPage })));
-const BlogDetailPage = lazy(() => import('./client/pages/public/BlogDetailPage').then(m => ({ default: m.BlogDetailPage })));
 const ContactPage = lazy(() => import('./client/pages/public/ContactPage').then(m => ({ default: m.ContactPage })));
 const CategoriesPage = lazy(() => import('./client/pages/public/CategoriesPage').then(m => ({ default: m.CategoriesPage })));
 const VariationsPage = lazy(() => import('./client/pages/public/VariationsPage').then(m => ({ default: m.VariationsPage })));
@@ -27,7 +26,6 @@ const HeroManagementPage = lazy(() => import('./client/pages/admin/HeroManagemen
 const SectionsManagementPage = lazy(() => import('./client/pages/admin/SectionsManagementPage').then(m => ({ default: m.SectionsManagementPage })));
 const PerformancesManagementPage = lazy(() => import('./client/pages/admin/PerformancesManagementPage').then(m => ({ default: m.PerformancesManagementPage })));
 const TestimonialsManagementPage = lazy(() => import('./client/pages/admin/TestimonialsManagementPage').then(m => ({ default: m.TestimonialsManagementPage })));
-const BlogManagementPage = lazy(() => import('./client/pages/admin/BlogManagementPage').then(m => ({ default: m.BlogManagementPage })));
 const SEOManagementPage = lazy(() => import('./client/pages/admin/SEOManagementPage').then(m => ({ default: m.SEOManagementPage })));
 const CategoriesManagementPage = lazy(() => import('./client/pages/admin/CategoriesManagementPage').then(m => ({ default: m.CategoriesManagementPage })));
 const VariationsManagementPage = lazy(() => import('./client/pages/admin/VariationsManagementPage').then(m => ({ default: m.VariationsManagementPage })));
@@ -68,11 +66,32 @@ const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) 
   return children;
 };
 
+// Component untuk handle scroll reveal initialization on route change
+const ScrollRevealHandler: React.FC = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Initialize scroll reveal setelah route change
+    const timer = setTimeout(() => {
+      initScrollReveal();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  return null;
+};
+
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
   useEffect(() => {
     checkAuth();
+    // Initialize scroll reveal on mount dengan delay untuk memastikan DOM ready
+    const timer = setTimeout(() => {
+      initScrollReveal();
+    }, 300);
+    return () => clearTimeout(timer);
   }, [checkAuth]);
 
   const toasts = useToastStore((state) => state.toasts);
@@ -89,6 +108,7 @@ function App() {
     <ErrorBoundary>
       <HelmetProvider>
         <BrowserRouter>
+          <ScrollRevealHandler />
           <ToastContainer toasts={toasts} onClose={removeToast} />
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
@@ -96,8 +116,6 @@ function App() {
               <Route path="/" element={<Layout><HomePage /></Layout>} />
               <Route path="/about" element={<Layout><AboutPage /></Layout>} />
               <Route path="/performances" element={<Layout><PerformancesPage /></Layout>} />
-              <Route path="/blog" element={<Layout><BlogPage /></Layout>} />
-              <Route path="/blog/:slug" element={<Layout><BlogDetailPage /></Layout>} />
               <Route path="/categories" element={<Layout><CategoriesPage /></Layout>} />
               <Route path="/categories/:categoryId" element={<Layout><VariationsPage /></Layout>} />
               <Route path="/variations/:variationId" element={<Layout><VariationDetailPage /></Layout>} />
@@ -142,14 +160,6 @@ function App() {
                 element={
                   <PrivateRoute>
                     <TestimonialsManagementPage />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/admin/blog"
-                element={
-                  <PrivateRoute>
-                    <BlogManagementPage />
                   </PrivateRoute>
                 }
               />

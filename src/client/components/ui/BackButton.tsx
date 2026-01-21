@@ -29,13 +29,13 @@ export const BackButton: React.FC<BackButtonProps> = memo(({
   return (
     <Button
       variant={variant}
-      size="sm"
+      size="md"
       onClick={handleClick}
-      className={cn('flex items-center gap-2', className)}
+      className={cn('flex items-center gap-2 group', className)}
       aria-label={label}
     >
       <svg
-        className="w-4 h-4"
+        className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:-translate-x-1"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -44,11 +44,11 @@ export const BackButton: React.FC<BackButtonProps> = memo(({
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth={2}
+          strokeWidth={2.5}
           d="M10 19l-7-7m0 0l7-7m-7 7h18"
         />
       </svg>
-      {label}
+      <span className="font-medium">{label}</span>
     </Button>
   );
 }, (prevProps, nextProps) => {

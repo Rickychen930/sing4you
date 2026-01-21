@@ -200,6 +200,10 @@
     margin-bottom: 1em;
     font-weight: 400;
     letter-spacing: -0.01em;
+    /* Enhanced readability */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   strong, b {
@@ -216,11 +220,17 @@
     text-decoration: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 500;
+    position: relative;
   }
-  
+
   a:hover {
     @apply text-gold-300;
     text-shadow: 0 0 8px rgba(255, 194, 51, 0.4);
+    transform: translateY(-1px);
+  }
+
+  a:active {
+    transform: translateY(0);
   }
   
   button:focus-visible,
@@ -325,6 +335,26 @@
   }
 }
 
+/* Fallback untuk elemen yang tidak ter-trigger oleh Intersection Observer */
+/* CSS fallback akan di-handle oleh JS, tapi kita tetap punya backup */
+@media (prefers-reduced-motion: no-preference) {
+  /* Fallback animation akan trigger jika JS tidak bekerja */
+  .scroll-reveal-io:not(.revealed) {
+    /* Will be handled by JS fallback */
+  }
+}
+
+@keyframes delayedReveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes fade-in-down {
   from {
     opacity: 0;
@@ -345,7 +375,37 @@
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Override untuk elemen dengan scroll-reveal-io - disable animation, let scroll reveal handle it */
+.scroll-reveal-io.animate-fade-in-up {
+  /* Disable fade-in-up animation, scroll-reveal-io will handle it */
+  animation: none !important;
+  /* Start state - akan di-override oleh scroll-reveal-io */
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+/* When revealed, use fade-in-up animation */
+.scroll-reveal-io.animate-fade-in-up.revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+/* Ensure elements with both classes work together */
+.scroll-reveal-io.animate-fade-in-up {
+  /* Start dengan opacity 0, akan di-reveal oleh scroll reveal */
+  opacity: 0;
+  transform: translateY(40px);
+  animation: none; /* Disable animation, let scroll-reveal handle it */
+}
+
+.scroll-reveal-io.animate-fade-in-up.revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .animate-fade-in-down {
@@ -400,13 +460,41 @@
   }
 }
 
+/* Enhanced scroll reveal animation */
 .scroll-reveal {
   opacity: 0;
-  animation: scrollReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform: translateY(40px) scale(0.95);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .scroll-reveal-visible {
   opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Intersection Observer based scroll reveal */
+.scroll-reveal-io {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-io.revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Safety: Jika elemen tidak ter-reveal dalam 2 detik, langsung reveal */
+.scroll-reveal-io:not(.revealed) {
+  /* Will be handled by JS, but ensure visibility after reasonable time */
+}
+
+/* Fallback: Reveal elemen yang sudah di viewport saat page load */
+.scroll-reveal-io.initial-check {
+  /* Temporary class untuk check initial visibility */
 }
 
 .image-fade-in {
@@ -424,13 +512,80 @@
   animation: shimmer 2s infinite linear;
 }
 
+/* Enhanced page transitions */
 main > * {
   animation: pageEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth scale animation for dialogs and modals */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Smooth fade-in for route transitions */
+@keyframes routeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.route-transition-enter {
+  animation: routeFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Enhanced scroll reveal with stagger */
+.scroll-reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal-stagger > *.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Improve text readability */
 p, li, span {
   text-rendering: optimizeLegibility;
+}
+
+/* Performance optimizations for animations */
+.card-hover-lift,
+.button-ripple,
+.magnetic-hover,
+.scroll-reveal,
+.scroll-reveal-io {
+  will-change: transform, opacity, box-shadow;
+  transform: translateZ(0); /* Force GPU acceleration */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize expensive properties */
+@supports (will-change: transform) {
+  .card-hover-lift:hover,
+  .button-ripple:active,
+  .magnetic-hover:hover {
+    will-change: transform, box-shadow;
+  }
 }
 
 /* Reduce motion for users who prefer it */
@@ -459,26 +614,74 @@ p, li, span {
     animation: none !important;
     transform: none !important;
   }
+  
+  /* Disable will-change for reduced motion */
+  .card-hover-lift,
+  .button-ripple,
+  .magnetic-hover {
+    will-change: auto !important;
+  }
 }
 
-/* Better focus visibility for keyboard navigation */
+/* Enhanced focus visibility for keyboard navigation */
 *:focus-visible {
   outline: 3px solid #ffc233;
   outline-offset: 3px;
   border-radius: 6px;
   z-index: 10;
+  /* Enhanced contrast for better visibility */
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 
+              0 0 0 4px rgba(255, 194, 51, 0.4),
+              0 0 20px rgba(255, 194, 51, 0.6);
 }
 
-/* Enhanced hover effects */
+/* Focus states for interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #ffc233;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 
+              0 0 0 4px rgba(255, 194, 51, 0.4),
+              0 0 20px rgba(255, 194, 51, 0.6);
+  z-index: 10;
+}
+
+/* Enhanced hover effects with better feedback */
 a:not(:disabled):hover,
 button:not(:disabled):hover,
 [role="button"]:not(:disabled):hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
-/* Smooth image loading */
+/* Link hover with underline animation */
+a:not(button):not([role="button"]):hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+/* Button hover lift effect */
+button:not(:disabled):hover,
+[role="button"]:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+button:not(:disabled):active,
+[role="button"]:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Smooth image loading with performance optimization */
 img {
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0); /* GPU acceleration */
+  will-change: opacity;
 }
 
 img[loading="lazy"] {
@@ -487,16 +690,53 @@ img[loading="lazy"] {
 
 img[loading="lazy"].loaded {
   opacity: 1;
+  will-change: auto; /* Remove will-change after load */
 }
 
-/* Enhanced card hover effects */
+/* Optimize image rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: optimize-quality;
+}
+
+/* Enhanced card hover effects with performance optimization */
 .card-hover-lift {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+  transform: translateZ(0); /* GPU acceleration */
+  backface-visibility: hidden;
+  /* Smooth entrance */
+  animation: cardEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .card-hover-lift:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px) scale(1.02) translateZ(0);
   box-shadow: 0 25px 70px rgba(255, 194, 51, 0.25), 0 15px 40px rgba(126, 34, 206, 0.2);
+  border-color: rgba(255, 194, 51, 0.6);
+}
+
+.card-hover-lift:active {
+  transform: translateY(-4px) scale(1.01) translateZ(0);
+}
+
+/* Remove will-change after animation to save resources */
+.card-hover-lift:not(:hover) {
+  will-change: auto;
+}
+
+/* Smooth scroll behavior enhancement */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Smooth button ripple effect */
@@ -601,7 +841,7 @@ select:focus {
   top: 0;
 }
 
-/* Harmonized Transition System */
+/* Harmonized Transition System - Enhanced */
 /* Micro interactions (300ms) - buttons, links, hover */
 button, 
 [role="button"],
@@ -616,20 +856,26 @@ a {
 .card, 
 .container,
 .section {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Smooth transitions (500ms) - complex animations */
 .animate-smooth,
 [class*="fade-in"],
 [class*="scroll-reveal"] {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Slow transitions (700ms) - background, large elements */
 .background,
 [class*="gradient"] {
-  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-position 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              background-size 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 button:not(:disabled):hover,
@@ -645,7 +891,9 @@ button:not(:disabled):active,
 /* Ensure minimum touch target size for mobile accessibility */
 button,
 a[role="button"],
-[role="button"] {
+[role="button"],
+input[type="button"],
+input[type="submit"] {
   min-height: 44px;
   min-width: 44px;
 }
@@ -654,6 +902,34 @@ a[role="button"],
 button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   min-height: 44px;
   min-width: 44px;
+}
+
+/* Enhanced mobile touch feedback */
+@media (hover: none) and (pointer: coarse) {
+  button:active,
+  a:active,
+  [role="button"]:active {
+    transform: scale(0.96);
+    opacity: 0.9;
+  }
+  
+  /* Larger touch targets on mobile */
+  button,
+  a[role="button"],
+  [role="button"] {
+    min-height: 48px;
+    padding: 12px 20px;
+  }
+  
+  /* Better tap feedback for cards */
+  .card:active {
+    transform: scale(0.98);
+  }
+  
+  /* Enhanced link tap feedback */
+  a:active {
+    opacity: 0.8;
+  }
 }
 
 /* Enhanced focus states - Improved contrast for accessibility */
@@ -870,13 +1146,51 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   background-size: 200% auto;
 }
 
-/* Enhanced Visual Effects - More Festive Without Compromising UX */
-
-/* Ripple Effect for Buttons */
-@keyframes ripple {
+/* Firework Effect Animations - Following UI/UX Guidelines */
+@keyframes fireworkExplode {
   0% {
     transform: scale(0);
     opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes fireworkParticle {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+.animate-firework-explode {
+  animation: fireworkExplode 0.6s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+.animate-firework-particle {
+  animation: fireworkParticle 1.5s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+/* Enhanced Visual Effects - More Festive Without Compromising UX */
+
+/* Improved Ripple Effect for Buttons */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
   }
   100% {
     transform: scale(4);
@@ -971,7 +1285,7 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   animation: gradientShift 8s ease infinite;
 }
 
-/* Text Glow Animation */
+/* Enhanced Text Glow Animation */
 @keyframes textGlow {
   0%, 100% {
     text-shadow: 0 0 10px rgba(255, 194, 51, 0.5),
@@ -987,6 +1301,18 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
 
 .animate-text-glow {
   animation: textGlow 3s ease-in-out infinite;
+  will-change: text-shadow;
+}
+
+/* Subtle text glow for headings */
+h1, h2, h3, h4, h5, h6 {
+  transition: text-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+h1:hover, h2:hover, h3:hover {
+  text-shadow: 0 0 20px rgba(255, 194, 51, 0.4),
+               0 0 40px rgba(255, 194, 51, 0.2),
+               0 0 60px rgba(126, 34, 206, 0.15);
 }
 
 /* Shimmer Effect for Text */
@@ -1050,20 +1376,30 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
-/* Smooth Scale on Hover */
+/* Smooth Scale on Hover - Enhanced */
 @keyframes scaleIn {
   from {
-    transform: scale(0.95);
+    transform: scale(0.95) translateY(10px);
     opacity: 0;
   }
   to {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Remove will-change after animation */
+.animate-scale-in {
+  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-scale-in[style*="animation"] {
+  will-change: auto;
 }
 
 /* Rotating Gradient Border */
@@ -1148,13 +1484,19 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   width: 100%;
 }
 
-/* Magnetic Hover Effect (Subtle) */
+/* Magnetic Hover Effect (Subtle) with performance optimization */
 .magnetic-hover {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0); /* GPU acceleration */
+  will-change: transform;
 }
 
 .magnetic-hover:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-4px) scale(1.02) translateZ(0);
+}
+
+.magnetic-hover:not(:hover) {
+  will-change: auto;
 }
 
 /* Stagger Animation for Lists */
@@ -1216,10 +1558,23 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
 }
 
 .focus-ring:focus-visible {
-  outline: 2px solid rgba(255, 194, 51, 0.8);
-  outline-offset: 4px;
-  box-shadow: 0 0 0 4px rgba(255, 194, 51, 0.2),
-              0 0 20px rgba(255, 194, 51, 0.4);
+  outline: 3px solid rgba(255, 194, 51, 0.9);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 
+              0 0 0 4px rgba(255, 194, 51, 0.3),
+              0 0 20px rgba(255, 194, 51, 0.5);
+  z-index: 10;
+}
+
+/* Better focus visibility for form elements */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(255, 194, 51, 0.9);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 
+              0 0 0 4px rgba(255, 194, 51, 0.3),
+              0 6px 20px rgba(255, 194, 51, 0.4);
 }
 
 /* Subtle Parallax Effect */

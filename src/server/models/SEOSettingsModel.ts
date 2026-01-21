@@ -19,7 +19,7 @@ const seoSettingsSchema = new Schema<ISEOSettings>(
     siteUrl: {
       type: String,
       required: true,
-      default: 'https://christinasings4u.com.au',
+      default: 'https://christina-sings4you.com.au',
     },
   },
   {
@@ -45,7 +45,7 @@ export class SEOSettingsModel {
       settings = await model.create({
         defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
         defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
-        siteUrl: process.env.SITE_URL || 'https://christinasings4u.com.au',
+        siteUrl: process.env.SITE_URL || 'https://christina-sings4you.com.au',
       });
     }
     

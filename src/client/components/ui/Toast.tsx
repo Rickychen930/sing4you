@@ -20,10 +20,10 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
   }, [toast, onClose]);
 
   const variants = {
-    success: 'bg-gradient-to-r from-green-900/90 to-emerald-900/90 text-green-100 border-green-600/50 shadow-2xl shadow-green-500/30 backdrop-blur-md',
-    error: 'bg-gradient-to-r from-red-900/90 to-rose-900/90 text-red-100 border-red-600/50 shadow-2xl shadow-red-500/30 backdrop-blur-md',
-    info: 'bg-gradient-to-r from-blue-900/90 to-cyan-900/90 text-blue-100 border-blue-600/50 shadow-2xl shadow-blue-500/30 backdrop-blur-md',
-    warning: 'bg-gradient-to-r from-yellow-900/90 to-amber-900/90 text-yellow-100 border-yellow-600/50 shadow-2xl shadow-yellow-500/30 backdrop-blur-md',
+    success: 'bg-gradient-to-br from-green-900/95 to-emerald-900/95 text-green-100 border-green-600/60',
+    error: 'bg-gradient-to-br from-red-900/95 to-rose-900/95 text-red-100 border-red-600/60',
+    info: 'bg-gradient-to-br from-blue-900/95 to-cyan-900/95 text-blue-100 border-blue-600/60',
+    warning: 'bg-gradient-to-br from-yellow-900/95 to-amber-900/95 text-yellow-100 border-yellow-600/60',
   };
 
   const icons = {
@@ -52,18 +52,27 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
   return (
     <div
       className={cn(
-        'flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border-2 transition-all duration-300 animate-slide-in hover:scale-[1.02] transform',
+        'flex items-start gap-3 sm:gap-4 p-5 sm:p-6 rounded-2xl border transition-all duration-300 animate-slide-in hover:scale-[1.02] transform shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-md relative overflow-hidden',
         variants[toast.type]
       )}
       role="alert"
       aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
       aria-atomic="true"
     >
-      <div className="flex-shrink-0" aria-hidden="true">{icons[toast.type]}</div>
-      <p className="flex-1 text-sm sm:text-base font-semibold leading-relaxed">{toast.message}</p>
+      {/* Subtle glow effect */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <div className="absolute top-0 left-0 w-32 h-32 rounded-full blur-2xl bg-current"></div>
+      </div>
+      
+      <div className="flex-shrink-0 mt-0.5" aria-hidden="true">
+        <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+          {icons[toast.type]}
+        </div>
+      </div>
+      <p className="flex-1 text-sm sm:text-base font-semibold leading-relaxed pt-0.5">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
-        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1 rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent min-w-[32px] min-h-[32px] flex items-center justify-center"
+        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1.5 rounded-full hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent min-w-[36px] min-h-[36px] flex items-center justify-center relative z-10"
         aria-label={`Close ${toast.type} notification`}
       >
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">

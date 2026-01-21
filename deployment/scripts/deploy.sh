@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# Deployment script for christina-sings4you.com.au
+# Usage: ./deploy.sh [production|staging]
+
+set -e  # Exit on error
+
+ENVIRONMENT=${1:-production}
+APP_DIR="/var/www/christina-sings4you"
+LOG_FILE="/var/log/christina-sings4you-deploy.log"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Logging function
+log() {
+    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"
+}
+
+error() {
+    echo -e "${RED}[ERROR]${NC} $1" | tee -a "$LOG_FILE"
+    exit 1
+}
+
+warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"
+}
+
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then 
+    error "Please run as root (use sudo)"
+fi
+
+log "Starting deployment for environment: $ENVIRONMENT"
+
+# Navigate to application directory
+cd "$APP_DIR" || error "Application directory not found: $APP_DIR"
+
+# Backup current version
+log "Creating backup..."
+BACKUP_DIR="/backup/christina-sings4you"
+mkdir -p "$BACKUP_DIR"
+tar -czf "$BACKUP_DIR/backup-$(date +%Y%m%d-%H%M%S).tar.gz" \
+    --exclude='node_modules' \
+    --exclude='.git' \
+    --exclude='dist' \
+    . || warning "Backup failed, continuing..."
+
+# Pull latest code (if using git)
+if [ -d ".git" ]; then
+    log "Pulling latest code..."
+    # Stash local changes if any
+    git stash || true
+    git pull origin master || warning "Git pull failed, continuing with existing code..."
+else
+    log "Not a git repository, skipping git pull..."
+fi
+
+# Install dependencies
+log "Installing dependencies..."
+npm ci --production --no-audit --no-fund || error "Failed to install dependencies"
+
+# Build frontend
+log "Building frontend..."
+npm run build || error "Frontend build failed"
+
+# Build backend
+log "Building backend..."
+npm run build:server || error "Backend build failed"
+
+# Set permissions
+log "Setting permissions..."
+chown -R www-data:www-data "$APP_DIR"
+chmod -R 755 "$APP_DIR"
+
+# Restart services
+log "Restarting services..."
+
+# Check if using PM2
+if command -v pm2 &> /dev/null; then
+    log "Restarting with PM2..."
+    pm2 restart christina-sings4you-api || pm2 start deployment/pm2/ecosystem.config.js --env production
+    pm2 save
+else
+    # Fallback to systemd
+    log "Restarting with systemd..."
+    systemctl restart christina-sings4you || error "Failed to restart service"
+fi
+
+# Reload Nginx
+log "Reloading Nginx..."
+nginx -t && systemctl reload nginx || error "Nginx reload failed"
+
+# Health check
+log "Performing health check..."
+sleep 5
+MAX_RETRIES=5
+RETRY_COUNT=0
+HEALTH_CHECK_PASSED=false
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    if curl -f http://localhost:3001/api/hero > /dev/null 2>&1; then
+        HEALTH_CHECK_PASSED=true
+        break
+    fi
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    log "Health check attempt $RETRY_COUNT/$MAX_RETRIES failed, retrying..."
+    sleep 2
+done
+
+if [ "$HEALTH_CHECK_PASSED" = true ]; then
+    log "Health check passed!"
+else
+    error "Health check failed after $MAX_RETRIES attempts! Check logs for details."
+fi
+
+log "Deployment completed successfully!"
+log "Application is live at: https://christina-sings4you.com.au"

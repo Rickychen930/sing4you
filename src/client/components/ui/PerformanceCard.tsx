@@ -19,46 +19,48 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
         <div className="absolute bottom-3 left-3 text-lg sm:text-xl text-musical-900/20 group-hover:text-musical-500/30 transition-colors duration-500 animate-float font-musical pointer-events-none" style={{ animationDelay: '1s' }}>♪</div>
         
         <div className="relative z-10 flex-grow flex flex-col">
-          <h3 className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-500">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-500 leading-tight">
             {performance.eventName}
           </h3>
-          <div className="space-y-3 sm:space-y-4 text-sm sm:text-base flex-grow">
-            <div className="flex items-start gap-3">
-              <span className="text-2xl flex-shrink-0">📍</span>
-              <div>
-                <p className="font-semibold text-gold-300 mb-1">Venue</p>
-                <p className="text-gray-200">{performance.venueName}</p>
+          <div className="space-y-4 sm:space-y-5 text-sm sm:text-base flex-grow">
+            <div className="flex items-start gap-3 sm:gap-4 group/item">
+              <span className="text-2xl sm:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-110">📍</span>
+              <div className="flex-1">
+                <p className="font-semibold text-gold-300 mb-1.5 sm:mb-2 text-sm sm:text-base">Venue</p>
+                <p className="text-gray-200 leading-relaxed">{performance.venueName}</p>
               </div>
             </div>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl flex-shrink-0">🌍</span>
-              <div>
-                <p className="font-semibold text-gold-300 mb-1">Location</p>
-                <p className="text-gray-200">{performance.city}, {performance.state}</p>
+            <div className="flex items-start gap-3 sm:gap-4 group/item">
+              <span className="text-2xl sm:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-110">🌍</span>
+              <div className="flex-1">
+                <p className="font-semibold text-gold-300 mb-1.5 sm:mb-2 text-sm sm:text-base">Location</p>
+                <p className="text-gray-200 leading-relaxed">{performance.city}, {performance.state}</p>
               </div>
             </div>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl flex-shrink-0">📅</span>
-              <div>
-                <p className="font-semibold text-gold-300 mb-1">Date & Time</p>
-                <p className="text-gray-200">{formatAustralianDateTime(performance.date, performance.time)}</p>
+            <div className="flex items-start gap-3 sm:gap-4 group/item">
+              <span className="text-2xl sm:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-110">📅</span>
+              <div className="flex-1">
+                <p className="font-semibold text-gold-300 mb-1.5 sm:mb-2 text-sm sm:text-base">Date & Time</p>
+                <p className="text-gray-200 leading-relaxed">{formatAustralianDateTime(performance.date, performance.time)}</p>
               </div>
             </div>
           </div>
         </div>
       </CardBody>
-      {performance.ticketLink && (
-        <CardFooter className="pt-0">
-          <Button
-            variant="primary"
-            size="md"
-            className="w-full"
-            onClick={() => window.open(performance.ticketLink!, '_blank')}
-          >
-            Get Tickets
-          </Button>
-        </CardFooter>
-      )}
+      <CardFooter className="pt-0">
+        <Button
+          variant="primary"
+          size="md"
+          className="w-full"
+          onClick={() => {
+            const location = `${performance.city}, ${performance.state}`;
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+            window.open(mapsUrl, '_blank');
+          }}
+        >
+          Get Location
+        </Button>
+      </CardFooter>
     </Card>
   );
 }, (prevProps, nextProps) => {

@@ -9,7 +9,6 @@ import { Input } from '../../components/ui/Input';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Link } from 'react-router-dom';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
-import { blogService } from '../../services/blogService';
 import { categoryService } from '../../services/categoryService';
 import { performanceService } from '../../services/performanceService';
 import { testimonialService } from '../../services/testimonialService';
@@ -27,7 +26,6 @@ interface DashboardItem {
 }
 
 interface DashboardStats {
-  blogs: number;
   categories: number;
   performances: number;
   testimonials: number;
@@ -42,7 +40,6 @@ export const DashboardPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'content' | 'settings' | 'management'>('all');
   const [stats, setStats] = useState<DashboardStats>({
-    blogs: 0,
     categories: 0,
     performances: 0,
     testimonials: 0,
@@ -56,13 +53,7 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const [blogs, categories, performances, testimonials, variations, sections] = await Promise.allSettled([
-          blogService.getAll().catch((error) => {
-            if (process.env.NODE_ENV === 'development') {
-              console.error('Error loading blogs:', error);
-            }
-            return [];
-          }),
+        const [categories, performances, testimonials, variations, sections] = await Promise.allSettled([
           categoryService.getAll().catch((error) => {
             if (process.env.NODE_ENV === 'development') {
               console.error('Error loading categories:', error);
@@ -96,7 +87,6 @@ export const DashboardPage: React.FC = () => {
         ]);
 
         setStats({
-          blogs: blogs.status === 'fulfilled' ? blogs.value.length : 0,
           categories: categories.status === 'fulfilled' ? categories.value.length : 0,
           performances: performances.status === 'fulfilled' ? performances.value.length : 0,
           testimonials: testimonials.status === 'fulfilled' ? testimonials.value.length : 0,
@@ -120,7 +110,6 @@ export const DashboardPage: React.FC = () => {
     { id: 'sections', title: 'Sections', description: 'Manage performance sections (Solo, Duo, etc.)', path: '/admin/sections', icon: '📋', category: 'content', count: stats.sections },
     { id: 'performances', title: 'Performances', description: 'Manage upcoming performances and events', path: '/admin/performances', icon: '🎭', category: 'content', count: stats.performances },
     { id: 'testimonials', title: 'Testimonials', description: 'Manage client testimonials', path: '/admin/testimonials', icon: '💬', category: 'content', count: stats.testimonials },
-    { id: 'blog', title: 'Blog', description: 'Manage blog posts and articles', path: '/admin/blog', icon: '📝', category: 'content', count: stats.blogs },
     { id: 'categories', title: 'Categories', description: 'Manage performance categories', path: '/admin/categories', icon: '📂', category: 'management', count: stats.categories },
     { id: 'variations', title: 'Variations', description: 'Manage variations/personas within categories', path: '/admin/variations', icon: '🎨', category: 'management', count: stats.variations },
     { id: 'seo', title: 'SEO Settings', description: 'Manage SEO metadata and settings', path: '/admin/seo', icon: '🔍', category: 'settings' },
@@ -197,18 +186,18 @@ export const DashboardPage: React.FC = () => {
 
           {/* Statistics Cards */}
           {loadingStats ? (
-            <div className="mb-6 sm:mb-8 flex justify-center py-8">
-              <LoadingSpinner size="md" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
+                  <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-4 sm:p-6 border border-gold-900/50 backdrop-blur-md">
+                    <div className="h-6 sm:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 w-2/3 mx-auto animate-pulse-soft skeleton-shimmer"></div>
+                    <div className="h-8 sm:h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-lg w-1/2 mx-auto animate-pulse-soft skeleton-shimmer"></div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
-              <Card hover className="text-center transition-all duration-300 hover:scale-105">
-                <CardBody className="p-4">
-                  <div className="text-2xl sm:text-3xl mb-2 transition-transform duration-300 hover:scale-110">📝</div>
-                  <div className="text-lg sm:text-xl font-bold text-gold-400">{stats.blogs}</div>
-                  <div className="text-xs sm:text-sm text-gray-400 mt-1">Blog Posts</div>
-                </CardBody>
-              </Card>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
                 <CardBody className="p-4">
                   <div className="text-2xl sm:text-3xl mb-2 transition-transform duration-300 hover:scale-110">🎭</div>
@@ -383,15 +372,7 @@ export const DashboardPage: React.FC = () => {
                 <span className="text-gold-400">⚡</span>
                 Quick Actions
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <Link to="/admin/blog" className="block">
-                  <Card hover className="h-full">
-                    <CardBody className="p-4 text-center">
-                      <div className="text-2xl mb-2">📝</div>
-                      <div className="text-sm font-medium text-gray-200">New Blog Post</div>
-                    </CardBody>
-                  </Card>
-                </Link>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                 <Link to="/admin/performances" className="block">
                   <Card hover className="h-full">
                     <CardBody className="p-4 text-center">

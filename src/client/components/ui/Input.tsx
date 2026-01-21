@@ -40,15 +40,15 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? errorId : helperText ? helperId : undefined}
           className={cn(
-            'w-full px-4 py-3 border-2 border-gold-900/50 rounded-xl',
-            'focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500',
-            'transition-all duration-300 bg-jazz-900/70 text-gray-100 backdrop-blur-sm',
-            'placeholder:text-gray-400 placeholder:font-light',
-            'hover:border-gold-800/70 hover:bg-jazz-900/80 hover:shadow-lg hover:shadow-gold-900/20',
-            'focus:shadow-xl focus:shadow-gold-500/30 focus:scale-[1.01] focus-ring',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gold-900/50',
-            error && 'border-red-500/80 focus:ring-red-500/50 focus:border-red-500 bg-red-900/20 focus:shadow-red-500/30',
-            !error && 'focus:bg-jazz-900/90',
+            'w-full px-4 sm:px-5 py-3 sm:py-3.5 border-2 border-gold-900/50 rounded-xl',
+            'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500',
+            'transition-all duration-300 bg-jazz-900/80 text-gray-100 backdrop-blur-sm',
+            'placeholder:text-gray-400 placeholder:font-light text-base sm:text-lg',
+            'hover:border-gold-700/70 hover:bg-jazz-900/90 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)]',
+            'focus:shadow-[0_0_0_3px_rgba(255,194,51,0.2),0_6px_20px_rgba(255,194,51,0.25)] focus:scale-[1.01] focus-ring focus:bg-jazz-900/95',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gold-900/50 disabled:hover:bg-jazz-900/80',
+            error && 'border-red-500/80 focus:ring-red-500/60 focus:border-red-500 bg-red-900/25 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.2),0_6px_20px_rgba(239,68,68,0.25)]',
+            !error && 'focus:bg-jazz-900/95',
             className
           )}
           {...props}

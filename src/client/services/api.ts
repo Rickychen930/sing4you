@@ -2,9 +2,9 @@ import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
 import type { IApiResponse } from '../../shared/interfaces';
 
 // In development, use relative URL to leverage Vite proxy
-// In production, use the configured API URL
+// In production, use the configured API URL or default to same origin
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.DEV ? '' : 'http://localhost:3001');
+  (import.meta.env.DEV ? '' : '');
 
 interface AxiosErrorResponse {
   response?: {

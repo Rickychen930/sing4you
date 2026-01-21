@@ -4,9 +4,9 @@ import { HeroSettingsModel } from '../models/HeroSettingsModel';
 import { SectionModel } from '../models/SectionModel';
 import { PerformanceModel } from '../models/PerformanceModel';
 import { TestimonialModel } from '../models/TestimonialModel';
-import { BlogPostModel } from '../models/BlogPostModel';
 import { SEOSettingsModel } from '../models/SEOSettingsModel';
 import { AdminUserModel } from '../models/AdminUserModel';
+import { CategoryModel } from '../models/CategoryModel';
 import bcrypt from 'bcryptjs';
 
 dotenv.config();
@@ -31,8 +31,8 @@ const seedDatabase = async (): Promise<void> => {
     await SectionModel.getModel().deleteMany({});
     await PerformanceModel.getModel().deleteMany({});
     await TestimonialModel.getModel().deleteMany({});
-    await BlogPostModel.getModel().deleteMany({});
     await SEOSettingsModel.getModel().deleteMany({});
+    await CategoryModel.getModel().deleteMany({});
     // Don't delete admin users
 
     // 1. Hero Settings
@@ -167,89 +167,48 @@ const seedDatabase = async (): Promise<void> => {
     ]);
     console.log(`✅ Created ${testimonials.length} testimonials`);
 
-    // 5. Blog Posts
-    console.log('📝 Seeding Blog Posts...');
-    const blogPosts = await BlogPostModel.getModel().create([
+    // 5. Categories
+    console.log('📝 Seeding Categories...');
+    const categories = await CategoryModel.getModel().create([
       {
-        title: 'Top 10 Wedding Songs for 2024',
-        slug: 'top-10-wedding-songs-2024',
-        content: `
-# Top 10 Wedding Songs for 2024
-
-Planning your wedding and looking for the perfect songs? Here are the top 10 wedding songs that are trending in 2024.
-
-## 1. All of Me - John Legend
-A timeless classic that never goes out of style.
-
-## 2. Perfect - Ed Sheeran
-This romantic ballad is perfect for first dances.
-
-## 3. A Thousand Years - Christina Perri
-A beautiful song for walking down the aisle.
-
-*And 7 more amazing songs that will make your special day unforgettable!*
-        `.trim(),
-        category: 'Wedding Tips',
-        tags: ['wedding', 'music', 'songs', 'tips'],
-        coverImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&h=630&fit=crop',
-        publishedAt: new Date('2024-01-15'),
+        name: 'Solo Performances',
+        description: 'Experience the power and beauty of a single voice. Perfect for intimate gatherings, cocktail parties, and small events.',
+        order: 1,
       },
       {
-        title: 'The Importance of Live Music at Corporate Events',
-        slug: 'live-music-corporate-events',
-        content: `
-# The Importance of Live Music at Corporate Events
-
-Live music can transform your corporate event from ordinary to extraordinary. Here's why it matters:
-
-## Creates the Right Atmosphere
-Live music sets the tone for your event and creates a memorable experience for your guests.
-
-## Professional Image
-A professional singer demonstrates attention to detail and adds sophistication to your event.
-
-*Learn more about how live music can elevate your corporate gatherings!*
-        `.trim(),
-        category: 'Corporate',
-        tags: ['corporate', 'events', 'business'],
-        coverImage: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&h=630&fit=crop',
-        publishedAt: new Date('2024-01-10'),
+        name: 'Duo Performances',
+        description: 'Harmonious duets that bring magic to your event. Two voices creating unforgettable moments.',
+        order: 2,
       },
       {
-        title: "Sydney's Best Wedding Venues for Music Performances",
-        slug: 'sydney-best-wedding-venues',
-        content: `
-# Sydney's Best Wedding Venues for Music Performances
-
-Discover the most beautiful wedding venues in Sydney that are perfect for live music performances.
-
-## 1. Royal Botanic Gardens
-An iconic location with stunning views and acoustics perfect for live music.
-
-## 2. Opera House
-What could be more perfect than having your wedding at one of the world's most famous venues?
-
-*Explore more amazing venues in Sydney!*
-        `.trim(),
-        category: 'Venues',
-        tags: ['wedding', 'venues', 'sydney'],
-        coverImage: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=1200&h=630&fit=crop',
-        publishedAt: new Date('2024-01-05'),
+        name: 'Wedding Ceremonies',
+        description: 'Make your special day unforgettable with beautiful wedding songs. From ceremony to reception, I\'ll help create magical moments.',
+        order: 3,
+      },
+      {
+        name: 'Corporate Events',
+        description: 'Professional performances for corporate gatherings, product launches, and business events.',
+        order: 4,
+      },
+      {
+        name: 'PocketRocker',
+        description: 'Compact and powerful performances perfect for smaller venues and intimate settings.',
+        order: 5,
       },
     ]);
-    console.log(`✅ Created ${blogPosts.length} blog posts`);
+    console.log(`✅ Created ${categories.length} categories`);
 
-    // 6. SEO Settings
+    // 7. SEO Settings
     console.log('📝 Seeding SEO Settings...');
     await SEOSettingsModel.getModel().create({
       defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
       defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
       defaultImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=630&fit=crop',
-      siteUrl: 'https://christinasings4u.com.au',
+      siteUrl: 'https://christina-sings4you.com.au',
     });
     console.log('✅ SEO Settings created');
 
-    // 7. Admin User (only if no admin exists)
+    // 8. Admin User (only if no admin exists)
     const existingAdmin = await AdminUserModel.getModel().findOne();
     if (!existingAdmin) {
       console.log('📝 Creating default admin user...');
@@ -270,7 +229,7 @@ What could be more perfect than having your wedding at one of the world's most f
     console.log(`   - Performance Sections: ${sections.length}`);
     console.log(`   - Upcoming Performances: ${performances.length}`);
     console.log(`   - Testimonials: ${testimonials.length}`);
-    console.log(`   - Blog Posts: ${blogPosts.length}`);
+    console.log(`   - Categories: ${categories.length}`);
     console.log(`   - SEO Settings: 1`);
     console.log('\n🌐 You can now view the website at http://localhost:5173');
 

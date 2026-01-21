@@ -3,12 +3,14 @@ import type { IHeroSettings } from '../../../shared/interfaces';
 import { heroService } from '../../services/heroService';
 import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { FireworkEffect } from '../ui/FireworkEffect';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { generateMailtoLink } from '../../../shared/utils/email';
 
 export const Hero: React.FC = memo(() => {
   const [heroSettings, setHeroSettings] = useState<IHeroSettings | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fireworkTrigger, setFireworkTrigger] = useState(0);
 
   useEffect(() => {
     const loadHeroSettings = async () => {
@@ -36,10 +38,14 @@ export const Hero: React.FC = memo(() => {
     : {}, [heroSettings?.backgroundImage]);
 
   const handleWhatsApp = useCallback(() => {
+    // Trigger firework effect on button click
+    setFireworkTrigger(prev => prev + 1);
     window.open(generateWhatsAppLink(undefined, undefined), '_blank');
   }, []);
 
   const handleEmail = useCallback(() => {
+    // Trigger firework effect on button click
+    setFireworkTrigger(prev => prev + 1);
     window.location.href = generateMailtoLink();
   }, []);
 
@@ -70,6 +76,14 @@ export const Hero: React.FC = memo(() => {
 
   return (
     <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
+      {/* Firework Effect - Triggered on CTA button clicks */}
+      <FireworkEffect
+        trigger={fireworkTrigger}
+        intensity="medium"
+        count={2}
+        position={{ x: 50, y: 50 }}
+        duration={2500}
+      />
       {heroSettings.backgroundVideo ? (
         <video
           autoPlay

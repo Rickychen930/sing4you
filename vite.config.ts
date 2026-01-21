@@ -41,7 +41,6 @@ export default defineConfig({
             './src/client/pages/admin/SectionsManagementPage',
             './src/client/pages/admin/PerformancesManagementPage',
             './src/client/pages/admin/TestimonialsManagementPage',
-            './src/client/pages/admin/BlogManagementPage',
             './src/client/pages/admin/SEOManagementPage',
             './src/client/pages/admin/CategoriesManagementPage',
             './src/client/pages/admin/VariationsManagementPage',

@@ -24,7 +24,7 @@ export const SEO: React.FC<SEOProps> = memo(({
   noindex = false,
   nofollow = false,
 }) => {
-  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christinasings4u.com.au';
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
   const fullUrl = useMemo(() => url || siteUrl, [url, siteUrl]);
   const ogImage = useMemo(() => image || `${siteUrl}/og-image.jpg`, [image, siteUrl]);
   const fullTitle = useMemo(() => {

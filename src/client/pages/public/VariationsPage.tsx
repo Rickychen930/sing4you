@@ -17,7 +17,7 @@ export const VariationsPage: React.FC = () => {
   const [category, setCategory] = useState<ICategory | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christinasings4u.com.au';
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
 
   useEffect(() => {
     const loadCategory = async () => {
@@ -53,9 +53,23 @@ export const VariationsPage: React.FC = () => {
           description="Loading performance variations..."
           url={`${siteUrl}/categories/${categoryId}`}
         />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+          <div className="flex justify-center py-8">
+            <div className="h-6 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-64 animate-pulse-soft skeleton-shimmer"></div>
+          </div>
+        </div>
         <SectionWrapper>
-          <div className="flex justify-center py-12">
-            <LoadingSpinner size="lg" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
+                <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-6 sm:p-8 border border-gold-900/50 backdrop-blur-md h-full">
+                  <div className="h-7 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-4/6 animate-pulse-soft skeleton-shimmer"></div>
+                </div>
+              </div>
+            ))}
           </div>
         </SectionWrapper>
       </>
@@ -73,8 +87,8 @@ export const VariationsPage: React.FC = () => {
         <SectionWrapper>
           <div className="text-center py-12 sm:py-16">
             <div className="text-6xl sm:text-7xl mb-4 opacity-50">🎵</div>
-            <h2 className="text-2xl sm:text-3xl font-elegant font-bold text-gray-200 mb-3">Category not found</h2>
-            <p className="text-base sm:text-lg text-gray-400 mb-6">The category you're looking for doesn't exist or has been removed.</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold text-gray-100 mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Category not found</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-8 leading-relaxed">The category you're looking for doesn't exist or has been removed.</p>
             <BackButton to="/categories" variant="primary" label="Back to Categories" />
           </div>
         </SectionWrapper>

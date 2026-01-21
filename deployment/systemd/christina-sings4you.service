@@ -1,0 +1,33 @@
+[Unit]
+Description=Christina Sings4You API Server
+After=network.target mongod.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/christina-sings4you
+Environment=NODE_ENV=production
+Environment=PORT=3001
+ExecStart=/usr/bin/node /var/www/christina-sings4you/dist/server/index.js
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=christina-sings4you-api
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/christina-sings4you
+ReadOnlyPaths=/etc/letsencrypt
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

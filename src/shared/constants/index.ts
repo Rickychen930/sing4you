@@ -36,7 +36,6 @@ export const EMAIL_BODY_TEMPLATE = (details?: string) =>
 export const PAGE_TITLES = {
   HOME: 'Christina Sings4U | Professional Singer in Sydney',
   PERFORMANCES: 'Upcoming Performances | Christina Sings4U',
-  BLOG: 'Blog | Christina Sings4U',
   CONTACT: 'Contact | Christina Sings4U',
   ADMIN_LOGIN: 'Admin Login | Christina Sings4U',
   ADMIN_DASHBOARD: 'Admin Dashboard | Christina Sings4U',

@@ -6,25 +6,127 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+pm2.log
+pm2-error.log
+pm2-out.log
 
+# Dependencies
 node_modules
+.pnp
+.pnp.js
+
+# Build outputs
 dist
 dist-ssr
-*.local
+build
+*.tsbuildinfo
 
-# Environment variables
+# Environment variables - CRITICAL: Never commit these!
 .env
+.env.*
+!.env.example
 .env.local
 .env.production
 .env.development
+.env.test
+.env.staging
+*.env
+
+# Secrets and credentials
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cert
+*.cer
+secrets/
+credentials/
+*.secret
+*.password
+*.token
+
+# SSL Certificates
+*.crt
+*.key
+*.pem
+ssl/
+certs/
+certificates/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.dump
+*.sql
+mongodb-data/
+mongo-data/
+
+# Backup files
+*.backup
+*.bak
+*.old
+backup/
+backups/
+*.tar.gz
+*.zip
+*.rar
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
+*.swp
+*.swo
+*~
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+.cache
+
+# Coverage and testing
+coverage/
+*.lcov
+.nyc_output
+
+# PM2
+.pm2/
+ecosystem.config.local.js
+
+# Deployment
+deployment/*.env
+deployment/*.key
+deployment/*.pem
+deployment/secrets/
+deployment/credentials/
+
+# Local development
+.local
+*.local
+
+# Package manager locks (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

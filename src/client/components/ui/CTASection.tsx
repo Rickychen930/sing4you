@@ -26,22 +26,34 @@ export const CTASection: React.FC<CTASectionProps> = memo(({
     window.location.href = generateMailtoLink();
   }, []);
   return (
-    <section className={cn('py-12 sm:py-16 lg:py-20 relative overflow-hidden', className)}>
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gold-900/20 via-jazz-900/30 to-musical-900/20"></div>
+    <section className={cn('py-16 sm:py-20 lg:py-24 relative overflow-hidden', className)}>
+      {/* Enhanced background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gold-900/25 via-jazz-900/35 to-musical-900/25"></div>
       
-      {/* Decorative elements - Reduced for better performance */}
-      <div className="absolute inset-0 pointer-events-none opacity-8">
+      {/* Animated glow effects */}
+      <div className="absolute inset-0 opacity-50 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl animate-musical-pulse" style={{ background: 'radial-gradient(circle, rgba(255, 194, 51, 0.3) 0%, transparent 70%)' }}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl animate-musical-pulse" style={{ background: 'radial-gradient(circle, rgba(126, 34, 206, 0.3) 0%, transparent 70%)', animationDelay: '1s' }}></div>
+      </div>
+      
+      {/* Decorative elements - Enhanced */}
+      <div className="absolute inset-0 pointer-events-none opacity-10">
         <div className="absolute top-10 left-10 text-5xl sm:text-6xl text-gold-400/60 animate-float font-musical">♪</div>
         <div className="absolute bottom-10 right-10 text-4xl sm:text-5xl text-musical-400/60 animate-float font-musical" style={{ animationDelay: '1s' }}>♫</div>
+        <div className="absolute top-1/2 left-1/4 text-3xl sm:text-4xl text-gold-400/40 animate-float font-musical" style={{ animationDelay: '2s' }}>♬</div>
+        <div className="absolute bottom-1/3 right-1/3 text-2xl sm:text-3xl text-musical-400/40 animate-float font-musical" style={{ animationDelay: '3s' }}>♩</div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-elegant font-bold mb-4 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
-            {title}
-          </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
+          <div className="relative inline-block mb-6 sm:mb-8">
+            {/* Glow effect behind title */}
+            <div className="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-60 animate-pulse"></div>
+            <h2 className="relative text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold mb-4 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(126, 34, 206, 0.2)' }}>
+              {title}
+            </h2>
+          </div>
+          <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-10 sm:mb-12 max-w-3xl mx-auto leading-relaxed">
             {description}
           </p>
 

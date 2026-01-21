@@ -3,7 +3,6 @@ import { HeroController } from '../controllers/HeroController';
 import { SectionController } from '../controllers/SectionController';
 import { PerformanceController } from '../controllers/PerformanceController';
 import { TestimonialController } from '../controllers/TestimonialController';
-import { BlogController } from '../controllers/BlogController';
 import { SEOController } from '../controllers/SEOController';
 import { AuthController } from '../controllers/AuthController';
 import { ContactController } from '../controllers/ContactController';
@@ -22,7 +21,6 @@ const heroController = new HeroController();
 const sectionController = new SectionController();
 const performanceController = new PerformanceController();
 const testimonialController = new TestimonialController();
-const blogController = new BlogController();
 const seoController = new SEOController();
 const contactController = new ContactController();
 const sitemapController = new SitemapController();
@@ -45,10 +43,6 @@ router.get('/api/performances/:id', performanceController.getById);
 router.get('/api/testimonials', testimonialController.getAll);
 router.get('/api/testimonials/:id', testimonialController.getById);
 
-// Blog
-router.get('/api/blog', blogController.getPublished);
-router.get('/api/blog/slug/:slug', blogController.getBySlug);
-router.get('/api/blog/:id', blogController.getById);
 
 // Categories
 const categoryController = new CategoryController();
@@ -103,11 +97,6 @@ router.post('/api/admin/testimonials', authMiddleware, testimonialController.cre
 router.put('/api/admin/testimonials/:id', authMiddleware, testimonialController.update);
 router.delete('/api/admin/testimonials/:id', authMiddleware, testimonialController.delete);
 
-// Admin Blog
-router.get('/api/admin/blog', authMiddleware, blogController.getAll);
-router.post('/api/admin/blog', authMiddleware, blogController.create);
-router.put('/api/admin/blog/:id', authMiddleware, blogController.update);
-router.delete('/api/admin/blog/:id', authMiddleware, blogController.delete);
 
 // Admin SEO
 router.put('/api/admin/seo', authMiddleware, seoController.updateSettings);

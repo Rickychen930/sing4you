@@ -49,7 +49,7 @@ export class EmailService {
 
       const adminEmail = process.env.ADMIN_EMAIL;
       const siteName = process.env.SITE_NAME || 'Christina Sings4U';
-      const siteUrl = process.env.SITE_URL || 'https://christinasings4u.com.au';
+      const siteUrl = process.env.SITE_URL || 'https://christina-sings4you.com.au';
 
       const subject = `New Contact Form Submission${formData.eventType ? ` - ${formData.eventType}` : ''}`;
 

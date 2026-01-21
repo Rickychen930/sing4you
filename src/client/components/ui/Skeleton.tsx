@@ -17,8 +17,9 @@ export const Skeleton: React.FC<SkeletonProps> = memo(({
   animated = true,
 }) => {
   const baseStyles = useMemo(() => cn(
-    'bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70',
-    animated && 'animate-pulse-soft skeleton-shimmer'
+    'bg-gradient-to-r from-jazz-800/80 via-jazz-900/80 to-jazz-800/80',
+    animated && 'animate-pulse-soft skeleton-shimmer',
+    'relative overflow-hidden'
   ), [animated]);
   
   const variants = useMemo(() => ({
@@ -42,6 +43,10 @@ export const Skeleton: React.FC<SkeletonProps> = memo(({
       role="status"
       aria-live="polite"
     >
+      {/* Enhanced shimmer overlay */}
+      {animated && (
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-900/20 to-transparent animate-shimmer-musical"></div>
+      )}
       <span className="sr-only">Loading content...</span>
     </div>
   );
@@ -60,11 +65,11 @@ Skeleton.displayName = 'Skeleton';
 export const SkeletonCard: React.FC = memo(() => {
   return (
     <div 
-      className="bg-gradient-to-br from-jazz-900/85 via-jazz-800/85 to-musical-900/85 rounded-2xl shadow-xl overflow-hidden p-5 sm:p-7 border-2 border-gold-900/40 backdrop-blur-md"
+      className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-6 sm:p-8 border border-gold-900/50 backdrop-blur-md"
       aria-label="Loading card"
     >
-      <Skeleton variant="rectangular" height={240} className="mb-5 rounded-xl" />
-      <Skeleton variant="text" width="85%" height={24} className="mb-3" />
+      <Skeleton variant="rectangular" height={240} className="mb-6 rounded-xl" />
+      <Skeleton variant="text" width="85%" height={28} className="mb-4" />
       <Skeleton variant="text" width="70%" height={20} className="mb-4" />
       <Skeleton variant="text" width="100%" height={20} />
     </div>

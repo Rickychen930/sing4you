@@ -35,8 +35,18 @@ export const UpcomingPerformances: React.FC = memo(() => {
       className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative overflow-hidden"
     >
       {loading ? (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="lg" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
+              <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-6 sm:p-8 border border-gold-900/50 backdrop-blur-md">
+                <div className="h-48 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-xl mb-6 animate-pulse-soft skeleton-shimmer"></div>
+                <div className="h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 w-3/4 animate-pulse-soft skeleton-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-6 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
+                <div className="h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-xl animate-pulse-soft skeleton-shimmer"></div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : performances.length === 0 ? (
         <EmptyState
@@ -49,7 +59,7 @@ export const UpcomingPerformances: React.FC = memo(() => {
           {performances.map((performance, index) => (
             <div
               key={performance._id}
-              className="animate-fade-in-up"
+              className="scroll-reveal-io animate-fade-in-up"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <PerformanceCard performance={performance} />

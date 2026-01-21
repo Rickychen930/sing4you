@@ -1,6 +1,6 @@
 import React from 'react';
 import { Hero } from '../../components/sections/Hero';
-import { CategoryList } from '../../components/sections/CategoryList';
+import { ServicesSection } from '../../components/sections/ServicesSection';
 import { UpcomingPerformances } from '../../components/sections/UpcomingPerformances';
 import { Testimonials } from '../../components/sections/Testimonials';
 import { SEO } from '../../components/ui/SEO';
@@ -9,7 +9,9 @@ import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 
 export const HomePage: React.FC = () => {
   useSmoothScroll(); // Handle hash-based scrolling
-  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christinasings4u.com.au';
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
+
+  // HomePage component - displays hero, services, performances, and testimonials
 
   const artistSchema = {
     '@context': 'https://schema.org',
@@ -34,9 +36,9 @@ export const HomePage: React.FC = () => {
       />
       <JSONLDSchema schema={artistSchema} />
       <Hero />
-      <CategoryList
-        title="Performance Categories"
-        subtitle="Choose the perfect musical experience for your special event"
+      <ServicesSection
+        title="Our Services"
+        subtitle="Explore our range of performance styles from solo to full band"
       />
       <UpcomingPerformances />
       <Testimonials />

@@ -3,15 +3,13 @@ import type {
   ISection,
   IPerformance,
   ITestimonial,
-  IBlogPost,
   ISEOSettings,
 } from '../../shared/interfaces';
 import {
   mockHeroSettings,
   mockSections,
-  mockPerformances,
+  mockPerformancesBase,
   mockTestimonials,
-  mockBlogPosts,
   mockSEOSettings,
 } from '../data/mockData';
 
@@ -19,10 +17,17 @@ export class MockDataService {
   // In-memory storage for mock data (simulates database)
   private static heroSettings: IHeroSettings = { ...mockHeroSettings };
   private static sections: ISection[] = [...mockSections];
-  private static performances: IPerformance[] = [...mockPerformances];
+  // Mutable copy of performances base for create/update/delete operations
+  private static performancesBase: Array<Omit<IPerformance, 'date'> & { daysOffset: number }> = [...mockPerformancesBase];
   private static testimonials: ITestimonial[] = [...mockTestimonials];
-  private static blogPosts: IBlogPost[] = [...mockBlogPosts];
   private static seoSettings: ISEOSettings = { ...mockSEOSettings };
+
+  // Helper to get date X days from now
+  private static getDateFromNow(days: number): Date {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return date;
+  }
 
   // Hero Settings
   static getHeroSettings(): IHeroSettings {
@@ -82,46 +87,88 @@ export class MockDataService {
 
   // Performances
   static getAllPerformances(): IPerformance[] {
-    return [...this.performances];
+    // Always return fresh dates based on daysOffset
+    return this.performancesBase.map(p => {
+      const { daysOffset, ...performance } = p;
+      return {
+        ...performance,
+        date: this.getDateFromNow(daysOffset),
+      } as IPerformance;
+    });
   }
 
   static getUpcomingPerformances(): IPerformance[] {
     const now = new Date();
-    return this.performances
+    return this.getAllPerformances()
       .filter(p => new Date(p.date) >= now)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
 
   static getPerformanceById(id: string): IPerformance | null {
-    return this.performances.find(p => p._id === id) || null;
+    const performanceBase = this.performancesBase.find(p => p._id === id);
+    if (!performanceBase) return null;
+    
+    const { daysOffset, ...performance } = performanceBase;
+    return {
+      ...performance,
+      date: this.getDateFromNow(daysOffset),
+    } as IPerformance;
   }
 
   static createPerformance(data: Partial<IPerformance>): IPerformance {
-    const newPerformance: IPerformance = {
+    // For created performances, use 30 days from now as default
+    const daysOffset = 30;
+    const date = data.date || this.getDateFromNow(daysOffset);
+    const daysFromNow = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    
+    const newPerformanceBase = {
       _id: Date.now().toString(),
+      daysOffset: daysFromNow > 0 ? daysFromNow : 30,
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
+    };
+    
+    // Add to base array for future retrieval
+    this.performancesBase.push(newPerformanceBase);
+    
+    const { daysOffset: offset, ...performance } = newPerformanceBase;
+    return {
+      ...performance,
+      date: this.getDateFromNow(offset),
     } as IPerformance;
-    this.performances.push(newPerformance);
-    return { ...newPerformance };
   }
 
   static updatePerformance(id: string, data: Partial<IPerformance>): IPerformance | null {
-    const index = this.performances.findIndex(p => p._id === id);
+    const index = this.performancesBase.findIndex(p => p._id === id);
     if (index === -1) return null;
-    this.performances[index] = {
-      ...this.performances[index],
-      ...data,
+    
+    // Update daysOffset if date is provided
+    let daysOffset = this.performancesBase[index].daysOffset;
+    if (data.date) {
+      const daysFromNow = Math.ceil((new Date(data.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      daysOffset = daysFromNow > 0 ? daysFromNow : 30;
+    }
+    
+    const { date, ...restData } = data;
+    this.performancesBase[index] = {
+      ...this.performancesBase[index],
+      ...restData,
+      daysOffset,
       updatedAt: new Date(),
     };
-    return { ...this.performances[index] };
+    
+    const { daysOffset: offset, ...performance } = this.performancesBase[index];
+    return {
+      ...performance,
+      date: this.getDateFromNow(offset),
+    } as IPerformance;
   }
 
   static deletePerformance(id: string): boolean {
-    const index = this.performances.findIndex(p => p._id === id);
+    const index = this.performancesBase.findIndex(p => p._id === id);
     if (index === -1) return false;
-    this.performances.splice(index, 1);
+    this.performancesBase.splice(index, 1);
     return true;
   }
 
@@ -160,59 +207,6 @@ export class MockDataService {
     const index = this.testimonials.findIndex(t => t._id === id);
     if (index === -1) return false;
     this.testimonials.splice(index, 1);
-    return true;
-  }
-
-  // Blog Posts
-  static getAllBlogPosts(): IBlogPost[] {
-    return [...this.blogPosts];
-  }
-
-  static getPublishedBlogPosts(): IBlogPost[] {
-    const now = new Date();
-    return this.blogPosts
-      .filter(p => p.publishedAt && new Date(p.publishedAt) <= now)
-      .sort((a, b) => {
-        const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-        const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-        return dateB - dateA;
-      });
-  }
-
-  static getBlogPostById(id: string): IBlogPost | null {
-    return this.blogPosts.find(p => p._id === id) || null;
-  }
-
-  static getBlogPostBySlug(slug: string): IBlogPost | null {
-    return this.blogPosts.find(p => p.slug === slug) || null;
-  }
-
-  static createBlogPost(data: Partial<IBlogPost>): IBlogPost {
-    const newPost: IBlogPost = {
-      _id: Date.now().toString(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as IBlogPost;
-    this.blogPosts.push(newPost);
-    return { ...newPost };
-  }
-
-  static updateBlogPost(id: string, data: Partial<IBlogPost>): IBlogPost | null {
-    const index = this.blogPosts.findIndex(p => p._id === id);
-    if (index === -1) return null;
-    this.blogPosts[index] = {
-      ...this.blogPosts[index],
-      ...data,
-      updatedAt: new Date(),
-    };
-    return { ...this.blogPosts[index] };
-  }
-
-  static deleteBlogPost(id: string): boolean {
-    const index = this.blogPosts.findIndex(p => p._id === id);
-    if (index === -1) return false;
-    this.blogPosts.splice(index, 1);
     return true;
   }
 

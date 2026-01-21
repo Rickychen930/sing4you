@@ -17,10 +17,10 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className })
 
   return (
     <nav 
-      className={cn('flex items-center space-x-2 text-sm sm:text-base mb-4 sm:mb-6', className)}
+      className={cn('flex items-center space-x-2 text-sm sm:text-base mb-6 sm:mb-8', className)}
       aria-label="Breadcrumb"
     >
-      <ol className="flex items-center space-x-2">
+      <ol className="flex items-center space-x-2 sm:space-x-3">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           
@@ -28,7 +28,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className })
             <li key={index} className="flex items-center">
               {index > 0 && (
                 <svg
-                  className="w-4 h-4 text-gold-600/60 mx-2"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-gold-600/70 mx-2 sm:mx-3 transition-colors duration-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -37,19 +37,19 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className })
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
                     d="M9 5l7 7-7 7"
                   />
                 </svg>
               )}
               {isLast ? (
-                <span className="text-gold-300 font-semibold" aria-current="page">
+                <span className="text-gold-300 font-semibold text-base sm:text-lg" aria-current="page">
                   {item.label}
                 </span>
               ) : item.path ? (
                 <Link
                   to={item.path}
-                  className="text-gray-400 hover:text-gold-400 transition-colors duration-300 hover:underline focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1"
+                  className="text-gray-300 hover:text-gold-400 transition-all duration-300 hover:underline focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1 font-medium"
                 >
                   {item.label}
                 </Link>

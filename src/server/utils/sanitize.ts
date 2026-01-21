@@ -32,7 +32,7 @@ export const sanitizeObject = <T extends Record<string, any>>(obj: T): T => {
 };
 
 export const sanitizeHtml = (html: string): string => {
-  // Allow basic HTML tags for blog content
+  // Allow basic HTML tags for content
   // In production, use DOMPurify or similar library
   return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 };

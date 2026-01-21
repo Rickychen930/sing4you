@@ -55,8 +55,16 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
   if (loading) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="lg" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
+              <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-6 sm:p-8 border border-gold-900/50 backdrop-blur-md h-full">
+                <div className="h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 w-3/4 mx-auto animate-pulse-soft skeleton-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 mx-auto animate-pulse-soft skeleton-shimmer"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </SectionWrapper>
     );
@@ -97,7 +105,7 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
         {categories.map((category, index) => (
           <div
             key={category._id}
-            className="animate-fade-in-up"
+            className="scroll-reveal-io animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
             <Card 
@@ -114,12 +122,12 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
               tabIndex={0}
               aria-label={`View ${category.name} category`}
             >
-              <CardBody className="p-6 sm:p-8 text-center">
-                <h3 className="text-2xl sm:text-3xl font-elegant font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+              <CardBody className="p-6 sm:p-8 lg:p-10 text-center flex flex-col h-full">
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                   {category.name}
                 </h3>
                 {category.description && (
-                  <p className="text-sm sm:text-base text-gray-300 line-clamp-3">
+                  <p className="text-sm sm:text-base lg:text-lg text-gray-300 line-clamp-3 leading-relaxed flex-grow">
                     {category.description}
                   </p>
                 )}

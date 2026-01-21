@@ -42,16 +42,16 @@ const SelectComponent = forwardRef<HTMLSelectElement, SelectProps>(({
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? errorId : helperText ? helperId : undefined}
           className={cn(
-            'w-full px-4 py-3 border-2 border-gold-900/50 rounded-xl',
-            'focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500',
-            'transition-all duration-300 bg-jazz-900/70 text-gray-100 backdrop-blur-sm',
-            'hover:border-gold-800/70 hover:bg-jazz-900/80 hover:shadow-lg hover:shadow-gold-900/20',
-            'focus:shadow-xl focus:shadow-gold-500/30 focus:scale-[1.01] focus-ring',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gold-900/50',
-            'appearance-none cursor-pointer',
-            'bg-[url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23ffc233\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E")] bg-no-repeat bg-[length:20px_20px] bg-[right_12px_center] pr-10',
-            error && 'border-red-500/80 focus:ring-red-500/50 focus:border-red-500 bg-red-900/20 focus:shadow-red-500/30',
-            !error && 'focus:bg-jazz-900/90',
+            'w-full px-4 sm:px-5 py-3 sm:py-3.5 border-2 border-gold-900/50 rounded-xl',
+            'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500',
+            'transition-all duration-300 bg-jazz-900/80 text-gray-100 backdrop-blur-sm',
+            'hover:border-gold-700/70 hover:bg-jazz-900/90 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)]',
+            'focus:shadow-[0_0_0_3px_rgba(255,194,51,0.2),0_6px_20px_rgba(255,194,51,0.25)] focus:scale-[1.01] focus-ring focus:bg-jazz-900/95',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gold-900/50 disabled:hover:bg-jazz-900/80',
+            'appearance-none cursor-pointer text-base sm:text-lg',
+            'bg-[url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23ffc233\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2.5\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E")] bg-no-repeat bg-[length:24px_24px] bg-[right_14px_center] pr-12',
+            error && 'border-red-500/80 focus:ring-red-500/60 focus:border-red-500 bg-red-900/25 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.2),0_6px_20px_rgba(239,68,68,0.25)]',
+            !error && 'focus:bg-jazz-900/95',
             className
           )}
           {...props}

@@ -17,13 +17,13 @@ export const Button: React.FC<ButtonProps> = memo(forwardRef<HTMLButtonElement, 
   type = 'button',
   ...props
 }, ref) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-jazz-900 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group transform active:scale-95';
+  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-jazz-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none relative overflow-hidden group transform active:scale-[0.98]';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 focus:ring-gold-500 hover:scale-105 shadow-lg hover:shadow-2xl hover:shadow-gold-500/50 before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700 before:ease-in-out',
-    secondary: 'bg-gradient-to-r from-jazz-800 via-musical-700 to-jazz-800 text-white hover:from-jazz-700 hover:via-musical-600 hover:to-jazz-700 focus:ring-musical-600 hover:scale-105 shadow-lg hover:shadow-2xl hover:shadow-musical-700/50 before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700',
-    outline: 'border-2 border-gold-500/80 text-gold-300 bg-transparent hover:bg-gradient-to-r hover:from-gold-900/50 hover:via-gold-800/40 hover:to-gold-900/50 focus:ring-gold-500 hover:border-gold-400 hover:text-gold-200 hover:shadow-xl hover:shadow-gold-500/30 hover:scale-105',
-    ghost: 'text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-gold-800/40 focus:ring-gold-500 hover:text-gold-200 hover:scale-105',
+    primary: 'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 focus:ring-gold-500 hover:scale-[1.02] shadow-[0_4px_14px_rgba(255,194,51,0.4)] hover:shadow-[0_8px_24px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.2)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700 before:ease-in-out after:absolute after:inset-0 after:rounded-xl after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-300 after:bg-gradient-to-r after:from-gold-400/20 after:via-transparent after:to-gold-400/20',
+    secondary: 'bg-gradient-to-r from-jazz-800 via-musical-700 to-jazz-800 text-white hover:from-jazz-700 hover:via-musical-600 hover:to-jazz-700 focus:ring-musical-600 hover:scale-[1.02] shadow-[0_4px_14px_rgba(126,34,206,0.3)] hover:shadow-[0_8px_24px_rgba(126,34,206,0.4),0_0_0_1px_rgba(126,34,206,0.2)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700',
+    outline: 'border-2 border-gold-500/70 text-gold-300 bg-jazz-900/30 backdrop-blur-sm hover:bg-gradient-to-r hover:from-gold-900/60 hover:via-gold-800/50 hover:to-gold-900/60 focus:ring-gold-500 hover:border-gold-400 hover:text-gold-200 hover:shadow-[0_4px_16px_rgba(255,194,51,0.3),0_0_0_1px_rgba(255,194,51,0.1)] hover:scale-[1.02]',
+    ghost: 'text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-gold-800/40 focus:ring-gold-500 hover:text-gold-200 hover:scale-[1.02] hover:shadow-[0_2px_8px_rgba(255,194,51,0.2)]',
   };
 
   const sizes = {
@@ -50,13 +50,11 @@ export const Button: React.FC<ButtonProps> = memo(forwardRef<HTMLButtonElement, 
       {variant === 'primary' && (
         <>
           <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <span className="absolute top-2 right-2 text-xs text-white/70 font-musical animate-float">♪</span>
-            <span className="absolute bottom-2 left-2 text-xs text-white/50 font-musical animate-float" style={{ animationDelay: '0.5s' }}>♫</span>
+            <span className="absolute top-2 right-2 text-xs text-white/80 font-musical animate-float">♪</span>
+            <span className="absolute bottom-2 left-2 text-xs text-white/60 font-musical animate-float" style={{ animationDelay: '0.5s' }}>♫</span>
           </span>
-          {/* Glow effect on hover */}
-          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl animate-pulse-glow" style={{
-            boxShadow: '0 0 20px rgba(255, 194, 51, 0.6), 0 0 40px rgba(255, 194, 51, 0.4)'
-          }}></span>
+          {/* Enhanced glow effect on hover */}
+          <span className="absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl blur-md bg-gradient-to-r from-gold-400/40 via-gold-500/50 to-gold-400/40"></span>
         </>
       )}
       

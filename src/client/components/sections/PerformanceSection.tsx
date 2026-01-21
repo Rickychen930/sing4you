@@ -3,8 +3,10 @@ import type { ISection } from '../../../shared/interfaces';
 import { sectionService } from '../../services/sectionService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { MediaGallery } from '../ui/MediaGallery';
-import { Card, CardBody } from '../ui/Card';
+import { Card, CardBody, CardFooter } from '../ui/Card';
+import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 
 interface PerformanceSectionProps {
   type?: string;
@@ -58,25 +60,31 @@ export const PerformanceSection: React.FC<PerformanceSectionProps> = memo(({
             className="animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
-            <Card className="mb-0" hover>
-              <CardBody className="p-5 sm:p-7 lg:p-8">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+            <Card className="mb-0 flex flex-col" hover>
+              <CardBody className="p-6 sm:p-8 lg:p-10 flex-grow">
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                   {section.title}
                 </h3>
-                <p className="text-base sm:text-lg text-gray-200 mb-6 sm:mb-8 whitespace-pre-line leading-relaxed font-normal">{section.description}</p>
+                <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-8 sm:mb-10 whitespace-pre-line leading-relaxed font-normal">{section.description}</p>
                 {section.media && section.media.length > 0 && (
-                  <div className="mb-6 sm:mb-8">
+                  <div className="mb-8 sm:mb-10">
                     <MediaGallery media={section.media} />
                   </div>
                 )}
-                {section.priceRange && (
-                  <div className="mt-6 pt-6 border-t-2 border-gold-900/40">
-                    <p className="text-lg sm:text-xl font-bold bg-gradient-to-r from-gold-500 via-gold-400 to-gold-500 bg-clip-text text-transparent">
-                      <span className="text-gray-300 font-medium">Price Range:</span> {section.priceRange}
-                    </p>
-                  </div>
-                )}
               </CardBody>
+              <CardFooter className="pt-0 pb-6 sm:pb-8 px-6 sm:px-8 lg:px-10">
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="w-full"
+                  onClick={() => {
+                    const message = `Hi Christina, I'd like to know more about your ${section.title} service.`;
+                    window.open(generateWhatsAppLink(message), '_blank');
+                  }}
+                >
+                  More Information
+                </Button>
+              </CardFooter>
             </Card>
           </div>
         ))}

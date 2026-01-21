@@ -51,18 +51,6 @@ export interface ITestimonial {
   updatedAt?: Date;
 }
 
-export interface IBlogPost {
-  _id?: string;
-  title: string;
-  slug: string;
-  content: string;
-  coverImage?: string;
-  tags: string[];
-  category: string;
-  publishedAt?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 export interface ISEOSettings {
   defaultTitle: string;

@@ -20,9 +20,22 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Check if element is already in viewport
+    const rect = container.getBoundingClientRect();
+    const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200;
+    
+    if (isVisible) {
+      setIsInView(true);
+      return;
+    }
+
+    // Use IntersectionObserver for elements not yet visible
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -34,18 +47,14 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
       },
       {
         threshold: 0.01,
-        rootMargin: '50px',
+        rootMargin: '200px', // Load images 200px before they come into view
       }
     );
 
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
+    observer.observe(container);
 
     return () => {
-      if (imgRef.current) {
-        observer.disconnect();
-      }
+      observer.disconnect();
     };
   }, []);
 
@@ -59,10 +68,13 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
   };
 
   return (
-    <div className={cn('relative overflow-hidden bg-gradient-to-br from-jazz-800/40 to-jazz-900/40', className)}>
+    <div 
+      ref={containerRef}
+      className={cn('relative overflow-hidden bg-gradient-to-br from-jazz-800/40 to-jazz-900/40', className)}
+    >
       {!isLoaded && !hasError && (
         <div
-          className="absolute inset-0 bg-gradient-to-br from-jazz-800/60 to-jazz-900/60 animate-pulse flex items-center justify-center"
+          className="absolute inset-0 bg-gradient-to-br from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 animate-pulse-soft skeleton-shimmer flex items-center justify-center z-10"
           style={{
             backgroundImage: placeholder ? `url(${placeholder})` : undefined,
             backgroundSize: 'cover',
@@ -71,25 +83,27 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
           aria-hidden="true"
         >
           {!placeholder && (
-            <svg className="w-12 h-12 text-gold-900/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+            <div className="text-center">
+              <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gold-900/40 mx-auto mb-2 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <div className="h-2 w-24 bg-gold-900/30 rounded-full mx-auto animate-pulse"></div>
+            </div>
           )}
         </div>
       )}
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-jazz-800/60 to-jazz-900/60" aria-hidden="true">
-          <div className="text-center p-4">
-            <svg className="w-12 h-12 text-gold-900/40 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 z-10 border-2 border-dashed border-gold-900/30 rounded-lg" aria-hidden="true">
+          <div className="text-center p-6">
+            <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gold-900/50 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p className="text-xs text-gray-500">Image unavailable</p>
+            <p className="text-sm text-gray-400 font-medium">Image unavailable</p>
           </div>
         </div>
       )}
       {isInView && !hasError && (
         <img
-          ref={imgRef}
           src={src}
           alt={alt}
           onLoad={handleLoad}

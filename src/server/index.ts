@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 const allowedOrigins = [
   process.env.CLIENT_URL || 'http://localhost:5173',
-  process.env.SITE_URL || 'https://christinasings4u.com.au',
+  process.env.SITE_URL || 'https://christina-sings4you.com.au',
 ];
 
 app.use(cors({
@@ -102,8 +102,14 @@ const startServer = async (): Promise<void> => {
       console.warn('   To use real database: Update MONGODB_URI in .env file');
     } else {
       const database = Database.getInstance();
+      // Use Promise.race to ensure server starts even if DB connection hangs
       try {
-        await database.connect(dbUri);
+        await Promise.race([
+          database.connect(dbUri),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Database connection timeout')), 10000)
+          )
+        ]);
         console.log('✅ Connected to MongoDB');
       } catch (dbError) {
         console.error('❌ Failed to connect to MongoDB');
@@ -119,9 +125,11 @@ const startServer = async (): Promise<void> => {
       console.log('✅ Cloudinary initialized');
     }
 
-    app.listen(PORT, () => {
-      console.log(`✅ Server running on http://localhost:${PORT}`);
-      console.log(`📡 API available at http://localhost:${PORT}/api`);
+    // Listen on all interfaces in production, localhost in development
+    const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+    app.listen(PORT, host, () => {
+      console.log(`✅ Server running on http://${host}:${PORT}`);
+      console.log(`📡 API available at http://${host}:${PORT}/api`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
