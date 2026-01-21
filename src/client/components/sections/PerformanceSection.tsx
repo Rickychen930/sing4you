@@ -61,7 +61,7 @@ export const PerformanceSection: React.FC<PerformanceSectionProps> = memo(({
             style={{ animationDelay: `${index * 150}ms` }}
           >
             <Card className="mb-0 flex flex-col" hover>
-              <CardBody className="p-6 sm:p-8 lg:p-10 flex-grow">
+              <CardBody className="flex-grow">
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                   {section.title}
                 </h3>

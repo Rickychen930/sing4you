@@ -68,7 +68,7 @@ export const EmptyState: React.FC<EmptyStateProps> = memo(({
             <div className="mb-4 animate-fade-in" aria-hidden="true">{icon}</div>
           )}
         </div>
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold text-gray-100 mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold text-gray-100 mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2)' }}>
           {title}
         </h3>
         {description && (

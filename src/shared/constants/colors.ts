@@ -102,16 +102,16 @@ export const COLOR_RGBA = {
     '600-30': 'rgba(232, 168, 34, 0.3)',
     '600-40': 'rgba(232, 168, 34, 0.4)',
   },
-  // Musical/Purple with opacity
+  // Musical/Purple with opacity - using musical-500 (#a855f7 = 168, 85, 247)
   musical: {
-    '500-10': 'rgba(126, 34, 206, 0.1)',
-    '500-15': 'rgba(126, 34, 206, 0.15)',
-    '500-20': 'rgba(126, 34, 206, 0.2)',
-    '500-25': 'rgba(126, 34, 206, 0.25)',
-    '500-30': 'rgba(126, 34, 206, 0.3)',
-    '500-40': 'rgba(126, 34, 206, 0.4)',
-    '500-50': 'rgba(126, 34, 206, 0.5)',
-    '500-60': 'rgba(126, 34, 206, 0.6)',
+    '500-10': 'rgba(168, 85, 247, 0.1)',
+    '500-15': 'rgba(168, 85, 247, 0.15)',
+    '500-20': 'rgba(168, 85, 247, 0.2)',
+    '500-25': 'rgba(168, 85, 247, 0.25)',
+    '500-30': 'rgba(168, 85, 247, 0.3)',
+    '500-40': 'rgba(168, 85, 247, 0.4)',
+    '500-50': 'rgba(168, 85, 247, 0.5)',
+    '500-60': 'rgba(168, 85, 247, 0.6)',
     '600-30': 'rgba(147, 51, 234, 0.3)',
     '600-40': 'rgba(147, 51, 234, 0.4)',
   },
@@ -157,24 +157,24 @@ export const GRADIENTS = {
   musical: 'linear-gradient(135deg, #7f1d1d 0%, #6b21a8 50%, #102a43 100%)',
   gold: 'linear-gradient(135deg, #ffc233 0%, #e8a822 50%, #cc8b1a 100%)',
   body: 'linear-gradient(135deg, #0a0e1a 0%, #102a43 25%, #1a1a2e 50%, #16213e 75%, #0a0e1a 100%)',
-  goldText: 'linear-gradient(90deg, #ffc233 0%, #e8a822 25%, #ffc233 50%, #7e22ce 75%, #ffc233 100%)',
+  goldText: 'linear-gradient(90deg, #ffc233 0%, #e8a822 25%, #ffc233 50%, #a855f7 75%, #ffc233 100%)',
 } as const;
 
 // Shadow definitions
 export const SHADOWS = {
   jazz: '0 10px 40px rgba(31, 38, 135, 0.37)',
   elegant: '0 8px 32px rgba(0, 0, 0, 0.12)',
-  musical: '0 4px 20px rgba(126, 34, 206, 0.3)',
-  musicalGlow: '0 0 30px rgba(255, 194, 51, 0.4), 0 0 60px rgba(126, 34, 206, 0.3), 0 0 90px rgba(255, 194, 51, 0.2)',
+  musical: '0 4px 20px rgba(168, 85, 247, 0.3)',
+  musicalGlow: '0 0 30px rgba(255, 194, 51, 0.4), 0 0 60px rgba(168, 85, 247, 0.3), 0 0 90px rgba(255, 194, 51, 0.2)',
   goldGlow: '0 0 20px rgba(255, 194, 51, 0.5), 0 0 40px rgba(255, 194, 51, 0.3)',
-  purpleGlow: '0 0 20px rgba(126, 34, 206, 0.5), 0 0 40px rgba(126, 34, 206, 0.3)',
+  purpleGlow: '0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3)',
 } as const;
 
 // Text shadow definitions
 export const TEXT_SHADOWS = {
-  h1: '0 4px 20px rgba(255, 194, 51, 0.3), 0 2px 10px rgba(126, 34, 206, 0.2)',
-  h2: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(126, 34, 206, 0.15)',
+  h1: '0 4px 20px rgba(255, 194, 51, 0.3), 0 2px 10px rgba(168, 85, 247, 0.2)',
+  h2: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)',
   h3: '0 2px 10px rgba(255, 194, 51, 0.2)',
-  base: '0 2px 12px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(126, 34, 206, 0.15)',
+  base: '0 2px 12px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.15)',
   link: '0 0 8px rgba(255, 194, 51, 0.4)',
 } as const;

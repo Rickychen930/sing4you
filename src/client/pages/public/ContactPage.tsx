@@ -147,7 +147,7 @@ export const ContactPage: React.FC = () => {
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20">
         <div className="max-w-3xl mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
-            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(126,34,206,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(168,85,247,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
               {/* Glow effect on hover */}
               <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl pointer-events-none"></div>
               <div className="text-4xl sm:text-5xl mb-4 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">📱</div>
@@ -161,7 +161,7 @@ export const ContactPage: React.FC = () => {
                 Message us on WhatsApp
               </a>
             </div>
-            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(126,34,206,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(168,85,247,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
               {/* Glow effect on hover */}
               <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl pointer-events-none"></div>
               <div className="text-4xl sm:text-5xl mb-4 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">✉️</div>

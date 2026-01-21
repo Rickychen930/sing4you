@@ -3,6 +3,7 @@ import { cn } from '../../utils/helpers';
 
 export const ScrollToTop: React.FC = memo(() => {
   const [isVisible, setIsVisible] = useState(false);
+  const [bottomOffset, setBottomOffset] = useState('5rem');
   const ticking = useRef(false);
 
   // Throttle scroll event for better performance
@@ -18,7 +19,25 @@ export const ScrollToTop: React.FC = memo(() => {
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    // Set bottom offset based on screen size to avoid overlap with BackgroundMusic
+    const updateBottomOffset = () => {
+      if (window.innerWidth >= 1024) {
+        setBottomOffset('6rem');
+      } else if (window.innerWidth >= 640) {
+        setBottomOffset('5.5rem');
+      } else {
+        setBottomOffset('5rem');
+      }
+    };
+    
+    updateBottomOffset();
+    window.addEventListener('resize', updateBottomOffset);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', updateBottomOffset);
+    };
   }, [handleScroll]);
 
   const scrollToTop = useCallback(() => {
@@ -40,7 +59,7 @@ export const ScrollToTop: React.FC = memo(() => {
       onClick={scrollToTop}
       onKeyDown={handleKeyDown}
       className={cn(
-        'fixed bottom-6 sm:bottom-8 right-6 sm:right-8 z-50',
+        'fixed z-[9999]',
         'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white',
         'rounded-full shadow-[0_4px_14px_rgba(255,194,51,0.4)]',
         'hover:shadow-[0_8px_24px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.2)]',
@@ -51,6 +70,12 @@ export const ScrollToTop: React.FC = memo(() => {
         'relative overflow-hidden group',
         isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-10 scale-90 pointer-events-none'
       )}
+      style={{
+        position: 'fixed',
+        bottom: bottomOffset,
+        right: '1.5rem',
+        zIndex: 9999
+      }}
       aria-label="Scroll to top"
       tabIndex={isVisible ? 0 : -1}
     >

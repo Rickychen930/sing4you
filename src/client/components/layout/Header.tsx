@@ -71,12 +71,12 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   }
 
   return (
-    <header className="glass-effect-strong shadow-elegant fixed w-full top-0 z-50 border-b border-gold-900/50 relative overflow-hidden transition-all duration-300">
+    <header className="glass-effect-strong shadow-elegant fixed w-full top-0 left-0 right-0 z-50 border-b border-gold-900/50 relative overflow-hidden transition-all duration-300">
       {/* Enhanced musical decorative elements */}
       <div className="absolute inset-0 pointer-events-none opacity-8">
         <div className="absolute top-1/2 left-10 text-2xl sm:text-3xl text-gold-400/70 animate-float-advanced font-musical glow-pulse-advanced">♪</div>
         <div className="absolute top-1/2 right-10 text-xl sm:text-2xl text-musical-400/70 animate-float-advanced font-musical glow-pulse-advanced" style={{ animationDelay: '1.5s' }}>♫</div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg text-gold-500/40 animate-float-advanced font-musical" style={{ animationDelay: '0.75s' }}>♬</div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg text-gold-500/40 animate-float-advanced font-musical" style={{ animationDelay: '0.75s' }}>♬</div>
       </div>
       
       {/* Enhanced gradient overlay with shimmer */}
@@ -89,7 +89,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
         <div className="flex justify-between items-center h-16 lg:h-20">
           <Link 
             to="/" 
-            className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold gradient-text-animated hover:scale-110 transition-all duration-500 transform relative group scale-on-hover"
+            className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold gradient-text-animated hover:scale-110 transition-all duration-300 transform relative group scale-on-hover"
             aria-label="Home - Christina Sings4U"
           >
             <span className="relative z-10 glow-pulse-advanced">Christina Sings4U</span>
@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               aria-label="Navigate to home page"
             >
               <span className="relative z-10">Home</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shimmer-advanced" />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-500 group-hover:w-full transition-all duration-300 rounded-full shimmer-advanced" />
               <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                 <span className="absolute top-1 right-1 text-xs text-gold-500/80 font-musical animate-float-advanced glow-pulse-advanced">♪</span>
               </span>

@@ -84,7 +84,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
                 src={selectedMedia} 
                 controls 
                 autoPlay 
-                className="max-w-full max-h-[90vh] rounded-2xl shadow-[0_25px_70px_rgba(255,194,51,0.3),0_15px_40px_rgba(126,34,206,0.2)] border-2 border-gold-500/50" 
+                className="max-w-full max-h-[90vh] rounded-2xl shadow-[0_25px_70px_rgba(255,194,51,0.3),0_15px_40px_rgba(168,85,247,0.2)] border-2 border-gold-500/50" 
               />
             ) : (
               <img 

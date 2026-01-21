@@ -3,8 +3,8 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 /**
  * BackgroundMusic Component
  * 
- * Memutar musik latar bertema 90s dengan kontrol volume dan mute.
- * Menggunakan audio HTML5 dengan autoplay yang diizinkan setelah interaksi user.
+ * Plays 90s-themed background music with volume and mute controls.
+ * Uses HTML5 audio with autoplay allowed after user interaction.
  * 
  * @example
  * <BackgroundMusic 
@@ -14,17 +14,17 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
  * />
  */
 interface BackgroundMusicProps {
-  /** URL sumber audio */
+  /** Audio source URL */
   src?: string;
   /** Volume (0-1), default: 0.3 */
   volume?: number;
-  /** Auto play setelah interaksi user */
+  /** Auto play after user interaction */
   autoPlay?: boolean;
   /** Loop audio */
   loop?: boolean;
-  /** Tampilkan kontrol UI */
+  /** Show control UI */
   showControls?: boolean;
-  /** Posisi kontrol: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' */
+  /** Control position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' */
   controlsPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 }
 
@@ -44,14 +44,14 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isAvailable, setIsAvailable] = useState(true);
 
-  // Default 90s style music - menggunakan URL eksternal atau local
-  // User dapat menyediakan file audio mereka sendiri di folder public/music/
-  // Contoh: /music/90s-jazz.mp3 atau URL eksternal
-  // Fallback: jika file lokal tidak ditemukan, bisa menggunakan URL eksternal
+  // Default 90s style music - using external or local URL
+  // Users can provide their own audio files in the public/music/ folder
+  // Example: /music/90s-jazz.mp3 or external URL
+  // Fallback: if local file not found, can use external URL
   const defaultSrc = src || '/music/90s-background.mp3';
   
-  // Fallback URLs untuk musik 90s (opsional, bisa diaktifkan jika diperlukan)
-  // Uncomment salah satu jika ingin menggunakan fallback:
+  // Fallback URLs for 90s music (optional, can be enabled if needed)
+  // Uncomment one if you want to use fallback:
   // const fallbackSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 
   // Handle user interaction untuk enable autoplay
@@ -61,7 +61,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
       if (autoPlay && audioRef.current) {
         audioRef.current.play().catch((err) => {
           console.warn('Autoplay failed:', err);
-          setError('Autoplay tidak diizinkan. Silakan klik tombol play.');
+          setError('Autoplay not allowed. Please click the play button.');
         });
       }
     }
@@ -79,25 +79,25 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     audio.addEventListener('pause', () => setIsPlaying(false));
     audio.addEventListener('ended', () => setIsPlaying(false));
     audio.addEventListener('error', () => {
-      // Jika file tidak ditemukan, sembunyikan kontrol dengan graceful
-      // User bisa menambahkan file di /public/music/90s-background.mp3
-      // atau memberikan URL melalui prop src
+      // If file not found, hide controls gracefully
+      // Users can add file at /public/music/90s-background.mp3
+      // or provide URL via src prop
       setIsAvailable(false);
       setIsPlaying(false);
-      // Jangan log error di console untuk menghindari spam
-      // File audio adalah opsional, jadi tidak perlu error message
+      // Don't log error to console to avoid spam
+      // Audio file is optional, so no error message needed
     });
     audio.addEventListener('volumechange', () => {
       setCurrentVolume(audio.volume);
       setIsMuted(audio.muted);
     });
     audio.addEventListener('loadeddata', () => {
-      // Audio berhasil dimuat
+      // Audio loaded successfully
       setIsAvailable(true);
       setError(null);
     });
     audio.addEventListener('canplay', () => {
-      // Audio siap diputar
+      // Audio ready to play
       setIsAvailable(true);
       setError(null);
     });
@@ -143,7 +143,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     } else {
       audioRef.current.play().catch((err) => {
         console.error('Play failed:', err);
-        setError('Gagal memutar audio.');
+        setError('Failed to play audio.');
       });
     }
     setHasInteracted(true);
@@ -190,7 +190,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
           onClick={togglePlay}
           className="flex-shrink-0 w-10 h-10 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gold-400"
           aria-label={isPlaying ? 'Pause' : 'Play'}
-          title={isPlaying ? 'Pause musik' : 'Play musik'}
+          title={isPlaying ? 'Pause music' : 'Play music'}
         >
           {isPlaying ? (
             <svg
@@ -276,8 +276,8 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
         </div>
       </div>
 
-      {/* Error Message - hanya untuk error selain file tidak ditemukan */}
-      {error && error !== 'File tidak ditemukan' && (
+      {/* Error Message - only for errors other than file not found */}
+      {error && error !== 'File not found' && (
         <div className="mt-2 text-xs text-red-300 bg-red-900/30 p-2 rounded">
           {error}
         </div>
@@ -285,7 +285,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
 
       {/* Info Text */}
       <div className="mt-2 text-xs text-gold-300/70 text-center">
-        🎵 Musik 90s
+        🎵 90s Music
       </div>
     </div>
   );

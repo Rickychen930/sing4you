@@ -1,4 +1,5 @@
-import React, { useEffect, useState, memo, useMemo, useCallback } from 'react';
+import { useEffect, useState, memo, useMemo, useCallback, useRef } from 'react';
+import type { FC, CSSProperties, KeyboardEvent } from 'react';
 import type { IHeroSettings } from '../../../shared/interfaces';
 import { heroService } from '../../services/heroService';
 import { Button } from '../ui/Button';
@@ -7,11 +8,13 @@ import { FireworkEffect } from '../ui/FireworkEffect';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { generateMailtoLink } from '../../../shared/utils/email';
 
-export const Hero: React.FC = memo(() => {
+export const Hero: FC = memo(() => {
   const [heroSettings, setHeroSettings] = useState<IHeroSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [fireworkTrigger, setFireworkTrigger] = useState(0);
   const [scrollY, setScrollY] = useState(0);
+  const rafIdRef = useRef<number | null>(null);
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     const loadHeroSettings = async () => {
@@ -30,23 +33,51 @@ export const Hero: React.FC = memo(() => {
     loadHeroSettings();
   }, []);
 
-  // Parallax scroll effect
+  // Optimized Parallax scroll effect with RAF throttling and debouncing
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false;
+    let lastKnownScrollY = 0;
+
+    const updateScrollY = () => {
       const heroSection = document.getElementById('hero');
       if (heroSection) {
         const rect = heroSection.getBoundingClientRect();
         if (rect.bottom > 0 && rect.top < window.innerHeight) {
-          setScrollY(window.scrollY);
+          // Only update if scroll changed significantly (5px threshold for smoother performance)
+          if (Math.abs(lastKnownScrollY - lastScrollYRef.current) >= 5) {
+            setScrollY(lastKnownScrollY);
+            lastScrollYRef.current = lastKnownScrollY;
+          }
+        } else {
+          // Reset when out of viewport
+          if (lastScrollYRef.current !== 0) {
+            setScrollY(0);
+            lastScrollYRef.current = 0;
+          }
         }
+      }
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      lastKnownScrollY = window.scrollY;
+      
+      if (!ticking) {
+        rafIdRef.current = requestAnimationFrame(updateScrollY);
+        ticking = true;
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
   }, []);
 
-  const backgroundStyle: React.CSSProperties = useMemo(() => heroSettings?.backgroundImage
+  const backgroundStyle: CSSProperties = useMemo(() => heroSettings?.backgroundImage
     ? {
         backgroundImage: `url(${heroSettings.backgroundImage})`,
         backgroundSize: 'cover',
@@ -67,10 +98,23 @@ export const Hero: React.FC = memo(() => {
   }, []);
 
   const handleScrollDown = useCallback(() => {
-    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    // Scroll to services section smoothly
+    const servicesSection = document.getElementById('services') || document.querySelector('[id*="service"]');
+    if (servicesSection) {
+      const headerOffset = 80;
+      const elementPosition = servicesSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    } else {
+      // Fallback: scroll to next section
+      window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    }
   }, []);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleScrollDown();
@@ -79,7 +123,7 @@ export const Hero: React.FC = memo(() => {
 
   if (loading || !heroSettings) {
     return (
-      <section id="hero" className="relative h-screen flex items-center justify-center bg-jazz-gradient">
+      <section id="hero" className="relative w-full flex items-center justify-center -mt-16 lg:-mt-20 pt-16 lg:pt-20 bg-black" style={{ minHeight: '100vh', height: '100vh', background: 'linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%)' }}>
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-white text-center px-4">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-elegant font-bold mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Christina Sings4U</h1>
@@ -92,7 +136,16 @@ export const Hero: React.FC = memo(() => {
   }
 
   return (
-    <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden particle-bg">
+    <section 
+      id="hero" 
+      className="relative w-full flex items-center justify-center overflow-hidden particle-bg -mt-16 lg:-mt-20 pt-16 lg:pt-20" 
+      style={{ 
+        minHeight: '100vh', 
+        height: '100vh',
+        backgroundColor: 'var(--color-black)',
+        background: 'linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%)'
+      }}
+    >
       {/* Firework Effect - Triggered on CTA button clicks */}
       <FireworkEffect
         trigger={fireworkTrigger}
@@ -102,12 +155,13 @@ export const Hero: React.FC = memo(() => {
         duration={2500}
       />
       
-      {/* Enhanced Parallax Background Layers */}
+      {/* Enhanced Parallax Background Layers - Optimized */}
       <div 
         className="absolute inset-0 parallax-element" 
         style={{ 
-          transform: `translateY(${scrollY * 0.5}px) translateZ(0)`,
-          willChange: 'transform'
+          transform: `translate3d(0, ${scrollY * 0.3}px, 0)`,
+          willChange: 'auto',
+          backfaceVisibility: 'hidden'
         }}
       >
         {heroSettings.backgroundVideo ? (
@@ -117,7 +171,11 @@ export const Hero: React.FC = memo(() => {
             muted
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ transform: `scale(1.1) translateY(${scrollY * 0.3}px)` }}
+            style={{ 
+              transform: `scale(1.1) translate3d(0, ${scrollY * 0.2}px, 0)`,
+              willChange: 'auto',
+              backfaceVisibility: 'hidden'
+            }}
           >
             <source src={heroSettings.backgroundVideo} type="video/mp4" />
           </video>
@@ -125,22 +183,40 @@ export const Hero: React.FC = memo(() => {
           <div className="absolute inset-0" style={backgroundStyle}>
             <div 
               className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80"
-              style={{ transform: `translateY(${scrollY * 0.2}px)` }}
+              style={{ 
+                transform: `translate3d(0, ${scrollY * 0.15}px, 0)`,
+                willChange: 'auto',
+                backfaceVisibility: 'hidden'
+              }}
             />
             <div className="absolute inset-0 bg-black/30" />
             {/* Enhanced animated musical overlay with more depth and parallax */}
             <div className="absolute inset-0 opacity-25">
               <div 
                 className="absolute top-1/4 left-1/4 w-48 h-48 bg-gold-600/40 rounded-full blur-3xl animate-musical-pulse"
-                style={{ transform: `translateY(${scrollY * 0.4}px)` }}
+                style={{ 
+                  transform: `translate3d(0, ${scrollY * 0.2}px, 0)`,
+                  willChange: 'auto',
+                  backfaceVisibility: 'hidden'
+                }}
               ></div>
               <div 
                 className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-musical-600/40 rounded-full blur-3xl animate-musical-pulse" 
-                style={{ animationDelay: '1s', transform: `translateY(${scrollY * 0.3}px)` }}
+                style={{ 
+                  animationDelay: '1s', 
+                  transform: `translate3d(0, ${scrollY * 0.15}px, 0)`,
+                  willChange: 'auto',
+                  backfaceVisibility: 'hidden'
+                }}
               ></div>
               <div 
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gold-500/30 rounded-full blur-3xl animate-musical-pulse" 
-                style={{ animationDelay: '0.5s', transform: `translate(-50%, calc(-50% + ${scrollY * 0.35}px))` }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gold-500/30 rounded-full blur-3xl animate-musical-pulse" 
+                style={{ 
+                  animationDelay: '0.5s', 
+                  transform: `translate3d(-50%, calc(-50% + ${scrollY * 0.18}px), 0)`,
+                  willChange: 'auto',
+                  backfaceVisibility: 'hidden'
+                }}
               ></div>
             </div>
             {/* Animated gradient overlay */}
@@ -160,10 +236,15 @@ export const Hero: React.FC = memo(() => {
         <div className="absolute bottom-1/2 right-1/4 text-2xl sm:text-3xl text-musical-400/15 animate-float-advanced font-musical select-none" style={{ animationDelay: '2.5s' }}>♫</div>
       </div>
 
-      {/* Enhanced Content with Advanced Effects and Parallax */}
+      {/* Enhanced Content with Advanced Effects and Parallax - Optimized */}
       <div 
-        className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in depth-layer-2"
-        style={{ transform: `translateY(${scrollY * 0.1}px) translateZ(0)` }}
+        className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in"
+        style={{ 
+          transform: `translate3d(0, ${scrollY * 0.05}px, 0)`,
+          willChange: 'auto',
+          backfaceVisibility: 'hidden',
+          opacity: 1
+        }}
       >
         <div className="relative inline-block mb-6 sm:mb-8">
           {/* Enhanced multi-layer glow effect */}
@@ -172,17 +253,17 @@ export const Hero: React.FC = memo(() => {
           <div className="absolute -inset-14 bg-musical-500/15 rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
           <div className="absolute -inset-18 bg-gold-400/10 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
           
-          <h1 className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-elegant font-bold mb-2 leading-[1.1] gradient-text-animated drop-shadow-2xl text-reveal">
+          <h1 className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-elegant font-bold mb-2 leading-[1.1] gradient-text-animated text-reveal" style={{ textShadow: '0 4px 20px rgba(255, 194, 51, 0.3), 0 2px 10px rgba(168, 85, 247, 0.2)' }}>
             {heroSettings.title}
             <span className="absolute -top-3 -right-8 sm:-right-12 text-3xl sm:text-4xl opacity-60 animate-float-advanced font-musical pointer-events-none neon-glow">♪</span>
             <span className="absolute -bottom-2 -left-8 sm:-left-12 text-2xl sm:text-3xl opacity-50 animate-float-advanced font-musical pointer-events-none neon-glow-purple" style={{ animationDelay: '2s' }}>♫</span>
           </h1>
         </div>
-        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-8 sm:mb-10 md:mb-12 text-gray-100 leading-relaxed font-light drop-shadow-xl max-w-3xl mx-auto relative inline-block animate-fade-in-up text-reveal" style={{ animationDelay: '0.3s' }}>
+        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-8 sm:mb-10 md:mb-12 text-gray-100 leading-relaxed font-light font-sans max-w-3xl mx-auto relative inline-block animate-fade-in-up text-reveal" style={{ animationDelay: '0.3s' }}>
           {heroSettings.subtitle}
-          <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-40 sm:w-56 h-0.5 bg-gradient-to-r from-transparent via-gold-400/70 via-musical-500/70 to-transparent opacity-70 rounded-full shimmer-advanced"></span>
+          <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-40 sm:w-56 h-0.5 bg-gradient-to-r from-transparent via-gold-400/70 to-musical-500/70 to-transparent opacity-70 rounded-full shimmer-advanced"></span>
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-stretch sm:items-center max-w-md sm:max-w-lg mx-auto animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center max-w-md sm:max-w-lg mx-auto animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
           <Button
             variant="primary"
             size="lg"
@@ -204,19 +285,19 @@ export const Hero: React.FC = memo(() => {
         </div>
       </div>
       
-      {/* Enhanced Scroll indicator with advanced effects */}
-      <div className="absolute bottom-6 sm:bottom-8 lg:bottom-12 left-1/2 transform -translate-x-1/2 z-20 depth-layer-1">
+      {/* Enhanced Scroll indicator with advanced effects - Fixed position */}
+      <div className="absolute bottom-8 sm:bottom-10 lg:bottom-14 left-1/2 -translate-x-1/2 z-20">
         <div 
-          className="flex flex-col items-center gap-2 text-white/90 hover:text-white transition-all duration-300 cursor-pointer group glass-effect rounded-full px-4 py-2 hover-lift-advanced"
+          className="flex flex-col items-center gap-2 sm:gap-3 text-white/95 hover:text-white transition-all duration-300 cursor-pointer group glass-effect-strong rounded-full px-5 py-3 sm:px-6 sm:py-4 hover-lift-advanced backdrop-blur-md"
           onClick={handleScrollDown}
           role="button"
           tabIndex={0}
           onKeyDown={handleKeyDown}
           aria-label="Scroll to explore more content"
         >
-          <span className="text-xs sm:text-sm font-medium tracking-wide uppercase">Scroll to explore</span>
+          <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-gold-200 group-hover:text-gold-100 transition-colors">Scroll to explore</span>
           <svg 
-            className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-y-2 transition-transform duration-500 animate-bounce glow-pulse-advanced" 
+            className="w-5 h-5 sm:w-6 sm:h-6 text-gold-300 group-hover:text-gold-200 group-hover:translate-y-1 transition-all duration-500 animate-bounce glow-pulse-advanced" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"

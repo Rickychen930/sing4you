@@ -10,7 +10,7 @@ export class AuthController {
 
   public login = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, password } = req.body;
+      let { email, password } = req.body;
       
       // Input validation
       if (!email || !password) {
@@ -21,6 +21,10 @@ export class AuthController {
         return;
       }
 
+      // Normalize email (trim whitespace and convert to lowercase)
+      email = email.trim().toLowerCase();
+      password = password.trim();
+
       // Basic email format validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
@@ -29,6 +33,10 @@ export class AuthController {
           error: 'Invalid email format' 
         });
         return;
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔐 Login attempt for email: ${email}`);
       }
 
       const result = await this.authService.login(email, password);
@@ -51,7 +59,8 @@ export class AuthController {
       const err = error as Error;
       // Log error for debugging (only in development)
       if (process.env.NODE_ENV === 'development') {
-        console.error('Login error:', err.message);
+        console.error('❌ Login error:', err.message);
+        console.error('   Stack:', err.stack);
       }
       res.status(401).json({ 
         success: false, 

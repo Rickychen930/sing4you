@@ -1,29 +1,29 @@
-# Inisialisasi Server - Quick Start
+# Server Initialization - Quick Start
 
-Jika direktori `/var/www/christina-sings4you` belum ada, ikuti langkah berikut:
+If the `/var/www/christina-sings4you` directory doesn't exist, follow these steps:
 
 ## 🚀 Quick Fix
 
-### Opsi 1: Menggunakan Script (Recommended)
+### Option 1: Using Script (Recommended)
 
 ```bash
-# Di server
+# On server
 cd /root
-# Upload file init-server.sh ke server, lalu:
+# Upload init-server.sh file to server, then:
 chmod +x init-server.sh
 sudo ./init-server.sh
 ```
 
-Script ini akan:
-- ✅ Membuat direktori `/var/www/christina-sings4you`
-- ✅ Membuat direktori log dan backup
-- ✅ Set permissions yang benar
-- ✅ Membuat template file `.env`
+This script will:
+- ✅ Create directory `/var/www/christina-sings4you`
+- ✅ Create log and backup directories
+- ✅ Set correct permissions
+- ✅ Create `.env` template file
 
-### Opsi 2: Manual
+### Option 2: Manual
 
 ```bash
-# Di server
+# On server
 sudo mkdir -p /var/www/christina-sings4you
 sudo mkdir -p /var/log/pm2
 sudo mkdir -p /backup/christina-sings4you
@@ -33,26 +33,26 @@ sudo chown -R www-data:www-data /var/www/christina-sings4you
 sudo chown -R www-data:www-data /var/log/pm2
 sudo chmod -R 755 /var/www/christina-sings4you
 
-# Verifikasi
+# Verify
 ls -la /var/www/christina-sings4you
 ```
 
-## 📋 Langkah Selanjutnya
+## 📋 Next Steps
 
-Setelah direktori dibuat:
+After directory is created:
 
-### 1. Upload Aplikasi ke Server
+### 1. Upload Application to Server
 
-**Opsi A: Menggunakan Git**
+**Option A: Using Git**
 ```bash
 cd /var/www
 git clone <your-repo-url> christina-sings4you
 cd christina-sings4you
 ```
 
-**Opsi B: Menggunakan SCP/RSYNC (dari local machine)**
+**Option B: Using SCP/RSYNC (from local machine)**
 ```bash
-# Dari local machine
+# From local machine
 rsync -avz --exclude 'node_modules' --exclude '.git' \
   ./ root@76.13.96.198:/var/www/christina-sings4you/
 ```
@@ -62,34 +62,34 @@ rsync -avz --exclude 'node_modules' --exclude '.git' \
 ```bash
 cd /var/www/christina-sings4you
 cp deployment/env.production.template .env
-nano .env  # Update dengan nilai sebenarnya
+nano .env  # Update with actual values
 chmod 600 .env
 chown www-data:www-data .env
 ```
 
-### 3. Setup Server Lengkap
+### 3. Complete Server Setup
 
 ```bash
 cd /var/www/christina-sings4you
 sudo ./deployment/scripts/setup-server.sh
 ```
 
-### 4. Deploy Aplikasi
+### 4. Deploy Application
 
 ```bash
 cd /var/www/christina-sings4you
 sudo ./deployment/scripts/deploy.sh production
 ```
 
-## ✅ Verifikasi
+## ✅ Verification
 
 ```bash
-# Cek direktori sudah ada
+# Check directory exists
 ls -la /var/www/christina-sings4you
 
-# Cek permissions
+# Check permissions
 ls -ld /var/www/christina-sings4you
-# Harus menunjukkan: drwxr-xr-x www-data www-data
+# Should show: drwxr-xr-x www-data www-data
 ```
 
 ## 🆘 Troubleshooting
@@ -100,11 +100,11 @@ sudo chown -R www-data:www-data /var/www/christina-sings4you
 sudo chmod -R 755 /var/www/christina-sings4you
 ```
 
-### Directory masih tidak ada setelah script
+### Directory still doesn't exist after script
 ```bash
-# Cek apakah script berjalan dengan sudo
+# Check if script ran with sudo
 sudo ./init-server.sh
 
-# Atau buat manual
+# Or create manually
 sudo mkdir -p /var/www/christina-sings4you
 ```

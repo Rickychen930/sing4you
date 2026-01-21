@@ -26,7 +26,7 @@ export const AboutPage: React.FC = () => {
           <div className="relative inline-block mb-6 sm:mb-8">
             {/* Glow effect behind title */}
             <div className="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-60 animate-pulse"></div>
-            <h1 className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-elegant font-bold mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(126, 34, 206, 0.2)' }}>
+            <h1 className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-elegant font-bold mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2)' }}>
               About Christina Sings4U
             </h1>
           </div>
@@ -64,7 +64,7 @@ export const AboutPage: React.FC = () => {
           <div className="relative inline-block mb-10 sm:mb-12 w-full text-center">
             {/* Glow effect behind title */}
             <div className="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-60 animate-pulse left-1/2 transform -translate-x-1/2"></div>
-            <h2 className="relative text-3xl sm:text-4xl lg:text-5xl font-elegant font-bold mb-8 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(126, 34, 206, 0.2)' }}>
+            <h2 className="relative text-3xl sm:text-4xl lg:text-5xl font-elegant font-bold mb-8 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2)' }}>
               What I Offer
             </h2>
           </div>
@@ -110,7 +110,7 @@ export const AboutPage: React.FC = () => {
           <div className="relative inline-block mb-6 sm:mb-8">
             {/* Glow effect behind title */}
             <div className="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-60 animate-pulse"></div>
-            <h2 className="relative text-3xl sm:text-4xl lg:text-5xl font-elegant font-bold mb-6 sm:mb-8 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(126, 34, 206, 0.2)' }}>
+            <h2 className="relative text-3xl sm:text-4xl lg:text-5xl font-elegant font-bold mb-6 sm:mb-8 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2)' }}>
               Let's Create Something Beautiful Together
             </h2>
           </div>

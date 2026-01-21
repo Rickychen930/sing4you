@@ -125,11 +125,11 @@ export const VariationList: React.FC<VariationListProps> = memo(({
               tabIndex={0}
               aria-label={`View ${variation.name} variation details`}
             >
-              <CardBody className="p-6 sm:p-8 lg:p-10 flex flex-col h-full">
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+              <CardBody className="flex flex-col h-full">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2)' }}>
                   {variation.name}
                 </h3>
-                <p className="text-sm sm:text-base lg:text-lg text-gray-300 line-clamp-4 leading-relaxed flex-grow">
+                <p className="text-sm sm:text-base lg:text-lg text-gray-300 line-clamp-4 leading-relaxed font-sans flex-grow">
                   {variation.shortDescription}
                 </p>
               </CardBody>

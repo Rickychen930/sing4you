@@ -82,7 +82,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
   }
 
   return (
-    <SectionWrapper title={title} subtitle={subtitle}>
+    <SectionWrapper id="services" title={title} subtitle={subtitle} className="scroll-smooth">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         {sections.map((section, index) => (
           <div
@@ -90,16 +90,16 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
             className="scroll-reveal-io animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
-            <Card className="h-full flex flex-col" hover>
-              <CardBody className="p-6 sm:p-8 lg:p-10 flex-grow flex flex-col">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+            <Card className="h-full flex flex-col transition-all duration-400 hover:scale-[1.02]" hover>
+              <CardBody className="flex-grow flex flex-col">
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2)' }}>
                   {section.title}
                 </h3>
-                <p className="text-sm sm:text-base lg:text-lg text-gray-300 mb-6 sm:mb-8 line-clamp-3 leading-relaxed flex-grow">
+                <p className="text-sm sm:text-base lg:text-lg text-gray-300 mb-6 sm:mb-8 line-clamp-3 leading-relaxed font-sans flex-grow">
                   {section.description}
                 </p>
                 {section.media && section.media.length > 0 && (
-                  <div className="mb-6 sm:mb-8">
+                  <div className="mb-6 sm:mb-8 rounded-lg overflow-hidden">
                     <MediaGallery 
                       media={section.media.slice(0, 4)} 
                       className="grid-cols-2"
@@ -107,11 +107,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
                   </div>
                 )}
               </CardBody>
-              <CardFooter className="pt-0 pb-6 sm:pb-8 px-6 sm:px-8 lg:px-10">
+              <CardFooter className="pt-0">
                 <Button
                   variant="primary"
                   size="md"
-                  className="w-full"
+                  className="w-full transition-all duration-300 hover:scale-105"
                   onClick={() => {
                     const message = `Hi Christina, I'd like to know more about your ${section.title} service.`;
                     window.open(generateWhatsAppLink(message), '_blank');

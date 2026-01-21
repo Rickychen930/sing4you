@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script untuk deploy dari local machine ke server
-# Usage: ./deploy-from-local.sh [production|staging]
+# Script untuk deploy dengan upload .env file
+# Usage: ./deploy-with-env.sh [production|staging]
 
 set -e
 
@@ -35,22 +35,25 @@ info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
 
-# Check if .env exists locally and upload it
-if [ -f "$LOCAL_DIR/.env" ]; then
-    log "Found .env file locally, uploading to server..."
-    scp "$LOCAL_DIR/.env" "$SERVER_USER@$SERVER_IP:$APP_DIR/.env" || warning "Failed to upload .env file"
-    
-    # Set permissions on server
-    ssh "$SERVER_USER@$SERVER_IP" "chmod 600 $APP_DIR/.env && chown www-data:www-data $APP_DIR/.env" || warning "Failed to set .env permissions"
-    log "✓ .env file uploaded and permissions set"
-else
-    warning ".env file not found locally. Make sure to create it on the server."
-    info "You can create .env on server using: sudo ./deployment/scripts/create-env-on-server.sh"
-fi
-
-log "Starting deployment to $ENVIRONMENT environment"
+log "Starting deployment with .env upload to $ENVIRONMENT environment"
 log "Server: $SERVER_USER@$SERVER_IP"
 log "Local directory: $LOCAL_DIR"
+
+# Check if .env exists locally
+if [ ! -f "$LOCAL_DIR/.env" ]; then
+    error ".env file not found in $LOCAL_DIR/.env"
+    info "Please create .env file first or use deploy-from-local.sh without .env"
+fi
+
+# Upload .env file first
+log "Uploading .env file to server..."
+scp "$LOCAL_DIR/.env" "$SERVER_USER@$SERVER_IP:$APP_DIR/.env" || error "Failed to upload .env file"
+
+# Set permissions on server
+log "Setting .env file permissions on server..."
+ssh "$SERVER_USER@$SERVER_IP" "chmod 600 $APP_DIR/.env && chown www-data:www-data $APP_DIR/.env" || error "Failed to set .env permissions"
+
+log "✓ .env file uploaded and permissions set"
 
 # Build locally first
 log "Building application locally..."
@@ -68,7 +71,6 @@ fi
 log "Build completed successfully!"
 
 # Create temporary exclude file for rsync
-# Note: .env is excluded from rsync because we upload it separately above
 EXCLUDE_FILE=$(mktemp)
 cat > "$EXCLUDE_FILE" << EOF
 node_modules/
@@ -92,7 +94,7 @@ coverage/
 *.bak
 EOF
 
-# Sync files to server
+# Sync files to server (excluding .env since we already uploaded it)
 log "Syncing files to server..."
 rsync -avz --delete \
     --exclude-from="$EXCLUDE_FILE" \

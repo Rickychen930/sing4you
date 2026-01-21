@@ -3,17 +3,17 @@ import React, { useEffect, useCallback } from 'react';
 /**
  * CursorEffect Component
  * 
- * Mengubah kursor menjadi ikon mic
+ * Changes cursor to microphone icon
  * 
  * @example
  * <CursorEffect />
  */
 interface CursorEffectProps {
-  /** Intensitas efek: 'low' | 'medium' | 'high' (tidak digunakan, tetap untuk kompatibilitas) */
+  /** Effect intensity: 'low' | 'medium' | 'high' (not used, kept for compatibility) */
   intensity?: 'low' | 'medium' | 'high';
-  /** Warna partikel (tidak digunakan, tetap untuk kompatibilitas) */
+  /** Particle colors (not used, kept for compatibility) */
   colors?: string[];
-  /** Nonaktifkan efek pada mobile */
+  /** Disable effect on mobile */
   disableOnMobile?: boolean;
 }
 

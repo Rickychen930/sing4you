@@ -39,7 +39,7 @@ log "Starting deployment for environment: $ENVIRONMENT"
 # Navigate to application directory
 cd "$APP_DIR" || error "Application directory not found: $APP_DIR"
 
-# Backup current version
+# Backup current version (including .env)
 log "Creating backup..."
 BACKUP_DIR="/backup/christina-sings4you"
 mkdir -p "$BACKUP_DIR"
@@ -48,6 +48,15 @@ tar -czf "$BACKUP_DIR/backup-$(date +%Y%m%d-%H%M%S).tar.gz" \
     --exclude='.git' \
     --exclude='dist' \
     . || warning "Backup failed, continuing..."
+
+# Backup .env file separately (important!)
+if [ -f "$APP_DIR/.env" ]; then
+    log "Backing up .env file..."
+    cp "$APP_DIR/.env" "$APP_DIR/.env.backup.$(date +%Y%m%d-%H%M%S)" || warning "Failed to backup .env file"
+else
+    warning ".env file not found! Make sure it exists before deployment."
+    info "You can create it using: sudo ./deployment/scripts/create-env-on-server.sh"
+fi
 
 # Pull latest code (if using git)
 if [ -d ".git" ]; then
@@ -89,6 +98,17 @@ fi
 log "Setting permissions..."
 chown -R www-data:www-data "$APP_DIR"
 chmod -R 755 "$APP_DIR"
+
+# Ensure .env file has correct permissions (don't overwrite if it exists)
+if [ -f "$APP_DIR/.env" ]; then
+    log "Setting .env file permissions..."
+    chmod 600 "$APP_DIR/.env"
+    chown www-data:www-data "$APP_DIR/.env"
+else
+    warning ".env file not found after deployment!"
+    warning "If this is a new deployment, create .env file:"
+    warning "  sudo ./deployment/scripts/create-env-on-server.sh"
+fi
 
 # Restart services
 log "Restarting services..."

@@ -1,20 +1,20 @@
 # Fix: Script Not Found Issue
 
-## 🔍 Masalah
+## 🔍 Problem
 
-Direktori sudah dibuat, tapi file aplikasi belum di-upload ke server, sehingga script tidak ditemukan.
+Directory has been created, but application files have not been uploaded to the server, so scripts are not found.
 
-## ✅ Solusi Cepat
+## ✅ Quick Solution
 
-### Langkah 1: Upload Aplikasi ke Server
+### Step 1: Upload Application to Server
 
-**Dari Local Machine (buka terminal baru):**
+**From Local Machine (open new terminal):**
 
 ```bash
-# Pastikan Anda di direktori project
+# Make sure you're in the project directory
 cd /Users/blackver69/sing4you
 
-# Upload menggunakan rsync
+# Upload using rsync
 rsync -avz --progress \
   --exclude 'node_modules' \
   --exclude '.git' \
@@ -24,52 +24,52 @@ rsync -avz --progress \
   ./ root@72.61.214.25:/var/www/christina-sings4you/
 ```
 
-**Atau gunakan script yang sudah disediakan:**
+**Or use the provided script:**
 ```bash
 cd /Users/blackver69/sing4you
 ./deployment/QUICK_UPLOAD.sh
 ```
 
-### Langkah 2: Set Permissions di Server
+### Step 2: Set Permissions on Server
 
-**Kembali ke SSH session:**
+**Back to SSH session:**
 ```bash
-# Di server
+# On server
 cd /var/www/christina-sings4you
 sudo chmod +x deployment/scripts/*.sh
 sudo chown -R www-data:www-data .
 ```
 
-### Langkah 3: Verifikasi
+### Step 3: Verify
 
 ```bash
-# Di server
+# On server
 cd /var/www/christina-sings4you
-ls -la  # Harus ada file-file aplikasi
-ls -la deployment/scripts/  # Harus ada script-script
+ls -la  # Application files should be present
+ls -la deployment/scripts/  # Scripts should be present
 ```
 
-### Langkah 4: Lanjutkan Setup
+### Step 4: Continue Setup
 
 ```bash
-# Di server
+# On server
 cd /var/www/christina-sings4you
 
-# Setup server lengkap
+# Complete server setup
 sudo ./deployment/scripts/setup-server.sh
 
-# Atau jika hanya perlu setup GitHub Actions
+# Or if only need to setup GitHub Actions
 sudo ./deployment/scripts/setup-github-actions.sh
 ```
 
-## 🚀 Alternatif: Menggunakan Git
+## 🚀 Alternative: Using Git
 
-Jika repository sudah di GitHub:
+If repository is already on GitHub:
 
 ```bash
-# Di server
+# On server
 cd /var/www
-rm -rf christina-sings4you  # Hapus direktori kosong
+rm -rf christina-sings4you  # Remove empty directory
 git clone <your-repo-url> christina-sings4you
 cd christina-sings4you
 sudo chmod +x deployment/scripts/*.sh
@@ -77,34 +77,34 @@ sudo chmod +x deployment/scripts/*.sh
 
 ## 📋 Checklist
 
-- [ ] File aplikasi sudah di-upload ke server
-- [ ] Script sudah executable: `chmod +x deployment/scripts/*.sh`
-- [ ] Permissions sudah benar: `chown -R www-data:www-data .`
-- [ ] Verifikasi file ada: `ls -la deployment/scripts/`
-- [ ] Script bisa dijalankan: `sudo ./deployment/scripts/setup-server.sh`
+- [ ] Application files have been uploaded to server
+- [ ] Scripts are executable: `chmod +x deployment/scripts/*.sh`
+- [ ] Permissions are correct: `chown -R www-data:www-data .`
+- [ ] Verify files exist: `ls -la deployment/scripts/`
+- [ ] Script can be executed: `sudo ./deployment/scripts/setup-server.sh`
 
-## 🆘 Masih Error?
+## 🆘 Still Error?
 
-### File tidak muncul setelah upload
+### Files don't appear after upload
 ```bash
-# Cek apakah upload berhasil
+# Check if upload was successful
 ls -la /var/www/christina-sings4you
 
-# Jika masih kosong, coba upload lagi dengan verbose
+# If still empty, try uploading again with verbose
 rsync -avz --progress -v ./ root@72.61.214.25:/var/www/christina-sings4you/
 ```
 
 ### Permission denied
 ```bash
-# Pastikan direktori bisa di-write
+# Make sure directory is writable
 sudo chmod 755 /var/www/christina-sings4you
 sudo chown root:root /var/www/christina-sings4you
 ```
 
-### Script masih tidak ditemukan
+### Script still not found
 ```bash
-# Pastikan path benar
+# Make sure path is correct
 cd /var/www/christina-sings4you
-pwd  # Harus menunjukkan /var/www/christina-sings4you
-ls deployment/scripts/  # Harus ada file-file .sh
+pwd  # Should show /var/www/christina-sings4you
+ls deployment/scripts/  # Should show .sh files
 ```

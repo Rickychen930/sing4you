@@ -93,6 +93,7 @@ export class Database {
   }
 
   public isConnectedToDb(): boolean {
-    return this.isConnected;
+    // Check both our flag and mongoose connection state
+    return this.isConnected && mongoose.connection.readyState === 1;
   }
 }

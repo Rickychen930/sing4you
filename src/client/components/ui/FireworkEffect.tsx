@@ -90,8 +90,8 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
   const defaultColors = useMemo(() => colors || [
     'rgba(255, 194, 51,', // gold-400
     'rgba(232, 168, 34,', // gold-500
-    'rgba(126, 34, 206,', // musical-600
-    'rgba(158, 34, 206,', // musical-500
+    'rgba(168, 85, 247,', // musical-500
+    'rgba(147, 51, 234,', // musical-600
     'rgba(255, 215, 0,',  // gold-300
   ], [colors]);
 

@@ -83,8 +83,21 @@ export class AuthService {
   public async login(email: string, password: string): Promise<{ accessToken: string; refreshToken: string; user: { id: string; email: string; name: string } }> {
     // Use mock data if database is not connected
     if (this.useMockData()) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔧 Using mock data for authentication (database not connected)');
+      }
       const mockUser = this.getMockUser();
-      if (email.toLowerCase() !== mockUser.email.toLowerCase() || password !== mockUser.password) {
+      const emailMatch = email.toLowerCase() === mockUser.email.toLowerCase();
+      const passwordMatch = password === mockUser.password;
+      
+      if (!emailMatch || !passwordMatch) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`❌ Login failed - Email match: ${emailMatch}, Password match: ${passwordMatch}`);
+          console.log(`   Expected email: ${mockUser.email}, Got: ${email}`);
+          console.log(`💡 Using mock data. Default credentials:`);
+          console.log(`   Email: ${mockUser.email}`);
+          console.log(`   Password: ${mockUser.password}`);
+        }
         throw new Error('Invalid credentials');
       }
 
@@ -95,6 +108,10 @@ export class AuthService {
 
       const accessToken = this.generateAccessToken(payload);
       const refreshToken = this.generateRefreshToken(payload);
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Login successful using mock data');
+      }
 
       return {
         accessToken,
@@ -108,11 +125,19 @@ export class AuthService {
     }
 
     // Real database authentication
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 Using database for authentication');
+    }
+    
     const user = await AdminUserModel.findByEmail(email);
     if (!user) {
       // Log for debugging in development
       if (process.env.NODE_ENV === 'development') {
-        console.log(`Login attempt failed: User not found for email: ${email}`);
+        console.log(`❌ Login attempt failed: User not found for email: ${email}`);
+        console.log('💡 Tip: Run "npm run seed" to create admin user');
+        console.log('   Default admin credentials after seeding:');
+        console.log('   Email: admin@christinasings4u.com.au');
+        console.log('   Password: admin123');
       }
       throw new Error('Invalid credentials');
     }
@@ -121,7 +146,12 @@ export class AuthService {
     if (!isPasswordValid) {
       // Log for debugging in development
       if (process.env.NODE_ENV === 'development') {
-        console.log(`Login attempt failed: Invalid password for email: ${email}`);
+        console.log(`❌ Login attempt failed: Invalid password for email: ${email}`);
+        console.log('💡 Possible issues:');
+        console.log('   1. Password might be double-hashed (run "npm run seed" to fix)');
+        console.log('   2. Wrong password entered');
+        console.log('   3. Password in database was manually changed');
+        console.log('   Expected password: admin123');
       }
       throw new Error('Invalid credentials');
     }
@@ -137,6 +167,10 @@ export class AuthService {
 
     const accessToken = this.generateAccessToken(payload);
     const refreshToken = this.generateRefreshToken(payload);
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`✅ Login successful for user: ${user.email}`);
+    }
 
     return {
       accessToken,

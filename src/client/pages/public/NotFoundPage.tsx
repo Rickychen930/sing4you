@@ -26,13 +26,13 @@ export const NotFoundPage: React.FC = () => {
           <div className="mb-8 sm:mb-10 relative inline-block">
             {/* Glow effect behind 404 */}
             <div className="absolute -inset-8 bg-gold-500/10 rounded-full blur-3xl opacity-60 animate-pulse"></div>
-            <h1 className="relative text-8xl sm:text-9xl lg:text-[12rem] xl:text-[14rem] font-elegant font-bold bg-gradient-to-r from-gold-500 via-gold-400 to-musical-500 bg-clip-text text-transparent mb-4 drop-shadow-2xl leading-none" style={{ textShadow: '0 0 60px rgba(255, 194, 51, 0.4), 0 0 120px rgba(126, 34, 206, 0.3)' }}>
+            <h1 className="relative text-8xl sm:text-9xl lg:text-[12rem] xl:text-[14rem] font-elegant font-bold bg-gradient-to-r from-gold-500 via-gold-400 to-musical-500 bg-clip-text text-transparent mb-4 drop-shadow-2xl leading-none" style={{ textShadow: '0 0 60px rgba(255, 194, 51, 0.4), 0 0 120px rgba(168, 85, 247, 0.3)' }}>
               404
             </h1>
           </div>
           <div className="relative inline-block mb-6 sm:mb-8">
             <div className="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-60 animate-pulse"></div>
-            <h2 className="relative text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold mb-4 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-musical-300 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(126, 34, 206, 0.2)' }}>
+            <h2 className="relative text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold mb-4 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-musical-300 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2)' }}>
               Page Not Found
             </h2>
           </div>

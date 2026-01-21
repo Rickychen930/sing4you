@@ -9,7 +9,7 @@ import { AdminUserModel } from '../models/AdminUserModel';
 import { CategoryModel } from '../models/CategoryModel';
 import { VariationModel } from '../models/VariationModel';
 import { MediaModel } from '../models/MediaModel';
-import bcrypt from 'bcryptjs';
+// Note: bcrypt is not needed here - AdminUserModel pre-save hook handles password hashing
 
 dotenv.config();
 
@@ -486,18 +486,27 @@ const seedDatabase = async (): Promise<void> => {
     console.log('✅ SEO Settings created');
 
     // 9. Admin User (only if no admin exists)
-    const existingAdmin = await AdminUserModel.getModel().findOne();
+    const existingAdmin = await AdminUserModel.getModel().findOne({ email: 'admin@christinasings4u.com.au' });
     if (!existingAdmin) {
       console.log('📝 Creating default admin user...');
-      const hashedPassword = await bcrypt.hash('admin123', 10);
+      // Don't hash password here - the pre-save hook in AdminUserModel will handle it
       await AdminUserModel.getModel().create({
         email: 'admin@christinasings4u.com.au',
-        password: hashedPassword,
+        password: 'admin123', // Plain password - will be hashed by pre-save hook
         name: 'Admin User',
       });
       console.log('✅ Admin user created (email: admin@christinasings4u.com.au, password: admin123)');
     } else {
-      console.log('ℹ️  Admin user already exists, skipping...');
+      console.log('ℹ️  Admin user already exists');
+      // Fix password if it was double-hashed (common issue)
+      // This will reset password to 'admin123' and hash it correctly
+      const adminUser = await AdminUserModel.getModel().findOne({ email: 'admin@christinasings4u.com.au' });
+      if (adminUser) {
+        console.log('🔧 Resetting admin password to fix double-hashing issue...');
+        adminUser.password = 'admin123'; // Will be hashed correctly by pre-save hook
+        await adminUser.save();
+        console.log('✅ Admin password reset to: admin123 (correctly hashed)');
+      }
     }
 
     console.log('\n🎉 Seeding completed successfully!');

@@ -96,7 +96,7 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
     <SectionWrapper title={title || variation.name} subtitle={subtitle}>
       <div className="space-y-8 sm:space-y-10 lg:space-y-12">
         <Card hover>
-          <CardBody className="p-6 sm:p-8 lg:p-10">
+          <CardBody>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
               {variation.name}
             </h2>

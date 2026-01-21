@@ -120,12 +120,12 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
               tabIndex={0}
               aria-label={`View ${category.name} category`}
             >
-              <CardBody className="p-6 sm:p-8 lg:p-10 text-center flex flex-col h-full">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+              <CardBody className="text-center flex flex-col h-full">
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2)' }}>
                   {category.name}
                 </h3>
                 {category.description && (
-                  <p className="text-sm sm:text-base lg:text-lg text-gray-300 line-clamp-3 leading-relaxed flex-grow">
+                  <p className="text-sm sm:text-base lg:text-lg text-gray-300 line-clamp-3 leading-relaxed font-sans flex-grow">
                     {category.description}
                   </p>
                 )}

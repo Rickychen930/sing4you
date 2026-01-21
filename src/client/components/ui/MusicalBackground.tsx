@@ -38,7 +38,8 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
 
     const particleCount = intensity === 'high' ? 30 : intensity === 'medium' ? 20 : 10;
     const notes = ['♪', '♫', '♬', '♩'];
-    const colors = ['rgba(255, 194, 51,', 'rgba(126, 34, 206,', 'rgba(232, 168, 34,', 'rgba(158, 34, 206,'];
+    // Using consistent color palette: gold-500, musical-500, gold-600, musical-600
+    const colors = ['rgba(255, 194, 51,', 'rgba(168, 85, 247,', 'rgba(232, 168, 34,', 'rgba(147, 51, 234,'];
 
     // Initialize particles
     for (let i = 0; i < particleCount; i++) {

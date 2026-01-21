@@ -17,9 +17,9 @@ export const Footer: React.FC = memo(() => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
           <div>
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2)' }}>
               Christina Sings4U
             </h3>
             <p className="text-base sm:text-lg text-gray-200 leading-relaxed max-w-sm">

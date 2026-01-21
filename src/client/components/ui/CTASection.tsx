@@ -33,7 +33,7 @@ export const CTASection: React.FC<CTASectionProps> = memo(({
       {/* Animated glow effects */}
       <div className="absolute inset-0 opacity-50 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl animate-musical-pulse" style={{ background: 'radial-gradient(circle, rgba(255, 194, 51, 0.3) 0%, transparent 70%)' }}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl animate-musical-pulse" style={{ background: 'radial-gradient(circle, rgba(126, 34, 206, 0.3) 0%, transparent 70%)', animationDelay: '1s' }}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl animate-musical-pulse" style={{ background: 'radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%)', animationDelay: '1s' }}></div>
       </div>
       
       {/* Decorative elements - Enhanced */}

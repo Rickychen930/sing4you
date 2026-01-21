@@ -130,4 +130,35 @@ const mediaUploadController = new MediaUploadController();
 router.post('/api/admin/media/upload', authMiddleware, uploadMiddleware, mediaUploadController.upload);
 router.delete('/api/admin/media/:publicId', authMiddleware, mediaUploadController.delete);
 
+// Handle method not allowed for auth routes (catch non-POST methods)
+// These handlers will only be reached for non-POST methods since POST is handled above
+router.all('/api/admin/auth/login', (req, res) => {
+  res.status(405).json({
+    success: false,
+    error: `Method ${req.method} not allowed. This endpoint only accepts POST requests.`
+  });
+});
+
+router.all('/api/admin/auth/refresh', (req, res) => {
+  res.status(405).json({
+    success: false,
+    error: `Method ${req.method} not allowed. This endpoint only accepts POST requests.`
+  });
+});
+
+router.all('/api/admin/auth/logout', (req, res) => {
+  res.status(405).json({
+    success: false,
+    error: `Method ${req.method} not allowed. This endpoint only accepts POST requests.`
+  });
+});
+
+// 404 handler for unmatched routes
+router.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: `Route ${req.method} ${req.path} not found`
+  });
+});
+
 export default router;
