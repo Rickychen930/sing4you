@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-import { Database } from './config/database';
-import { CloudinaryConfig } from './config/cloudinary';
-import routes from './routes';
-import { errorHandler } from './middlewares/errorHandler';
+import { Database } from './config/database.js';
+import { CloudinaryConfig } from './config/cloudinary.js';
+import routes from './routes/index.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
 
