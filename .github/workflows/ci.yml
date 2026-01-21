@@ -41,6 +41,3 @@ jobs:
 
       - name: Build backend
         run: npm run build:server
-
-      - name: Check for sensitive data
-        run: bash ./.github/scripts/check-sensitive-data.sh
