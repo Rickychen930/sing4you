@@ -487,27 +487,87 @@ jobs:
             echo "Starting PM2 process..."
             cd "$BACKEND_TARGET"
 
+            # Verify dist/server/index.js exists
+            if [ ! -f "dist/server/index.js" ]; then
+              echo "❌ ERROR: dist/server/index.js not found!"
+              echo "Available files in dist/server:"
+              ls -la dist/server/ || echo "dist/server directory does not exist"
+              exit 1
+            fi
+
+            # Check if node_modules exists, if not, install dependencies
+            if [ ! -d "node_modules" ]; then
+              echo "⚠️  node_modules not found, installing dependencies..."
+              npm install --production || {
+                echo "❌ ERROR: npm install failed!"
+                exit 1
+              }
+            fi
+
             # Use ecosystem.config.js if exists, otherwise start directly
             if [ -f "ecosystem.config.js" ]; then
-              pm2 start ecosystem.config.js
+              echo "Using ecosystem.config.js..."
+              pm2 start ecosystem.config.js || {
+                echo "❌ ERROR: Failed to start PM2 with ecosystem.config.js"
+                echo "Trying direct start..."
+                if [ -f "server/.env" ]; then
+                  pm2 start dist/server/index.js \
+                    --name sing4you-api \
+                    --env-file server/.env \
+                    --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                    --merge-logs \
+                    --error ./logs/pm2-error.log \
+                    --output ./logs/pm2-out.log
+                else
+                  pm2 start dist/server/index.js \
+                    --name sing4you-api \
+                    --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                    --merge-logs \
+                    --error ./logs/pm2-error.log \
+                    --output ./logs/pm2-out.log
+                fi
+              }
             elif [ -f "server/.env" ]; then
+              echo "Starting with server/.env..."
+              mkdir -p logs
               pm2 start dist/server/index.js \
                 --name sing4you-api \
                 --env-file server/.env \
                 --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                --merge-logs
+                --merge-logs \
+                --error ./logs/pm2-error.log \
+                --output ./logs/pm2-out.log
             elif [ -f ".env.production" ]; then
+              echo "Starting with .env.production..."
+              mkdir -p logs
               pm2 start dist/server/index.js \
                 --name sing4you-api \
                 --env-file .env.production \
                 --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                --merge-logs
+                --merge-logs \
+                --error ./logs/pm2-error.log \
+                --output ./logs/pm2-out.log
             else
-              # Fallback: start without env-file (assumes env vars are set in system)
+              echo "⚠️  No .env file found, starting without env-file..."
+              mkdir -p logs
               pm2 start dist/server/index.js \
                 --name sing4you-api \
                 --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                --merge-logs
+                --merge-logs \
+                --error ./logs/pm2-error.log \
+                --output ./logs/pm2-out.log
+            fi
+
+            # Wait a moment and check if PM2 process started successfully
+            sleep 3
+            if pm2 list | grep -q "sing4you-api.*online"; then
+              echo "✅ PM2 process started successfully"
+            else
+              echo "⚠️  WARNING: PM2 process may not have started correctly"
+              echo "PM2 status:"
+              pm2 list
+              echo "PM2 logs:"
+              pm2 logs sing4you-api --lines 20 --nostream || true
             fi
 
             # Save PM2 configuration
@@ -624,6 +684,144 @@ jobs:
             rm -f "$TEMP_CONFIG"
             
             echo "✅ Nginx configuration deployed"
+
+      # ✅ Upload Deployment Scripts
+      - name: Upload deployment scripts
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 2m
+          use_insecure_cipher: false
+          source: "deployment/scripts/start-pm2.sh,deployment/scripts/check-deployment.sh"
+          target: "/var/www/christina-sings4you/deployment/scripts"
+          overwrite: true
+
+      - name: Make scripts executable
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 30s
+          command_timeout: 1m
+          use_insecure_cipher: false
+          script: |
+            chmod +x /var/www/christina-sings4you/deployment/scripts/start-pm2.sh
+            chmod +x /var/www/christina-sings4you/deployment/scripts/check-deployment.sh
+            echo "✅ Scripts are now executable"
+
+      # ✅ Run Diagnostic Check
+      - name: Run deployment diagnostic
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 120s
+          command_timeout: 5m
+          use_insecure_cipher: false
+          script: |
+            set +e  # Don't exit on error for diagnostic
+            cd /var/www/christina-sings4you
+            echo "=== Running Deployment Diagnostic ==="
+            bash deployment/scripts/check-deployment.sh || {
+              echo "⚠️ Diagnostic script encountered issues, but continuing..."
+            }
+
+      # ✅ Ensure PM2 is Running
+      - name: Ensure PM2 is running
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 120s
+          command_timeout: 5m
+          use_insecure_cipher: false
+          script: |
+            set -e
+            cd /var/www/christina-sings4you
+            echo "=== Ensuring PM2 is Running ==="
+            
+            # Check if PM2 process is running
+            if pm2 list | grep -q "sing4you-api.*online"; then
+              echo "✅ PM2 process 'sing4you-api' is already running"
+              pm2 list
+            else
+              echo "⚠️ PM2 process 'sing4you-api' is not running"
+              echo "Attempting to start PM2..."
+              
+              # Try to start using the script
+              if [ -f "deployment/scripts/start-pm2.sh" ]; then
+                bash deployment/scripts/start-pm2.sh || {
+                  echo "⚠️ Script start failed, trying manual start..."
+                  
+                  # Manual start fallback
+                  BACKEND_TARGET="/var/www/christina-sings4you"
+                  cd "$BACKEND_TARGET"
+                  
+                  # Check if dist exists
+                  if [ ! -f "dist/server/index.js" ]; then
+                    echo "❌ ERROR: dist/server/index.js not found!"
+                    echo "Available files:"
+                    ls -la dist/ 2>/dev/null || echo "dist directory does not exist"
+                    exit 1
+                  fi
+                  
+                  # Install dependencies if needed
+                  if [ ! -d "node_modules" ]; then
+                    echo "Installing dependencies..."
+                    npm install --production
+                  fi
+                  
+                  # Stop old process
+                  pm2 stop sing4you-api || true
+                  pm2 delete sing4you-api || true
+                  
+                  # Start PM2
+                  mkdir -p logs
+                  if [ -f "server/.env" ]; then
+                    pm2 start dist/server/index.js \
+                      --name sing4you-api \
+                      --env-file server/.env \
+                      --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                      --merge-logs \
+                      --error ./logs/pm2-error.log \
+                      --output ./logs/pm2-out.log
+                  else
+                    pm2 start dist/server/index.js \
+                      --name sing4you-api \
+                      --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                      --merge-logs \
+                      --error ./logs/pm2-error.log \
+                      --output ./logs/pm2-out.log
+                  fi
+                  
+                  pm2 save
+                }
+              else
+                echo "❌ start-pm2.sh script not found!"
+                exit 1
+              fi
+              
+              # Verify it started
+              sleep 3
+              if pm2 list | grep -q "sing4you-api.*online"; then
+                echo "✅ PM2 process started successfully"
+              else
+                echo "❌ ERROR: PM2 process failed to start"
+                pm2 list
+                pm2 logs sing4you-api --lines 30 --nostream || true
+                exit 1
+              fi
+            fi
 
       # ✅ Verify Deployment
       - name: Verify deployment

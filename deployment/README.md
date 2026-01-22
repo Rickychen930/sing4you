@@ -209,6 +209,79 @@ Script untuk membuat backup aplikasi. Backup disimpan di `/backup/christina-sing
 ### health-check.sh
 Script untuk mengecek status aplikasi, service, dan kesehatan sistem.
 
+### start-pm2.sh
+**Script manual untuk start PM2** - Gunakan jika PM2 belum running atau setelah deployment. Script ini akan:
+- Mengecek file-file yang diperlukan (dist/server/index.js, node_modules, .env)
+- Install dependencies jika belum ada
+- Stop dan delete process lama jika ada
+- Start PM2 dengan konfigurasi yang benar
+- Verifikasi bahwa process berhasil start
+
+**Cara penggunaan:**
+```bash
+ssh root@76.13.96.198
+cd /var/www/christina-sings4you
+bash deployment/scripts/start-pm2.sh
+```
+
+### check-deployment.sh
+**Script diagnostik untuk mengecek status deployment** - Gunakan untuk troubleshooting jika ada masalah. Script ini akan mengecek:
+- Project directory dan file-file penting
+- Backend dist files (dist/server/index.js)
+- node_modules dan dependencies
+- .env files
+- ecosystem.config.js
+- PM2 status dan process
+- Port 4000 usage
+- Backend health check
+- Nginx status dan config
+
+**Cara penggunaan:**
+```bash
+ssh root@76.13.96.198
+cd /var/www/christina-sings4you
+bash deployment/scripts/check-deployment.sh
+```
+
+## Troubleshooting
+
+### PM2 Tidak Running
+
+Jika PM2 tidak running setelah deployment:
+
+1. **Cek status deployment:**
+   ```bash
+   bash deployment/scripts/check-deployment.sh
+   ```
+
+2. **Start PM2 manually:**
+   ```bash
+   bash deployment/scripts/start-pm2.sh
+   ```
+
+3. **Cek logs jika masih error:**
+   ```bash
+   pm2 logs sing4you-api --lines 50
+   ```
+
+### Nginx Config Kosong
+
+Jika nginx config file kosong:
+
+1. **Upload config manual:**
+   ```bash
+   # Dari local machine
+   scp deployment/nginx/christina-sings4you.com.au.conf root@76.13.96.198:/tmp/
+   
+   # Di server
+   sudo cp /tmp/christina-sings4you.com.au.conf /etc/nginx/sites-available/
+   sudo ln -sf /etc/nginx/sites-available/christina-sings4you.com.au.conf /etc/nginx/sites-enabled/
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+2. **Atau tunggu deployment workflow** yang akan otomatis upload config
+
 ## Support
 
 For detailed instructions, see `DEPLOYMENT_GUIDE.md`.  
