@@ -3,7 +3,7 @@
  * Production setup untuk sing4you API
  * 
  * Usage:
- *   pm2 start ecosystem.config.js
+ *   pm2 start ecosystem.config.cjs
  *   pm2 save
  */
 
@@ -15,7 +15,6 @@ module.exports = {
       cwd: process.cwd(),
       instances: 1,
       exec_mode: 'fork',
-      env_file: 'server/.env',
       env: {
         NODE_ENV: 'production',
         PORT: 4000,

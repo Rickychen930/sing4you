@@ -23,6 +23,18 @@ jobs:
 
       - name: Setup SSH
         run: |
+          # ============================================================================
+          # SSH Configuration
+          # ============================================================================
+          # Required GitHub Secrets:
+          # - SERVER_HOST: IP address (e.g., 76.13.96.198)
+          # - SERVER_USER: SSH username (e.g., root)
+          # - SSH_PORT: SSH port (e.g., 22)
+          # - SSH_PRIVATE_KEY: Complete private key including BEGIN/END lines
+          # - TARGET_DIR: Frontend deployment directory
+          # - BACKEND_TARGET_DIR: Backend deployment directory
+          # ============================================================================
+          
           # Validate required secrets
           if [ -z "${{ secrets.TARGET_DIR }}" ]; then
             echo "❌ ERROR: TARGET_DIR secret is not set!"
@@ -38,14 +50,17 @@ jobs:
           fi
           if [ -z "${{ secrets.SERVER_HOST }}" ]; then
             echo "❌ ERROR: SERVER_HOST secret is not set!"
+            echo "   Expected: 76.13.96.198"
             exit 1
           fi
           if [ -z "${{ secrets.SERVER_USER }}" ]; then
             echo "❌ ERROR: SERVER_USER secret is not set!"
+            echo "   Expected: root"
             exit 1
           fi
           if [ -z "${{ secrets.SSH_PORT }}" ]; then
             echo "❌ ERROR: SSH_PORT secret is not set!"
+            echo "   Expected: 22 (or your SSH port)"
             exit 1
           fi
           
@@ -53,6 +68,8 @@ jobs:
           echo "Host: ${{ secrets.SERVER_HOST }}"
           echo "User: ${{ secrets.SERVER_USER }}"
           echo "Port: ${{ secrets.SSH_PORT }}"
+          echo ""
+          echo "📝 Note: SSH connection will be: ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}"
           
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -290,7 +307,7 @@ jobs:
           target: "${{ secrets.BACKEND_TARGET_DIR }}"
           overwrite: true
 
-      - name: Upload ecosystem.config.js via SSH
+      - name: Upload ecosystem.config.cjs via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -304,7 +321,7 @@ jobs:
             set -e
             BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
             mkdir -p "$BACKEND_TARGET"
-            cat > "$BACKEND_TARGET/ecosystem.config.js" << EOF
+            cat > "$BACKEND_TARGET/ecosystem.config.cjs" << EOF
             module.exports = {
               apps: [
                 {
@@ -313,7 +330,6 @@ jobs:
                   cwd: "${BACKEND_TARGET}",
                   instances: 1,
                   exec_mode: "fork",
-                  env_file: "server/.env",
                   env: {
                     NODE_ENV: "production",
                     PORT: 4000,
@@ -332,8 +348,8 @@ jobs:
               ],
             };
             EOF
-            chmod 644 "$BACKEND_TARGET/ecosystem.config.js"
-            echo "✅ ecosystem.config.js uploaded with cwd: ${BACKEND_TARGET}"
+            chmod 644 "$BACKEND_TARGET/ecosystem.config.cjs"
+            echo "✅ ecosystem.config.cjs uploaded with cwd: ${BACKEND_TARGET}"
 
       # ✅ Activate Frontend Release
       - name: Activate frontend release (atomic)
@@ -444,6 +460,15 @@ jobs:
               mkdir -p "$BACKEND_TARGET/server"
               cp "$ENV_PROD_FILE" "$ENV_FILE"
             fi
+            
+            # Copy .env to root directory (app loads from root in production)
+            if [ -f "$ENV_FILE" ]; then
+              echo "Copying server/.env to root .env for production..."
+              cp "$ENV_FILE" "$BACKEND_TARGET/.env"
+            elif [ -f "$ENV_PROD_FILE" ]; then
+              echo "Copying .env.production to root .env for production..."
+              cp "$ENV_PROD_FILE" "$BACKEND_TARGET/.env"
+            fi
 
             # Verify critical files
             if [ ! -f "$DIST_DIR/server/index.js" ]; then
@@ -504,51 +529,23 @@ jobs:
               }
             fi
 
-            # Use ecosystem.config.js if exists, otherwise start directly
-            if [ -f "ecosystem.config.js" ]; then
-              echo "Using ecosystem.config.js..."
-              pm2 start ecosystem.config.js || {
-                echo "❌ ERROR: Failed to start PM2 with ecosystem.config.js"
+            # Use ecosystem.config.cjs if exists, otherwise start directly
+            if [ -f "ecosystem.config.cjs" ]; then
+              echo "Using ecosystem.config.cjs..."
+              pm2 start ecosystem.config.cjs || {
+                echo "❌ ERROR: Failed to start PM2 with ecosystem.config.cjs"
                 echo "Trying direct start..."
-                if [ -f "server/.env" ]; then
-                  pm2 start dist/server/index.js \
-                    --name sing4you-api \
-                    --env-file server/.env \
-                    --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                    --merge-logs \
-                    --error ./logs/pm2-error.log \
-                    --output ./logs/pm2-out.log
-                else
-                  pm2 start dist/server/index.js \
-                    --name sing4you-api \
-                    --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                    --merge-logs \
-                    --error ./logs/pm2-error.log \
-                    --output ./logs/pm2-out.log
-                fi
+                mkdir -p logs
+                pm2 start dist/server/index.js \
+                  --name sing4you-api \
+                  --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
+                  --merge-logs \
+                  --error ./logs/pm2-error.log \
+                  --output ./logs/pm2-out.log
               }
-            elif [ -f "server/.env" ]; then
-              echo "Starting with server/.env..."
-              mkdir -p logs
-              pm2 start dist/server/index.js \
-                --name sing4you-api \
-                --env-file server/.env \
-                --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                --merge-logs \
-                --error ./logs/pm2-error.log \
-                --output ./logs/pm2-out.log
-            elif [ -f ".env.production" ]; then
-              echo "Starting with .env.production..."
-              mkdir -p logs
-              pm2 start dist/server/index.js \
-                --name sing4you-api \
-                --env-file .env.production \
-                --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                --merge-logs \
-                --error ./logs/pm2-error.log \
-                --output ./logs/pm2-out.log
             else
-              echo "⚠️  No .env file found, starting without env-file..."
+              echo "⚠️  ecosystem.config.cjs not found, starting directly..."
+              echo "   Make sure .env file exists in root directory"
               mkdir -p logs
               pm2 start dist/server/index.js \
                 --name sing4you-api \
@@ -787,14 +784,9 @@ jobs:
                   
                   # Start PM2
                   mkdir -p logs
-                  if [ -f "server/.env" ]; then
-                    pm2 start dist/server/index.js \
-                      --name sing4you-api \
-                      --env-file server/.env \
-                      --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
-                      --merge-logs \
-                      --error ./logs/pm2-error.log \
-                      --output ./logs/pm2-out.log
+                  # Use ecosystem.config.cjs if available, otherwise start directly
+                  if [ -f "ecosystem.config.cjs" ]; then
+                    pm2 start ecosystem.config.cjs
                   else
                     pm2 start dist/server/index.js \
                       --name sing4you-api \

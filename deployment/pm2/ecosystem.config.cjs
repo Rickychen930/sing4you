@@ -7,11 +7,10 @@ module.exports = {
   apps: [
     {
       name: 'sing4you-api',
-      script: './dist/server/server.js',
+      script: './dist/server/index.js',
       cwd: '/var/www/christina-sings4you',
       instances: 1,
       exec_mode: 'fork',
-      env_file: 'server/.env',
       // Environment variables
       env: {
         NODE_ENV: 'production',
