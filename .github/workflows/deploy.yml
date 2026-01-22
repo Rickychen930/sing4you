@@ -709,19 +709,47 @@ jobs:
             sudo chmod 644 "$NGINX_CONFIG_FILE"
             
             # Update root directory in config based on actual deployment structure
-            if [ -d "$FRONTEND_TARGET/build" ]; then
-              echo "Updating root directory to: $FRONTEND_TARGET/build"
-              sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_TARGET/build|g" "$NGINX_CONFIG_FILE"
-            elif [ -L "$FRONTEND_TARGET/build" ]; then
-              echo "Updating root directory to symlink: $FRONTEND_TARGET/build"
-              sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_TARGET/build|g" "$NGINX_CONFIG_FILE"
-            elif [ -d "$FRONTEND_TARGET/current" ]; then
-              echo "Updating root directory to: $FRONTEND_TARGET/current"
-              sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_TARGET/current|g" "$NGINX_CONFIG_FILE"
+            # Try multiple path patterns to ensure we catch all variations
+            echo "Determining frontend root directory..."
+            FRONTEND_ROOT=""
+            
+            # Priority 1: Check for build symlink (created by workflow)
+            if [ -L "$FRONTEND_TARGET/build" ] || [ -d "$FRONTEND_TARGET/build" ]; then
+              FRONTEND_ROOT="$FRONTEND_TARGET/build"
+              echo "✅ Found build directory/symlink: $FRONTEND_ROOT"
+            # Priority 2: Check for current symlink
+            elif [ -L "$FRONTEND_TARGET/current" ] || [ -d "$FRONTEND_TARGET/current" ]; then
+              FRONTEND_ROOT="$FRONTEND_TARGET/current"
+              echo "✅ Found current symlink: $FRONTEND_ROOT"
+            # Priority 3: Check for dist/client (direct build output)
+            elif [ -d "$FRONTEND_TARGET/../dist/client" ]; then
+              FRONTEND_ROOT="$(dirname $FRONTEND_TARGET)/dist/client"
+              echo "✅ Found dist/client: $FRONTEND_ROOT"
+            # Priority 4: Check if TARGET_DIR itself contains the build
+            elif [ -f "$FRONTEND_TARGET/index.html" ]; then
+              FRONTEND_ROOT="$FRONTEND_TARGET"
+              echo "✅ Found index.html directly in TARGET_DIR: $FRONTEND_ROOT"
             else
               echo "⚠️  Warning: Could not determine frontend directory structure"
+              echo "   TARGET_DIR: $FRONTEND_TARGET"
               echo "   Available paths:"
-              ls -la "$FRONTEND_TARGET" || true
+              ls -la "$FRONTEND_TARGET" 2>/dev/null || true
+              ls -la "$(dirname $FRONTEND_TARGET)" 2>/dev/null || true
+              # Use build as default (will be created by workflow)
+              FRONTEND_ROOT="$FRONTEND_TARGET/build"
+              echo "   Using default: $FRONTEND_ROOT"
+            fi
+            
+            # Update nginx config with determined path
+            if [ ! -z "$FRONTEND_ROOT" ]; then
+              echo "Updating nginx root to: $FRONTEND_ROOT"
+              # Update all possible path patterns in config
+              sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
+              sudo sed -i "s|root /var/www/christina-sings4you/frontend/build|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
+              sudo sed -i "s|root /var/www/christina-sings4you/frontend/current|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
+              # Verify the update
+              UPDATED_ROOT=$(grep -E "^\s*root\s+" "$NGINX_CONFIG_FILE" | head -1 | sed 's/.*root\s\+\([^;]*\);.*/\1/')
+              echo "✅ Nginx root updated to: $UPDATED_ROOT"
             fi
             
             # Ensure backend port is correct (4000)
