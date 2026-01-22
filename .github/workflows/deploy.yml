@@ -670,11 +670,30 @@ jobs:
             
             echo "=== Nginx Configuration Deployment ==="
             
-            # Check if temp config exists
+            # Debug: Check what files are in /tmp
+            echo "Checking /tmp directory for uploaded files..."
+            ls -la /tmp/ | grep -i "christina\|nginx" || true
+            find /tmp -name "*christina*" -o -name "*nginx*" 2>/dev/null || true
+            
+            # Check if temp config exists in expected location
             if [ ! -f "$TEMP_CONFIG" ]; then
-              echo "❌ ERROR: Nginx config file not found at $TEMP_CONFIG"
-              exit 1
+              echo "⚠️  File not found at $TEMP_CONFIG, checking alternative locations..."
+              # Check if it was uploaded with directory structure preserved
+              if [ -f "/tmp/deployment/nginx/christina-sings4you.com.au.conf" ]; then
+                echo "Found file at /tmp/deployment/nginx/christina-sings4you.com.au.conf, copying to expected location..."
+                cp "/tmp/deployment/nginx/christina-sings4you.com.au.conf" "$TEMP_CONFIG"
+              elif [ -f "/tmp/nginx/christina-sings4you.com.au.conf" ]; then
+                echo "Found file at /tmp/nginx/christina-sings4you.com.au.conf, copying to expected location..."
+                cp "/tmp/nginx/christina-sings4you.com.au.conf" "$TEMP_CONFIG"
+              else
+                echo "❌ ERROR: Nginx config file not found at $TEMP_CONFIG or alternative locations"
+                echo "Contents of /tmp:"
+                ls -la /tmp/ || true
+                exit 1
+              fi
             fi
+            
+            echo "✅ Found nginx config file at $TEMP_CONFIG"
             
             # Backup existing config if exists
             if [ -f "$NGINX_CONFIG_FILE" ]; then
