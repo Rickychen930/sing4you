@@ -140,9 +140,28 @@ jobs:
           echo "✅ SSH key configured"
           echo "🧪 Testing SSH connection..."
           
+          # Verify key file exists and has correct permissions
+          if [ ! -f ~/.ssh/deploy_key ]; then
+            echo "❌ ERROR: SSH key file not found at ~/.ssh/deploy_key"
+            exit 1
+          fi
+          
+          # Show key fingerprint for debugging
+          echo "🔑 SSH Key Fingerprint:"
+          ssh-keygen -l -f ~/.ssh/deploy_key 2>&1 || echo "⚠️  Could not get fingerprint"
+          
+          # Extract and show public key (for troubleshooting)
+          echo ""
+          echo "📋 Public Key (to add to server's ~/.ssh/authorized_keys if needed):"
+          ssh-keygen -y -f ~/.ssh/deploy_key 2>&1 | head -1 || echo "⚠️  Could not extract public key"
+          echo ""
+          
           # Test connection with detailed output
-          ssh -v -o StrictHostKeyChecking=no \
+          ssh -v -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=no \
+              -o IdentitiesOnly=yes \
               -o ConnectTimeout=10 \
+              -o PasswordAuthentication=no \
               -p ${{ secrets.SSH_PORT }} \
               ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
               "echo '✅ SSH connection successful'" 2>&1 || {
