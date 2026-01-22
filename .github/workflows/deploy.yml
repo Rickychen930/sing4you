@@ -138,7 +138,6 @@ jobs:
           }
           
           echo "✅ SSH key configured"
-          echo "🧪 Testing SSH connection..."
           
           # Verify key file exists and has correct permissions
           if [ ! -f ~/.ssh/deploy_key ]; then
@@ -156,28 +155,68 @@ jobs:
           ssh-keygen -y -f ~/.ssh/deploy_key 2>&1 | head -1 || echo "⚠️  Could not extract public key"
           echo ""
           
+          # Test basic connectivity first
+          echo "🌐 Testing basic connectivity..."
+          echo "Host: ${{ secrets.SERVER_HOST }}"
+          echo "Port: ${{ secrets.SSH_PORT }}"
+          echo "User: ${{ secrets.SERVER_USER }}"
+          echo ""
+          
+          # Test if host is reachable (ping-like test with timeout)
+          if command -v nc >/dev/null 2>&1; then
+            echo "Testing port connectivity with nc..."
+            if nc -zv -w 5 ${{ secrets.SERVER_HOST }} ${{ secrets.SSH_PORT }} 2>&1; then
+              echo "✅ Port ${{ secrets.SSH_PORT }} is reachable"
+            else
+              echo "❌ Port ${{ secrets.SSH_PORT }} is NOT reachable"
+              echo "⚠️  This might be a firewall/network issue"
+            fi
+          fi
+          
+          echo ""
+          echo "🧪 Testing SSH connection..."
+          
           # Test connection with detailed output
           ssh -v -i ~/.ssh/deploy_key \
               -o StrictHostKeyChecking=no \
               -o IdentitiesOnly=yes \
-              -o ConnectTimeout=10 \
+              -o ConnectTimeout=15 \
               -o PasswordAuthentication=no \
+              -o BatchMode=yes \
               -p ${{ secrets.SSH_PORT }} \
               ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
               "echo '✅ SSH connection successful'" 2>&1 || {
+            echo ""
             echo "❌ SSH connection test failed!"
             echo ""
-            echo "Troubleshooting steps:"
-            echo "1. Verify public key is in ~/.ssh/authorized_keys on server"
-            echo "2. Check username: ${{ secrets.SERVER_USER }}"
-            echo "3. Check host: ${{ secrets.SERVER_HOST }}"
-            echo "4. Check port: ${{ secrets.SSH_PORT }}"
-            echo "5. Verify SSH_PRIVATE_KEY format in GitHub Secrets"
+            echo "🔍 Diagnostic Information:"
+            echo "  Host: ${{ secrets.SERVER_HOST }}"
+            echo "  Port: ${{ secrets.SSH_PORT }}"
+            echo "  User: ${{ secrets.SERVER_USER }}"
             echo ""
-            echo "To add public key to server, run on server:"
-            echo "  mkdir -p ~/.ssh && chmod 700 ~/.ssh"
-            echo "  echo 'PUBLIC_KEY_HERE' >> ~/.ssh/authorized_keys"
-            echo "  chmod 600 ~/.ssh/authorized_keys"
+            echo "📋 Troubleshooting steps:"
+            echo ""
+            echo "1. CONNECTION TIMEOUT (if you see 'Connection timed out'):"
+            echo "   → Check if server IP is correct: ${{ secrets.SERVER_HOST }}"
+            echo "   → Check if SSH port is correct: ${{ secrets.SSH_PORT }}"
+            echo "   → Check firewall/security group allows port ${{ secrets.SSH_PORT }} from GitHub Actions"
+            echo "   → GitHub Actions IP ranges: 140.82.112.0/20, 143.55.64.0/20"
+            echo "   → Test from your local: ssh -v ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} -p ${{ secrets.SSH_PORT }}"
+            echo ""
+            echo "2. AUTHENTICATION FAILED (if you see 'Permission denied'):"
+            echo "   → Verify public key is in ~/.ssh/authorized_keys on server"
+            echo "   → Check username: ${{ secrets.SERVER_USER }}"
+            echo "   → Verify SSH_PRIVATE_KEY format in GitHub Secrets (must include BEGIN/END lines)"
+            echo ""
+            echo "3. To add public key to server, run on server:"
+            echo "   mkdir -p ~/.ssh && chmod 700 ~/.ssh"
+            echo "   echo 'PUBLIC_KEY_HERE' >> ~/.ssh/authorized_keys"
+            echo "   chmod 600 ~/.ssh/authorized_keys"
+            echo ""
+            echo "4. Check server firewall (on server):"
+            echo "   sudo ufw status"
+            echo "   sudo ufw allow ${{ secrets.SSH_PORT }}/tcp"
+            echo ""
             exit 1
           }
 
