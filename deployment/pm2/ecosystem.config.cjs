@@ -6,25 +6,24 @@
 module.exports = {
   apps: [
     {
-      name: 'christina-sings4you-api',
-      script: './dist/server/index.js',
+      name: 'sing4you-api',
+      script: './dist/server/server.js',
       cwd: '/var/www/christina-sings4you',
-      instances: 2, // Use 2 instances for load balancing (adjust based on CPU cores)
-      exec_mode: 'cluster',
+      instances: 1,
+      exec_mode: 'fork',
+      env_file: 'server/.env',
       // Environment variables
       env: {
         NODE_ENV: 'production',
-        PORT: 3001,
+        PORT: 4000,
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3001,
+        PORT: 4000,
       },
-      // Logging - create directory if it doesn't exist
-      error_file: '/var/log/pm2/christina-sings4you-error.log',
-      out_file: '/var/log/pm2/christina-sings4you-out.log',
-      log_file: '/var/log/pm2/christina-sings4you-combined.log',
-      time: true,
+      // Logging
+      error_file: './logs/pm2-error.log',
+      out_file: './logs/pm2-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
       
@@ -43,14 +42,8 @@ module.exports = {
       wait_ready: true,
       listen_timeout: 10000,
       
-      // Source map support
-      source_map_support: true,
-      
-      // Instance vars
-      instance_var: 'INSTANCE_ID',
-      
-      // Interpreter
-      interpreter: 'node',
+      // Ignore watch patterns
+      ignore_watch: ['node_modules', 'logs', 'uploads'],
     },
   ],
 

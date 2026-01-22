@@ -308,8 +308,8 @@ jobs:
             module.exports = {
               apps: [
                 {
-                  name: "giftforyou-api",
-                  script: "dist/server/server.js",
+                  name: "sing4you-api",
+                  script: "dist/server/index.js",
                   cwd: "${BACKEND_TARGET}",
                   instances: 1,
                   exec_mode: "fork",
@@ -446,8 +446,8 @@ jobs:
             fi
 
             # Verify critical files
-            if [ ! -f "$DIST_DIR/server/server.js" ]; then
-              echo "ERROR: server.js not found in dist!"
+            if [ ! -f "$DIST_DIR/server/index.js" ]; then
+              echo "ERROR: index.js not found in dist!"
               exit 1
             fi
 
@@ -471,8 +471,8 @@ jobs:
 
             # Stop old PM2 process if running
             echo "=== PM2 Management ==="
-            pm2 stop giftforyou-api || true
-            pm2 delete giftforyou-api || true
+            pm2 stop sing4you-api || true
+            pm2 delete sing4you-api || true
 
             # Kill any process on port 4000 (safety measure)
             echo "Checking for processes on port 4000..."
@@ -491,21 +491,21 @@ jobs:
             if [ -f "ecosystem.config.js" ]; then
               pm2 start ecosystem.config.js
             elif [ -f "server/.env" ]; then
-              pm2 start dist/server/server.js \
-                --name giftforyou-api \
+              pm2 start dist/server/index.js \
+                --name sing4you-api \
                 --env-file server/.env \
                 --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
                 --merge-logs
             elif [ -f ".env.production" ]; then
-              pm2 start dist/server/server.js \
-                --name giftforyou-api \
+              pm2 start dist/server/index.js \
+                --name sing4you-api \
                 --env-file .env.production \
                 --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
                 --merge-logs
             else
               # Fallback: start without env-file (assumes env vars are set in system)
-              pm2 start dist/server/server.js \
-                --name giftforyou-api \
+              pm2 start dist/server/index.js \
+                --name sing4you-api \
                 --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
                 --merge-logs
             fi
@@ -517,6 +517,113 @@ jobs:
             rm -rf "$BACKEND_TARGET/_incoming_backend"
 
             echo "✅ Backend deployment complete"
+
+      # ✅ Deploy Nginx Configuration
+      - name: Upload nginx configuration
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 2m
+          use_insecure_cipher: false
+          source: "deployment/nginx/christina-sings4you.com.au.conf"
+          target: "/tmp"
+          overwrite: true
+
+      - name: Deploy nginx configuration to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 5m
+          use_insecure_cipher: false
+          script: |
+            set -e
+            DOMAIN="christina-sings4you.com.au"
+            NGINX_SITES_AVAILABLE="/etc/nginx/sites-available"
+            NGINX_SITES_ENABLED="/etc/nginx/sites-enabled"
+            NGINX_CONFIG_FILE="${NGINX_SITES_AVAILABLE}/${DOMAIN}.conf"
+            TEMP_CONFIG="/tmp/christina-sings4you.com.au.conf"
+            FRONTEND_TARGET="${{ secrets.TARGET_DIR }}"
+            
+            echo "=== Nginx Configuration Deployment ==="
+            
+            # Check if temp config exists
+            if [ ! -f "$TEMP_CONFIG" ]; then
+              echo "❌ ERROR: Nginx config file not found at $TEMP_CONFIG"
+              exit 1
+            fi
+            
+            # Backup existing config if exists
+            if [ -f "$NGINX_CONFIG_FILE" ]; then
+              echo "Backing up existing nginx config..."
+              BACKUP_FILE="${NGINX_CONFIG_FILE}.backup.$(date +%Y%m%d-%H%M%S)"
+              sudo cp "$NGINX_CONFIG_FILE" "$BACKUP_FILE" || true
+              echo "✅ Backup created: $BACKUP_FILE"
+            fi
+            
+            # Copy config with sudo
+            echo "Copying nginx config to $NGINX_CONFIG_FILE..."
+            sudo cp "$TEMP_CONFIG" "$NGINX_CONFIG_FILE"
+            sudo chmod 644 "$NGINX_CONFIG_FILE"
+            
+            # Update root directory in config based on actual deployment structure
+            if [ -d "$FRONTEND_TARGET/build" ]; then
+              echo "Updating root directory to: $FRONTEND_TARGET/build"
+              sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_TARGET/build|g" "$NGINX_CONFIG_FILE"
+            elif [ -L "$FRONTEND_TARGET/build" ]; then
+              echo "Updating root directory to symlink: $FRONTEND_TARGET/build"
+              sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_TARGET/build|g" "$NGINX_CONFIG_FILE"
+            elif [ -d "$FRONTEND_TARGET/current" ]; then
+              echo "Updating root directory to: $FRONTEND_TARGET/current"
+              sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_TARGET/current|g" "$NGINX_CONFIG_FILE"
+            else
+              echo "⚠️  Warning: Could not determine frontend directory structure"
+              echo "   Available paths:"
+              ls -la "$FRONTEND_TARGET" || true
+            fi
+            
+            # Ensure backend port is correct (4000)
+            echo "Ensuring backend port is 4000..."
+            sudo sed -i "s|proxy_pass http://localhost:3001|proxy_pass http://localhost:4000|g" "$NGINX_CONFIG_FILE"
+            
+            # Create symlink if not exists
+            if [ ! -L "${NGINX_SITES_ENABLED}/${DOMAIN}.conf" ]; then
+              echo "Creating symlink in sites-enabled..."
+              sudo ln -s "$NGINX_CONFIG_FILE" "${NGINX_SITES_ENABLED}/${DOMAIN}.conf"
+            fi
+            
+            # Remove default site if exists
+            if [ -L "${NGINX_SITES_ENABLED}/default" ]; then
+              echo "Removing default nginx site..."
+              sudo rm "${NGINX_SITES_ENABLED}/default"
+            fi
+            
+            # Test nginx configuration
+            echo "Testing nginx configuration..."
+            if sudo nginx -t; then
+              echo "✅ Nginx configuration is valid"
+            else
+              echo "❌ ERROR: Nginx configuration test failed!"
+              sudo nginx -t
+              exit 1
+            fi
+            
+            # Reload nginx
+            echo "Reloading nginx..."
+            sudo systemctl reload nginx || sudo systemctl restart nginx
+            echo "✅ Nginx reloaded successfully"
+            
+            # Cleanup temp file
+            rm -f "$TEMP_CONFIG"
+            
+            echo "✅ Nginx configuration deployed"
 
       # ✅ Verify Deployment
       - name: Verify deployment
@@ -536,7 +643,7 @@ jobs:
             # Check PM2 status
             echo "PM2 Status:"
             pm2 status || true
-            pm2 logs giftforyou-api --lines 20 --nostream || true
+            pm2 logs sing4you-api --lines 20 --nostream || true
 
             # Check backend health
             echo -e "\nBackend Health Check:"

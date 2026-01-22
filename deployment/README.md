@@ -4,6 +4,23 @@ Professional deployment configuration for **christina-sings4you.com.au**.
 
 ## 🚀 Quick Start
 
+### Setup Nginx & PM2 dari Awal
+
+**Untuk setup Nginx dan PM2 dari awal (recommended untuk server baru):**
+
+```bash
+ssh root@76.13.96.198
+cd /var/www/christina-sings4you
+sudo chmod +x deployment/scripts/setup-all.sh
+sudo ./deployment/scripts/setup-all.sh
+```
+
+Atau setup secara terpisah:
+- **Setup PM2 saja**: `sudo ./deployment/scripts/setup-pm2.sh`
+- **Setup Nginx saja**: `sudo ./deployment/scripts/setup-nginx.sh`
+
+Lihat **[SETUP_NGINX_PM2.md](./SETUP_NGINX_PM2.md)** untuk panduan lengkap.
+
 ### Untuk Deployment Pertama Kali
 
 1. **Setup Server** (hanya sekali):
@@ -47,6 +64,9 @@ deployment/
 ├── systemd/
 │   └── christina-sings4you.service        # Systemd service (alternative)
 ├── scripts/
+│   ├── setup-all.sh                       # Master setup script (Nginx + PM2)
+│   ├── setup-nginx.sh                     # Nginx setup script
+│   ├── setup-pm2.sh                       # PM2 setup script
 │   ├── setup-server.sh                    # Initial server setup (run once)
 │   ├── deploy.sh                          # Deployment automation (on server)
 │   ├── deploy-from-local.sh               # Deploy from local machine
@@ -161,6 +181,15 @@ systemctl reload nginx
 - **SYNC_SUMMARY.md** - Summary of all synchronized configurations
 
 ## 🔧 Scripts Overview
+
+### setup-all.sh
+**Master setup script** - Setup lengkap Nginx dan PM2 dari awal. **Recommended untuk server baru**.
+
+### setup-nginx.sh
+Setup Nginx dari awal: install, konfigurasi, SSL setup, firewall. Bisa dijalankan terpisah.
+
+### setup-pm2.sh
+Setup PM2 dari awal: install Node.js, PM2, konfigurasi ecosystem, startup script, log rotation. Bisa dijalankan terpisah.
 
 ### setup-server.sh
 Setup awal server (install Node.js, Nginx, PM2, dll). **Jalankan hanya sekali** saat pertama kali setup server.
