@@ -713,19 +713,42 @@ jobs:
             echo "Determining frontend root directory..."
             FRONTEND_ROOT=""
             
-            # Priority 1: Check for build symlink (created by workflow)
-            if [ -L "$FRONTEND_TARGET/build" ] || [ -d "$FRONTEND_TARGET/build" ]; then
-              FRONTEND_ROOT="$FRONTEND_TARGET/build"
-              echo "✅ Found build directory/symlink: $FRONTEND_ROOT"
-            # Priority 2: Check for current symlink
+            # Priority 1: Check for build/dist/client (Vite output structure)
+            if [ -f "$FRONTEND_TARGET/build/dist/client/index.html" ]; then
+              FRONTEND_ROOT="$FRONTEND_TARGET/build/dist/client"
+              echo "✅ Found build/dist/client: $FRONTEND_ROOT"
+            # Priority 2: Check for current/dist/client
+            elif [ -f "$FRONTEND_TARGET/current/dist/client/index.html" ]; then
+              FRONTEND_ROOT="$FRONTEND_TARGET/current/dist/client"
+              echo "✅ Found current/dist/client: $FRONTEND_ROOT"
+            # Priority 3: Check for build symlink with dist/client inside
+            elif [ -L "$FRONTEND_TARGET/build" ] || [ -d "$FRONTEND_TARGET/build" ]; then
+              BUILD_PATH=$(readlink -f "$FRONTEND_TARGET/build" 2>/dev/null || echo "$FRONTEND_TARGET/build")
+              if [ -f "$BUILD_PATH/dist/client/index.html" ]; then
+                FRONTEND_ROOT="$BUILD_PATH/dist/client"
+                echo "✅ Found build symlink -> dist/client: $FRONTEND_ROOT"
+              elif [ -f "$BUILD_PATH/index.html" ]; then
+                FRONTEND_ROOT="$BUILD_PATH"
+                echo "✅ Found build directory with index.html: $FRONTEND_ROOT"
+              else
+                FRONTEND_ROOT="$FRONTEND_TARGET/build"
+                echo "✅ Found build directory/symlink: $FRONTEND_ROOT"
+              fi
+            # Priority 4: Check for current symlink
             elif [ -L "$FRONTEND_TARGET/current" ] || [ -d "$FRONTEND_TARGET/current" ]; then
-              FRONTEND_ROOT="$FRONTEND_TARGET/current"
-              echo "✅ Found current symlink: $FRONTEND_ROOT"
-            # Priority 3: Check for dist/client (direct build output)
+              CURRENT_PATH=$(readlink -f "$FRONTEND_TARGET/current" 2>/dev/null || echo "$FRONTEND_TARGET/current")
+              if [ -f "$CURRENT_PATH/dist/client/index.html" ]; then
+                FRONTEND_ROOT="$CURRENT_PATH/dist/client"
+                echo "✅ Found current symlink -> dist/client: $FRONTEND_ROOT"
+              else
+                FRONTEND_ROOT="$CURRENT_PATH"
+                echo "✅ Found current symlink: $FRONTEND_ROOT"
+              fi
+            # Priority 5: Check for dist/client (direct build output)
             elif [ -d "$FRONTEND_TARGET/../dist/client" ]; then
               FRONTEND_ROOT="$(dirname $FRONTEND_TARGET)/dist/client"
               echo "✅ Found dist/client: $FRONTEND_ROOT"
-            # Priority 4: Check if TARGET_DIR itself contains the build
+            # Priority 6: Check if TARGET_DIR itself contains the build
             elif [ -f "$FRONTEND_TARGET/index.html" ]; then
               FRONTEND_ROOT="$FRONTEND_TARGET"
               echo "✅ Found index.html directly in TARGET_DIR: $FRONTEND_ROOT"
@@ -734,19 +757,24 @@ jobs:
               echo "   TARGET_DIR: $FRONTEND_TARGET"
               echo "   Available paths:"
               ls -la "$FRONTEND_TARGET" 2>/dev/null || true
+              ls -la "$FRONTEND_TARGET/build" 2>/dev/null || true
               ls -la "$(dirname $FRONTEND_TARGET)" 2>/dev/null || true
-              # Use build as default (will be created by workflow)
-              FRONTEND_ROOT="$FRONTEND_TARGET/build"
+              # Use build/dist/client as default (Vite output structure)
+              FRONTEND_ROOT="$FRONTEND_TARGET/build/dist/client"
               echo "   Using default: $FRONTEND_ROOT"
             fi
             
             # Update nginx config with determined path
             if [ ! -z "$FRONTEND_ROOT" ]; then
               echo "Updating nginx root to: $FRONTEND_ROOT"
-              # Update all possible path patterns in config
+              # Update all possible path patterns in config (including dist/client variations)
               sudo sed -i "s|root /var/www/christina-sings4you/dist/client|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
+              sudo sed -i "s|root /var/www/christina-sings4you/frontend/build/dist/client|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
               sudo sed -i "s|root /var/www/christina-sings4you/frontend/build|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
               sudo sed -i "s|root /var/www/christina-sings4you/frontend/current|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
+              sudo sed -i "s|root /var/www/christina-sings4you/frontend/current/dist/client|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
+              # Also update the ACME challenge location
+              sudo sed -i "s|root /var/www/html|root /var/www/html|g" "$NGINX_CONFIG_FILE" || true
               # Verify the update
               UPDATED_ROOT=$(grep -E "^\s*root\s+" "$NGINX_CONFIG_FILE" | head -1 | sed 's/.*root\s\+\([^;]*\);.*/\1/')
               echo "✅ Nginx root updated to: $UPDATED_ROOT"
