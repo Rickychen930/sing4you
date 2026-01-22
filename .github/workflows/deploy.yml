@@ -305,7 +305,7 @@ jobs:
           timeout: 180s
           command_timeout: 20m
           use_insecure_cipher: false
-          source: "build/**"
+          source: "dist/client/**"
           target: "${{ secrets.TARGET_DIR }}/_incoming"
           overwrite: true
 
@@ -425,7 +425,7 @@ jobs:
             set -e
             FRONTEND_TARGET="${{ secrets.TARGET_DIR }}"
             RELEASES="$FRONTEND_TARGET/_releases"
-            INCOMING="$FRONTEND_TARGET/_incoming/build"
+            INCOMING="$FRONTEND_TARGET/_incoming"
             TS="$(date +%Y%m%d-%H%M%S)"
             NEW="$RELEASES/$TS"
             CURRENT="$FRONTEND_TARGET/current"
