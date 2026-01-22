@@ -14,9 +14,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load .env file from project root (not from dist/server)
-// In production, dist/server/index.js needs to load .env from /var/www/christina-sings4you/.env
+// In production, use BACKEND_ROOT env var if set, otherwise default to /var/www/christina-sings4you
+// This allows flexibility for different deployment paths
+const productionEnvPath = process.env.BACKEND_ROOT 
+  ? resolve(process.env.BACKEND_ROOT, '.env')
+  : resolve('/var/www/christina-sings4you/.env');
+  
 const envPath = process.env.NODE_ENV === 'production' 
-  ? resolve('/var/www/christina-sings4you/.env')
+  ? productionEnvPath
   : resolve(__dirname, '../../.env');
 
 dotenv.config({ path: envPath });

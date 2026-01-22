@@ -18,6 +18,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 4000,
+        BACKEND_ROOT: process.cwd(),
       },
       error_file: './logs/pm2-error.log',
       out_file: './logs/pm2-out.log',

@@ -392,6 +392,7 @@ jobs:
                   env: {
                     NODE_ENV: "production",
                     PORT: 4000,
+                    BACKEND_ROOT: "${BACKEND_TARGET}",
                   },
                   error_file: "./logs/pm2-error.log",
                   out_file: "./logs/pm2-out.log",
@@ -527,6 +528,17 @@ jobs:
             elif [ -f "$ENV_PROD_FILE" ]; then
               echo "Copying .env.production to root .env for production..."
               cp "$ENV_PROD_FILE" "$BACKEND_TARGET/.env"
+            fi
+            
+            # Ensure PORT=4000 in .env (critical for nginx proxy)
+            if [ -f "$BACKEND_TARGET/.env" ]; then
+              echo "Ensuring PORT=4000 in .env..."
+              if grep -q "^PORT=" "$BACKEND_TARGET/.env"; then
+                sed -i 's/^PORT=.*/PORT=4000/' "$BACKEND_TARGET/.env"
+              else
+                echo "PORT=4000" >> "$BACKEND_TARGET/.env"
+              fi
+              echo "✅ PORT set to 4000 in .env"
             fi
 
             # Verify critical files
@@ -828,7 +840,7 @@ jobs:
           command_timeout: 2m
           use_insecure_cipher: false
           source: "deployment/scripts/start-pm2.sh,deployment/scripts/check-deployment.sh"
-          target: "/var/www/christina-sings4you/deployment/scripts"
+          target: "${{ secrets.BACKEND_TARGET_DIR }}/deployment/scripts"
           overwrite: true
 
       - name: Make scripts executable
@@ -842,8 +854,9 @@ jobs:
           command_timeout: 1m
           use_insecure_cipher: false
           script: |
-            chmod +x /var/www/christina-sings4you/deployment/scripts/start-pm2.sh
-            chmod +x /var/www/christina-sings4you/deployment/scripts/check-deployment.sh
+            BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
+            chmod +x "$BACKEND_TARGET/deployment/scripts/start-pm2.sh"
+            chmod +x "$BACKEND_TARGET/deployment/scripts/check-deployment.sh"
             echo "✅ Scripts are now executable"
 
       # ✅ Run Diagnostic Check
@@ -859,9 +872,10 @@ jobs:
           use_insecure_cipher: false
           script: |
             set +e  # Don't exit on error for diagnostic
-            cd /var/www/christina-sings4you
+            BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
+            cd "$BACKEND_TARGET"
             echo "=== Running Deployment Diagnostic ==="
-            bash deployment/scripts/check-deployment.sh || {
+            bash "$BACKEND_TARGET/deployment/scripts/check-deployment.sh" || {
               echo "⚠️ Diagnostic script encountered issues, but continuing..."
             }
 
@@ -878,7 +892,8 @@ jobs:
           use_insecure_cipher: false
           script: |
             set -e
-            cd /var/www/christina-sings4you
+            BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
+            cd "$BACKEND_TARGET"
             echo "=== Ensuring PM2 is Running ==="
             
             # Check if PM2 process is running
@@ -890,12 +905,11 @@ jobs:
               echo "Attempting to start PM2..."
               
               # Try to start using the script
-              if [ -f "deployment/scripts/start-pm2.sh" ]; then
-                bash deployment/scripts/start-pm2.sh || {
+              if [ -f "$BACKEND_TARGET/deployment/scripts/start-pm2.sh" ]; then
+                bash "$BACKEND_TARGET/deployment/scripts/start-pm2.sh" || {
                   echo "⚠️ Script start failed, trying manual start..."
                   
                   # Manual start fallback
-                  BACKEND_TARGET="/var/www/christina-sings4you"
                   cd "$BACKEND_TARGET"
                   
                   # Check if dist exists
