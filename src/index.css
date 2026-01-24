@@ -479,8 +479,10 @@
   /* Disable fade-in-up animation, scroll-reveal-io will handle it */
   animation: none !important;
   /* Start state - akan di-override oleh scroll-reveal-io */
-  opacity: 0;
+  opacity: 0 !important;
   transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* When revealed, use fade-in-up animation */
@@ -488,20 +490,6 @@
   opacity: 1 !important;
   transform: translateY(0) !important;
   animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-}
-
-/* Ensure elements with both classes work together */
-.scroll-reveal-io.animate-fade-in-up {
-  /* Start dengan opacity 0, akan di-reveal oleh scroll reveal */
-  opacity: 0;
-  transform: translateY(40px);
-  animation: none; /* Disable animation, let scroll-reveal handle it */
-}
-
-.scroll-reveal-io.animate-fade-in-up.revealed {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .animate-fade-in-down {
@@ -583,9 +571,17 @@
   transform: translateY(0) !important;
 }
 
-/* Safety: Jika elemen tidak ter-reveal dalam 2 detik, langsung reveal */
+/* Safety: Jika elemen tidak ter-reveal dalam 3 detik, langsung reveal */
+@keyframes forceReveal {
+  to {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}
+
 .scroll-reveal-io:not(.revealed) {
-  /* Will be handled by JS, but ensure visibility after reasonable time */
+  /* Fallback: Force reveal after 3 seconds if not revealed */
+  animation: forceReveal 0.1s ease-out 3s forwards;
 }
 
 /* Fallback: Reveal elemen yang sudah di viewport saat page load */

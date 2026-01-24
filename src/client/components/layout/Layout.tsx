@@ -25,14 +25,14 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold-900/5 to-jazz-900/10 pointer-events-none z-0" />
       <div className="absolute inset-0 bg-gradient-to-r from-musical-900/5 via-transparent to-gold-900/5 pointer-events-none z-0" />
       
-      {/* Musical decorative elements - Reduced opacity for better readability */}
-      <div className="absolute top-20 left-10 text-5xl sm:text-6xl text-gold-900/8 pointer-events-none z-0 animate-float font-musical select-none">♪</div>
-      <div className="absolute top-40 right-20 text-4xl sm:text-5xl text-musical-900/8 pointer-events-none z-0 animate-float font-musical select-none" style={{ animationDelay: '1s' }}>♫</div>
-      <div className="absolute bottom-40 left-1/4 text-6xl sm:text-7xl text-gold-900/8 pointer-events-none z-0 animate-float font-musical select-none" style={{ animationDelay: '2s' }}>♬</div>
-      <div className="absolute bottom-60 right-1/3 text-3xl sm:text-4xl text-musical-900/8 pointer-events-none z-0 animate-float font-musical select-none" style={{ animationDelay: '3s' }}>♩</div>
+      {/* Musical decorative elements - Enhanced with subtle glow */}
+      <div className="absolute top-16 sm:top-20 left-4 sm:left-5 lg:left-10 text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-gold-900/10 sm:text-gold-900/8 pointer-events-none z-0 animate-float font-musical select-none drop-shadow-[0_0_20px_rgba(255,194,51,0.15)]">♪</div>
+      <div className="absolute top-32 sm:top-40 right-6 sm:right-10 lg:right-20 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-musical-900/10 sm:text-musical-900/8 pointer-events-none z-0 animate-float font-musical select-none drop-shadow-[0_0_20px_rgba(168,85,247,0.15)]" style={{ animationDelay: '1s' }}>♫</div>
+      <div className="absolute bottom-32 sm:bottom-40 left-1/4 text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-gold-900/10 sm:text-gold-900/8 pointer-events-none z-0 animate-float font-musical select-none drop-shadow-[0_0_25px_rgba(255,194,51,0.15)]" style={{ animationDelay: '2s' }}>♬</div>
+      <div className="absolute bottom-48 sm:bottom-60 right-1/3 text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-musical-900/10 sm:text-musical-900/8 pointer-events-none z-0 animate-float font-musical select-none drop-shadow-[0_0_15px_rgba(168,85,247,0.15)]" style={{ animationDelay: '3s' }}>♩</div>
       
       <Header isAdmin={isAdmin} />
-      <main id="main-content" className="flex-grow pt-16 lg:pt-20 relative z-10" tabIndex={-1}>
+      <main id="main-content" className="flex-grow pt-14 sm:pt-16 lg:pt-18 xl:pt-20 relative z-10" tabIndex={-1}>
         {children}
       </main>
       {!isAdmin && <Footer />}

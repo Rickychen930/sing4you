@@ -69,7 +69,7 @@ const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) 
 // Component untuk handle scroll reveal initialization on route change
 // Loading fallback component - declared outside render
 const LoadingFallback: React.FC = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60">
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 sm:px-6 py-10 sm:py-12">
     <LoadingSpinner size="lg" />
   </div>
 );

@@ -153,8 +153,8 @@ export const TestimonialsManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Testimonials Management | Admin" />
-        <div className="min-h-screen py-12 px-4">
-          <div className="max-w-7xl mx-auto flex justify-center py-12">
+        <div className="min-h-screen py-10 sm:py-12 px-4 sm:px-6">
+          <div className="max-w-7xl mx-auto flex justify-center py-10 sm:py-12">
             <LoadingSpinner size="lg" />
           </div>
         </div>
@@ -165,38 +165,38 @@ export const TestimonialsManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Testimonials Management | Admin" />
-      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 sm:mb-6 lg:mb-8 gap-3 sm:gap-4">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Testimonials Management
             </h1>
-            <div className="flex gap-2">
-              <Button variant="primary" size="sm" onClick={handleCreate}>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button variant="primary" size="sm" onClick={handleCreate} className="w-full sm:w-auto">
                 + New Testimonial
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')}>
+              <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')} className="w-full sm:w-auto">
                 Back
               </Button>
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
+            <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-lg sm:rounded-xl text-xs sm:text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <div className="lg:col-span-1">
               <Card>
-                <CardHeader className="p-4 sm:p-6">
-                  <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+                <CardHeader className="p-4 sm:p-5 lg:p-6">
+                  <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Testimonial' : 'New Testimonial'}
                   </h2>
                 </CardHeader>
-                <CardBody className="p-4 sm:p-6">
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                <CardBody className="p-4 sm:p-5 lg:p-6">
+                  <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                     <Input
                       label="Client Name"
                       required
@@ -254,12 +254,12 @@ export const TestimonialsManagementPage: React.FC = () => {
                       ]}
                       error={formErrors.rating}
                     />
-                    <div className="flex gap-2">
-                      <Button type="submit" isLoading={saving} variant="primary" className="flex-1">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button type="submit" isLoading={saving} variant="primary" className="flex-1 w-full sm:w-auto">
                         {editingId ? 'Update' : 'Create'}
                       </Button>
                       {editingId && (
-                        <Button type="button" variant="outline" onClick={handleCreate}>
+                        <Button type="button" variant="outline" onClick={handleCreate} className="w-full sm:w-auto">
                           Cancel
                         </Button>
                       )}
@@ -270,37 +270,38 @@ export const TestimonialsManagementPage: React.FC = () => {
             </div>
 
             <div className="lg:col-span-2">
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {testimonials.map((testimonial) => (
                   <Card key={testimonial._id} hover>
-                    <CardBody className="p-4 sm:p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+                    <CardBody className="p-4 sm:p-5 lg:p-6">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                            <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                               {testimonial.clientName}
                             </h3>
                             {testimonial.rating && (
-                              <span className="text-sm text-gold-600">
+                              <span className="text-xs sm:text-sm text-gold-600">
                                 {'★'.repeat(testimonial.rating)}
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-400 mb-2">{testimonial.eventType}</p>
-                          <p className="text-sm text-gray-300 italic">"{testimonial.message}"</p>
+                          <p className="text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">{testimonial.eventType}</p>
+                          <p className="text-xs sm:text-sm text-gray-300 italic">"{testimonial.message}"</p>
                         </div>
-                        <div className="flex gap-2 ml-4">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:ml-4">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleEdit(testimonial)}
+                            className="w-full sm:w-auto"
                           >
                             Edit
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-400 hover:text-red-300"
+                            className="text-red-400 hover:text-red-300 w-full sm:w-auto"
                             onClick={() => testimonial._id && handleDeleteClick(testimonial._id)}
                           >
                             Delete

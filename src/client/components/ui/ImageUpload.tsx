@@ -110,16 +110,16 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-2 sm:mb-2.5 lg:mb-3">
           {label}
         </label>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3 lg:space-y-4">
         {/* Preview */}
         {showPreview && preview && (
-          <div className="relative w-full max-w-md">
-            <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-gold-900/50 bg-gradient-to-br from-jazz-900/70 to-jazz-800/70 shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-sm group">
+          <div className="relative w-full max-w-md mx-auto sm:mx-0">
+            <div className="relative aspect-video rounded-lg sm:rounded-xl overflow-hidden border-2 border-gold-900/60 sm:border-gold-900/50 hover:border-gold-800/70 bg-gradient-to-br from-jazz-900/80 sm:from-jazz-900/70 to-jazz-800/80 sm:to-jazz-800/70 shadow-[0_10px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.15)_inset] hover:shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.25)_inset] backdrop-blur-sm group transition-all duration-500">
               {preview.startsWith('data:video') || preview.includes('video') ? (
                 <video
                   src={preview}
@@ -130,17 +130,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                 <img
                   src={preview}
                   alt="Preview"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               )}
               <button
                 type="button"
                 onClick={handleRemove}
-                className="absolute top-3 right-3 bg-red-600/90 hover:bg-red-600 text-white rounded-full p-2 hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-red-500/50 backdrop-blur-sm border-2 border-red-500/50 hover:border-red-400/70 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-jazz-900 min-w-[40px] min-h-[40px] flex items-center justify-center"
+                className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-red-600/95 sm:bg-red-600/90 hover:bg-red-600 text-white rounded-full p-1.5 sm:p-2 hover:scale-110 active:scale-95 transition-all duration-300 shadow-[0_8px_24px_rgba(239,68,68,0.4)] hover:shadow-[0_12px_32px_rgba(239,68,68,0.6),0_0_30px_rgba(239,68,68,0.3)] backdrop-blur-sm border-2 border-red-500/60 sm:border-red-500/50 hover:border-red-400/80 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center hover:drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]"
                 aria-label="Remove image"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -158,7 +158,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
         )}
 
         {/* Upload Area */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
           <input
             ref={fileInputRef}
             type="file"
@@ -173,18 +173,18 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
             disabled={isUploading}
             aria-label={value ? "Change image" : "Upload image"}
             className={cn(
-              'px-5 py-3 border-2 border-gold-900/50 rounded-xl text-base font-semibold',
-              'text-gray-200 bg-jazz-900/80 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-gold-800/40',
-              'hover:border-gold-700/70 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)]',
+              'px-4 sm:px-5 lg:px-6 py-2.5 sm:py-3 border-2 border-gold-900/60 sm:border-gold-900/50 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold',
+              'text-gray-200 bg-jazz-900/90 sm:bg-jazz-900/80 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-gold-800/50',
+              'hover:border-gold-700/80 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2),0_0_0_1px_rgba(255,194,51,0.1)]',
               'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-jazz-900/80',
-              'transition-all duration-300 min-h-[48px] flex items-center justify-center'
+              'transition-all duration-300 min-h-[44px] sm:min-h-[48px] flex items-center justify-center w-full sm:w-auto hover:drop-shadow-[0_0_8px_rgba(255,194,51,0.3)]'
             )}
           >
             {isUploading ? (
               <span className="flex items-center gap-2">
                 <LoadingSpinner size="sm" />
-                Uploading...
+                <span className="text-sm sm:text-base">Uploading...</span>
               </span>
             ) : value ? (
               'Change Image'
@@ -193,13 +193,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
             )}
           </button>
           {value && (
-            <span className="text-sm text-gray-400">
+            <span className="text-xs sm:text-sm text-gray-400 flex items-center justify-center sm:justify-start">
               or{' '}
               <button
                 type="button"
                 onClick={handleRemove}
                 aria-label="Remove current image"
-                className="text-red-400 hover:text-red-300 underline font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1"
+                className="text-red-400 hover:text-red-300 underline font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1 min-h-[32px] sm:min-h-[36px] flex items-center hover:drop-shadow-[0_0_6px_rgba(239,68,68,0.4)]"
               >
                 remove
               </button>
@@ -209,12 +209,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
 
         {/* Current URL Display */}
         {value && !preview && (
-          <div className="text-sm text-gray-300 break-all">
-            Current: <a href={value} target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:text-gold-300 underline transition-colors">{value}</a>
+          <div className="text-xs sm:text-sm text-gray-300/95 sm:text-gray-300 break-all">
+            Current: <a href={value} target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]">{value}</a>
           </div>
         )}
 
-        <p className="text-xs text-gray-400">
+        <p className="text-xs sm:text-sm text-gray-400">
           Max file size: {maxSizeMB}MB. Supported: Images (PNG, JPG, JPEG, HEIF, GIF, WebP) and Videos (MP4, WebM)
         </p>
       </div>

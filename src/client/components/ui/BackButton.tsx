@@ -35,7 +35,7 @@ export const BackButton: React.FC<BackButtonProps> = memo(({
       aria-label={label}
     >
       <svg
-        className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:-translate-x-1"
+        className="w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 group-hover:-translate-x-1 flex-shrink-0 drop-shadow-[0_0_6px_currentColor] group-hover:drop-shadow-[0_0_10px_currentColor]"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -48,7 +48,7 @@ export const BackButton: React.FC<BackButtonProps> = memo(({
           d="M10 19l-7-7m0 0l7-7m-7 7h18"
         />
       </svg>
-      <span className="font-medium">{label}</span>
+      <span className="font-medium text-sm sm:text-base group-hover:drop-shadow-[0_0_6px_currentColor] transition-all duration-300">{label}</span>
     </Button>
   );
 }, (prevProps, nextProps) => {

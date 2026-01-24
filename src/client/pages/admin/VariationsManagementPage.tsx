@@ -161,8 +161,8 @@ export const VariationsManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Variations Management | Admin" />
-        <div className="min-h-screen py-12 px-4">
-          <div className="max-w-7xl mx-auto flex justify-center py-12">
+        <div className="min-h-screen py-10 sm:py-12 px-4 sm:px-6">
+          <div className="max-w-7xl mx-auto flex justify-center py-10 sm:py-12">
             <LoadingSpinner size="lg" />
           </div>
         </div>
@@ -173,44 +173,44 @@ export const VariationsManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Variations Management | Admin" />
-      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 sm:mb-6 lg:mb-8 gap-3 sm:gap-4">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Variations Management
             </h1>
-            <div className="flex gap-2">
-              <Button variant="primary" size="sm" onClick={handleCreate}>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button variant="primary" size="sm" onClick={handleCreate} className="w-full sm:w-auto">
                 + New Variation
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')}>
+              <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')} className="w-full sm:w-auto">
                 Back
               </Button>
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
+            <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-lg sm:rounded-xl text-xs sm:text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <div className="lg:col-span-1">
               <Card>
-                <CardHeader className="p-4 sm:p-6">
-                  <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+                <CardHeader className="p-4 sm:p-5 lg:p-6">
+                  <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Variation' : 'New Variation'}
                   </h2>
                 </CardHeader>
-                <CardBody className="p-4 sm:p-6">
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                <CardBody className="p-4 sm:p-5 lg:p-6">
+                  <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-200 mb-1">
+                      <label className="block text-sm sm:text-base font-medium text-gray-200 mb-1.5 sm:mb-2">
                         Category
                       </label>
                       <select
-                        className="w-full px-4 py-2 border border-gold-900/50 rounded-lg bg-jazz-900/60 text-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-colors"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gold-900/50 rounded-lg bg-jazz-900/60 text-sm sm:text-base text-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-colors min-h-[44px] sm:min-h-[48px]"
                         value={formData.categoryId || ''}
                         onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                         required
@@ -255,8 +255,8 @@ export const VariationsManagementPage: React.FC = () => {
                       value={formData.order?.toString() || '0'}
                       onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
                     />
-                    <div className="flex gap-2">
-                      <Button type="submit" isLoading={saving} variant="primary" className="flex-1">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button type="submit" isLoading={saving} variant="primary" className="flex-1 w-full sm:w-auto">
                         {editingId ? 'Update' : 'Create'}
                       </Button>
                       {editingId && (
@@ -264,6 +264,7 @@ export const VariationsManagementPage: React.FC = () => {
                           type="button"
                           variant="outline"
                           onClick={handleCreate}
+                          className="w-full sm:w-auto"
                         >
                           Cancel
                         </Button>
@@ -275,7 +276,7 @@ export const VariationsManagementPage: React.FC = () => {
             </div>
 
             <div className="lg:col-span-2">
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {variations.map((variation) => {
                   const getCategoryName = (): string => {
                     if (typeof variation.categoryId === 'object' && variation.categoryId !== null) {
@@ -290,39 +291,40 @@ export const VariationsManagementPage: React.FC = () => {
                   
                   return (
                     <Card key={variation._id} hover>
-                      <CardBody className="p-4 sm:p-6">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
+                      <CardBody className="p-4 sm:p-5 lg:p-6">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
                               {variation.name}
                             </h3>
-                            <p className="text-sm text-gray-400 mb-2">
+                            <p className="text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
                               Category: {category} | Order: {variation.order || 0}
                             </p>
                             {variation.slug && (
-                              <p className="text-sm text-gray-400 mb-2">
+                              <p className="text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
                                 Slug: {variation.slug}
                               </p>
                             )}
-                            <p className="text-sm text-gray-300 line-clamp-2 mb-2">
+                            <p className="text-xs sm:text-sm text-gray-300 line-clamp-2 mb-1.5 sm:mb-2">
                               {variation.shortDescription}
                             </p>
                             <p className="text-xs text-gray-400 line-clamp-2">
                               {variation.longDescription}
                             </p>
                           </div>
-                          <div className="flex gap-2 ml-4">
+                          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:ml-4">
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleEdit(variation)}
+                              className="w-full sm:w-auto"
                             >
                               Edit
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-red-400 hover:text-red-300"
+                              className="text-red-400 hover:text-red-300 w-full sm:w-auto"
                               onClick={() => variation._id && handleDeleteClick(variation._id)}
                             >
                               Delete

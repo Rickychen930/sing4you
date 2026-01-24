@@ -53,35 +53,35 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 py-12 relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 sm:px-6 py-10 sm:py-12 lg:py-16 relative overflow-hidden">
           {/* Decorative background elements */}
           <div className="absolute inset-0 pointer-events-none opacity-10">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl animate-musical-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-musical-500/20 rounded-full blur-3xl animate-musical-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-gold-500/20 rounded-full blur-3xl animate-musical-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 lg:w-[28rem] lg:h-[28rem] bg-musical-500/20 rounded-full blur-3xl animate-musical-pulse" style={{ animationDelay: '1s' }}></div>
           </div>
           
           <Card className="max-w-lg w-full relative z-10">
-            <CardHeader className="p-6 sm:p-8 text-center">
-              <div className="text-7xl sm:text-8xl mb-6 opacity-70 animate-float" aria-hidden="true">⚠️</div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+            <CardHeader className="p-5 sm:p-6 lg:p-8 text-center">
+              <div className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl mb-4 sm:mb-5 lg:mb-6 opacity-70 animate-float" aria-hidden="true">⚠️</div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-4">
                 Oops! Something went wrong
               </h1>
             </CardHeader>
-            <CardBody className="p-6 sm:p-8">
-              <p className="text-base sm:text-lg text-gray-200 mb-6 text-center font-light leading-relaxed">
+            <CardBody className="p-5 sm:p-6 lg:p-8">
+              <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-5 sm:mb-6 text-center font-light leading-relaxed">
                 We apologize for the inconvenience. Please try refreshing the page or returning to the homepage.
               </p>
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mb-6">
-                  <summary className="text-sm text-gold-400 cursor-pointer mb-3 font-semibold hover:text-gold-300 transition-colors">
+                <details className="mb-5 sm:mb-6">
+                  <summary className="text-xs sm:text-sm text-gold-400 cursor-pointer mb-2 sm:mb-3 font-semibold hover:text-gold-300 transition-colors min-h-[32px] sm:min-h-[36px] flex items-center">
                     Error Details (Development Only)
                   </summary>
-                  <pre className="text-xs bg-gradient-to-br from-jazz-900/90 to-jazz-800/90 p-4 rounded-xl overflow-auto max-h-48 border border-gold-900/40 text-gray-300 font-mono leading-relaxed">
+                  <pre className="text-xs sm:text-sm bg-gradient-to-br from-jazz-900/90 to-jazz-800/90 p-3 sm:p-4 rounded-lg sm:rounded-xl overflow-auto max-h-40 sm:max-h-48 border border-gold-900/40 text-gray-300 font-mono leading-relaxed">
                     {this.state.error.toString()}
                   </pre>
                 </details>
               )}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <Button 
                   variant="primary" 
                   onClick={this.handleReset}

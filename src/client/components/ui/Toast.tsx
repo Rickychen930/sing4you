@@ -52,30 +52,35 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
   return (
     <div
       className={cn(
-        'flex items-start gap-3 sm:gap-4 p-5 sm:p-6 rounded-2xl border transition-all duration-300 animate-slide-in hover:scale-[1.02] transform shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-md relative overflow-hidden',
+        'flex items-start gap-3 sm:gap-4 p-4 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-500 animate-slide-in hover:scale-[1.03] transform shadow-[0_12px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.1)_inset] hover:shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.15)_inset,0_0_30px_currentColor] backdrop-blur-lg relative overflow-hidden group',
         variants[toast.type]
       )}
       role="alert"
       aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
       aria-atomic="true"
     >
-      {/* Subtle glow effect */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute top-0 left-0 w-32 h-32 rounded-full blur-2xl bg-current"></div>
+      {/* Enhanced multi-layer glow effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-30 pointer-events-none transition-opacity duration-500">
+        <div className="absolute top-0 left-0 w-40 h-40 sm:w-48 sm:h-48 rounded-full blur-2xl bg-current"></div>
+        <div className="absolute bottom-0 right-0 w-32 h-32 sm:w-40 sm:h-40 rounded-full blur-xl bg-current opacity-60"></div>
+      </div>
+      {/* Shimmer effect on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
       </div>
       
-      <div className="flex-shrink-0 mt-0.5" aria-hidden="true">
-        <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+      <div className="flex-shrink-0 mt-0.5 relative z-10" aria-hidden="true">
+        <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_currentColor]">
           {icons[toast.type]}
         </div>
       </div>
-      <p className="flex-1 text-sm sm:text-base font-semibold leading-relaxed pt-0.5">{toast.message}</p>
+      <p className="flex-1 text-sm sm:text-base lg:text-lg font-semibold leading-relaxed pt-0.5 relative z-10 group-hover:text-current/95 transition-colors duration-300">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
-        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1.5 rounded-full hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent min-w-[36px] min-h-[36px] flex items-center justify-center relative z-10"
+        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1.5 sm:p-2 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-transparent min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center relative z-10 touch-manipulation shadow-[0_0_10px_rgba(0,0,0,0.2)] hover:shadow-[0_0_15px_currentColor]"
         aria-label={`Close ${toast.type} notification`}
       >
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
       </button>
@@ -93,7 +98,7 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose 
 
   return (
     <div 
-      className="fixed top-20 sm:top-24 right-4 sm:right-6 z-50 space-y-3 max-w-md w-[calc(100%-2rem)] sm:w-auto"
+      className="fixed top-20 sm:top-24 lg:top-28 right-3 sm:right-4 lg:right-6 z-50 space-y-2 sm:space-y-3 max-w-md w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] lg:w-auto"
       role="region"
       aria-label="Notifications"
       aria-live="polite"

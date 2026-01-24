@@ -89,8 +89,8 @@ export const HeroManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Hero Settings | Admin" />
-        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto flex justify-center py-12">
+        <div className="min-h-screen py-10 sm:py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto flex justify-center py-10 sm:py-12">
             <LoadingSpinner size="lg" />
           </div>
         </div>
@@ -102,9 +102,9 @@ export const HeroManagementPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Hero Settings | Admin" />
-        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-10 sm:py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center text-red-400">Failed to load settings</div>
+            <div className="text-center text-sm sm:text-base text-red-400">Failed to load settings</div>
           </div>
         </div>
       </Layout>
@@ -114,29 +114,29 @@ export const HeroManagementPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Hero Settings | Admin" />
-      <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 sm:mb-6 lg:mb-8 gap-3 sm:gap-4">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Hero Settings
             </h1>
-            <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')}>
+            <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')} className="w-full sm:w-auto">
               Back to Dashboard
             </Button>
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-sm backdrop-blur-sm">
+            <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-lg sm:rounded-xl text-xs sm:text-sm backdrop-blur-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
-            <Card className="mb-6">
-              <CardHeader className="p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Basic Information</h2>
+            <Card className="mb-4 sm:mb-5 lg:mb-6">
+              <CardHeader className="p-4 sm:p-5 lg:p-6">
+                <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Basic Information</h2>
               </CardHeader>
-              <CardBody className="p-4 sm:p-6 space-y-4">
+              <CardBody className="p-4 sm:p-5 lg:p-6 space-y-3 sm:space-y-4">
                 <Input
                   label="Title"
                   name="title"
@@ -169,11 +169,11 @@ export const HeroManagementPage: React.FC = () => {
               </CardBody>
             </Card>
 
-            <Card className="mb-6">
-              <CardHeader className="p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">WhatsApp CTA</h2>
+            <Card className="mb-4 sm:mb-5 lg:mb-6">
+              <CardHeader className="p-4 sm:p-5 lg:p-6">
+                <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">WhatsApp CTA</h2>
               </CardHeader>
-              <CardBody className="p-4 sm:p-6 space-y-4">
+              <CardBody className="p-4 sm:p-5 lg:p-6 space-y-3 sm:space-y-4">
                 <Input
                   label="Button Text"
                   name="ctaWhatsApp.text"
@@ -194,11 +194,11 @@ export const HeroManagementPage: React.FC = () => {
               </CardBody>
             </Card>
 
-            <Card className="mb-6">
-              <CardHeader className="p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Email CTA</h2>
+            <Card className="mb-4 sm:mb-5 lg:mb-6">
+              <CardHeader className="p-4 sm:p-5 lg:p-6">
+                <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Email CTA</h2>
               </CardHeader>
-              <CardBody className="p-4 sm:p-6 space-y-4">
+              <CardBody className="p-4 sm:p-5 lg:p-6 space-y-3 sm:space-y-4">
                 <Input
                   label="Button Text"
                   name="ctaEmail.text"
@@ -219,15 +219,16 @@ export const HeroManagementPage: React.FC = () => {
               </CardBody>
             </Card>
 
-            <div className="flex justify-end gap-4">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => navigate('/admin/dashboard')}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
-              <Button type="submit" isLoading={saving} variant="primary">
+              <Button type="submit" isLoading={saving} variant="primary" className="w-full sm:w-auto">
                 Save Settings
               </Button>
             </div>

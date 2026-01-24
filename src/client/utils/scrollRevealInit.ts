@@ -26,12 +26,12 @@ export const initScrollReveal = () => {
     const rect = element.getBoundingClientRect();
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
     // Check jika elemen sudah visible atau akan segera visible (lebih generous)
-    const isVisible = rect.top < viewportHeight + 400 && rect.bottom > -400;
+    const isVisible = rect.top < viewportHeight + 500 && rect.bottom > -200;
     if (isVisible) {
       // Langsung reveal untuk elemen yang sudah visible dengan small delay untuk smooth animation
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         element.classList.add('revealed');
-      });
+      }, 50);
       return true;
     }
     return false;
@@ -49,7 +49,7 @@ export const initScrollReveal = () => {
     },
     {
       threshold: 0.01, // Very low threshold untuk trigger lebih cepat
-      rootMargin: '0px 0px 0px 0px', // No negative margin, trigger as soon as element enters viewport
+      rootMargin: '0px 0px -50px 0px', // Small negative margin untuk trigger sedikit lebih awal
     }
   );
 

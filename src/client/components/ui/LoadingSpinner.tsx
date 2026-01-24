@@ -17,18 +17,18 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = memo(({
   variant = 'default',
 }) => {
   const sizes = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
-    xl: 'w-16 h-16',
+    sm: 'w-4 h-4 sm:w-5 sm:h-5',
+    md: 'w-6 h-6 sm:w-8 sm:h-8',
+    lg: 'w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14',
+    xl: 'w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20',
   };
 
   const spinner = variant === 'dots' ? (
     <div className={cn('flex items-center justify-center gap-2', className)}>
-      <div className="flex gap-1.5">
-        <div className="w-2 h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-        <div className="w-2 h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-        <div className="w-2 h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+      <div className="flex gap-1 sm:gap-1.5">
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
       </div>
     </div>
   ) : variant === 'minimal' ? (
@@ -99,14 +99,14 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = memo(({
         aria-label={text || "Loading"}
       >
         {/* Animated background elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gold-900/30 pointer-events-none animate-gradient"></div>
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gold-500/10 rounded-full blur-3xl animate-musical-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-musical-500/10 rounded-full blur-3xl animate-musical-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gold-900/35 pointer-events-none animate-gradient"></div>
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-40 sm:h-40 bg-gold-500/15 sm:bg-gold-500/10 rounded-full blur-3xl animate-musical-pulse shadow-[0_0_50px_rgba(255,194,51,0.2)]"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-48 sm:h-48 bg-musical-500/15 sm:bg-musical-500/10 rounded-full blur-3xl animate-musical-pulse shadow-[0_0_50px_rgba(168,85,247,0.2)]" style={{ animationDelay: '1s' }}></div>
         
-        <div className="relative z-10 flex flex-col items-center gap-4">
+        <div className="relative z-10 flex flex-col items-center gap-3 sm:gap-4 lg:gap-5">
           {spinner}
           {text && (
-            <p className="text-gold-300 text-lg font-medium animate-pulse">{text}</p>
+            <p className="text-gold-300 text-base sm:text-lg lg:text-xl font-medium animate-pulse drop-shadow-[0_0_10px_rgba(255,194,51,0.4)]" style={{ textShadow: '0 2px 8px rgba(255, 194, 51, 0.3)' }}>{text}</p>
           )}
         </div>
       </div>

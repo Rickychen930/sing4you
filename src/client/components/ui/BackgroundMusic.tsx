@@ -181,20 +181,20 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
 
   return (
     <div
-      className={`fixed ${positionClasses[controlsPosition]} z-50 bg-gold-900/90 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-gold-700/50`}
-      style={{ minWidth: '200px' }}
+      className={`fixed ${positionClasses[controlsPosition]} z-50 bg-gold-900/90 backdrop-blur-sm rounded-lg sm:rounded-xl p-2.5 sm:p-3 shadow-lg border border-gold-700/50`}
+      style={{ minWidth: 'clamp(180px, 200px, 240px)' }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Play/Pause Button */}
         <button
           onClick={togglePlay}
-          className="flex-shrink-0 w-10 h-10 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gold-400"
+          className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px]"
           aria-label={isPlaying ? 'Pause' : 'Play'}
           title={isPlaying ? 'Pause music' : 'Play music'}
         >
           {isPlaying ? (
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -207,7 +207,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
             </svg>
           ) : (
             <svg
-              className="w-5 h-5 ml-0.5"
+              className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -222,17 +222,17 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
         </button>
 
         {/* Volume Control */}
-        <div className="flex-1 flex items-center gap-2">
+        <div className="flex-1 flex items-center gap-1.5 sm:gap-2 min-w-0">
           {/* Mute Button */}
           <button
             onClick={toggleMute}
-            className="flex-shrink-0 w-8 h-8 text-gold-200 hover:text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400 rounded"
+            className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 text-gold-200 hover:text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 rounded min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
             aria-label={isMuted ? 'Unmute' : 'Mute'}
             title={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted || currentVolume === 0 ? (
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4 sm:w-5 sm:h-5"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -245,7 +245,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
               </svg>
             ) : (
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4 sm:w-5 sm:h-5"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -267,7 +267,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
             step="0.01"
             value={isMuted ? 0 : currentVolume}
             onChange={handleVolumeChange}
-            className="flex-1 h-2 bg-gold-800 rounded-lg appearance-none cursor-pointer accent-gold-400"
+            className="flex-1 h-1.5 sm:h-2 bg-gold-800 rounded-lg appearance-none cursor-pointer accent-gold-400 min-w-0"
             style={{
               background: `linear-gradient(to right, #ffc233 0%, #ffc233 ${(isMuted ? 0 : currentVolume) * 100}%, #4a5568 ${(isMuted ? 0 : currentVolume) * 100}%, #4a5568 100%)`,
             }}
@@ -278,13 +278,13 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
 
       {/* Error Message - only for errors other than file not found */}
       {error && error !== 'File not found' && (
-        <div className="mt-2 text-xs text-red-300 bg-red-900/30 p-2 rounded">
+        <div className="mt-1.5 sm:mt-2 text-xs text-red-300 bg-red-900/30 p-1.5 sm:p-2 rounded text-center">
           {error}
         </div>
       )}
 
       {/* Info Text */}
-      <div className="mt-2 text-xs text-gold-300/70 text-center">
+      <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/70 text-center">
         🎵 90s Music
       </div>
     </div>

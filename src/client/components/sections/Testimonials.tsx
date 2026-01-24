@@ -3,6 +3,7 @@ import type { ITestimonial } from '../../../shared/interfaces';
 import { testimonialService } from '../../services/testimonialService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { TestimonialCard } from '../ui/TestimonialCard';
+import { initScrollReveal } from '../../utils/scrollRevealInit';
 
 export const Testimonials: React.FC = memo(() => {
   const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);
@@ -24,6 +25,16 @@ export const Testimonials: React.FC = memo(() => {
 
     loadTestimonials();
   }, []);
+
+  // Initialize scroll reveal after testimonials are loaded
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => {
+        initScrollReveal();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, testimonials.length]);
 
   if (loading) {
     return (
@@ -53,27 +64,29 @@ export const Testimonials: React.FC = memo(() => {
     );
   }
 
-  if (testimonials.length === 0) {
-    return null; // Don't show section if no testimonials
-  }
-
   return (
     <SectionWrapper
       title="What Our Clients Say"
       subtitle="Read testimonials from our satisfied clients"
       className="bg-gradient-to-br from-musical-900/30 via-jazz-900/20 to-gold-900/20 relative overflow-hidden"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-        {testimonials.map((testimonial, index) => (
-          <div
-            key={testimonial._id}
-            className="scroll-reveal-io animate-fade-in-up"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <TestimonialCard testimonial={testimonial} />
-          </div>
-        ))}
-      </div>
+      {testimonials.length === 0 ? (
+        <div className="text-center py-10 sm:py-12 lg:py-16">
+          <p className="text-gray-400 text-base sm:text-lg lg:text-xl">No testimonials available yet. Check back soon!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={testimonial._id}
+              className="scroll-reveal-io animate-fade-in-up"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <TestimonialCard testimonial={testimonial} />
+            </div>
+          ))}
+        </div>
+      )}
     </SectionWrapper>
   );
 });

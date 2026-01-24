@@ -56,19 +56,19 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
   if (loading) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="space-y-8 sm:space-y-10 lg:space-y-12">
-          <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-6 sm:p-8 lg:p-10 border border-gold-900/50 backdrop-blur-md">
-            <div className="h-10 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-6 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
-            <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
-            <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
-            <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-8 w-4/6 animate-pulse-soft skeleton-shimmer"></div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-8">
+        <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
+          <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-5 sm:p-6 lg:p-8 xl:p-10 border border-gold-900/50 backdrop-blur-md">
+            <div className="h-8 sm:h-10 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 sm:mb-5 lg:mb-6 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
+            <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
+            <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
+            <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-6 sm:mb-7 lg:mb-8 w-4/6 animate-pulse-soft skeleton-shimmer"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 mb-6 sm:mb-7 lg:mb-8">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="aspect-video bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-xl animate-pulse-soft skeleton-shimmer"></div>
+                <div key={i} className="aspect-video bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg sm:rounded-xl animate-pulse-soft skeleton-shimmer"></div>
               ))}
             </div>
-            <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
-            <div className="h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
+            <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
+            <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
           </div>
         </div>
       </SectionWrapper>
@@ -94,21 +94,21 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
 
   return (
     <SectionWrapper title={title || variation.name} subtitle={subtitle}>
-      <div className="space-y-8 sm:space-y-10 lg:space-y-12">
+      <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
         <Card hover>
-          <CardBody>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+          <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_15px_rgba(255,194,51,0.4)] transition-all duration-300" style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}>
               {variation.name}
             </h2>
             
             {variation.shortDescription && (
-              <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-8 sm:mb-10 leading-relaxed font-light">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200/95 sm:text-gray-200 mb-6 sm:mb-7 lg:mb-8 xl:mb-10 leading-relaxed font-light group-hover:text-gray-100 transition-colors duration-300" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)' }}>
                 {variation.shortDescription}
               </p>
             )}
 
             {mediaUrls.length > 0 && (
-              <div className="mb-8 sm:mb-10">
+              <div className="mb-6 sm:mb-7 lg:mb-8 xl:mb-10">
                 <MediaGallery media={mediaUrls} />
               </div>
             )}

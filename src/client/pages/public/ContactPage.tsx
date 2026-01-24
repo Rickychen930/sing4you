@@ -141,41 +141,51 @@ export const ContactPage: React.FC = () => {
         title="Contact | Christina Sings4U"
         description="Get in touch with Christina Sings4U for booking inquiries. Reach out via email or WhatsApp."
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
         <Breadcrumb items={breadcrumbItems} />
       </div>
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20">
-        <div className="max-w-3xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
-            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(168,85,247,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
-              {/* Glow effect on hover */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl pointer-events-none"></div>
-              <div className="text-4xl sm:text-5xl mb-4 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">📱</div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gold-200 mb-4">WhatsApp</h3>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 lg:gap-8 xl:gap-10 mb-10 sm:mb-12 lg:mb-16 xl:mb-20">
+            <div className="text-center p-5 sm:p-6 lg:p-8 xl:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-500 hover:shadow-[0_25px_70px_rgba(255,194,51,0.35),0_15px_40px_rgba(168,85,247,0.25),0_0_0_1px_rgba(255,194,51,0.2)] hover:scale-[1.03] border-2 border-gold-900/50 hover:border-gold-700/70 backdrop-blur-lg group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+              {/* Enhanced multi-layer glow effect */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-2xl pointer-events-none"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-xl pointer-events-none" style={{ transitionDelay: '100ms' }}></div>
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+              </div>
+              <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_0_15px_rgba(255,194,51,0.5)]" aria-hidden="true">📱</div>
+              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gold-200 group-hover:text-gold-100 mb-3 sm:mb-4 lg:mb-5 xl:mb-6 transition-colors duration-300">WhatsApp</h3>
               <a
                 href={generateWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 py-2 min-h-[44px] flex items-center justify-center mx-auto relative z-10"
+                className="text-sm sm:text-base lg:text-lg text-gold-400 hover:text-gold-200 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 min-h-[44px] sm:min-h-[48px] flex items-center justify-center mx-auto relative z-10 hover:scale-105 active:scale-95"
               >
                 Message us on WhatsApp
               </a>
             </div>
-            <div className="text-center p-8 sm:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,194,51,0.25),0_10px_30px_rgba(168,85,247,0.2)] hover:scale-[1.02] border border-gold-900/50 backdrop-blur-md group focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
-              {/* Glow effect on hover */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl pointer-events-none"></div>
-              <div className="text-4xl sm:text-5xl mb-4 text-gold-400 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">✉️</div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gold-200 mb-4">Email</h3>
+            <div className="text-center p-5 sm:p-6 lg:p-8 xl:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-500 hover:shadow-[0_25px_70px_rgba(255,194,51,0.35),0_15px_40px_rgba(168,85,247,0.25),0_0_0_1px_rgba(255,194,51,0.2)] hover:scale-[1.03] border-2 border-gold-900/50 hover:border-gold-700/70 backdrop-blur-lg group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+              {/* Enhanced multi-layer glow effect */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-2xl pointer-events-none"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-xl pointer-events-none" style={{ transitionDelay: '100ms' }}></div>
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+              </div>
+              <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_0_15px_rgba(255,194,51,0.5)]" aria-hidden="true">✉️</div>
+              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gold-200 group-hover:text-gold-100 mb-3 sm:mb-4 lg:mb-5 xl:mb-6 transition-colors duration-300">Email</h3>
               <a
                 href={generateMailtoLink()}
-                className="text-base sm:text-lg text-gold-400 hover:text-gold-300 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 py-2 min-h-[44px] flex items-center justify-center mx-auto relative z-10"
+                className="text-sm sm:text-base lg:text-lg text-gold-400 hover:text-gold-200 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 min-h-[44px] sm:min-h-[48px] flex items-center justify-center mx-auto relative z-10 hover:scale-105 active:scale-95"
               >
                 Send us an email
               </a>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 lg:space-y-7">
             <Input
               label="Name"
               name="name"
@@ -249,36 +259,40 @@ export const ContactPage: React.FC = () => {
               helperText={`${formData.message.length}/2000 characters`}
             />
             {submitStatus === 'success' && (
-              <div className="p-6 bg-gradient-to-br from-green-900/60 to-green-800/50 text-green-100 rounded-xl border border-green-700/60 backdrop-blur-md shadow-[0_8px_24px_rgba(34,197,94,0.3)] animate-fade-in">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-700/50 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <div className="p-4 sm:p-5 lg:p-6 xl:p-7 bg-gradient-to-br from-green-900/70 to-green-800/60 text-green-100 rounded-lg sm:rounded-xl border-2 border-green-700/70 hover:border-green-600/80 backdrop-blur-lg shadow-[0_12px_32px_rgba(34,197,94,0.4),0_0_0_1px_rgba(34,197,94,0.2)] animate-fade-in relative overflow-hidden group">
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-transparent to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="flex items-start gap-2.5 sm:gap-3 lg:gap-4 relative z-10">
+                  <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-green-700/60 group-hover:bg-green-700/70 flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.5)] transition-all duration-300">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-200 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-lg mb-1">Message sent successfully!</p>
-                    <p className="text-green-200/90">Thank you for your inquiry! We will get back to you soon.</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm sm:text-base lg:text-lg xl:text-xl mb-1 sm:mb-1.5 lg:mb-2 group-hover:text-green-50 transition-colors duration-300">Message sent successfully!</p>
+                    <p className="text-xs sm:text-sm lg:text-base text-green-200/90 group-hover:text-green-100/90 transition-colors duration-300">Thank you for your inquiry! We will get back to you soon.</p>
                   </div>
                 </div>
               </div>
             )}
             {submitStatus === 'error' && (
-              <div className="p-6 bg-gradient-to-br from-red-900/60 to-red-800/50 text-red-100 rounded-xl border border-red-700/60 backdrop-blur-md shadow-[0_8px_24px_rgba(239,68,68,0.3)] animate-fade-in">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-700/50 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <div className="p-4 sm:p-5 lg:p-6 xl:p-7 bg-gradient-to-br from-red-900/70 to-red-800/60 text-red-100 rounded-lg sm:rounded-xl border-2 border-red-700/70 hover:border-red-600/80 backdrop-blur-lg shadow-[0_12px_32px_rgba(239,68,68,0.4),0_0_0_1px_rgba(239,68,68,0.2)] animate-fade-in relative overflow-hidden group">
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-transparent to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="flex items-start gap-2.5 sm:gap-3 lg:gap-4 relative z-10">
+                  <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-red-700/60 group-hover:bg-red-700/70 flex items-center justify-center shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all duration-300">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-200 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-lg mb-1">Submission failed</p>
-                    <p className="text-red-200/90">There was an error submitting your form. Please try again.</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm sm:text-base lg:text-lg xl:text-xl mb-1 sm:mb-1.5 lg:mb-2 group-hover:text-red-50 transition-colors duration-300">Submission failed</p>
+                    <p className="text-xs sm:text-sm lg:text-base text-red-200/90 group-hover:text-red-100/90 transition-colors duration-300">There was an error submitting your form. Please try again.</p>
                   </div>
                 </div>
               </div>
             )}
-            <Button type="submit" isLoading={isSubmitting} size="lg" className="w-full">
+            <Button type="submit" isLoading={isSubmitting} size="lg" className="w-full mt-5 sm:mt-6 lg:mt-8">
               Send Message
             </Button>
           </form>

@@ -11,12 +11,12 @@ export const DescriptionSection: React.FC<DescriptionSectionProps> = memo(({
   className,
 }) => {
   return (
-    <div className={cn('mt-8 sm:mt-10 pt-8 sm:pt-10 border-t-2 border-gold-900/50', className)}>
-      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-5 sm:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2)' }}>
+    <div className={cn('mt-6 sm:mt-7 lg:mt-8 xl:mt-10 pt-6 sm:pt-7 lg:pt-8 xl:pt-10 border-t-2 border-gold-900/60 sm:border-gold-900/50 hover:border-gold-800/70 transition-colors duration-300', className)}>
+      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight drop-shadow-[0_2px_12px_rgba(255,194,51,0.3)]" style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}>
         Description
       </h3>
       <div className="prose prose-invert max-w-none">
-        <p className="text-base sm:text-lg lg:text-xl text-gray-200 whitespace-pre-line leading-relaxed font-normal font-sans">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200/95 sm:text-gray-200 whitespace-pre-line leading-relaxed font-normal font-sans" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}>
           {description}
         </p>
       </div>
