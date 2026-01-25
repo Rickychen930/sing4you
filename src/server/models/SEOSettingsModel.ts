@@ -54,12 +54,10 @@ export class SEOSettingsModel {
     } catch (error) {
       // Return default settings if database query fails
       return {
-        _id: 'default',
         defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
         defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
+        defaultImage: '',
         siteUrl: process.env.SITE_URL || 'https://christina-sings4you.com.au',
-        createdAt: new Date(),
-        updatedAt: new Date(),
       };
     }
   }

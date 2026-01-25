@@ -42,7 +42,7 @@ const upload = multer({
 export const uploadMiddleware = upload.single('file');
 
 export class MediaUploadController {
-  public upload = async (req: Request, res: Response): Promise<void> => {
+  public upload = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.file) {
         res.status(400).json({

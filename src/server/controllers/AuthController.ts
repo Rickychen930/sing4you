@@ -8,7 +8,7 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
-  public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public login = async (req: Request, res: Response): Promise<void> => {
     try {
       let { email, password } = req.body;
       
@@ -70,7 +70,7 @@ export class AuthController {
     }
   };
 
-  public refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public refresh = async (req: Request, res: Response): Promise<void> => {
     try {
       const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
       if (!refreshToken) {

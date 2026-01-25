@@ -81,7 +81,6 @@ export class HeroSettingsModel {
     } catch (error) {
       // Return default settings if database query fails
       return {
-        _id: 'default',
         title: 'Christina Sings4U',
         subtitle: 'Elegant live vocals for your special moments in Sydney',
         ctaWhatsApp: {
@@ -92,8 +91,6 @@ export class HeroSettingsModel {
           text: 'Book via Email',
           link: '',
         },
-        createdAt: new Date(),
-        updatedAt: new Date(),
       };
     }
   }
