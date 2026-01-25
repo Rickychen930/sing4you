@@ -35,33 +35,70 @@ export class CategoryModel {
   }
 
   public static async findAll(): Promise<ICategory[]> {
-    const model = this.getModel();
-    return model.find().sort({ order: 1, createdAt: 1 });
+    try {
+      const model = this.getModel();
+      return await model.find().sort({ order: 1, createdAt: 1 }).lean();
+    } catch (error) {
+      return [];
+    }
   }
 
   public static async findById(id: string): Promise<ICategory | null> {
-    const model = this.getModel();
-    return model.findById(id);
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      return await model.findById(id).lean();
+    } catch (error) {
+      return null;
+    }
   }
 
   public static async findByName(name: string): Promise<ICategory | null> {
-    const model = this.getModel();
-    return model.findOne({ name });
+    try {
+      const model = this.getModel();
+      return await model.findOne({ name }).lean();
+    } catch (error) {
+      return null;
+    }
   }
 
   public static async create(data: Partial<ICategory>): Promise<ICategory> {
-    const model = this.getModel();
-    return model.create(data);
+    try {
+      const model = this.getModel();
+      return await model.create(data);
+    } catch (error) {
+      const err = error as Error;
+      throw new Error(`Failed to create category: ${err.message}`);
+    }
   }
 
   public static async update(id: string, data: Partial<ICategory>): Promise<ICategory | null> {
-    const model = this.getModel();
-    return model.findByIdAndUpdate(id, { $set: data }, { new: true });
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      return await model.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
+    } catch (error) {
+      return null;
+    }
   }
 
   public static async delete(id: string): Promise<boolean> {
-    const model = this.getModel();
-    const result = await model.findByIdAndDelete(id);
-    return !!result;
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return false;
+      }
+      const result = await model.findByIdAndDelete(id);
+      return !!result;
+    } catch (error) {
+      return false;
+    }
   }
 }

@@ -1,10 +1,10 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import type { IContactForm } from '../../shared/interfaces';
 import { sanitizeObject } from '../utils/sanitize';
 import { EmailService } from '../services/EmailService';
 
 export class ContactController {
-  public submit = async (req: Request, res: Response): Promise<void> => {
+  public submit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // Sanitize input to prevent XSS
       const formData: IContactForm = sanitizeObject(req.body);
@@ -38,12 +38,7 @@ export class ContactController {
         message: 'Thank you for your inquiry. We will get back to you soon.',
       });
     } catch (error) {
-      const err = error as Error;
-      console.error('Contact form error:', err);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to submit contact form. Please try again later.',
-      });
+      next(error);
     }
   };
 }

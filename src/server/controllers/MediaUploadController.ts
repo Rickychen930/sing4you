@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import { CloudinaryConfig } from '../config/cloudinary';
 import { getRequiredStringParam } from '../utils/requestHelpers';
@@ -93,16 +93,11 @@ export class MediaUploadController {
         },
       });
     } catch (error) {
-      const err = error as Error;
-      console.error('Media upload error:', err);
-      res.status(500).json({
-        success: false,
-        error: err.message || 'Failed to upload media. Please try again.',
-      });
+      next(error);
     }
   };
 
-  public delete = async (req: Request, res: Response): Promise<void> => {
+  public delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const publicId = getRequiredStringParam(req, 'publicId');
 
@@ -134,12 +129,7 @@ export class MediaUploadController {
         });
       }
     } catch (error) {
-      const err = error as Error;
-      console.error('Media delete error:', err);
-      res.status(500).json({
-        success: false,
-        error: err.message || 'Failed to delete media. Please try again.',
-      });
+      next(error);
     }
   };
 }

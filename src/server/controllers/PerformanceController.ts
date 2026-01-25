@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { PerformanceService } from '../services/PerformanceService';
 import { getRequiredStringParam } from '../utils/requestHelpers';
 
@@ -9,66 +9,75 @@ export class PerformanceController {
     this.performanceService = new PerformanceService();
   }
 
-  public getAll = async (_req: Request, res: Response): Promise<void> => {
+  public getAll = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const performances = await this.performanceService.getAll();
       res.json({ success: true, data: performances });
     } catch (error) {
-      const err = error as Error;
-      res.status(500).json({ success: false, error: err.message });
+      next(error);
     }
   };
 
-  public getUpcoming = async (_req: Request, res: Response): Promise<void> => {
+  public getUpcoming = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const performances = await this.performanceService.getUpcoming();
       res.json({ success: true, data: performances });
     } catch (error) {
-      const err = error as Error;
-      res.status(500).json({ success: false, error: err.message });
+      next(error);
     }
   };
 
-  public getById = async (req: Request, res: Response): Promise<void> => {
+  public getById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = getRequiredStringParam(req, 'id');
       const performance = await this.performanceService.getById(id);
       res.json({ success: true, data: performance });
     } catch (error) {
       const err = error as Error;
-      res.status(404).json({ success: false, error: err.message });
+      if (err.message === 'Performance not found') {
+        res.status(404).json({ success: false, error: err.message });
+      } else {
+        next(error);
+      }
     }
   };
 
-  public create = async (req: Request, res: Response): Promise<void> => {
+  public create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const performance = await this.performanceService.create(req.body);
       res.status(201).json({ success: true, data: performance });
     } catch (error) {
-      const err = error as Error;
-      res.status(500).json({ success: false, error: err.message });
+      next(error);
     }
   };
 
-  public update = async (req: Request, res: Response): Promise<void> => {
+  public update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = getRequiredStringParam(req, 'id');
       const performance = await this.performanceService.update(id, req.body);
       res.json({ success: true, data: performance });
     } catch (error) {
       const err = error as Error;
-      res.status(404).json({ success: false, error: err.message });
+      if (err.message === 'Performance not found') {
+        res.status(404).json({ success: false, error: err.message });
+      } else {
+        next(error);
+      }
     }
   };
 
-  public delete = async (req: Request, res: Response): Promise<void> => {
+  public delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = getRequiredStringParam(req, 'id');
       await this.performanceService.delete(id);
       res.json({ success: true, message: 'Performance deleted successfully' });
     } catch (error) {
       const err = error as Error;
-      res.status(404).json({ success: false, error: err.message });
+      if (err.message === 'Performance not found') {
+        res.status(404).json({ success: false, error: err.message });
+      } else {
+        next(error);
+      }
     }
   };
 }

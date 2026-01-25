@@ -58,11 +58,30 @@ export class HeroSettingsModel {
   }
 
   public static async getSettings(): Promise<IHeroSettings | null> {
-    const model = this.getModel();
-    let settings = await model.findOne();
-    
-    if (!settings) {
-      settings = await model.create({
+    try {
+      const model = this.getModel();
+      let settings = await model.findOne().lean();
+      
+      if (!settings) {
+        settings = await model.create({
+          title: 'Christina Sings4U',
+          subtitle: 'Elegant live vocals for your special moments in Sydney',
+          ctaWhatsApp: {
+            text: 'Book via WhatsApp',
+            link: '',
+          },
+          ctaEmail: {
+            text: 'Book via Email',
+            link: '',
+          },
+        });
+      }
+      
+      return settings;
+    } catch (error) {
+      // Return default settings if database query fails
+      return {
+        _id: 'default',
         title: 'Christina Sings4U',
         subtitle: 'Elegant live vocals for your special moments in Sydney',
         ctaWhatsApp: {
@@ -73,19 +92,27 @@ export class HeroSettingsModel {
           text: 'Book via Email',
           link: '',
         },
-      });
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
     }
-    
-    return settings;
   }
 
   public static async updateSettings(data: Partial<IHeroSettings>): Promise<IHeroSettings> {
-    const model = this.getModel();
-    const settings = await model.findOneAndUpdate(
-      {},
-      { $set: data },
-      { new: true, upsert: true }
-    );
-    return settings;
+    try {
+      const model = this.getModel();
+      const settings = await model.findOneAndUpdate(
+        {},
+        { $set: data },
+        { new: true, upsert: true }
+      ).lean();
+      if (!settings) {
+        throw new Error('Failed to update hero settings');
+      }
+      return settings;
+    } catch (error) {
+      const err = error as Error;
+      throw new Error(`Failed to update hero settings: ${err.message}`);
+    }
   }
 }

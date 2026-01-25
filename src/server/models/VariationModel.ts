@@ -50,38 +50,98 @@ export class VariationModel {
   }
 
   public static async findAll(): Promise<IVariation[]> {
-    const model = this.getModel();
-    return model.find().populate('categoryId').sort({ order: 1, createdAt: 1 });
+    try {
+      const model = this.getModel();
+      return await model.find().populate('categoryId').sort({ order: 1, createdAt: 1 }).lean();
+    } catch (error) {
+      // If populate fails (e.g., invalid reference), return without populate
+      const model = this.getModel();
+      return await model.find().sort({ order: 1, createdAt: 1 }).lean();
+    }
   }
 
   public static async findById(id: string): Promise<IVariation | null> {
-    const model = this.getModel();
-    return model.findById(id).populate('categoryId');
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      return await model.findById(id).populate('categoryId').lean();
+    } catch (error) {
+      // If populate fails, return without populate
+      const model = this.getModel();
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      return await model.findById(id).lean();
+    }
   }
 
   public static async findByCategoryId(categoryId: string): Promise<IVariation[]> {
-    const model = this.getModel();
-    return model.find({ categoryId }).sort({ order: 1, createdAt: 1 });
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+        return [];
+      }
+      return await model.find({ categoryId }).sort({ order: 1, createdAt: 1 }).lean();
+    } catch (error) {
+      return [];
+    }
   }
 
   public static async findBySlug(slug: string): Promise<IVariation | null> {
-    const model = this.getModel();
-    return model.findOne({ slug }).populate('categoryId');
+    try {
+      const model = this.getModel();
+      return await model.findOne({ slug }).populate('categoryId').lean();
+    } catch (error) {
+      // If populate fails, return without populate
+      const model = this.getModel();
+      return await model.findOne({ slug }).lean();
+    }
   }
 
   public static async create(data: Partial<IVariation>): Promise<IVariation> {
-    const model = this.getModel();
-    return model.create(data);
+    try {
+      const model = this.getModel();
+      return await model.create(data);
+    } catch (error) {
+      const err = error as Error;
+      throw new Error(`Failed to create variation: ${err.message}`);
+    }
   }
 
   public static async update(id: string, data: Partial<IVariation>): Promise<IVariation | null> {
-    const model = this.getModel();
-    return model.findByIdAndUpdate(id, { $set: data }, { new: true }).populate('categoryId');
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      const result = await model.findByIdAndUpdate(id, { $set: data }, { new: true }).populate('categoryId').lean();
+      return result;
+    } catch (error) {
+      // If populate fails, return without populate
+      const model = this.getModel();
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      return await model.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
+    }
   }
 
   public static async delete(id: string): Promise<boolean> {
-    const model = this.getModel();
-    const result = await model.findByIdAndDelete(id);
-    return !!result;
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return false;
+      }
+      const result = await model.findByIdAndDelete(id);
+      return !!result;
+    } catch (error) {
+      return false;
+    }
   }
 }

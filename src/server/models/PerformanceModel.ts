@@ -52,34 +52,71 @@ export class PerformanceModel {
   }
 
   public static async findAll(): Promise<IPerformance[]> {
-    const model = this.getModel();
-    return model.find().sort({ date: 1 });
+    try {
+      const model = this.getModel();
+      return await model.find().sort({ date: 1 }).lean();
+    } catch (error) {
+      return [];
+    }
   }
 
   public static async findUpcoming(): Promise<IPerformance[]> {
-    const model = this.getModel();
-    const now = new Date();
-    return model.find({ date: { $gte: now } }).sort({ date: 1 });
+    try {
+      const model = this.getModel();
+      const now = new Date();
+      return await model.find({ date: { $gte: now } }).sort({ date: 1 }).lean();
+    } catch (error) {
+      return [];
+    }
   }
 
   public static async findById(id: string): Promise<IPerformance | null> {
-    const model = this.getModel();
-    return model.findById(id);
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      return await model.findById(id).lean();
+    } catch (error) {
+      return null;
+    }
   }
 
   public static async create(data: Partial<IPerformance>): Promise<IPerformance> {
-    const model = this.getModel();
-    return model.create(data);
+    try {
+      const model = this.getModel();
+      return await model.create(data);
+    } catch (error) {
+      const err = error as Error;
+      throw new Error(`Failed to create performance: ${err.message}`);
+    }
   }
 
   public static async update(id: string, data: Partial<IPerformance>): Promise<IPerformance | null> {
-    const model = this.getModel();
-    return model.findByIdAndUpdate(id, { $set: data }, { new: true });
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return null;
+      }
+      return await model.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
+    } catch (error) {
+      return null;
+    }
   }
 
   public static async delete(id: string): Promise<boolean> {
-    const model = this.getModel();
-    const result = await model.findByIdAndDelete(id);
-    return !!result;
+    try {
+      const model = this.getModel();
+      // Validate ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return false;
+      }
+      const result = await model.findByIdAndDelete(id);
+      return !!result;
+    } catch (error) {
+      return false;
+    }
   }
 }

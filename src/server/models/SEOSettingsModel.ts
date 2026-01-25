@@ -38,27 +38,47 @@ export class SEOSettingsModel {
   }
 
   public static async getSettings(): Promise<ISEOSettings | null> {
-    const model = this.getModel();
-    let settings = await model.findOne();
-    
-    if (!settings) {
-      settings = await model.create({
+    try {
+      const model = this.getModel();
+      let settings = await model.findOne().lean();
+      
+      if (!settings) {
+        settings = await model.create({
+          defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
+          defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
+          siteUrl: process.env.SITE_URL || 'https://christina-sings4you.com.au',
+        });
+      }
+      
+      return settings;
+    } catch (error) {
+      // Return default settings if database query fails
+      return {
+        _id: 'default',
         defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
         defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
         siteUrl: process.env.SITE_URL || 'https://christina-sings4you.com.au',
-      });
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
     }
-    
-    return settings;
   }
 
   public static async updateSettings(data: Partial<ISEOSettings>): Promise<ISEOSettings> {
-    const model = this.getModel();
-    const settings = await model.findOneAndUpdate(
-      {},
-      { $set: data },
-      { new: true, upsert: true }
-    );
-    return settings;
+    try {
+      const model = this.getModel();
+      const settings = await model.findOneAndUpdate(
+        {},
+        { $set: data },
+        { new: true, upsert: true }
+      ).lean();
+      if (!settings) {
+        throw new Error('Failed to update SEO settings');
+      }
+      return settings;
+    } catch (error) {
+      const err = error as Error;
+      throw new Error(`Failed to update SEO settings: ${err.message}`);
+    }
   }
 }

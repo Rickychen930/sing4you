@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/AuthService';
 
 export class AuthController {
@@ -8,7 +8,7 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
-  public login = async (req: Request, res: Response): Promise<void> => {
+  public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       let { email, password } = req.body;
       
@@ -62,6 +62,7 @@ export class AuthController {
         console.error('❌ Login error:', err.message);
         console.error('   Stack:', err.stack);
       }
+      // For auth errors, return 401 directly (not 500)
       res.status(401).json({ 
         success: false, 
         error: err.message || 'Invalid credentials' 
@@ -69,7 +70,7 @@ export class AuthController {
     }
   };
 
-  public refresh = async (req: Request, res: Response): Promise<void> => {
+  public refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
       if (!refreshToken) {
@@ -81,6 +82,7 @@ export class AuthController {
       res.json({ success: true, data: { accessToken } });
     } catch (error) {
       const err = error as Error;
+      // For auth errors, return 401 directly (not 500)
       res.status(401).json({ success: false, error: err.message });
     }
   };
