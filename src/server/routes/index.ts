@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import { HeroController } from '../controllers/HeroController';
 import { SectionController } from '../controllers/SectionController';
 import { PerformanceController } from '../controllers/PerformanceController';
@@ -127,7 +128,33 @@ router.delete('/api/admin/media/:id', authMiddleware, mediaController.delete);
 
 // Admin Media Upload (protected)
 const mediaUploadController = new MediaUploadController();
-router.post('/api/admin/media/upload', authMiddleware, uploadMiddleware, mediaUploadController.upload);
+// Wrap multer middleware to handle errors properly
+const handleUpload = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  uploadMiddleware(req, res, (err: any) => {
+    if (err) {
+      // Multer errors (file size, file type, etc.)
+      if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({
+            success: false,
+            error: 'File too large. Maximum size is 10MB.',
+          });
+        }
+        return res.status(400).json({
+          success: false,
+          error: err.message || 'File upload error',
+        });
+      }
+      // Other errors (fileFilter errors, etc.)
+      return res.status(400).json({
+        success: false,
+        error: err.message || 'File upload error',
+      });
+    }
+    next();
+  });
+};
+router.post('/api/admin/media/upload', authMiddleware, handleUpload, mediaUploadController.upload);
 router.delete('/api/admin/media/:publicId', authMiddleware, mediaUploadController.delete);
 
 // Handle method not allowed for auth routes (catch non-POST methods)

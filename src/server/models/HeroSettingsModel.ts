@@ -63,7 +63,7 @@ export class HeroSettingsModel {
       let settings = await model.findOne().lean();
       
       if (!settings) {
-        settings = await model.create({
+        await model.create({
           title: 'Christina Sings4U',
           subtitle: 'Elegant live vocals for your special moments in Sydney',
           ctaWhatsApp: {
@@ -75,9 +75,17 @@ export class HeroSettingsModel {
             link: '',
           },
         });
+        // Query again with lean() to get plain object without Mongoose properties
+        settings = await model.findOne().lean();
       }
       
-      return settings;
+      // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
+      if (settings) {
+        const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
+        return cleanSettings as IHeroSettings;
+      }
+      
+      return null;
     } catch (error) {
       // Return default settings if database query fails
       return {
@@ -106,7 +114,9 @@ export class HeroSettingsModel {
       if (!settings) {
         throw new Error('Failed to update hero settings');
       }
-      return settings;
+      // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
+      const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
+      return cleanSettings as IHeroSettings;
     } catch (error) {
       const err = error as Error;
       throw new Error(`Failed to update hero settings: ${err.message}`);

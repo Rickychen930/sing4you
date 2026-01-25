@@ -43,14 +43,22 @@ export class SEOSettingsModel {
       let settings = await model.findOne().lean();
       
       if (!settings) {
-        settings = await model.create({
+        await model.create({
           defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
           defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
           siteUrl: process.env.SITE_URL || 'https://christina-sings4you.com.au',
         });
+        // Query again with lean() to get plain object without Mongoose properties
+        settings = await model.findOne().lean();
       }
       
-      return settings;
+      // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
+      if (settings) {
+        const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
+        return cleanSettings as ISEOSettings;
+      }
+      
+      return null;
     } catch (error) {
       // Return default settings if database query fails
       return {
@@ -73,7 +81,9 @@ export class SEOSettingsModel {
       if (!settings) {
         throw new Error('Failed to update SEO settings');
       }
-      return settings;
+      // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
+      const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
+      return cleanSettings as ISEOSettings;
     } catch (error) {
       const err = error as Error;
       throw new Error(`Failed to update SEO settings: ${err.message}`);
