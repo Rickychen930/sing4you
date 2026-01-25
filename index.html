@@ -15,6 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
+    <!-- Load fonts with display=swap for better performance -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" /></noscript>
+    
+    <!-- Performance optimizations -->
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+    <meta name="format-detection" content="telephone=no" />
+    
     <!-- Prevent white flash on initial load -->
     <style>
       html, body {
@@ -23,11 +31,20 @@
         background-color: #0a0e1a !important;
         background: linear-gradient(135deg, #0a0e1a 0%, #102a43 25%, #1a1a2e 50%, #16213e 75%, #0a0e1a 100%) !important;
         min-height: 100vh;
+        /* Performance optimizations */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
       #root {
         background-color: #0a0e1a;
         background: linear-gradient(135deg, #0a0e1a 0%, #102a43 25%, #1a1a2e 50%, #16213e 75%, #0a0e1a 100%);
         min-height: 100vh;
+      }
+      /* Prevent layout shift */
+      img, video {
+        max-width: 100%;
+        height: auto;
       }
     </style>
   </head>

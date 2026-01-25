@@ -19,6 +19,9 @@ interface AxiosErrorResponse {
 
 class ApiClient {
   private client: AxiosInstance;
+  private requestCache: Map<string, { data: unknown; timestamp: number }> = new Map();
+  private pendingRequests: Map<string, Promise<unknown>> = new Map();
+  private readonly CACHE_TTL = 30000; // 30 seconds cache for GET requests
 
   constructor() {
     this.client = axios.create({
@@ -27,6 +30,7 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
       withCredentials: true,
+      timeout: 10000, // 10 second timeout
     });
 
     // Request interceptor for auth token
@@ -86,13 +90,54 @@ class ApiClient {
     );
   }
 
-  async get<T>(url: string): Promise<T> {
+  async get<T>(url: string, useCache: boolean = true): Promise<T> {
     try {
-      const response = await this.client.get<IApiResponse<T>>(url);
-      if (!response.data.success && response.data.error) {
-        throw new Error(response.data.error);
+      // Check cache for GET requests
+      if (useCache) {
+        const cacheKey = url;
+        const cached = this.requestCache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
+          return cached.data as T;
+        }
+        
+        // Check if request is already pending (deduplication)
+        const pendingRequest = this.pendingRequests.get(cacheKey);
+        if (pendingRequest) {
+          return pendingRequest as Promise<T>;
+        }
       }
-      return response.data.data as T;
+
+      // Create request promise
+      const requestPromise = this.client.get<IApiResponse<T>>(url)
+        .then((response) => {
+          if (!response.data.success && response.data.error) {
+            throw new Error(response.data.error);
+          }
+          
+          const data = response.data.data as T;
+          
+          // Cache successful GET responses
+          if (useCache) {
+            this.requestCache.set(url, { data, timestamp: Date.now() });
+          }
+          
+          // Remove from pending requests
+          this.pendingRequests.delete(url);
+          
+          return data;
+        })
+        .catch((error) => {
+          // Remove from pending requests on error
+          this.pendingRequests.delete(url);
+          throw error;
+        });
+
+      // Store pending request for deduplication
+      if (useCache) {
+        this.pendingRequests.set(url, requestPromise);
+      }
+
+      return requestPromise as Promise<T>;
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorResponse;
       
@@ -184,6 +229,16 @@ class ApiClient {
       }
       throw error;
     }
+  }
+
+  // Clear cache (useful after mutations)
+  clearCache(): void {
+    this.requestCache.clear();
+  }
+
+  // Clear specific cache entry
+  clearCacheEntry(url: string): void {
+    this.requestCache.delete(url);
   }
 }
 

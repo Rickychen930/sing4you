@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Fonts are loaded via link tags in index.html for better performance */
 
 /* Font Loading Optimization */
 @font-face {
@@ -732,6 +732,19 @@ img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   will-change: auto;
+  /* Prevent layout shift */
+  max-width: 100%;
+  height: auto;
+}
+
+/* Optimize video elements */
+video {
+  will-change: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Prevent layout shift */
+  max-width: 100%;
+  height: auto;
 }
 
 /* Prevent layout shifts */

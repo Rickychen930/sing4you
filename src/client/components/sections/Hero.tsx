@@ -53,14 +53,15 @@ export const Hero: FC = memo(() => {
   useEffect(() => {
     let ticking = false;
     let lastKnownScrollY = 0;
+    let rafId: number | null = null;
 
     const updateScrollY = () => {
       const heroSection = document.getElementById('hero');
       if (heroSection) {
         const rect = heroSection.getBoundingClientRect();
         if (rect.bottom > 0 && rect.top < window.innerHeight) {
-          // Only update if scroll changed significantly (5px threshold for smoother performance)
-          if (Math.abs(lastKnownScrollY - lastScrollYRef.current) >= 5) {
+          // Only update if scroll changed significantly (10px threshold for better performance)
+          if (Math.abs(lastKnownScrollY - lastScrollYRef.current) >= 10) {
             setScrollY(lastKnownScrollY);
             lastScrollYRef.current = lastKnownScrollY;
           }
@@ -73,13 +74,15 @@ export const Hero: FC = memo(() => {
         }
       }
       ticking = false;
+      rafId = null;
     };
 
     const handleScroll = () => {
       lastKnownScrollY = window.scrollY;
       
-      if (!ticking) {
-        rafIdRef.current = requestAnimationFrame(updateScrollY);
+      if (!ticking && rafId === null) {
+        rafId = requestAnimationFrame(updateScrollY);
+        rafIdRef.current = rafId;
         ticking = true;
       }
     };
@@ -87,6 +90,9 @@ export const Hero: FC = memo(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
       }
@@ -188,6 +194,7 @@ export const Hero: FC = memo(() => {
             loop
             muted
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
             style={{ 
               transform: `scale(1.1) translate3d(0, ${scrollY * 0.2}px, 0)`,

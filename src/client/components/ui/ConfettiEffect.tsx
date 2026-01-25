@@ -203,8 +203,9 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
     const animate = () => {
       if (!isAnimating) return;
 
-      // Clear canvas with fade effect
-      ctx.fillStyle = 'rgba(10, 14, 26, 0.05)';
+      // Clear canvas - optimized for performance
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(10, 14, 26, 0.03)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Update and draw confetti

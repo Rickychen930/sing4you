@@ -46,11 +46,24 @@ export default defineConfig({
             './src/client/pages/admin/VariationsManagementPage',
           ],
         },
+        // Optimize chunk file names
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
     },
     // Optimize chunk size
     chunkSizeWarningLimit: 1000,
     // Enable source maps for production debugging (optional)
     sourcemap: process.env.NODE_ENV === 'production' ? false : true,
+    // Minify and optimize - using esbuild (faster and built-in)
+    minify: 'esbuild',
+    // Note: esbuild automatically drops console in production builds
+    // Optimize asset inlining
+    assetsInlineLimit: 4096, // Inline assets smaller than 4kb
+    // Report compressed size
+    reportCompressedSize: true,
+    // CSS code splitting
+    cssCodeSplit: true,
   },
 })

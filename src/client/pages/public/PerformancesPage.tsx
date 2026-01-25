@@ -70,12 +70,17 @@ export const PerformancesPage: React.FC = () => {
         position: index + 1,
         item: {
           '@type': 'Event',
-          name: performance.title,
-          description: performance.description,
-          startDate: performance.date,
+          name: performance.eventName,
+          description: `${performance.venueName}, ${performance.city}, ${performance.state}`,
+          startDate: performance.date instanceof Date ? performance.date.toISOString() : performance.date,
           location: {
             '@type': 'Place',
-            name: performance.location,
+            name: `${performance.venueName}, ${performance.city}, ${performance.state}`,
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: performance.city,
+              addressRegion: performance.state,
+            },
           },
         },
       })),

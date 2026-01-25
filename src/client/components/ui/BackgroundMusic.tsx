@@ -63,12 +63,13 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     }
   }, [hasInteracted, autoPlay]);
 
-  // Setup audio element
-  useEffect(() => {
-    const audio = new Audio();
-    audio.volume = volume;
-    audio.loop = loop;
-    audio.preload = 'auto';
+    // Setup audio element
+    useEffect(() => {
+      const audio = new Audio();
+      audio.volume = volume;
+      audio.loop = loop;
+      // Use 'metadata' instead of 'auto' to prevent blocking initial page load
+      audio.preload = 'metadata';
 
     // Event listener handlers
     const handlePlay = () => setIsPlaying(true);

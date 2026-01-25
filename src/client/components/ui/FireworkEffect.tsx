@@ -130,7 +130,8 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
     targetY: number,
     color: string
   ): Firework => {
-    const particleCount = intensity === 'high' ? 80 : intensity === 'medium' ? 60 : 40;
+    // Reduced particle count for better performance
+    const particleCount = intensity === 'high' ? 50 : intensity === 'medium' ? 35 : 25;
     const particles: Particle[] = [];
 
     // Create particles for explosion
@@ -149,8 +150,6 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
       hue: 0,
     };
   }, [intensity, createParticle]);
-
-  const timeoutIdsRef = useRef<number[]>([]);
 
   const launchFireworks = useCallback(() => {
     if (prefersReducedMotion()) {
@@ -234,8 +233,9 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
     const animate = () => {
       if (!isAnimating) return;
 
-      // Clear canvas with fade effect
-      ctx.fillStyle = 'rgba(10, 14, 26, 0.1)';
+      // Clear canvas with fade effect - optimized for performance
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(10, 14, 26, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Update and draw fireworks

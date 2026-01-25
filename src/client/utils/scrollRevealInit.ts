@@ -116,11 +116,16 @@ if (typeof window !== 'undefined') {
     }, 1500);
     
     // Cleanup fallback timer if all elements are revealed faster
+    // Use a more efficient check with max iterations to prevent infinite loops
+    let checkIterations = 0;
+    const maxIterations = 30; // Max 15 seconds (30 * 500ms)
     checkInterval = setInterval(() => {
+      checkIterations++;
       const unrevealed = document.querySelectorAll('.scroll-reveal-io:not(.revealed)');
-      if (unrevealed.length === 0) {
+      if (unrevealed.length === 0 || checkIterations >= maxIterations) {
         if (fallbackTimer) clearTimeout(fallbackTimer);
         if (checkInterval) clearInterval(checkInterval);
+        checkIterations = 0;
       }
     }, 500);
   };
