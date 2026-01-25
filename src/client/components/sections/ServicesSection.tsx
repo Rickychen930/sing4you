@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState, memo, useCallback, useRef } from 'react';
 import type { ISection } from '../../../shared/interfaces';
 import { sectionService } from '../../services/sectionService';
 import { SectionWrapper } from '../ui/SectionWrapper';
@@ -8,7 +8,6 @@ import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { EmptyState } from '../ui/EmptyState';
 import { MediaGallery } from '../ui/MediaGallery';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
-import { initScrollReveal } from '../../utils/scrollRevealInit';
 
 interface ServicesSectionProps {
   title?: string;
@@ -22,52 +21,37 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
   const [sections, setSections] = useState<ISection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isMountedRef = useRef(true);
 
-  useEffect(() => {
-    let isMounted = true;
-    const abortController = new AbortController();
-
-    const loadSections = async () => {
-      try {
-        setError(null);
-        const data = await sectionService.getAll();
-        // Only update state if component is still mounted
-        if (isMounted && !abortController.signal.aborted) {
-          setSections(data);
-        }
-      } catch (error) {
-        // Don't update state if component unmounted or aborted
-        if (!isMounted || abortController.signal.aborted) return;
-        
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load services';
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Error loading services:', error);
-        }
-        setError(errorMessage);
-      } finally {
-        if (isMounted && !abortController.signal.aborted) {
-          setLoading(false);
-        }
+  const loadSections = useCallback(async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const data = await sectionService.getAll();
+      if (isMountedRef.current) setSections(data);
+    } catch (err) {
+      if (!isMountedRef.current) return;
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading services:', err);
       }
-    };
-
-    loadSections();
-
-    return () => {
-      isMounted = false;
-      abortController.abort();
-    };
+      setError(errorMessage);
+    } finally {
+      if (isMountedRef.current) setLoading(false);
+    }
   }, []);
 
-  // Initialize scroll reveal after sections are loaded - debounced
   useEffect(() => {
-    if (!loading && sections.length > 0) {
-      const timer = setTimeout(() => {
-        initScrollReveal();
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [loading, sections.length]);
+    isMountedRef.current = true;
+    loadSections();
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [loadSections]);
+
+  const retry = useCallback(() => {
+    loadSections();
+  }, [loadSections]);
 
   if (loading) {
     return (
@@ -88,7 +72,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
           description={error}
           action={{
             label: "Try Again",
-            onClick: () => window.location.reload(),
+            onClick: retry,
             variant: "primary"
           }}
         />
@@ -114,7 +98,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
         {sections.map((section, index) => (
           <div
             key={section._id}
-            className="scroll-reveal-io animate-fade-in-up"
+            className="animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
             <Card className="h-full flex flex-col transition-all duration-500 hover:scale-[1.03]" hover>

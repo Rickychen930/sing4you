@@ -11,17 +11,11 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
-  const checkAuth = useAuthStore((state) => state.checkAuth);
   const navigate = useNavigate();
 
-  // Handler to close mobile menu
   const closeMobileMenu = useCallback(() => {
     setIsMenuOpen(false);
   }, []);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
 
   // Close admin dropdown when clicking outside - optimized with passive
   useEffect(() => {

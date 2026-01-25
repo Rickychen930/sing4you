@@ -57,6 +57,9 @@ if [ -z "$FRONTEND_ROOT" ]; then
   exit 1
 fi
 
+# Fix duplicate dist/client (causes redirect loop)
+FRONTEND_ROOT="${FRONTEND_ROOT//\/dist\/client\/dist\/client/\/dist\/client}"
+
 # Verify index.html exists
 if [ ! -f "$FRONTEND_ROOT/index.html" ]; then
   echo "❌ ERROR: index.html not found in $FRONTEND_ROOT"
@@ -71,19 +74,20 @@ sudo cp "$NGINX_CONFIG_FILE" "${NGINX_CONFIG_FILE}.backup.$(date +%Y%m%d_%H%M%S)
 
 # Fix root path - remove any duplicate dist/client patterns
 echo "🔧 Fixing root path in nginx config..."
-sudo sed -i "s|root /var/www/christina-sings4you.*|root $FRONTEND_ROOT;|g" "$NGINX_CONFIG_FILE"
+sudo sed -i "s|root /var/www/christina-sings4you[^;]*;|root $FRONTEND_ROOT;|g" "$NGINX_CONFIG_FILE"
+sudo sed -i 's|/dist/client/dist/client|/dist/client|g' "$NGINX_CONFIG_FILE"
 
 # Verify root path was updated
 CURRENT_ROOT=$(grep -E "^\s*root\s+" "$NGINX_CONFIG_FILE" | head -1 | sed 's/.*root\s\+\([^;]*\);.*/\1/')
 echo "✅ Root path updated to: $CURRENT_ROOT"
 
-# Fix try_files to prevent redirect loop
-# The issue is that try_files might be causing a loop if index.html path is wrong
+# Fix try_files to use @spa fallback (avoids redirect loop) if @spa exists
 echo "🔧 Checking try_files configuration..."
-if grep -q "try_files.*index.html" "$NGINX_CONFIG_FILE"; then
-  # Ensure try_files uses absolute path from root
-  sudo sed -i 's|try_files \$uri \$uri/ /index.html;|try_files $uri $uri/ /index.html;|g' "$NGINX_CONFIG_FILE"
-  echo "✅ try_files configuration verified"
+if grep -q "location @spa" "$NGINX_CONFIG_FILE" && grep -q "try_files.*index.html" "$NGINX_CONFIG_FILE"; then
+  sudo sed -i 's|try_files \$uri \$uri/ /index.html;|try_files $uri $uri/ @spa;|g' "$NGINX_CONFIG_FILE"
+  echo "✅ try_files updated to use @spa"
+elif grep -q "try_files.*index.html" "$NGINX_CONFIG_FILE"; then
+  echo "✅ try_files uses /index.html (ensure root path is correct)"
 fi
 
 # Check for duplicate location blocks that might cause conflicts

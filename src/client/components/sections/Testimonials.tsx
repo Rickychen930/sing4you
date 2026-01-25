@@ -3,7 +3,6 @@ import type { ITestimonial } from '../../../shared/interfaces';
 import { testimonialService } from '../../services/testimonialService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { TestimonialCard } from '../ui/TestimonialCard';
-import { initScrollReveal } from '../../utils/scrollRevealInit';
 
 export const Testimonials: React.FC = memo(() => {
   const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);
@@ -41,16 +40,6 @@ export const Testimonials: React.FC = memo(() => {
       abortController.abort();
     };
   }, []);
-
-  // Initialize scroll reveal after testimonials are loaded - debounced
-  useEffect(() => {
-    if (!loading && testimonials.length > 0) {
-      const timer = setTimeout(() => {
-        initScrollReveal();
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [loading, testimonials.length]);
 
   if (loading) {
     return (
@@ -95,7 +84,7 @@ export const Testimonials: React.FC = memo(() => {
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial._id}
-              className="scroll-reveal-io animate-fade-in-up"
+              className="animate-fade-in-up"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <TestimonialCard testimonial={testimonial} />

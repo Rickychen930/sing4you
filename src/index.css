@@ -120,6 +120,13 @@
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
+    /* Optimize scroll performance - only set will-change when needed */
+    will-change: scroll-position;
+  }
+  
+  /* Remove will-change when page is idle to save resources */
+  html:not(:hover):not(:focus-within) {
+    will-change: auto;
   }
 
   body {
@@ -127,6 +134,10 @@
     background: linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%);
     background-size: 400% 400%;
     animation: gradientShift 20s ease infinite;
+    /* Optimize rendering performance */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
     /* Prevent white flash - ensure background is set immediately */
     background-color: var(--color-black) !important;
     @apply text-gray-50;
@@ -431,11 +442,11 @@
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 
@@ -471,33 +482,32 @@
 }
 
 .animate-slide-in {
-  animation: slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slide-in 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .animate-fade-in {
-  animation: fade-in 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fade-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity;
+  backface-visibility: hidden;
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fade-in-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-fill-mode: forwards;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
-/* Override untuk elemen dengan scroll-reveal-io - disable animation, let scroll reveal handle it */
-.scroll-reveal-io.animate-fade-in-up {
-  /* Disable fade-in-up animation, scroll-reveal-io will handle it */
-  animation: none !important;
-  /* Start state - akan di-override oleh scroll-reveal-io */
-  opacity: 0 !important;
-  transform: translateY(40px);
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* When revealed, use fade-in-up animation */
+/* scroll-reveal-io deprecated - use animate-fade-in-up only. Keep rules for backwards compat. */
+.scroll-reveal-io.animate-fade-in-up,
 .scroll-reveal-io.animate-fade-in-up.revealed {
+  animation: fade-in-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
   opacity: 1 !important;
-  transform: translateY(0) !important;
-  animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+  transform: translateY(0) translateZ(0) !important;
 }
 
 .animate-fade-in-down {
@@ -510,11 +520,11 @@
 @keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 
@@ -552,12 +562,12 @@
   }
 }
 
-/* Enhanced scroll reveal animation */
+/* scroll-reveal: default visible to avoid hidden content */
 .scroll-reveal {
-  opacity: 0;
-  transform: translateY(40px) scale(0.95);
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transform: translateY(0) scale(1) translateZ(0);
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .scroll-reveal-visible {
@@ -565,39 +575,26 @@
   transform: translateY(0) scale(1);
 }
 
-/* Intersection Observer based scroll reveal */
+/* scroll-reveal-io: default visible to avoid hidden content. Use animate-fade-in-up instead. */
 .scroll-reveal-io {
-  opacity: 0;
-  transform: translateY(40px) translateZ(0);
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: opacity, transform;
-  contain: layout style paint;
-  backface-visibility: hidden;
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .scroll-reveal-io.revealed {
   opacity: 1 !important;
   transform: translateY(0) translateZ(0) !important;
-  will-change: auto; /* Remove after animation */
-}
-
-/* Safety: Jika elemen tidak ter-reveal dalam 3 detik, langsung reveal */
-@keyframes forceReveal {
-  to {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
 }
 
 .scroll-reveal-io:not(.revealed) {
-  /* Fallback: Force reveal after 3 seconds if not revealed */
-  animation: forceReveal 0.1s ease-out 3s forwards;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Fallback: Reveal elemen yang sudah di viewport saat page load */
 .scroll-reveal-io.initial-check {
-  /* Temporary class untuk check initial visibility */
+  opacity: 1;
 }
 
 .image-fade-in {
@@ -617,7 +614,10 @@
 
 /* Enhanced page transitions */
 main > * {
-  animation: pageEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: pageEnter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* Smooth scale animation for dialogs and modals */
@@ -652,10 +652,10 @@ main > * {
   animation: routeFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Enhanced scroll reveal with stagger */
+/* scroll-reveal-stagger: default visible to avoid hidden content */
 .scroll-reveal-stagger > * {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1;
+  transform: translateY(0);
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -690,22 +690,56 @@ p, li, span {
   will-change: transform, opacity, box-shadow;
 }
 
+/* Remove will-change when not hovering for better performance */
+.card-hover-lift:not(:hover),
+.button-ripple:not(:active),
+.magnetic-hover:not(:hover) {
+  will-change: auto;
+}
+
 /* Optimize all animated elements for smooth 60fps */
 .animate-float,
 .animate-float-advanced,
-.animate-fade-in,
-.animate-fade-in-up,
 .animate-pulse,
 .animate-pulse-glow,
 .animate-musical-pulse,
 .animate-shimmer,
 .animate-shimmer-advanced,
-.animate-gradient,
-.animate-scale-in {
+.animate-gradient {
   will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: layout style paint;
+}
+
+/* Fade animations - optimized for smooth performance */
+.animate-fade-in,
+.animate-fade-in-up,
+.animate-scale-in {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout style paint;
+  /* will-change will be removed after animation via JS */
+}
+
+/* Remove will-change after animation completes */
+.animate-fade-in-up[style*="animation-delay"]:not([style*="animation-play-state: paused"]),
+.animate-fade-in[style*="animation-delay"]:not([style*="animation-play-state: paused"]) {
+  animation-fill-mode: forwards;
+}
+
+/* Remove will-change after animation completes */
+.animate-fade-in-up,
+.animate-fade-in,
+.animate-scale-in {
+  animation-fill-mode: forwards;
+}
+
+@supports (animation-fill-mode: forwards) {
+  .animate-fade-in-up:not([style*="animation-delay"]),
+  .animate-fade-in:not([style*="animation-delay"]) {
+    animation-fill-mode: forwards;
+  }
 }
 
 /* Optimize parallax elements for smooth scrolling */
@@ -757,6 +791,16 @@ section,
 .scroll-container {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  /* Optimize scrolling performance */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Only set will-change during active scroll */
+  contain: layout style paint;
+}
+
+/* Optimize scroll performance without will-change overhead */
+html:not(:hover) {
+  will-change: auto;
 }
 
 /* Optimize expensive properties */

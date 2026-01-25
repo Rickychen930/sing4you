@@ -1,75 +1,66 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Hero } from '../../components/sections/Hero';
 import { ServicesSection } from '../../components/sections/ServicesSection';
 import { UpcomingPerformances } from '../../components/sections/UpcomingPerformances';
 import { Testimonials } from '../../components/sections/Testimonials';
-import { SEO } from '../../components/ui/SEO';
-import { JSONLDSchema } from '../../components/ui/SEO';
+import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 
 export const HomePage: React.FC = () => {
-  useSmoothScroll(); // Handle hash-based scrolling
+  useSmoothScroll();
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
 
-  // HomePage component - displays hero, services, performances, and testimonials
-
-  const artistSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    '@id': `${siteUrl}#person`,
-    name: 'Christina Sings4U',
-    jobTitle: 'Professional Singer',
-    description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Sydney',
-      addressRegion: 'NSW',
-      addressCountry: 'AU',
-    },
-    url: siteUrl,
-    sameAs: [
-      // Add social media profiles here
-      // 'https://www.facebook.com/christinasings4u',
-      // 'https://www.instagram.com/christinasings4u',
-    ],
-    knowsAbout: ['Singing', 'Live Performance', 'Wedding Entertainment', 'Corporate Events', 'Music'],
-    offers: {
-      '@type': 'Offer',
-      itemOffered: {
-        '@type': 'Service',
-        serviceType: 'Live Music Performance',
-        areaServed: {
-          '@type': 'City',
-          name: 'Sydney',
-          containedIn: {
-            '@type': 'State',
-            name: 'New South Wales',
+  const artistSchema = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      '@id': `${siteUrl}#person`,
+      name: 'Christina Sings4U',
+      jobTitle: 'Professional Singer',
+      description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Sydney',
+        addressRegion: 'NSW',
+        addressCountry: 'AU',
+      },
+      url: siteUrl,
+      sameAs: [] as string[],
+      knowsAbout: ['Singing', 'Live Performance', 'Wedding Entertainment', 'Corporate Events', 'Music'],
+      offers: {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          serviceType: 'Live Music Performance',
+          areaServed: {
+            '@type': 'City',
+            name: 'Sydney',
+            containedIn: { '@type': 'State', name: 'New South Wales' },
           },
         },
       },
-    },
-  };
+    }),
+    [siteUrl]
+  );
 
-  const websiteSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    '@id': `${siteUrl}#website`,
-    url: siteUrl,
-    name: 'Christina Sings4U',
-    description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
-    publisher: {
-      '@id': `${siteUrl}#person`,
-    },
-    inLanguage: 'en-AU',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${siteUrl}/search?q={search_term_string}`,
+  const websiteSchema = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${siteUrl}#website`,
+      url: siteUrl,
+      name: 'Christina Sings4U',
+      description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
+      publisher: { '@id': `${siteUrl}#person` },
+      inLanguage: 'en-AU',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: { '@type': 'EntryPoint', urlTemplate: `${siteUrl}/search?q={search_term_string}` },
+        'query-input': 'required name=search_term_string',
       },
-      'query-input': 'required name=search_term_string',
-    },
-  };
+    }),
+    [siteUrl]
+  );
 
   return (
     <>

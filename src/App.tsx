@@ -7,7 +7,7 @@ import { LoadingSpinner } from './client/components/ui/LoadingSpinner';
 import { useToastStore } from './client/stores/toastStore';
 import { Layout } from './client/components/layout/Layout';
 import { useAuthStore } from './client/stores/authStore';
-import { initScrollReveal } from './client/utils/scrollRevealInit';
+import { initScrollRevealWithFallback } from './client/utils/scrollRevealInit';
 
 // Lazy load public pages for better code splitting
 const HomePage = lazy(() => import('./client/pages/public/HomePage'));
@@ -78,9 +78,8 @@ const ScrollRevealHandler: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Initialize scroll reveal after route change - debounced
     const timer = setTimeout(() => {
-      initScrollReveal();
+      initScrollRevealWithFallback();
     }, 200);
 
     return () => clearTimeout(timer);
@@ -109,14 +108,16 @@ function App() {
           <ToastContainer toasts={toasts} onClose={removeToast} />
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Layout><HomePage /></Layout>} />
-              <Route path="/about" element={<Layout><AboutPage /></Layout>} />
-              <Route path="/performances" element={<Layout><PerformancesPage /></Layout>} />
-              <Route path="/categories" element={<Layout><CategoriesPage /></Layout>} />
-              <Route path="/categories/:categoryId" element={<Layout><VariationsPage /></Layout>} />
-              <Route path="/variations/:variationId" element={<Layout><VariationDetailPage /></Layout>} />
-              <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
+              {/* Public routes – Layout stays mounted (no remount/refresh on nav) */}
+              <Route element={<Layout />}>
+                <Route index element={<HomePage />} />
+                <Route path="about" element={<AboutPage />} />
+                <Route path="performances" element={<PerformancesPage />} />
+                <Route path="categories" element={<CategoriesPage />} />
+                <Route path="categories/:categoryId" element={<VariationsPage />} />
+                <Route path="variations/:variationId" element={<VariationDetailPage />} />
+                <Route path="contact" element={<ContactPage />} />
+              </Route>
 
               {/* Admin routes */}
               <Route path="/admin/login" element={<LoginPage />} />

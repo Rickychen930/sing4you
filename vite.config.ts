@@ -25,6 +25,9 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
   build: {
     outDir: 'dist/client',
     rollupOptions: {
@@ -65,5 +68,7 @@ export default defineConfig({
     reportCompressedSize: true,
     // CSS code splitting
     cssCodeSplit: true,
+    // Performance optimizations
+    target: 'esnext',
   },
 })

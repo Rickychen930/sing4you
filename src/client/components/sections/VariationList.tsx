@@ -127,7 +127,7 @@ export const VariationList: React.FC<VariationListProps> = memo(({
         {variations.map((variation, index) => (
           <div
             key={variation._id}
-            className="scroll-reveal-io animate-fade-in-up"
+            className="animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
             <Card 

@@ -1,18 +1,14 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 
 /**
  * BackgroundMusic Component
- * 
- * Plays background music with volume and mute controls.
- * Uses HTML5 audio with autoplay allowed after user interaction.
+ *
+ * Autoplay: starts muted (browsers allow this), then unmutes on first user
+ * click/tap/keypress anywhere. Shows "Tap anywhere to unmute" when playing muted.
  * Default file: /public/background_music.mp3
- * 
+ *
  * @example
- * <BackgroundMusic 
- *   src="/background_music.mp3"
- *   volume={0.3}
- *   autoPlay={true}
- * />
+ * <BackgroundMusic src="/background_music.mp3" volume={0.3} autoPlay loop />
  */
 interface BackgroundMusicProps {
   /** Audio source URL */
@@ -29,7 +25,18 @@ interface BackgroundMusicProps {
   controlsPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 }
 
-export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
+// Global audio instance to persist across route changes
+let globalAudioInstance: HTMLAudioElement | null = null;
+type StateSetters = {
+  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentVolume: React.Dispatch<React.SetStateAction<number>>;
+  setIsAvailable: React.Dispatch<React.SetStateAction<boolean>>;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+};
+let globalStateSetters: Set<StateSetters> = new Set();
+
+export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
   src,
   volume = 0.3,
   autoPlay = true,
@@ -38,106 +45,140 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   controlsPosition = 'bottom-right',
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentVolume, setCurrentVolume] = useState(volume);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const hasUnmutedRef = useRef(false);
+  const [isPlaying, setIsPlaying] = useState(() => {
+    // Initialize from global instance if available
+    return globalAudioInstance ? !globalAudioInstance.paused : false;
+  });
+  const [isMuted, setIsMuted] = useState(() => {
+    return globalAudioInstance ? globalAudioInstance.muted : true;
+  });
+  const [currentVolume, setCurrentVolume] = useState(() => {
+    return globalAudioInstance ? globalAudioInstance.volume : volume;
+  });
   const [error, setError] = useState<string | null>(null);
   const [isAvailable, setIsAvailable] = useState(true);
 
-  // Default background music - using file from public folder
-  // File location: /public/background_music.mp3
-  // Users can provide their own audio file via src prop or use external URL
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+    return null;
+  }
+
   const defaultSrc = src || '/background_music.mp3';
 
-  // Handle user interaction to enable autoplay
-  const handleUserInteraction = useCallback(() => {
-    if (!hasInteracted) {
-      setHasInteracted(true);
-      if (autoPlay && audioRef.current) {
-        audioRef.current.play().catch((err) => {
-          console.warn('Autoplay failed:', err);
-          setError('Autoplay not allowed. Please click the play button.');
-        });
-      }
+  const unmute = useCallback(() => {
+    if (hasUnmutedRef.current) return;
+    hasUnmutedRef.current = true;
+    const audio = audioRef.current || globalAudioInstance;
+    if (audio) {
+      audio.muted = false;
+      audio.volume = currentVolume;
+      setIsMuted(false);
     }
-  }, [hasInteracted, autoPlay]);
+  }, [currentVolume]);
 
-    // Setup audio element
-    useEffect(() => {
-      const audio = new Audio();
-      audio.volume = volume;
-      audio.loop = loop;
-      // Use 'metadata' instead of 'auto' to prevent blocking initial page load
-      audio.preload = 'metadata';
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+      return;
+    }
 
-    // Event listener handlers
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => setIsPlaying(false);
-    const handleError = () => {
-      // If file not found, hide controls gracefully
-      // File should be at /public/background_music.mp3
-      // or provide URL via src prop
-      setIsAvailable(false);
-      setIsPlaying(false);
-      // Don't log error to console to avoid spam
-      // Audio file is optional, so no error message needed
+    // Reuse existing audio instance if available
+    let audio = globalAudioInstance;
+    
+    // Register this component's state setters
+    const stateSetters: StateSetters = {
+      setIsPlaying,
+      setIsMuted,
+      setCurrentVolume,
+      setIsAvailable,
+      setError,
     };
-    const handleVolumeChange = () => {
-      setCurrentVolume(audio.volume);
+    globalStateSetters.add(stateSetters);
+    
+    if (!audio) {
+      // Create audio instance only once
+      const audioEl = new Audio();
+      audio = audioEl;
+      globalAudioInstance = audioEl;
+      audioEl.volume = volume;
+      audioEl.muted = true;
+      audioEl.loop = loop;
+      audioEl.preload = 'auto';
+      audioEl.src = defaultSrc;
+
+      const notifyAllComponents = (updater: (s: StateSetters) => void) => {
+        globalStateSetters.forEach(updater);
+      };
+
+      const handlePlay = () => {
+        notifyAllComponents(s => s.setIsPlaying(true));
+      };
+      const handlePause = () => {
+        notifyAllComponents(s => s.setIsPlaying(false));
+      };
+      const handleEnded = () => {
+        notifyAllComponents(s => s.setIsPlaying(false));
+      };
+      const handleError = () => {
+        notifyAllComponents(s => {
+          s.setIsAvailable(false);
+          s.setIsPlaying(false);
+        });
+      };
+      const onAudioVolumeChange = () => {
+        notifyAllComponents(s => {
+          s.setCurrentVolume(audioEl.volume);
+          s.setIsMuted(audioEl.muted);
+        });
+      };
+      const handleLoadedData = () => {
+        notifyAllComponents(s => {
+          s.setIsAvailable(true);
+          s.setError(null);
+        });
+      };
+      const handleCanPlay = () => {
+        notifyAllComponents(s => {
+          s.setIsAvailable(true);
+          s.setError(null);
+        });
+        if (autoPlay && audioEl.paused) {
+          audioEl.play().catch(() => {});
+        }
+      };
+
+      audioEl.addEventListener('play', handlePlay);
+      audioEl.addEventListener('pause', handlePause);
+      audioEl.addEventListener('ended', handleEnded);
+      audioEl.addEventListener('error', handleError);
+      audioEl.addEventListener('volumechange', onAudioVolumeChange);
+      audioEl.addEventListener('loadeddata', handleLoadedData);
+      audioEl.addEventListener('canplay', handleCanPlay);
+
+      if (autoPlay && audioEl.readyState >= 2) {
+        audioEl.play().catch(() => {});
+      }
+    } else {
+      setIsPlaying(!audio.paused);
       setIsMuted(audio.muted);
-    };
-    const handleLoadedData = () => {
-      // Audio loaded successfully
-      setIsAvailable(true);
-      setError(null);
-    };
-    const handleCanPlay = () => {
-      // Audio ready to play
-      setIsAvailable(true);
-      setError(null);
-    };
+      setCurrentVolume(audio.volume);
+    }
 
-    // Event listeners
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-    audio.addEventListener('volumechange', handleVolumeChange);
-    audio.addEventListener('loadeddata', handleLoadedData);
-    audio.addEventListener('canplay', handleCanPlay);
-
-    // Set src after event listeners
-    audio.src = defaultSrc;
     audioRef.current = audio;
 
-    // Add global click listener to enable autoplay - optimized
-    if (autoPlay) {
-      // Only listen to click for better performance
-      document.addEventListener('click', handleUserInteraction, { once: true, passive: true });
+    // Add unmute listeners only once
+    if (autoPlay && !hasUnmutedRef.current) {
+      document.addEventListener('click', unmute, { once: true, passive: true });
+      document.addEventListener('touchstart', unmute, { once: true, passive: true });
+      document.addEventListener('keydown', unmute, { once: true, passive: true });
     }
 
+    // Cleanup: remove this component's state setters
     return () => {
-      // Remove all event listeners
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
-      audio.removeEventListener('volumechange', handleVolumeChange);
-      audio.removeEventListener('loadeddata', handleLoadedData);
-      audio.removeEventListener('canplay', handleCanPlay);
-      
-      // Cleanup audio
-      audio.pause();
-      audio.src = '';
+      globalStateSetters.delete(stateSetters);
       audioRef.current = null;
-      
-      if (autoPlay) {
-        document.removeEventListener('click', handleUserInteraction);
-      }
+      // Don't destroy audio instance - keep it playing across route changes
     };
-  }, [defaultSrc, loop, autoPlay, handleUserInteraction, volume]);
+  }, [defaultSrc, loop, autoPlay, unmute, volume]);
 
   // Update volume
   useEffect(() => {
@@ -146,37 +187,36 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     }
   }, [currentVolume]);
 
-  // Toggle play/pause
   const togglePlay = useCallback(() => {
     if (!audioRef.current) return;
-
+    unmute(); // User gesture: unmute if still muted
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play().catch((err) => {
-        console.error('Play failed:', err);
-        setError('Failed to play audio.');
-      });
+      if (audioRef.current.readyState >= 2) {
+        audioRef.current.play().catch(() => setError('Failed to play. Try again.'));
+      } else {
+        audioRef.current.addEventListener('canplay', () => {
+          audioRef.current?.play().catch(() => setError('Failed to play. Try again.'));
+        }, { once: true });
+      }
     }
-    setHasInteracted(true);
-  }, [isPlaying]);
+  }, [isPlaying, unmute]);
 
-  // Toggle mute
   const toggleMute = useCallback(() => {
     if (!audioRef.current) return;
     audioRef.current.muted = !audioRef.current.muted;
-    setHasInteracted(true);
   }, []);
 
-  // Handle volume change
   const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
     setCurrentVolume(newVolume);
     if (audioRef.current) {
+      unmute();
       audioRef.current.muted = false;
+      audioRef.current.volume = newVolume;
     }
-    setHasInteracted(true);
-  }, []);
+  }, [unmute]);
 
   // Position classes for controls
   const positionClasses = {
@@ -288,17 +328,34 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
         </div>
       </div>
 
-      {/* Error Message - only for errors other than file not found */}
+      {/* Tap to unmute hint - when autoplay muted */}
+      {isPlaying && isMuted && (
+        <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/90 text-center animate-pulse">
+          Tap anywhere to unmute
+        </div>
+      )}
+
       {error && error !== 'File not found' && (
         <div className="mt-1.5 sm:mt-2 text-xs text-red-300 bg-red-900/30 p-1.5 sm:p-2 rounded text-center">
           {error}
         </div>
       )}
 
-      {/* Info Text */}
       <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/70 text-center">
         🎵 Background Music
       </div>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Prevent re-render if props haven't changed
+  return (
+    prevProps.src === nextProps.src &&
+    prevProps.volume === nextProps.volume &&
+    prevProps.autoPlay === nextProps.autoPlay &&
+    prevProps.loop === nextProps.loop &&
+    prevProps.showControls === nextProps.showControls &&
+    prevProps.controlsPosition === nextProps.controlsPosition
+  );
+});
+
+BackgroundMusic.displayName = 'BackgroundMusic';

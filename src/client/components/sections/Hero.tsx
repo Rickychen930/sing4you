@@ -60,8 +60,8 @@ export const Hero: FC = memo(() => {
       if (heroSection) {
         const rect = heroSection.getBoundingClientRect();
         if (rect.bottom > 0 && rect.top < window.innerHeight) {
-          // Only update if scroll changed significantly (10px threshold for better performance)
-          if (Math.abs(lastKnownScrollY - lastScrollYRef.current) >= 10) {
+          // Only update if scroll changed significantly (15px threshold for better performance)
+          if (Math.abs(lastKnownScrollY - lastScrollYRef.current) >= 15) {
             setScrollY(lastKnownScrollY);
             lastScrollYRef.current = lastKnownScrollY;
           }

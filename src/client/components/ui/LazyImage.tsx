@@ -55,7 +55,7 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
         },
         {
           threshold: 0.01,
-          rootMargin: '200px', // Load images 200px before they come into view
+          rootMargin: '150px', // Load images 150px before they come into view (optimized)
         }
       );
 

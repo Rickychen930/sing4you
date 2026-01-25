@@ -25,14 +25,22 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Throttled resize handler
+    // Throttled resize handler with requestAnimationFrame for smoother performance
     let resizeTimeout: number;
+    let resizeRafId: number | null = null;
     const resizeCanvas = () => {
       if (resizeTimeout) clearTimeout(resizeTimeout);
+      if (resizeRafId) cancelAnimationFrame(resizeRafId);
+      
       resizeTimeout = window.setTimeout(() => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }, 150);
+        resizeRafId = requestAnimationFrame(() => {
+          if (canvas) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+          }
+          resizeRafId = null;
+        });
+      }, 200); // Slightly longer delay for better performance
     };
 
     window.addEventListener('resize', resizeCanvas, { passive: true });
@@ -151,8 +159,9 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      observer.disconnect();
       if (resizeTimeout) clearTimeout(resizeTimeout);
+      if (resizeRafId !== null) cancelAnimationFrame(resizeRafId);
+      observer.disconnect();
       window.removeEventListener('resize', resizeCanvas);
     };
 

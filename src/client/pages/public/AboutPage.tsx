@@ -90,7 +90,7 @@ export const AboutPage: React.FC = () => {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 lg:gap-8">
-            <Card hover className="scroll-reveal-io">
+            <Card hover className="animate-fade-in-up" style={{ animationDelay: '0ms' }}>
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
                 <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Solo Performances</h3>
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">
@@ -98,7 +98,7 @@ export const AboutPage: React.FC = () => {
                 </p>
               </CardBody>
             </Card>
-            <Card hover className="scroll-reveal-io">
+            <Card hover className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
                 <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Duo & Trio</h3>
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">
@@ -106,7 +106,7 @@ export const AboutPage: React.FC = () => {
                 </p>
               </CardBody>
             </Card>
-            <Card hover className="scroll-reveal-io">
+            <Card hover className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
                 <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Full Band</h3>
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">
@@ -114,7 +114,7 @@ export const AboutPage: React.FC = () => {
                 </p>
               </CardBody>
             </Card>
-            <Card hover className="scroll-reveal-io">
+            <Card hover className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
                 <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Custom Arrangements</h3>
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">

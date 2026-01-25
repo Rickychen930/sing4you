@@ -776,6 +776,9 @@ jobs:
               echo "   Using default: $FRONTEND_ROOT"
             fi
             
+            # Fix duplicate dist/client (causes redirect loop)
+            FRONTEND_ROOT="${FRONTEND_ROOT//\/dist\/client\/dist\/client/\/dist\/client}"
+            
             # Update nginx config with determined path
             if [ ! -z "$FRONTEND_ROOT" ]; then
               echo "Updating nginx root to: $FRONTEND_ROOT"
@@ -785,6 +788,9 @@ jobs:
               sudo sed -i "s|root /var/www/christina-sings4you/frontend/build|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
               sudo sed -i "s|root /var/www/christina-sings4you/frontend/current|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
               sudo sed -i "s|root /var/www/christina-sings4you/frontend/current/dist/client|root $FRONTEND_ROOT|g" "$NGINX_CONFIG_FILE"
+              sudo sed -i "s|root /var/www/christina-sings4you[^;]*;|root $FRONTEND_ROOT;|g" "$NGINX_CONFIG_FILE"
+              # Fix any duplicate dist/client in root lines
+              sudo sed -i 's|/dist/client/dist/client|/dist/client|g' "$NGINX_CONFIG_FILE"
               # Also update the ACME challenge location
               sudo sed -i "s|root /var/www/html|root /var/www/html|g" "$NGINX_CONFIG_FILE" || true
               # Verify the update
@@ -792,9 +798,10 @@ jobs:
               echo "✅ Nginx root updated to: $UPDATED_ROOT"
             fi
             
-            # Ensure backend port is correct (4000)
-            echo "Ensuring backend port is 4000..."
-            sudo sed -i "s|proxy_pass http://localhost:3001|proxy_pass http://localhost:4000|g" "$NGINX_CONFIG_FILE"
+            # Use 127.0.0.1:4000 (not localhost) to avoid IPv6 connection refused
+            echo "Ensuring proxy_pass uses 127.0.0.1:4000..."
+            sudo sed -i "s|proxy_pass http://localhost:3001|proxy_pass http://127.0.0.1:4000|g" "$NGINX_CONFIG_FILE"
+            sudo sed -i "s|proxy_pass http://localhost:4000|proxy_pass http://127.0.0.1:4000|g" "$NGINX_CONFIG_FILE"
             
             # Create symlink if not exists
             if [ ! -L "${NGINX_SITES_ENABLED}/${DOMAIN}.conf" ]; then

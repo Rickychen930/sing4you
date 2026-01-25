@@ -119,7 +119,7 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
         {categories.map((category, index) => (
           <div
             key={category._id}
-            className="scroll-reveal-io animate-fade-in-up"
+            className="animate-fade-in-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
             <Card 

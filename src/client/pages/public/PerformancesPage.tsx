@@ -147,7 +147,7 @@ export const PerformancesPage: React.FC = () => {
             {performances.map((performance, index) => (
               <div
                 key={performance._id}
-                className="scroll-reveal-io animate-fade-in-up"
+                className="animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <PerformanceCard performance={performance} />
