@@ -20,7 +20,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
   const hasAlternateBg = useMemo(() => sectionNumber % 2 === 1, [sectionNumber]);
   
   const sectionClassName = useMemo(() => cn(
-    'py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden',
+    'py-14 sm:py-18 md:py-22 lg:py-26 xl:py-30 px-4 sm:px-6 lg:px-8 relative overflow-hidden',
     hasAlternateBg && !className?.includes('bg-') 
       ? 'bg-gradient-to-br from-jazz-900/40 via-jazz-800/30 to-musical-900/30' 
       : '',
@@ -62,7 +62,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
       )}
       <div className="max-w-7xl mx-auto relative z-10">
         {(title || subtitle) && (
-          <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <div className="text-center mb-10 sm:mb-12 md:mb-14 lg:mb-18">
             {title && (
               <div className="relative inline-block mb-3 sm:mb-4 md:mb-5 lg:mb-6">
                 {/* Enhanced multi-layer glow effect behind title */}
@@ -77,7 +77,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
               </div>
             )}
             {subtitle && (
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200/95 sm:text-gray-200 max-w-3xl mx-auto px-4 sm:px-6 font-light leading-relaxed font-sans relative inline-block text-reveal" style={{ animationDelay: '0.2s', textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)' }}>
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-50/95 sm:text-gray-50 max-w-3xl mx-auto px-4 sm:px-6 font-normal leading-relaxed font-sans relative inline-block text-reveal" style={{ animationDelay: '0.2s', textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)' }}>
                 {subtitle}
                 <span className="absolute -bottom-2 sm:-bottom-3 left-1/2 -translate-x-1/2 w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56 h-0.5 sm:h-1 bg-gradient-to-r from-transparent via-gold-400/90 to-musical-500/90 to-transparent opacity-80 sm:opacity-70 rounded-full shimmer-advanced shadow-[0_0_10px_rgba(255,194,51,0.4)]"></span>
               </p>

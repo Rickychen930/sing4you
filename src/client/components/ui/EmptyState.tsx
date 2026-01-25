@@ -68,11 +68,11 @@ export const EmptyState: React.FC<EmptyStateProps> = memo(({
             <div className="mb-3 sm:mb-4 animate-fade-in" aria-hidden="true">{icon}</div>
           )}
         </div>
-        <h3 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold text-gray-100 mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(255,194,51,0.3)]" style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}>
+        <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold text-gray-50 mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(255,194,51,0.3)] leading-tight" style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}>
           {title}
         </h3>
         {description && (
-          <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-gray-300/95 sm:text-gray-300 mb-6 sm:mb-8 lg:mb-10 leading-relaxed max-w-lg mx-auto" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)' }}>
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-50/95 sm:text-gray-50 mb-7 sm:mb-9 lg:mb-11 leading-relaxed max-w-lg mx-auto" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.4)' }}>
             {description}
           </p>
         )}

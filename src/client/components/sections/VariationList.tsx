@@ -25,25 +25,44 @@ export const VariationList: React.FC<VariationListProps> = memo(({
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!categoryId) {
+      setLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    const abortController = new AbortController();
+
     const loadVariations = async () => {
       try {
         setError(null);
         const data = await variationService.getByCategoryId(categoryId);
-        setVariations(data);
+        // Only update state if component is still mounted
+        if (isMounted && !abortController.signal.aborted) {
+          setVariations(data);
+        }
       } catch (error) {
+        // Don't update state if component unmounted or aborted
+        if (!isMounted || abortController.signal.aborted) return;
+        
         const errorMessage = error instanceof Error ? error.message : 'Failed to load variations';
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading variations:', error);
         }
         setError(errorMessage);
       } finally {
-        setLoading(false);
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
-    if (categoryId) {
-      loadVariations();
-    }
+    loadVariations();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, [categoryId]);
 
   const handleVariationClick = useCallback((variationId: string) => {

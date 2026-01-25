@@ -27,9 +27,9 @@ export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(({
   };
 
   const sizes = {
-    sm: 'px-4 sm:px-5 py-2 sm:py-2.5 text-sm sm:text-base min-h-[44px] sm:min-h-[48px] touch-manipulation',
-    md: 'px-5 sm:px-6 py-2.5 sm:py-3 text-base sm:text-lg min-h-[48px] sm:min-h-[52px] touch-manipulation',
-    lg: 'px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-base sm:text-lg lg:text-xl min-h-[52px] sm:min-h-[56px] lg:min-h-[60px] touch-manipulation',
+    sm: 'px-5 sm:px-6 py-2.5 sm:py-3 text-base sm:text-lg min-h-[48px] sm:min-h-[52px] touch-manipulation leading-relaxed',
+    md: 'px-6 sm:px-7 py-3 sm:py-3.5 text-base sm:text-lg lg:text-xl min-h-[52px] sm:min-h-[56px] touch-manipulation leading-relaxed',
+    lg: 'px-7 sm:px-9 lg:px-11 py-3.5 sm:py-4.5 lg:py-5.5 text-lg sm:text-xl lg:text-2xl min-h-[56px] sm:min-h-[60px] lg:min-h-[64px] touch-manipulation leading-relaxed',
   };
 
   return (

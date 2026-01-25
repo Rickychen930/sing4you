@@ -10,20 +10,36 @@ export const UpcomingPerformances: React.FC = memo(() => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    const abortController = new AbortController();
+
     const loadPerformances = async () => {
       try {
         const data = await performanceService.getUpcoming();
-        setPerformances(data);
+        // Only update state if component is still mounted
+        if (isMounted && !abortController.signal.aborted) {
+          setPerformances(data);
+        }
       } catch (error) {
+        // Don't update state if component unmounted or aborted
+        if (!isMounted || abortController.signal.aborted) return;
+        
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading performances:', error);
         }
       } finally {
-        setLoading(false);
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadPerformances();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, []);
 
   return (

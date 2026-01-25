@@ -32,7 +32,7 @@ export const ScrollToTop: React.FC = memo(() => {
     };
     
     updateBottomOffset();
-    window.addEventListener('resize', updateBottomOffset);
+    window.addEventListener('resize', updateBottomOffset, { passive: true });
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -80,8 +80,8 @@ export const ScrollToTop: React.FC = memo(() => {
       tabIndex={isVisible ? 0 : -1}
     >
       {/* Enhanced multi-layer glow effect on hover */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-gold-400/0 via-gold-400/0 to-gold-400/0 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-500 blur-md pointer-events-none"></div>
-      <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/0 via-musical-500/0 to-gold-500/0 rounded-full opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-lg pointer-events-none"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-gold-400 via-gold-400 to-gold-400 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-500 blur-md pointer-events-none"></div>
+      <div className="absolute -inset-2 bg-gradient-to-r from-gold-500 via-musical-500 to-gold-500 rounded-full opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-lg pointer-events-none"></div>
       
       <svg
         className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 relative z-10 transition-transform duration-300 group-hover:-translate-y-1 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.5)]"

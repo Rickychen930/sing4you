@@ -16,7 +16,7 @@ export const DescriptionSection: React.FC<DescriptionSectionProps> = memo(({
         Description
       </h3>
       <div className="prose prose-invert max-w-none">
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200/95 sm:text-gray-200 whitespace-pre-line leading-relaxed font-normal font-sans" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50/95 sm:text-gray-50 whitespace-pre-line leading-relaxed font-normal font-sans" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)' }}>
           {description}
         </p>
       </div>

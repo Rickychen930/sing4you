@@ -85,6 +85,7 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
   const particlesRef = useRef<Particle[]>([]);
   const startTimeRef = useRef<number | null>(null);
   const triggerRef = useRef<boolean | number>(trigger);
+  const timeoutIdsRef = useRef<number[]>([]);
 
   // Default colors matching the theme (gold and purple) - memoized to prevent re-creation
   const defaultColors = useMemo(() => colors || [
@@ -149,6 +150,8 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
     };
   }, [intensity, createParticle]);
 
+  const timeoutIdsRef = useRef<number[]>([]);
+
   const launchFireworks = useCallback(() => {
     if (prefersReducedMotion()) {
       if (onComplete) onComplete();
@@ -160,6 +163,10 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Clear any pending timeouts
+    timeoutIdsRef.current.forEach(id => clearTimeout(id));
+    timeoutIdsRef.current = [];
 
     // Set canvas size
     canvas.width = window.innerWidth;
@@ -180,7 +187,7 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
     // Launch multiple fireworks
     for (let i = 0; i < count; i++) {
       const delay = i * 200; // Stagger launches
-      setTimeout(() => {
+      const timeoutId = window.setTimeout(() => {
         const x = position?.x !== undefined 
           ? launchX + (Math.random() - 0.5) * 100
           : Math.random() * canvas.width;
@@ -192,6 +199,7 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
         const firework = createFirework(x, y, targetY, color);
         fireworksRef.current.push(firework);
       }, delay);
+      timeoutIdsRef.current.push(timeoutId);
     }
   }, [count, position, createFirework, defaultColors, prefersReducedMotion, onComplete]);
 
@@ -219,7 +227,7 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
 
     let isAnimating = false;
 
@@ -326,7 +334,7 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
       }
     };
 
-    // Start animation when fireworks are launched
+    // Start animation when fireworks are launched - no need for interval
     const checkAndStartAnimation = () => {
       if ((fireworksRef.current.length > 0 || particlesRef.current.length > 0) && !isAnimating) {
         isAnimating = true;
@@ -334,15 +342,27 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
       }
     };
 
-    // Check periodically if animation should start
-    const intervalId = setInterval(checkAndStartAnimation, 100);
+    // Check immediately and use RAF instead of setInterval
+    checkAndStartAnimation();
+    let rafCheckId: number | null = null;
+    const rafCheck = () => {
+      checkAndStartAnimation();
+      if (isAnimating || fireworksRef.current.length > 0 || particlesRef.current.length > 0) {
+        rafCheckId = requestAnimationFrame(rafCheck);
+      } else {
+        rafCheckId = null;
+      }
+    };
+    rafCheckId = requestAnimationFrame(rafCheck);
 
     return () => {
       isAnimating = false;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      clearInterval(intervalId);
+      if (rafCheckId !== null) {
+        cancelAnimationFrame(rafCheckId);
+      }
       window.removeEventListener('resize', resizeCanvas);
     };
   }, [duration, onComplete]);
@@ -353,6 +373,9 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      // Clear all pending timeouts
+      timeoutIdsRef.current.forEach(id => clearTimeout(id));
+      timeoutIdsRef.current = [];
     };
   }, []);
 

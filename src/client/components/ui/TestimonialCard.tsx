@@ -76,7 +76,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = memo(({ testimoni
           <div className="group-hover:animate-pulse-glow mb-3 sm:mb-4">
             {renderStars}
           </div>
-          <blockquote className="text-sm sm:text-base lg:text-lg text-gray-200/95 sm:text-gray-200 mb-4 sm:mb-5 lg:mb-6 italic leading-relaxed font-light relative flex-grow group-hover:text-gray-100 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}>
+          <blockquote className="text-base sm:text-lg lg:text-xl text-gray-50/95 sm:text-gray-50 mb-5 sm:mb-6 lg:mb-7 italic leading-relaxed font-normal relative flex-grow group-hover:text-gray-50 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)' }}>
             <span 
               className="text-2xl sm:text-3xl lg:text-4xl text-gold-600/50 sm:text-gold-600/40 group-hover:text-gold-500/70 sm:group-hover:text-gold-500/60 transition-colors duration-500 leading-none absolute -top-1 sm:-top-2 -left-1 drop-shadow-[0_0_10px_rgba(255,194,51,0.4)]"
               aria-hidden="true"
@@ -96,7 +96,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = memo(({ testimoni
               {testimonial.clientName}
             </p>
             {testimonial.eventType && (
-              <p className="text-xs sm:text-sm lg:text-base text-gray-400/90 sm:text-gray-400 group-hover:text-gray-300 transition-colors duration-300 mt-1 sm:mt-1.5 font-medium">
+              <p className="text-sm sm:text-base lg:text-lg text-gray-300/90 sm:text-gray-300 group-hover:text-gray-200 transition-colors duration-300 mt-2 sm:mt-2.5 font-medium leading-relaxed">
                 {testimonial.eventType}
               </p>
             )}

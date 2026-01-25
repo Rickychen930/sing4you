@@ -106,7 +106,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = memo(({
         <div className="relative z-10 flex flex-col items-center gap-3 sm:gap-4 lg:gap-5">
           {spinner}
           {text && (
-            <p className="text-gold-300 text-base sm:text-lg lg:text-xl font-medium animate-pulse drop-shadow-[0_0_10px_rgba(255,194,51,0.4)]" style={{ textShadow: '0 2px 8px rgba(255, 194, 51, 0.3)' }}>{text}</p>
+            <p className="text-gold-200 text-lg sm:text-xl lg:text-2xl font-medium animate-pulse drop-shadow-[0_0_10px_rgba(255,194,51,0.4)] leading-relaxed" style={{ textShadow: '0 2px 8px rgba(255, 194, 51, 0.4)' }}>{text}</p>
           )}
         </div>
       </div>

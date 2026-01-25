@@ -1,23 +1,44 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { SEO } from '../../components/ui/SEO';
+import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { Card, CardBody } from '../../components/ui/Card';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { Button } from '../../components/ui/Button';
 
 export const AboutPage: React.FC = () => {
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
+  
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
     { label: 'About' },
   ];
 
+  const aboutPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${siteUrl}/about#webpage`,
+    url: `${siteUrl}/about`,
+    name: 'About | Christina Sings4U',
+    description: 'Learn more about Christina Sings4U - Professional singer offering solo, duo, trio, and full band performances for weddings, corporate events, and special occasions in Sydney, NSW.',
+    mainEntity: {
+      '@type': 'Person',
+      '@id': `${siteUrl}#person`,
+      name: 'Christina Sings4U',
+      jobTitle: 'Professional Singer',
+      description: 'Professional vocalist delivering unforgettable musical experiences for weddings, corporate events, and special occasions.',
+    },
+  };
+
   return (
     <>
       <SEO 
         title="About | Christina Sings4U" 
-        description="Learn more about Christina Sings4U - Professional singer offering solo, duo, trio, band performances for weddings, corporate events, and special occasions."
+        description="Learn more about Christina Sings4U - Professional singer offering solo, duo, trio, and full band performances for weddings, corporate events, and special occasions in Sydney, NSW."
+        keywords="about Christina Sings4U, professional singer Sydney, wedding singer, corporate event singer, live vocals, Sydney vocalist, solo performer, band performances"
+        url={`${siteUrl}/about`}
       />
+      <JSONLDSchema schema={aboutPageSchema} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
         <Breadcrumb items={breadcrumbItems} />
       </div>
@@ -43,8 +64,8 @@ export const AboutPage: React.FC = () => {
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 xl:mb-8 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                 My Story
               </h2>
-              <div className="space-y-4 sm:space-y-5 lg:space-y-6 text-gray-200 leading-relaxed">
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl">
+              <div className="space-y-5 sm:space-y-6 lg:space-y-7 text-gray-50 leading-relaxed">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl">
                   Welcome to Christina Sings4U! I am a passionate and dedicated professional singer with years of experience in delivering exceptional musical performances. My journey in music has allowed me to perform at countless weddings, corporate events, and special occasions, bringing joy and creating lasting memories for my clients.
                 </p>
                 <p className="text-sm sm:text-base md:text-lg lg:text-xl">
@@ -71,32 +92,32 @@ export const AboutPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 lg:gap-8">
             <Card hover className="scroll-reveal-io">
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">Solo Performances</h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Solo Performances</h3>
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">
                   Intimate and powerful solo performances perfect for smaller events and ceremonies.
                 </p>
               </CardBody>
             </Card>
             <Card hover className="scroll-reveal-io">
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">Duo & Trio</h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Duo & Trio</h3>
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">
                   Enhanced musical experiences with talented musicians to create richer soundscapes.
                 </p>
               </CardBody>
             </Card>
             <Card hover className="scroll-reveal-io">
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">Full Band</h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Full Band</h3>
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">
                   Complete band performances for larger events that need a full, energetic sound.
                 </p>
               </CardBody>
             </Card>
             <Card hover className="scroll-reveal-io">
               <CardBody className="p-5 sm:p-6 lg:p-8 xl:p-10">
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">Custom Arrangements</h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent leading-tight">Custom Arrangements</h3>
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50 leading-relaxed">
                   Tailored performances designed specifically for your event and musical preferences.
                 </p>
               </CardBody>

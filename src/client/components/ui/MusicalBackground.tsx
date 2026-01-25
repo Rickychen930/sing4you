@@ -6,23 +6,45 @@ interface MusicalBackgroundProps {
 
 export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ intensity = 'medium' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const isVisibleRef = useRef(true);
+  const lastFrameTimeRef = useRef(0);
+  const throttleMs = 16; // ~60fps
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false }); // Disable alpha for better performance
     if (!ctx) return;
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Throttled resize handler
+    let resizeTimeout: number;
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = window.setTimeout(() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }, 150);
     };
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+
+    // Intersection Observer to pause when not visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isVisibleRef.current = entries[0].isIntersecting;
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
 
     // Musical particles
     const particles: Array<{
@@ -34,11 +56,12 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
       opacity: number;
       color: string;
       type: 'note' | 'wave';
+      noteIndex: number;
     }> = [];
 
-    const particleCount = intensity === 'high' ? 30 : intensity === 'medium' ? 20 : 10;
+    // Reduced particle count for better performance
+    const particleCount = intensity === 'high' ? 20 : intensity === 'medium' ? 12 : 6;
     const notes = ['♪', '♫', '♬', '♩'];
-    // Using consistent color palette: gold-500, musical-500, gold-600, musical-600
     const colors = ['rgba(255, 194, 51,', 'rgba(168, 85, 247,', 'rgba(232, 168, 34,', 'rgba(147, 51, 234,'];
 
     // Initialize particles
@@ -46,19 +69,35 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 20 + 15,
-        opacity: Math.random() * 0.3 + 0.1,
+        vx: (Math.random() - 0.5) * 0.3, // Slower for better performance
+        vy: (Math.random() - 0.5) * 0.3,
+        size: Math.random() * 15 + 12, // Smaller
+        opacity: Math.random() * 0.25 + 0.1,
         color: colors[Math.floor(Math.random() * colors.length)],
-        type: Math.random() > 0.7 ? 'wave' : 'note',
+        type: Math.random() > 0.8 ? 'wave' : 'note', // More notes, fewer waves
+        noteIndex: Math.floor(Math.random() * notes.length),
       });
     }
 
-    let animationFrame: number;
+    let timeOffset = 0;
 
-    const animate = () => {
+    const animate = (currentTime: number) => {
+      // Throttle to ~60fps
+      if (currentTime - lastFrameTimeRef.current < throttleMs) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+      lastFrameTimeRef.current = currentTime;
+
+      // Pause when not visible
+      if (!isVisibleRef.current) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      timeOffset = currentTime * 0.001;
 
       particles.forEach((particle, index) => {
         // Update position
@@ -75,42 +114,45 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
 
         // Draw particle
         ctx.save();
-        ctx.globalAlpha = particle.opacity * (0.8 + Math.sin(Date.now() * 0.001 + index) * 0.2);
+        const alpha = particle.opacity * (0.8 + Math.sin(timeOffset + index) * 0.2);
+        ctx.globalAlpha = alpha;
         
         if (particle.type === 'note') {
-          const noteIndex = Math.floor((Date.now() * 0.0001 + index) % notes.length);
-          const note = notes[noteIndex];
+          // Use cached note index, update less frequently
+          const note = notes[particle.noteIndex];
           ctx.fillStyle = particle.color + '0.3)';
           ctx.font = `bold ${particle.size}px serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(note, particle.x, particle.y);
         } else {
-          // Draw wave
+          // Simplified wave drawing - fewer points
           ctx.beginPath();
           ctx.moveTo(particle.x, particle.y);
-          for (let i = 0; i < 30; i++) {
-            const x = particle.x + i * 2;
-            const y = particle.y + Math.sin(i * 0.3 + Date.now() * 0.002 + index) * 12;
+          for (let i = 0; i < 20; i++) { // Reduced from 30
+            const x = particle.x + i * 3;
+            const y = particle.y + Math.sin(i * 0.4 + timeOffset + index) * 10;
             ctx.lineTo(x, y);
           }
           ctx.strokeStyle = particle.color + '0.4)';
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.5;
           ctx.stroke();
         }
 
         ctx.restore();
       });
 
-      animationFrame = requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
+      observer.disconnect();
+      if (resizeTimeout) clearTimeout(resizeTimeout);
       window.removeEventListener('resize', resizeCanvas);
     };
 
@@ -120,7 +162,11 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.4 }}
+      style={{ 
+        opacity: 0.4,
+        willChange: 'transform',
+        transform: 'translateZ(0)', // Force GPU acceleration
+      }}
     />
   );
 }, (prevProps, nextProps) => {

@@ -63,6 +63,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
   const confettiRef = useRef<ConfettiPiece[]>([]);
   const startTimeRef = useRef<number | null>(null);
   const triggerRef = useRef<boolean | number>(trigger);
+  const timeoutIdsRef = useRef<number[]>([]);
 
   // Calculate particle count based on intensity
   const particleCount = count || (intensity === 'high' ? 150 : intensity === 'medium' ? 100 : 50);
@@ -127,14 +128,19 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Clear any pending timeouts
+    timeoutIdsRef.current.forEach(id => clearTimeout(id));
+    timeoutIdsRef.current = [];
+
     confettiRef.current = [];
     startTimeRef.current = Date.now();
 
     // Create confetti pieces
     for (let i = 0; i < particleCount; i++) {
-      setTimeout(() => {
+      const timeoutId = window.setTimeout(() => {
         confettiRef.current.push(createConfetti());
       }, i * 10); // Stagger creation for more natural effect
+      timeoutIdsRef.current.push(timeoutId);
     }
   }, [particleCount, createConfetti, prefersReducedMotion, duration, onComplete]);
 
@@ -162,7 +168,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
 
     let isAnimating = false;
 
@@ -246,7 +252,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
       }
     };
 
-    // Start animation when confetti is launched
+    // Start animation when confetti is launched - no need for interval
     const checkAndStartAnimation = () => {
       if (confettiRef.current.length > 0 && !isAnimating) {
         isAnimating = true;
@@ -254,15 +260,27 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
       }
     };
 
-    // Check periodically if animation should start
-    const intervalId = setInterval(checkAndStartAnimation, 100);
+    // Check immediately and use RAF instead of setInterval
+    checkAndStartAnimation();
+    let rafCheckId: number | null = null;
+    const rafCheck = () => {
+      checkAndStartAnimation();
+      if (isAnimating || confettiRef.current.length > 0) {
+        rafCheckId = requestAnimationFrame(rafCheck);
+      } else {
+        rafCheckId = null;
+      }
+    };
+    rafCheckId = requestAnimationFrame(rafCheck);
 
     return () => {
       isAnimating = false;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      clearInterval(intervalId);
+      if (rafCheckId !== null) {
+        cancelAnimationFrame(rafCheckId);
+      }
       window.removeEventListener('resize', resizeCanvas);
     };
   }, [duration, onComplete]);
@@ -273,6 +291,9 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      // Clear all pending timeouts
+      timeoutIdsRef.current.forEach(id => clearTimeout(id));
+      timeoutIdsRef.current = [];
     };
   }, []);
 

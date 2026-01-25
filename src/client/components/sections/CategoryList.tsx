@@ -23,23 +23,39 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+    const abortController = new AbortController();
+
     const loadCategories = async () => {
       try {
         setError(null);
         const data = await categoryService.getAll();
-        setCategories(data);
+        // Only update state if component is still mounted
+        if (isMounted && !abortController.signal.aborted) {
+          setCategories(data);
+        }
       } catch (error) {
+        // Don't update state if component unmounted or aborted
+        if (!isMounted || abortController.signal.aborted) return;
+        
         const errorMessage = error instanceof Error ? error.message : 'Failed to load categories';
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading categories:', error);
         }
         setError(errorMessage);
       } finally {
-        setLoading(false);
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadCategories();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, []);
 
   const handleCategoryClick = useCallback((categoryId: string) => {

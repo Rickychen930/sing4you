@@ -6,7 +6,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
 import { Button } from '../../components/ui/Button';
-import { SEO } from '../../components/ui/SEO';
+import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { useToastStore } from '../../stores/toastStore';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
@@ -83,13 +83,14 @@ export const ContactPage: React.FC = () => {
     // Focus on first error field
     if (Object.keys(newErrors).length > 0) {
       const firstErrorField = Object.keys(newErrors)[0] as keyof IContactForm;
-      const errorElement = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
-      if (errorElement) {
-        setTimeout(() => {
+      // Use requestAnimationFrame for smoother focus
+      requestAnimationFrame(() => {
+        const errorElement = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
+        if (errorElement) {
           errorElement.focus();
           errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-      }
+        }
+      });
     }
     
     return Object.keys(newErrors).length === 0;
@@ -97,6 +98,9 @@ export const ContactPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmitting) return;
     
     // Validate form
     if (!validateForm()) {
@@ -109,6 +113,7 @@ export const ContactPage: React.FC = () => {
 
     try {
       await contactService.submitForm(formData);
+      // Only update state if form is still mounted (not navigating away)
       setSubmitStatus('success');
       toast.success('Thank you for your inquiry! We will get back to you soon.');
       setFormData({
@@ -135,57 +140,85 @@ export const ContactPage: React.FC = () => {
     { label: 'Contact' },
   ];
 
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
+  
+  const contactPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${siteUrl}/contact#webpage`,
+    url: `${siteUrl}/contact`,
+    name: 'Contact | Christina Sings4U',
+    description: 'Get in touch with Christina Sings4U for booking inquiries. Professional singer available for weddings, corporate events, and private occasions in Sydney, NSW.',
+    mainEntity: {
+      '@type': 'Organization',
+      '@id': `${siteUrl}#organization`,
+      name: 'Christina Sings4U',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'Booking Inquiries',
+        availableLanguage: ['English'],
+        areaServed: {
+          '@type': 'City',
+          name: 'Sydney',
+        },
+      },
+    },
+  };
+
   return (
     <>
       <SEO
         title="Contact | Christina Sings4U"
-        description="Get in touch with Christina Sings4U for booking inquiries. Reach out via email or WhatsApp."
+        description="Get in touch with Christina Sings4U for booking inquiries. Professional singer available for weddings, corporate events, and private occasions in Sydney, NSW. Contact via email or WhatsApp."
+        keywords="contact Christina Sings4U, book singer Sydney, wedding singer contact, corporate event singer, professional singer booking, Sydney vocalist"
+        url={`${siteUrl}/contact`}
       />
+      <JSONLDSchema schema={contactPageSchema} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
         <Breadcrumb items={breadcrumbItems} />
       </div>
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 lg:gap-8 xl:gap-10 mb-10 sm:mb-12 lg:mb-16 xl:mb-20">
-            <div className="text-center p-5 sm:p-6 lg:p-8 xl:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-500 hover:shadow-[0_25px_70px_rgba(255,194,51,0.35),0_15px_40px_rgba(168,85,247,0.25),0_0_0_1px_rgba(255,194,51,0.2)] hover:scale-[1.03] border-2 border-gold-900/50 hover:border-gold-700/70 backdrop-blur-lg group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 lg:gap-9 xl:gap-11 mb-12 sm:mb-14 lg:mb-18 xl:mb-22">
+            <div className="text-center p-6 sm:p-7 lg:p-9 xl:p-11 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-500 hover:shadow-[0_25px_70px_rgba(255,194,51,0.35),0_15px_40px_rgba(168,85,247,0.25),0_0_0_1px_rgba(255,194,51,0.2)] hover:scale-[1.02] border-2 border-gold-900/50 hover:border-gold-700/70 backdrop-blur-lg group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
               {/* Enhanced multi-layer glow effect */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-2xl pointer-events-none"></div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-xl pointer-events-none" style={{ transitionDelay: '100ms' }}></div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold-500 via-gold-500 to-musical-500 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-2xl pointer-events-none"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500 via-gold-500 to-musical-500 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-xl pointer-events-none" style={{ transitionDelay: '100ms' }}></div>
               {/* Shimmer effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
               </div>
               <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_0_15px_rgba(255,194,51,0.5)]" aria-hidden="true">📱</div>
-              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gold-200 group-hover:text-gold-100 mb-3 sm:mb-4 lg:mb-5 xl:mb-6 transition-colors duration-300">WhatsApp</h3>
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gold-100 group-hover:text-gold-50 mb-4 sm:mb-5 lg:mb-6 xl:mb-7 transition-colors duration-300 leading-tight">WhatsApp</h3>
               <a
                 href={generateWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm sm:text-base lg:text-lg text-gold-400 hover:text-gold-200 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 min-h-[44px] sm:min-h-[48px] flex items-center justify-center mx-auto relative z-10 hover:scale-105 active:scale-95"
+                className="text-base sm:text-lg lg:text-xl text-gold-300 hover:text-gold-100 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 min-h-[48px] sm:min-h-[52px] flex items-center justify-center mx-auto relative z-10 hover:scale-105 active:scale-95 leading-relaxed"
               >
                 Message us on WhatsApp
               </a>
             </div>
-            <div className="text-center p-5 sm:p-6 lg:p-8 xl:p-10 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-500 hover:shadow-[0_25px_70px_rgba(255,194,51,0.35),0_15px_40px_rgba(168,85,247,0.25),0_0_0_1px_rgba(255,194,51,0.2)] hover:scale-[1.03] border-2 border-gold-900/50 hover:border-gold-700/70 backdrop-blur-lg group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
+            <div className="text-center p-6 sm:p-7 lg:p-9 xl:p-11 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-500 hover:shadow-[0_25px_70px_rgba(255,194,51,0.35),0_15px_40px_rgba(168,85,247,0.25),0_0_0_1px_rgba(255,194,51,0.2)] hover:scale-[1.02] border-2 border-gold-900/50 hover:border-gold-700/70 backdrop-blur-lg group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
               {/* Enhanced multi-layer glow effect */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-2xl pointer-events-none"></div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-xl pointer-events-none" style={{ transitionDelay: '100ms' }}></div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold-500 via-gold-500 to-musical-500 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-25 transition-opacity duration-700 blur-2xl pointer-events-none"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-gold-500 via-gold-500 to-musical-500 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-xl pointer-events-none" style={{ transitionDelay: '100ms' }}></div>
               {/* Shimmer effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
               </div>
               <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_0_15px_rgba(255,194,51,0.5)]" aria-hidden="true">✉️</div>
-              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gold-200 group-hover:text-gold-100 mb-3 sm:mb-4 lg:mb-5 xl:mb-6 transition-colors duration-300">Email</h3>
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gold-100 group-hover:text-gold-50 mb-4 sm:mb-5 lg:mb-6 xl:mb-7 transition-colors duration-300 leading-tight">Email</h3>
               <a
                 href={generateMailtoLink()}
-                className="text-sm sm:text-base lg:text-lg text-gold-400 hover:text-gold-200 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 min-h-[44px] sm:min-h-[48px] flex items-center justify-center mx-auto relative z-10 hover:scale-105 active:scale-95"
+                className="text-base sm:text-lg lg:text-xl text-gold-300 hover:text-gold-100 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 min-h-[48px] sm:min-h-[52px] flex items-center justify-center mx-auto relative z-10 hover:scale-105 active:scale-95 leading-relaxed"
               >
                 Send us an email
               </a>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 lg:space-y-7">
+          <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7 lg:space-y-8">
             <Input
               label="Name"
               name="name"
@@ -269,8 +302,8 @@ export const ContactPage: React.FC = () => {
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm sm:text-base lg:text-lg xl:text-xl mb-1 sm:mb-1.5 lg:mb-2 group-hover:text-green-50 transition-colors duration-300">Message sent successfully!</p>
-                    <p className="text-xs sm:text-sm lg:text-base text-green-200/90 group-hover:text-green-100/90 transition-colors duration-300">Thank you for your inquiry! We will get back to you soon.</p>
+                    <p className="font-semibold text-base sm:text-lg lg:text-xl xl:text-2xl mb-2 sm:mb-2.5 lg:mb-3 group-hover:text-green-50 transition-colors duration-300 leading-relaxed">Message sent successfully!</p>
+                    <p className="text-sm sm:text-base lg:text-lg text-green-100/95 group-hover:text-green-50 transition-colors duration-300 leading-relaxed">Thank you for your inquiry! We will get back to you soon.</p>
                   </div>
                 </div>
               </div>
@@ -286,8 +319,8 @@ export const ContactPage: React.FC = () => {
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm sm:text-base lg:text-lg xl:text-xl mb-1 sm:mb-1.5 lg:mb-2 group-hover:text-red-50 transition-colors duration-300">Submission failed</p>
-                    <p className="text-xs sm:text-sm lg:text-base text-red-200/90 group-hover:text-red-100/90 transition-colors duration-300">There was an error submitting your form. Please try again.</p>
+                    <p className="font-semibold text-base sm:text-lg lg:text-xl xl:text-2xl mb-2 sm:mb-2.5 lg:mb-3 group-hover:text-red-50 transition-colors duration-300 leading-relaxed">Submission failed</p>
+                    <p className="text-sm sm:text-base lg:text-lg text-red-100/95 group-hover:text-red-50 transition-colors duration-300 leading-relaxed">There was an error submitting your form. Please try again.</p>
                   </div>
                 </div>
               </div>

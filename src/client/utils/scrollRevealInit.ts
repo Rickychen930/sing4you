@@ -1,14 +1,26 @@
 /**
- * Initialize scroll reveal untuk semua elemen dengan class 'scroll-reveal-io'
- * Menggunakan Intersection Observer untuk performa yang lebih baik
+ * Initialize scroll reveal for all elements with class 'scroll-reveal-io'
+ * Uses Intersection Observer for better performance
  */
+let initScrollRevealTimeout: NodeJS.Timeout | null = null;
+let isInitializing = false;
+
 export const initScrollReveal = () => {
-  // Skip jika sudah di-initialize atau jika user prefers reduced motion
+  // Debounce multiple calls
+  if (initScrollRevealTimeout) {
+    clearTimeout(initScrollRevealTimeout);
+  }
+  
+  if (isInitializing) return;
+  
+  initScrollRevealTimeout = setTimeout(() => {
+    isInitializing = true;
+  // Skip if already initialized or if user prefers reduced motion
   if (typeof window === 'undefined') {
     return;
   }
 
-  // Jika user prefers reduced motion, langsung reveal semua elemen
+  // If user prefers reduced motion, immediately reveal all elements
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const elements = document.querySelectorAll('.scroll-reveal-io');
     elements.forEach((element) => {
@@ -42,14 +54,14 @@ export const initScrollReveal = () => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('revealed');
-          // Unobserve setelah revealed untuk performa
+          // Unobserve after revealed for performance
           observer.unobserve(entry.target);
         }
       });
     },
     {
-      threshold: 0.01, // Very low threshold untuk trigger lebih cepat
-      rootMargin: '0px 0px -50px 0px', // Small negative margin untuk trigger sedikit lebih awal
+      threshold: 0.01, // Very low threshold to trigger faster
+      rootMargin: '0px 0px -50px 0px', // Small negative margin to trigger slightly earlier
     }
   );
 
@@ -70,11 +82,14 @@ export const initScrollReveal = () => {
     observer.observe(element);
   });
 
+  isInitializing = false;
+  
   return () => {
     elements.forEach((element) => {
       observer.unobserve(element);
     });
   };
+  }, 50); // Debounce 50ms
 };
 
 // Auto-initialize saat DOM ready
@@ -100,7 +115,7 @@ if (typeof window !== 'undefined') {
       }
     }, 1500);
     
-    // Cleanup fallback timer jika semua sudah ter-reveal lebih cepat
+    // Cleanup fallback timer if all elements are revealed faster
     checkInterval = setInterval(() => {
       const unrevealed = document.querySelectorAll('.scroll-reveal-io:not(.revealed)');
       if (unrevealed.length === 0) {
@@ -111,14 +126,10 @@ if (typeof window !== 'undefined') {
   };
 
   const initialize = () => {
-    // Initial load - multiple attempts untuk memastikan semua ter-catch
+    // Initial load - single call with delay to ensure DOM is ready
     setTimeout(() => {
       initScrollReveal();
-    }, 100);
-    
-    setTimeout(() => {
-      initScrollReveal(); // Second attempt
-    }, 300);
+    }, 200);
     
     setupFallback();
   };
@@ -129,25 +140,50 @@ if (typeof window !== 'undefined') {
     initialize();
   }
 
-  // Re-initialize setelah route changes (untuk SPA)
+  // Re-initialize after route changes (for SPA) - using MutationObserver or popstate
   let lastPath = window.location.pathname;
-  const checkRouteChange = () => {
+  
+  // Listen to popstate for browser navigation
+  window.addEventListener('popstate', () => {
     if (window.location.pathname !== lastPath) {
       lastPath = window.location.pathname;
-      // Clear existing timers
       if (fallbackTimer) clearTimeout(fallbackTimer);
       if (checkInterval) clearInterval(checkInterval);
       
       setTimeout(() => {
         initScrollReveal();
         setTimeout(() => {
-          initScrollReveal(); // Second attempt
+          initScrollReveal();
         }, 200);
         setupFallback();
       }, 200);
     }
-  };
+  }, { passive: true });
 
-  // Check setiap 100ms untuk route changes
-  setInterval(checkRouteChange, 100);
+  // Use MutationObserver to detect DOM changes - debounced
+  let mutationTimeout: NodeJS.Timeout | null = null;
+  const observer = new MutationObserver(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath !== lastPath) {
+      lastPath = currentPath;
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+      if (checkInterval) clearInterval(checkInterval);
+      if (mutationTimeout) clearTimeout(mutationTimeout);
+      
+      // Debounce mutation observer
+      mutationTimeout = setTimeout(() => {
+        initScrollReveal();
+        setupFallback();
+      }, 300);
+    }
+  });
+
+  // Observe only the main content area for changes
+  const mainContent = document.querySelector('main') || document.body;
+  if (mainContent) {
+    observer.observe(mainContent, {
+      childList: true,
+      subtree: true,
+    });
+  }
 }

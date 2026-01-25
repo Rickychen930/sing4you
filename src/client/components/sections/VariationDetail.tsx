@@ -25,6 +25,14 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!variationId) {
+      setLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    const abortController = new AbortController();
+
     const loadVariationData = async () => {
       try {
         setError(null);
@@ -32,22 +40,33 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
           variationService.getById(variationId),
           mediaService.getByVariationId(variationId),
         ]);
-        setVariation(variationData);
-        setMedia(mediaData);
+        // Only update state if component is still mounted
+        if (isMounted && !abortController.signal.aborted) {
+          setVariation(variationData);
+          setMedia(mediaData);
+        }
       } catch (error) {
+        // Don't update state if component unmounted or aborted
+        if (!isMounted || abortController.signal.aborted) return;
+        
         const errorMessage = error instanceof Error ? error.message : 'Failed to load variation';
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading variation:', error);
         }
         setError(errorMessage);
       } finally {
-        setLoading(false);
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
-    if (variationId) {
-      loadVariationData();
-    }
+    loadVariationData();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, [variationId]);
 
   // useMemo must be called before any early returns to follow Rules of Hooks

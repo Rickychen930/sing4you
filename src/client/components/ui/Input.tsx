@@ -25,7 +25,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
       {label && (
         <label 
           htmlFor={inputId} 
-          className="block text-sm sm:text-base font-semibold text-gray-200 mb-2 sm:mb-2.5 lg:mb-3 transition-colors duration-200"
+          className="block text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-3.5 lg:mb-4 transition-colors duration-200 leading-relaxed"
         >
           {label}
           {props.required && (
@@ -40,10 +40,10 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? errorId : helperText ? helperId : undefined}
           className={cn(
-            'w-full px-4 sm:px-5 lg:px-6 py-3 sm:py-3.5 lg:py-4 min-h-[48px] sm:min-h-[52px] lg:min-h-[56px] border-2 border-gold-900/50 rounded-xl',
+            'w-full px-5 sm:px-6 lg:px-7 py-4 sm:py-4.5 lg:py-5 min-h-[52px] sm:min-h-[56px] lg:min-h-[60px] border-2 border-gold-900/50 rounded-xl',
             'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500',
-            'transition-all duration-300 bg-jazz-900/80 text-gray-100 backdrop-blur-sm',
-            'placeholder:text-gray-400 placeholder:font-light text-base sm:text-lg',
+            'transition-all duration-300 bg-jazz-900/80 text-gray-50 backdrop-blur-sm',
+            'placeholder:text-gray-400/70 placeholder:font-normal text-base sm:text-lg leading-relaxed',
             'hover:border-gold-700/80 hover:bg-jazz-900/95 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2),0_0_0_1px_rgba(255,194,51,0.1)]',
             'focus:shadow-[0_0_0_4px_rgba(255,194,51,0.25),0_8px_24px_rgba(255,194,51,0.3),0_0_40px_rgba(255,194,51,0.15)] focus:scale-[1.01] focus-ring focus:bg-jazz-900/98 focus:border-gold-400',
             'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gold-900/50 disabled:hover:bg-jazz-900/80',
@@ -61,7 +61,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
       {error && (
         <p 
           id={errorId}
-          className="mt-2 sm:mt-2.5 text-sm sm:text-base text-red-400 font-medium flex items-center gap-2 animate-fade-in"
+          className="mt-3 sm:mt-3.5 text-base sm:text-lg text-red-300 font-medium flex items-center gap-2.5 animate-fade-in leading-relaxed"
           role="alert"
           aria-live="polite"
         >
@@ -74,7 +74,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
       {helperText && !error && (
         <p 
           id={helperId}
-          className="mt-2 sm:mt-2.5 text-sm sm:text-base text-gray-400 font-normal"
+          className="mt-3 sm:mt-3.5 text-base sm:text-lg text-gray-300/90 font-normal leading-relaxed"
         >
           {helperText}
         </p>

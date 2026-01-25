@@ -101,6 +101,16 @@ export default {
         'wave': 'wave 3s ease-in-out infinite',
         'wave-reverse': 'waveReverse 3s ease-in-out infinite',
       },
+      lineHeight: {
+        'relaxed': '1.8',
+        'comfortable': '1.75',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '22': '5.5rem',
+        '26': '6.5rem',
+        '30': '7.5rem',
+      },
     },
   },
   plugins: [],

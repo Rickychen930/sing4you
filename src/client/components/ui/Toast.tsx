@@ -74,7 +74,7 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
           {icons[toast.type]}
         </div>
       </div>
-      <p className="flex-1 text-sm sm:text-base lg:text-lg font-semibold leading-relaxed pt-0.5 relative z-10 group-hover:text-current/95 transition-colors duration-300">{toast.message}</p>
+      <p className="flex-1 text-base sm:text-lg lg:text-xl font-semibold leading-relaxed pt-0.5 relative z-10 group-hover:text-current/95 transition-colors duration-300">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
         className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1.5 sm:p-2 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-transparent min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center relative z-10 touch-manipulation shadow-[0_0_10px_rgba(0,0,0,0.2)] hover:shadow-[0_0_15px_currentColor]"

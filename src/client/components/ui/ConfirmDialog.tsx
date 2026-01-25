@@ -33,23 +33,35 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       previousActiveElement.current = document.activeElement as HTMLElement;
       
       // Focus the confirm button when dialog opens
-      setTimeout(() => {
+      let focusTimeout: number | null = null;
+      focusTimeout = window.setTimeout(() => {
         confirmButtonRef.current?.focus();
       }, 100);
 
-      // Trap focus within the dialog
+      // Trap focus within the dialog - memoize querySelector
+      const dialog = dialogRef.current;
+      let focusableElements: NodeListOf<HTMLElement> | null = null;
+      
+      const getFocusableElements = () => {
+        if (!focusableElements && dialog) {
+          focusableElements = dialog.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          ) as NodeListOf<HTMLElement>;
+        }
+        return focusableElements;
+      };
+      
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
           onCancel();
+          return;
         }
         if (e.key === 'Tab') {
-          const focusableElements = dialogRef.current?.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          );
-          if (!focusableElements || focusableElements.length === 0) return;
+          const elements = getFocusableElements();
+          if (!elements || elements.length === 0) return;
 
-          const firstElement = focusableElements[0] as HTMLElement;
-          const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+          const firstElement = elements[0];
+          const lastElement = elements[elements.length - 1];
 
           if (e.shiftKey) {
             if (document.activeElement === firstElement) {
@@ -65,12 +77,16 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         }
       };
 
-      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keydown', handleKeyDown, { passive: false });
       document.body.style.overflow = 'hidden';
 
       return () => {
+        if (focusTimeout !== null) {
+          clearTimeout(focusTimeout);
+        }
         document.removeEventListener('keydown', handleKeyDown);
         document.body.style.overflow = '';
+        focusableElements = null; // Clear cache
         // Restore focus to previous element
         previousActiveElement.current?.focus();
       };

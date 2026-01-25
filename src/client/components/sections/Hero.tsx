@@ -17,20 +17,36 @@ export const Hero: FC = memo(() => {
   const lastScrollYRef = useRef(0);
 
   useEffect(() => {
+    let isMounted = true;
+    const abortController = new AbortController();
+
     const loadHeroSettings = async () => {
       try {
         const settings = await heroService.getSettings();
-        setHeroSettings(settings);
+        // Only update state if component is still mounted
+        if (isMounted && !abortController.signal.aborted) {
+          setHeroSettings(settings);
+        }
       } catch (error) {
+        // Don't update state if component unmounted or aborted
+        if (!isMounted || abortController.signal.aborted) return;
+        
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading hero settings:', error);
         }
       } finally {
-        setLoading(false);
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadHeroSettings();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, []);
 
   // Optimized Parallax scroll effect with RAF throttling and debouncing
@@ -99,19 +115,21 @@ export const Hero: FC = memo(() => {
 
   const handleScrollDown = useCallback(() => {
     // Scroll to services section smoothly
-    const servicesSection = document.getElementById('services') || document.querySelector('[id*="service"]');
-    if (servicesSection) {
-      const headerOffset = 80;
-      const elementPosition = servicesSection.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    } else {
-      // Fallback: scroll to next section
-      window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-    }
+    requestAnimationFrame(() => {
+      const servicesSection = document.getElementById('services') || document.querySelector('[id*="service"]');
+      if (servicesSection) {
+        const headerOffset = 80;
+        const elementPosition = servicesSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      } else {
+        // Fallback: scroll to next section
+        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+      }
+    });
   }, []);
 
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
@@ -259,7 +277,7 @@ export const Hero: FC = memo(() => {
             <span className="absolute -bottom-0.5 sm:-bottom-1 lg:-bottom-2 -left-4 sm:-left-6 lg:-left-8 xl:-left-12 text-lg sm:text-xl lg:text-2xl xl:text-3xl opacity-50 animate-float-advanced font-musical pointer-events-none neon-glow-purple" style={{ animationDelay: '2s' }}>♫</span>
           </h1>
         </div>
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl mb-5 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 text-gray-100 leading-relaxed font-light font-sans max-w-3xl mx-auto relative inline-block animate-fade-in-up text-reveal px-3 sm:px-4" style={{ animationDelay: '0.3s' }}>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl mb-6 sm:mb-7 md:mb-9 lg:mb-11 xl:mb-14 text-gray-50 leading-relaxed font-normal font-sans max-w-3xl mx-auto relative inline-block animate-fade-in-up text-reveal px-3 sm:px-4" style={{ animationDelay: '0.3s' }}>
           {heroSettings.subtitle}
           <span className="absolute -bottom-1.5 sm:-bottom-2 lg:-bottom-3 left-1/2 -translate-x-1/2 w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56 h-0.5 bg-gradient-to-r from-transparent via-gold-400/70 to-musical-500/70 to-transparent opacity-70 rounded-full shimmer-advanced"></span>
         </p>

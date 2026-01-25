@@ -24,31 +24,47 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    const abortController = new AbortController();
+
     const loadSections = async () => {
       try {
         setError(null);
         const data = await sectionService.getAll();
-        setSections(data);
+        // Only update state if component is still mounted
+        if (isMounted && !abortController.signal.aborted) {
+          setSections(data);
+        }
       } catch (error) {
+        // Don't update state if component unmounted or aborted
+        if (!isMounted || abortController.signal.aborted) return;
+        
         const errorMessage = error instanceof Error ? error.message : 'Failed to load services';
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading services:', error);
         }
         setError(errorMessage);
       } finally {
-        setLoading(false);
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadSections();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, []);
 
-  // Initialize scroll reveal after sections are loaded
+  // Initialize scroll reveal after sections are loaded - debounced
   useEffect(() => {
     if (!loading && sections.length > 0) {
       const timer = setTimeout(() => {
         initScrollReveal();
-      }, 100);
+      }, 150);
       return () => clearTimeout(timer);
     }
   }, [loading, sections.length]);
@@ -106,7 +122,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
                 <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300" style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}>
                   {section.title}
                 </h3>
-                <p className="text-sm sm:text-base lg:text-lg text-gray-300/95 sm:text-gray-300 mb-4 sm:mb-5 lg:mb-6 xl:mb-8 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-200 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}>
+                <p className="text-base sm:text-lg lg:text-xl text-gray-50/95 sm:text-gray-50 mb-5 sm:mb-6 lg:mb-7 xl:mb-9 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-50 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)' }}>
                   {section.description}
                 </p>
                 {section.media && section.media.length > 0 && (

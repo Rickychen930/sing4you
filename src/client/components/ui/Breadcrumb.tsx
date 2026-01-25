@@ -13,13 +13,31 @@ interface BreadcrumbProps {
 }
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className }) => {
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
+  
   if (items.length === 0) return null;
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.label,
+      ...(item.path && { item: `${siteUrl}${item.path}` }),
+    })),
+  };
+
   return (
-    <nav 
-      className={cn('flex items-center space-x-2 text-xs sm:text-sm lg:text-base mb-4 sm:mb-6 lg:mb-8', className)}
-      aria-label="Breadcrumb"
-    >
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <nav 
+        className={cn('flex items-center space-x-2 text-sm sm:text-base lg:text-lg mb-5 sm:mb-7 lg:mb-9', className)}
+        aria-label="Breadcrumb"
+      >
       <ol className="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-3">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
@@ -43,24 +61,25 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className })
                 </svg>
               )}
               {isLast ? (
-                <span className="text-gold-300 font-semibold text-sm sm:text-base lg:text-lg drop-shadow-[0_0_8px_rgba(255,194,51,0.4)]" aria-current="page" style={{ textShadow: '0 2px 8px rgba(255, 194, 51, 0.3)' }}>
+                <span className="text-gold-200 font-semibold text-base sm:text-lg lg:text-xl drop-shadow-[0_0_8px_rgba(255,194,51,0.4)] leading-relaxed" aria-current="page" style={{ textShadow: '0 2px 8px rgba(255, 194, 51, 0.3)' }}>
                   {item.label}
                 </span>
               ) : item.path ? (
                 <Link
                   to={item.path}
-                  className="text-gray-300 hover:text-gold-300 transition-all duration-300 hover:underline focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1.5 sm:px-2 py-1 font-medium min-h-[32px] sm:min-h-[36px] flex items-center hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]"
+                  className="text-gray-50 hover:text-gold-200 transition-all duration-300 hover:underline focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 sm:px-2.5 py-1.5 font-medium min-h-[36px] sm:min-h-[40px] flex items-center hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] leading-relaxed"
                 >
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-gray-400/90 sm:text-gray-400 text-sm sm:text-base">{item.label}</span>
+                <span className="text-gray-300/90 sm:text-gray-300 text-base sm:text-lg leading-relaxed">{item.label}</span>
               )}
             </li>
           );
         })}
       </ol>
     </nav>
+    </>
   );
 }, (prevProps, nextProps) => {
   if (prevProps.items.length !== nextProps.items.length) return false;

@@ -129,13 +129,13 @@
     animation: gradientShift 20s ease infinite;
     /* Prevent white flash - ensure background is set immediately */
     background-color: var(--color-black) !important;
-    @apply text-gray-100;
+    @apply text-gray-50;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     /* Removed background-attachment: fixed for better scroll performance */
     position: relative;
     color: var(--color-light-gray);
     overflow-x: hidden;
-    line-height: 1.7;
+    line-height: 1.8;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Improve scroll performance */
@@ -145,8 +145,8 @@
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    /* Optimize scroll performance */
-    will-change: scroll-position;
+    /* Optimize scroll performance - only set will-change when needed */
+    contain: layout style paint;
   }
   
   body::before {
@@ -171,6 +171,7 @@
     will-change: opacity, filter;
     transform: translateZ(0); /* Force GPU acceleration */
     backface-visibility: hidden;
+    contain: layout style paint; /* Isolate rendering */
   }
   
   @keyframes musicalGlow {
@@ -258,28 +259,33 @@
   }
   
   h1 {
-    @apply text-gold-200;
+    @apply text-gold-100;
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
     text-shadow: 0 4px 20px rgba(255, 194, 51, 0.3), 0 2px 10px rgba(168, 85, 247, 0.2);
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
   }
   
   h2 {
-    @apply text-gold-100;
+    @apply text-gold-50;
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 700;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
     text-shadow: 0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15);
+    margin-bottom: 1rem;
   }
   
   h3 {
-    @apply text-gold-200;
+    @apply text-gold-100;
     font-size: clamp(1.5rem, 3vw, 2.25rem);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
+    line-height: 1.4;
     text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2);
+    margin-bottom: 0.875rem;
   }
   
   h4, h5, h6 {
@@ -290,12 +296,13 @@
   }
   
   p {
-    @apply text-gray-200;
+    @apply text-gray-100;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.75;
-    margin-bottom: 1em;
+    line-height: 1.8;
+    margin-bottom: 1.25em;
     font-weight: 400;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
+    font-size: clamp(1rem, 1.1vw, 1.125rem);
     /* Enhanced readability */
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -312,16 +319,17 @@
   }
   
   a {
-    @apply text-gold-400;
+    @apply text-gold-300;
     text-decoration: none;
     transition: all var(--duration-fast) var(--easing-standard);
     font-weight: 500;
     position: relative;
+    line-height: 1.6;
   }
 
   a:hover {
-    @apply text-gold-300;
-    text-shadow: 0 0 8px rgba(255, 194, 51, 0.4);
+    @apply text-gold-100;
+    text-shadow: 0 0 8px rgba(255, 194, 51, 0.5);
     transform: translateY(-1px);
   }
 
@@ -560,15 +568,18 @@
 /* Intersection Observer based scroll reveal */
 .scroll-reveal-io {
   opacity: 0;
-  transform: translateY(40px);
+  transform: translateY(40px) translateZ(0);
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: opacity, transform;
+  contain: layout style paint;
+  backface-visibility: hidden;
 }
 
 .scroll-reveal-io.revealed {
   opacity: 1 !important;
-  transform: translateY(0) !important;
+  transform: translateY(0) translateZ(0) !important;
+  will-change: auto; /* Remove after animation */
 }
 
 /* Safety: Jika elemen tidak ter-reveal dalam 3 detik, langsung reveal */
@@ -669,6 +680,7 @@ p, li, span {
   transform: translateZ(0); /* Force GPU acceleration */
   backface-visibility: hidden;
   perspective: 1000px;
+  contain: layout style paint; /* Isolate rendering */
   /* Only set will-change on hover for better performance */
 }
 
@@ -676,6 +688,24 @@ p, li, span {
 .button-ripple:active,
 .magnetic-hover:hover {
   will-change: transform, opacity, box-shadow;
+}
+
+/* Optimize all animated elements for smooth 60fps */
+.animate-float,
+.animate-float-advanced,
+.animate-fade-in,
+.animate-fade-in-up,
+.animate-pulse,
+.animate-pulse-glow,
+.animate-musical-pulse,
+.animate-shimmer,
+.animate-shimmer-advanced,
+.animate-gradient,
+.animate-scale-in {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout style paint;
 }
 
 /* Optimize parallax elements for smooth scrolling */
@@ -686,6 +716,27 @@ p, li, span {
   perspective: 1000px;
   /* Reduce repaints during scroll */
   contain: layout style paint;
+}
+
+/* Optimize canvas elements for smooth animations */
+canvas {
+  will-change: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Optimize images for smooth loading */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  will-change: auto;
+}
+
+/* Prevent layout shifts */
+img[loading="lazy"] {
+  aspect-ratio: attr(width) / attr(height);
 }
 
 /* Smooth scroll container optimization */
@@ -739,19 +790,20 @@ section,
   }
 }
 
-/* Enhanced focus visibility for keyboard navigation */
+/* Enhanced focus visibility for keyboard navigation - Better visibility */
 *:focus-visible {
-  outline: 3px solid var(--color-gold-500);
-  outline-offset: 3px;
-  border-radius: 6px;
+  outline: 4px solid var(--color-gold-500);
+  outline-offset: 4px;
+  border-radius: 8px;
   z-index: 10;
   /* Enhanced contrast for better visibility */
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 
-              0 0 0 4px rgba(255, 194, 51, 0.4),
-              0 0 20px rgba(255, 194, 51, 0.6);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 
+              0 0 0 6px rgba(255, 194, 51, 0.5),
+              0 0 25px rgba(255, 194, 51, 0.7),
+              0 0 40px rgba(255, 194, 51, 0.4);
 }
 
-/* Focus states for interactive elements */
+/* Focus states for interactive elements - Enhanced visibility */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -759,11 +811,12 @@ textarea:focus-visible,
 select:focus-visible,
 [role="button"]:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid var(--color-gold-500);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 
-              0 0 0 4px rgba(255, 194, 51, 0.4),
-              0 0 20px rgba(255, 194, 51, 0.6);
+  outline: 4px solid var(--color-gold-500);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 
+              0 0 0 6px rgba(255, 194, 51, 0.5),
+              0 0 25px rgba(255, 194, 51, 0.7),
+              0 0 40px rgba(255, 194, 51, 0.4);
   z-index: 10;
 }
 

@@ -3,12 +3,13 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 /**
  * BackgroundMusic Component
  * 
- * Plays 90s-themed background music with volume and mute controls.
+ * Plays background music with volume and mute controls.
  * Uses HTML5 audio with autoplay allowed after user interaction.
+ * Default file: /public/background_music.mp3
  * 
  * @example
  * <BackgroundMusic 
- *   src="/music/90s-jazz.mp3"
+ *   src="/background_music.mp3"
  *   volume={0.3}
  *   autoPlay={true}
  * />
@@ -44,17 +45,12 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isAvailable, setIsAvailable] = useState(true);
 
-  // Default 90s style music - using external or local URL
-  // Users can provide their own audio files in the public/music/ folder
-  // Example: /music/90s-jazz.mp3 or external URL
-  // Fallback: if local file not found, can use external URL
-  const defaultSrc = src || '/music/90s-background.mp3';
-  
-  // Fallback URLs for 90s music (optional, can be enabled if needed)
-  // Uncomment one if you want to use fallback:
-  // const fallbackSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+  // Default background music - using file from public folder
+  // File location: /public/background_music.mp3
+  // Users can provide their own audio file via src prop or use external URL
+  const defaultSrc = src || '/background_music.mp3';
 
-  // Handle user interaction untuk enable autoplay
+  // Handle user interaction to enable autoplay
   const handleUserInteraction = useCallback(() => {
     if (!hasInteracted) {
       setHasInteracted(true);
@@ -74,55 +70,70 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     audio.loop = loop;
     audio.preload = 'auto';
 
-    // Event listeners
-    audio.addEventListener('play', () => setIsPlaying(true));
-    audio.addEventListener('pause', () => setIsPlaying(false));
-    audio.addEventListener('ended', () => setIsPlaying(false));
-    audio.addEventListener('error', () => {
+    // Event listener handlers
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => setIsPlaying(false);
+    const handleError = () => {
       // If file not found, hide controls gracefully
-      // Users can add file at /public/music/90s-background.mp3
+      // File should be at /public/background_music.mp3
       // or provide URL via src prop
       setIsAvailable(false);
       setIsPlaying(false);
       // Don't log error to console to avoid spam
       // Audio file is optional, so no error message needed
-    });
-    audio.addEventListener('volumechange', () => {
+    };
+    const handleVolumeChange = () => {
       setCurrentVolume(audio.volume);
       setIsMuted(audio.muted);
-    });
-    audio.addEventListener('loadeddata', () => {
+    };
+    const handleLoadedData = () => {
       // Audio loaded successfully
       setIsAvailable(true);
       setError(null);
-    });
-    audio.addEventListener('canplay', () => {
+    };
+    const handleCanPlay = () => {
       // Audio ready to play
       setIsAvailable(true);
       setError(null);
-    });
+    };
 
-    // Set src setelah event listeners
+    // Event listeners
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('volumechange', handleVolumeChange);
+    audio.addEventListener('loadeddata', handleLoadedData);
+    audio.addEventListener('canplay', handleCanPlay);
+
+    // Set src after event listeners
     audio.src = defaultSrc;
     audioRef.current = audio;
 
-    // Add global click listener untuk enable autoplay
+    // Add global click listener to enable autoplay - optimized
     if (autoPlay) {
-      const events = ['click', 'touchstart', 'keydown'];
-      events.forEach((event) => {
-        document.addEventListener(event, handleUserInteraction, { once: true });
-      });
+      // Only listen to click for better performance
+      document.addEventListener('click', handleUserInteraction, { once: true, passive: true });
     }
 
     return () => {
+      // Remove all event listeners
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('volumechange', handleVolumeChange);
+      audio.removeEventListener('loadeddata', handleLoadedData);
+      audio.removeEventListener('canplay', handleCanPlay);
+      
+      // Cleanup audio
       audio.pause();
       audio.src = '';
       audioRef.current = null;
+      
       if (autoPlay) {
-        const events = ['click', 'touchstart', 'keydown'];
-        events.forEach((event) => {
-          document.removeEventListener(event, handleUserInteraction);
-        });
+        document.removeEventListener('click', handleUserInteraction);
       }
     };
   }, [defaultSrc, loop, autoPlay, handleUserInteraction, volume]);
@@ -166,7 +177,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     setHasInteracted(true);
   }, []);
 
-  // Position classes untuk kontrol
+  // Position classes for controls
   const positionClasses = {
     'top-left': 'top-4 left-4',
     'top-right': 'top-4 right-4',
@@ -174,7 +185,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     'bottom-right': 'bottom-4 right-4',
   };
 
-  // Sembunyikan kontrol jika tidak tersedia atau showControls false
+  // Hide controls if not available or showControls is false
   if (!showControls || !isAvailable) {
     return null;
   }
@@ -285,7 +296,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
 
       {/* Info Text */}
       <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/70 text-center">
-        🎵 90s Music
+        🎵 Background Music
       </div>
     </div>
   );

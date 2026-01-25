@@ -43,13 +43,13 @@ export const Card: React.FC<CardProps> = memo(({
       {/* Enhanced musical accent on hover with glow */}
       {hover && (
         <>
-          <div className="absolute top-3 right-3 text-2xl sm:text-3xl text-gold-500/0 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-90 hover:opacity-90 animate-float-advanced neon-glow drop-shadow-[0_0_10px_rgba(255,194,51,0.6)]">
+          <div className="absolute top-3 right-3 text-2xl sm:text-3xl text-gold-500 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-90 hover:opacity-90 animate-float-advanced neon-glow drop-shadow-[0_0_10px_rgba(255,194,51,0.6)]">
             ♪
           </div>
-          <div className="absolute bottom-3 left-3 text-xl sm:text-2xl text-musical-500/0 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 hover:opacity-70 animate-float-advanced neon-glow-purple drop-shadow-[0_0_10px_rgba(168,85,247,0.6)]" style={{ animationDelay: '1s' }}>
+          <div className="absolute bottom-3 left-3 text-xl sm:text-2xl text-musical-500 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 hover:opacity-70 animate-float-advanced neon-glow-purple drop-shadow-[0_0_10px_rgba(168,85,247,0.6)]" style={{ animationDelay: '1s' }}>
             ♫
           </div>
-          <div className="absolute top-1/2 right-4 text-lg sm:text-xl text-gold-400/0 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-50 hover:opacity-50 animate-float-advanced drop-shadow-[0_0_8px_rgba(255,194,51,0.4)]" style={{ animationDelay: '0.5s' }}>
+          <div className="absolute top-1/2 right-4 text-lg sm:text-xl text-gold-400 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-50 hover:opacity-50 animate-float-advanced drop-shadow-[0_0_8px_rgba(255,194,51,0.4)]" style={{ animationDelay: '0.5s' }}>
             ♬
           </div>
         </>
@@ -58,9 +58,9 @@ export const Card: React.FC<CardProps> = memo(({
       {/* Enhanced multi-layer glow effect on hover */}
       {hover && (
         <>
-          <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-30 hover:opacity-30 transition-opacity duration-500 blur-2xl pointer-events-none -z-10" />
-          <div className="absolute -inset-4 bg-gradient-to-r from-musical-500/0 via-gold-500/0 to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-20 hover:opacity-20 transition-opacity duration-700 blur-3xl pointer-events-none -z-10" />
-          <div className="absolute -inset-6 bg-gradient-to-r from-gold-500/0 via-transparent to-musical-500/0 rounded-2xl opacity-0 group-hover:opacity-10 hover:opacity-10 transition-opacity duration-1000 blur-[40px] pointer-events-none -z-10" />
+          <div className="absolute -inset-2 bg-gradient-to-r from-gold-500 via-gold-500 to-musical-500 rounded-2xl opacity-0 group-hover:opacity-30 hover:opacity-30 transition-opacity duration-500 blur-2xl pointer-events-none -z-10" />
+          <div className="absolute -inset-4 bg-gradient-to-r from-musical-500 via-gold-500 to-musical-500 rounded-2xl opacity-0 group-hover:opacity-20 hover:opacity-20 transition-opacity duration-700 blur-3xl pointer-events-none -z-10" />
+          <div className="absolute -inset-6 bg-gradient-to-r from-gold-500 via-transparent to-musical-500 rounded-2xl opacity-0 group-hover:opacity-10 hover:opacity-10 transition-opacity duration-1000 blur-[40px] pointer-events-none -z-10" />
         </>
       )}
       
@@ -94,7 +94,7 @@ interface CardHeaderProps {
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({ children, className }) => {
-  return <div className={cn('px-5 sm:px-6 lg:px-8 xl:px-10 py-4 sm:py-5 lg:py-6 border-b border-gold-900/40 bg-gradient-to-r from-gold-900/25 via-jazz-900/35 to-gold-900/25', className)}>{children}</div>;
+  return <div className={cn('px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7 border-b border-gold-900/40 bg-gradient-to-r from-gold-900/25 via-jazz-900/35 to-gold-900/25', className)}>{children}</div>;
 };
 
 interface CardBodyProps {
@@ -103,7 +103,7 @@ interface CardBodyProps {
 }
 
 export const CardBody: React.FC<CardBodyProps> = ({ children, className }) => {
-  return <div className={cn('px-5 sm:px-6 lg:px-8 xl:px-10 py-4 sm:py-5 lg:py-6', className)}>{children}</div>;
+  return <div className={cn('px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7', className)}>{children}</div>;
 };
 
 interface CardFooterProps {
@@ -112,5 +112,5 @@ interface CardFooterProps {
 }
 
 export const CardFooter: React.FC<CardFooterProps> = ({ children, className }) => {
-  return <div className={cn('px-5 sm:px-6 lg:px-8 xl:px-10 py-4 sm:py-5 lg:py-6 bg-gradient-to-r from-gold-900/25 via-musical-900/25 to-gold-900/35 border-t border-gold-900/40', className)}>{children}</div>;
+  return <div className={cn('px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7 bg-gradient-to-r from-gold-900/25 via-musical-900/25 to-gold-900/35 border-t border-gold-900/40', className)}>{children}</div>;
 };

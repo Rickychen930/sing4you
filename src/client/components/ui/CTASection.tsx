@@ -54,7 +54,7 @@ export const CTASection: React.FC<CTASectionProps> = memo(({
               {title}
             </h2>
           </div>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-200/95 sm:text-gray-200 mb-6 sm:mb-8 lg:mb-10 xl:mb-12 max-w-3xl mx-auto leading-relaxed" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)' }}>
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-50/95 sm:text-gray-50 mb-7 sm:mb-9 lg:mb-11 xl:mb-14 max-w-3xl mx-auto leading-relaxed" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)' }}>
             {description}
           </p>
 
@@ -88,7 +88,7 @@ export const CTASection: React.FC<CTASectionProps> = memo(({
           <div className="mt-5 sm:mt-6 lg:mt-8 xl:mt-10">
             <Link
               to="/contact"
-              className="inline-block text-xs sm:text-sm md:text-base text-gold-400 hover:text-gold-300 transition-all duration-300 underline hover:no-underline font-medium focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1.5 sm:px-2 py-1 min-h-[32px] sm:min-h-[36px] flex items-center hover:drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]"
+              className="inline-block text-sm sm:text-base md:text-lg text-gold-300 hover:text-gold-100 transition-all duration-300 underline hover:no-underline font-medium focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 sm:px-3 py-1.5 sm:py-2 min-h-[36px] sm:min-h-[40px] flex items-center hover:drop-shadow-[0_0_8px_rgba(255,194,51,0.5)] leading-relaxed"
             >
               <span className="hover:translate-x-1 transition-transform duration-300 inline-block">Or fill out our contact form →</span>
             </Link>

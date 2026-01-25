@@ -23,40 +23,42 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
     checkAuth();
   }, [checkAuth]);
 
-  // Close admin dropdown when clicking outside
+  // Close admin dropdown when clicking outside - optimized with passive
   useEffect(() => {
+    if (!isAdminMenuOpen) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (isAdminMenuOpen && !target.closest('.admin-menu-container')) {
+      if (!target.closest('.admin-menu-container')) {
         setIsAdminMenuOpen(false);
       }
     };
 
-    if (isAdminMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    // Use capture phase for better performance
+    document.addEventListener('mousedown', handleClickOutside, { capture: true, passive: true });
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside, { capture: true });
     };
   }, [isAdminMenuOpen]);
 
-  // Close mobile menu when clicking outside
+  // Close mobile menu when clicking outside - optimized with passive
   useEffect(() => {
+    if (!isMenuOpen) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const headerElement = target.closest('header');
-      if (isMenuOpen && !headerElement) {
+      if (!headerElement) {
         setIsMenuOpen(false);
       }
     };
 
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    // Use capture phase for better performance
+    document.addEventListener('mousedown', handleClickOutside, { capture: true, passive: true });
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside, { capture: true });
     };
   }, [isMenuOpen]);
 
@@ -72,18 +74,14 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
 
   return (
     <header className="glass-effect-strong shadow-elegant fixed w-full top-0 left-0 right-0 z-50 border-b border-gold-900/50 relative overflow-hidden transition-all duration-300">
-      {/* Enhanced musical decorative elements */}
-      <div className="absolute inset-0 pointer-events-none opacity-10 sm:opacity-8">
-        <div className="absolute top-1/2 left-8 sm:left-10 text-xl sm:text-2xl lg:text-3xl text-gold-400/80 sm:text-gold-400/70 animate-float-advanced font-musical glow-pulse-advanced drop-shadow-[0_0_15px_rgba(255,194,51,0.3)]">♪</div>
-        <div className="absolute top-1/2 right-8 sm:right-10 text-lg sm:text-xl lg:text-2xl text-musical-400/80 sm:text-musical-400/70 animate-float-advanced font-musical glow-pulse-advanced drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]" style={{ animationDelay: '1.5s' }}>♫</div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-base sm:text-lg text-gold-500/50 sm:text-gold-500/40 animate-float-advanced font-musical drop-shadow-[0_0_10px_rgba(255,194,51,0.25)]" style={{ animationDelay: '0.75s' }}>♬</div>
+      {/* Simplified decorative elements - reduced for performance */}
+      <div className="absolute inset-0 pointer-events-none opacity-8 sm:opacity-6">
+        <div className="absolute top-1/2 left-8 sm:left-10 text-xl sm:text-2xl text-gold-400/60 sm:text-gold-400/50 font-musical drop-shadow-[0_0_10px_rgba(255,194,51,0.2)]">♪</div>
+        <div className="absolute top-1/2 right-8 sm:right-10 text-lg sm:text-xl text-musical-400/60 sm:text-musical-400/50 font-musical drop-shadow-[0_0_10px_rgba(168,85,247,0.2)]">♫</div>
       </div>
       
-      {/* Enhanced gradient overlay with shimmer */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-900/10 sm:via-gold-900/8 to-transparent pointer-events-none shimmer-advanced opacity-40 sm:opacity-30" />
-      
-      {/* Particle effect background */}
-      <div className="absolute inset-0 particle-bg opacity-25 sm:opacity-20 pointer-events-none" />
+      {/* Simplified gradient overlay - removed shimmer for performance */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-900/8 sm:via-gold-900/6 to-transparent pointer-events-none opacity-30 sm:opacity-20" />
       
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center h-14 sm:h-16 lg:h-18 xl:h-20">
@@ -92,66 +90,51 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-elegant font-bold gradient-text-animated hover:scale-110 transition-all duration-300 transform relative group scale-on-hover"
             aria-label="Home - Christina Sings4U"
           >
-            <span className="relative z-10 glow-pulse-advanced drop-shadow-[0_2px_8px_rgba(255,194,51,0.3)]">Christina Sings4U</span>
-            <span className="absolute -top-0.5 sm:-top-1 -right-1.5 sm:-right-2 lg:-right-3 text-[10px] sm:text-xs lg:text-sm opacity-0 group-hover:opacity-90 sm:group-hover:opacity-80 transition-opacity duration-300 font-musical animate-float-advanced neon-glow drop-shadow-[0_0_12px_rgba(255,194,51,0.5)]">♪</span>
-            <span className="absolute -bottom-0.5 sm:-bottom-1 -left-1.5 sm:-left-2 lg:-left-3 text-[10px] sm:text-xs lg:text-sm opacity-0 group-hover:opacity-70 sm:group-hover:opacity-60 transition-opacity duration-300 font-musical animate-float-advanced neon-glow-purple drop-shadow-[0_0_12px_rgba(168,85,247,0.5)]" style={{ animationDelay: '0.5s' }}>♫</span>
+            <span className="relative z-10 drop-shadow-[0_2px_8px_rgba(255,194,51,0.3)]">Christina Sings4U</span>
+            <span className="absolute -top-0.5 sm:-top-1 -right-1.5 sm:-right-2 lg:-right-3 text-[10px] sm:text-xs lg:text-sm opacity-0 group-hover:opacity-90 sm:group-hover:opacity-80 transition-opacity duration-300 font-musical drop-shadow-[0_0_12px_rgba(255,194,51,0.5)]">♪</span>
+            <span className="absolute -bottom-0.5 sm:-bottom-1 -left-1.5 sm:-left-2 lg:-left-3 text-[10px] sm:text-xs lg:text-sm opacity-0 group-hover:opacity-70 sm:group-hover:opacity-60 transition-opacity duration-300 font-musical drop-shadow-[0_0_12px_rgba(168,85,247,0.5)]">♫</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-0.5 lg:space-x-1 xl:space-x-2 2xl:space-x-3">
             <Link
               to="/"
-              className="px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 text-xs sm:text-sm lg:text-base text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/40 hover:shadow-[0_4px_12px_rgba(255,194,51,0.2)] link-underline magnetic-hover-advanced hover-lift-advanced min-h-[44px] flex items-center"
+              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/40 hover:shadow-[0_4px_12px_rgba(255,194,51,0.2)] link-underline magnetic-hover-advanced hover-lift-advanced min-h-[48px] flex items-center leading-relaxed"
               aria-label="Navigate to home page"
             >
               <span className="relative z-10 group-hover:drop-shadow-[0_0_8px_rgba(255,194,51,0.4)] transition-all duration-300">Home</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-500 group-hover:w-full transition-all duration-300 rounded-full shimmer-advanced shadow-[0_0_8px_rgba(255,194,51,0.5)]" />
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <span className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1 text-[10px] sm:text-xs text-gold-500/90 font-musical animate-float-advanced glow-pulse-advanced drop-shadow-[0_0_10px_rgba(255,194,51,0.6)]">♪</span>
-              </span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-500 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_8px_rgba(255,194,51,0.5)]" />
             </Link>
             <Link
               to="/about"
-              className="px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 text-xs sm:text-sm lg:text-base text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[44px] flex items-center"
+              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
               aria-label="Navigate to about page"
             >
               <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">About</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <span className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1 text-[10px] sm:text-xs text-gold-500/70 font-musical animate-float drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]" style={{ animationDelay: '0.2s' }}>♫</span>
-              </span>
             </Link>
             <Link
               to="/categories"
-              className="px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 text-xs sm:text-sm lg:text-base text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[44px] flex items-center"
+              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
               aria-label="Navigate to categories page"
             >
               <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">Services</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <span className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1 text-[10px] sm:text-xs text-gold-500/70 font-musical animate-float drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]" style={{ animationDelay: '0.4s' }}>♪</span>
-              </span>
             </Link>
             <Link
               to="/performances"
-              className="px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 text-xs sm:text-sm lg:text-base text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[44px] flex items-center"
+              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
               aria-label="Navigate to performances page"
             >
               <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">Performances</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <span className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1 text-[10px] sm:text-xs text-gold-500/70 font-musical animate-float drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]" style={{ animationDelay: '0.6s' }}>♬</span>
-              </span>
             </Link>
             <Link
               to="/contact"
-              className="px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 text-xs sm:text-sm lg:text-base text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[44px] flex items-center"
+              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
               aria-label="Navigate to contact page"
             >
               <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">Contact</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <span className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1 text-[10px] sm:text-xs text-gold-500/70 font-musical animate-float drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]" style={{ animationDelay: '1s' }}>♪</span>
-              </span>
             </Link>
             
             {/* Admin Menu */}
@@ -159,7 +142,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               <div className="relative admin-menu-container">
                 <button
                   onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
-                  className="flex items-center space-x-1 text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm min-h-[44px]"
+                  className="flex items-center space-x-1 text-gray-50 hover:text-gold-300 transition-all duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-sm sm:text-base min-h-[48px] leading-relaxed"
                   aria-label="Admin menu"
                   aria-expanded={isAdminMenuOpen}
                   aria-haspopup="true"
@@ -177,7 +160,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
                   >
                     <Link
                       to="/admin/dashboard"
-                      className="block px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-300 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[40px] sm:min-h-[44px] flex items-center group"
+                      className="block px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-50 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
                       onClick={() => setIsAdminMenuOpen(false)}
                       role="menuitem"
                     >
@@ -185,7 +168,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-300 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[40px] sm:min-h-[44px] flex items-center group"
+                      className="block w-full text-left px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-50 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
                       role="menuitem"
                       aria-label="Logout from admin account"
                     >
@@ -197,7 +180,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             ) : (
               <Link
                 to="/admin/login"
-                className="text-gray-200 hover:text-gold-400 transition-all duration-300 font-medium relative after:absolute after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-gold-400 after:to-gold-300 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 text-xs sm:text-sm lg:text-base min-h-[44px] flex items-center"
+                className="text-gray-50 hover:text-gold-300 transition-all duration-300 font-medium relative after:absolute after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-gold-400 after:to-gold-300 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg min-h-[48px] flex items-center leading-relaxed"
                 aria-label="Navigate to admin login page"
               >
                 Admin
@@ -206,7 +189,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           </div>
 
           <button
-            className="md:hidden text-gray-200 hover:text-gold-400 transition-all duration-300 p-2 -mr-2 min-w-[44px] sm:min-w-[48px] min-h-[44px] sm:min-h-[48px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg active:scale-95 touch-manipulation"
+            className="md:hidden text-gray-50 hover:text-gold-300 transition-all duration-300 p-2.5 -mr-2 min-w-[48px] sm:min-w-[52px] min-h-[48px] sm:min-h-[52px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg active:scale-95 touch-manipulation"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen}
@@ -231,7 +214,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           >
             <Link
               to="/"
-              className="block text-sm sm:text-base text-gray-200 hover:text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[44px] sm:min-h-[48px] flex items-center touch-manipulation group"
+              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
               onClick={closeMobileMenu}
               role="menuitem"
             >
@@ -242,7 +225,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/about"
-              className="block text-sm sm:text-base text-gray-200 hover:text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[44px] sm:min-h-[48px] flex items-center touch-manipulation group"
+              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
               onClick={closeMobileMenu}
               role="menuitem"
             >
@@ -250,7 +233,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/categories"
-              className="block text-sm sm:text-base text-gray-200 hover:text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[44px] sm:min-h-[48px] flex items-center touch-manipulation group"
+              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
               onClick={closeMobileMenu}
               role="menuitem"
             >
@@ -258,7 +241,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/performances"
-              className="block text-sm sm:text-base text-gray-200 hover:text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[44px] sm:min-h-[48px] flex items-center touch-manipulation group"
+              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
               onClick={closeMobileMenu}
               role="menuitem"
             >
@@ -266,7 +249,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/contact"
-              className="block text-sm sm:text-base text-gray-200 hover:text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[44px] sm:min-h-[48px] flex items-center touch-manipulation group"
+              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
               onClick={closeMobileMenu}
               role="menuitem"
             >

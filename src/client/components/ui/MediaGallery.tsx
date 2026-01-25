@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useEffect } from 'react';
 import { cn } from '../../utils/helpers';
 import { LazyImage } from './LazyImage';
 
@@ -9,6 +9,26 @@ interface MediaGalleryProps {
 
 export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, className }) => {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
+
+  // Handle ESC key to close modal
+  useEffect(() => {
+    if (!selectedMedia) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedMedia(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape, { passive: true });
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [selectedMedia]);
 
   if (media.length === 0) {
     return null;
@@ -48,14 +68,14 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
               {index < 3 ? (
                 <img
                   src={url}
-                  alt={`Gallery image ${index + 1}`}
+                  alt={`Performance gallery image ${index + 1} - Christina Sings4U`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="eager"
                 />
               ) : (
                 <LazyImage
                   src={url}
-                  alt={`Gallery image ${index + 1}`}
+                  alt={`Performance gallery image ${index + 1} - Christina Sings4U`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   fadeIn
                 />

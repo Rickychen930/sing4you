@@ -1,0 +1,22 @@
+# robots.txt for Christina Sings4U
+# https://christina-sings4you.com.au/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+
+# Allow important pages
+Allow: /
+Allow: /about
+Allow: /categories
+Allow: /performances
+Allow: /contact
+
+# Sitemap location
+Sitemap: https://christina-sings4you.com.au/sitemap.xml
+
+# Crawl-delay (optional, adjust as needed)
+Crawl-delay: 1

@@ -26,36 +26,49 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
     const container = containerRef.current;
     if (!container) return;
 
+    let timeoutId: number | null = null;
+    let observer: IntersectionObserver | null = null;
+
     // Check if element is already in viewport
     const rect = container.getBoundingClientRect();
     const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200;
     
     if (isVisible) {
       // Use setTimeout to avoid setState in effect
-      setTimeout(() => setIsInView(true), 0);
-      return;
+      timeoutId = window.setTimeout(() => {
+        if (containerRef.current) {
+          setIsInView(true);
+        }
+      }, 0);
+    } else {
+      // Use IntersectionObserver for elements not yet visible
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && containerRef.current) {
+              setIsInView(true);
+              if (observer) {
+                observer.disconnect();
+              }
+            }
+          });
+        },
+        {
+          threshold: 0.01,
+          rootMargin: '200px', // Load images 200px before they come into view
+        }
+      );
+
+      observer.observe(container);
     }
 
-    // Use IntersectionObserver for elements not yet visible
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsInView(true);
-            observer.disconnect();
-          }
-        });
-      },
-      {
-        threshold: 0.01,
-        rootMargin: '200px', // Load images 200px before they come into view
-      }
-    );
-
-    observer.observe(container);
-
     return () => {
-      observer.disconnect();
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      if (observer) {
+        observer.disconnect();
+      }
     };
   }, []);
 

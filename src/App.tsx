@@ -66,7 +66,7 @@ const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) 
   return children;
 };
 
-// Component untuk handle scroll reveal initialization on route change
+// Component to handle scroll reveal initialization on route change
 // Loading fallback component - declared outside render
 const LoadingFallback: React.FC = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 sm:px-6 py-10 sm:py-12">
@@ -78,10 +78,10 @@ const ScrollRevealHandler: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Initialize scroll reveal setelah route change
+    // Initialize scroll reveal after route change - debounced
     const timer = setTimeout(() => {
       initScrollReveal();
-    }, 100);
+    }, 200);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
@@ -94,11 +94,8 @@ function App() {
 
   useEffect(() => {
     checkAuth();
-    // Initialize scroll reveal on mount dengan delay untuk memastikan DOM ready
-    const timer = setTimeout(() => {
-      initScrollReveal();
-    }, 300);
-    return () => clearTimeout(timer);
+    // Scroll reveal will be handled by ScrollRevealHandler and auto-init
+    // No need to call again here to avoid duplicate calls
   }, [checkAuth]);
 
   const toasts = useToastStore((state) => state.toasts);

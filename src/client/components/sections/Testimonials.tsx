@@ -10,28 +10,44 @@ export const Testimonials: React.FC = memo(() => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    const abortController = new AbortController();
+
     const loadTestimonials = async () => {
       try {
         const data = await testimonialService.getAll();
-        setTestimonials(data);
+        // Only update state if component is still mounted
+        if (isMounted && !abortController.signal.aborted) {
+          setTestimonials(data);
+        }
       } catch (error) {
+        // Don't update state if component unmounted or aborted
+        if (!isMounted || abortController.signal.aborted) return;
+        
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading testimonials:', error);
         }
       } finally {
-        setLoading(false);
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadTestimonials();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, []);
 
-  // Initialize scroll reveal after testimonials are loaded
+  // Initialize scroll reveal after testimonials are loaded - debounced
   useEffect(() => {
-    if (!loading) {
+    if (!loading && testimonials.length > 0) {
       const timer = setTimeout(() => {
         initScrollReveal();
-      }, 100);
+      }, 150);
       return () => clearTimeout(timer);
     }
   }, [loading, testimonials.length]);
