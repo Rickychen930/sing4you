@@ -4,17 +4,13 @@ import type { IHeroSettings } from '../../../shared/interfaces';
 import { heroService } from '../../services/heroService';
 import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
-import { FireworkEffect } from '../ui/FireworkEffect';
+// import { FireworkEffect } from '../ui/FireworkEffect'; // Disabled for performance
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { generateMailtoLink } from '../../../shared/utils/email';
 
 export const Hero: FC = memo(() => {
   const [heroSettings, setHeroSettings] = useState<IHeroSettings | null>(null);
   const [loading, setLoading] = useState(true);
-  const [fireworkTrigger, setFireworkTrigger] = useState(0);
-  const [scrollY, setScrollY] = useState(0);
-  const rafIdRef = useRef<number | null>(null);
-  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -49,55 +45,7 @@ export const Hero: FC = memo(() => {
     };
   }, []);
 
-  // Optimized Parallax scroll effect with RAF throttling and debouncing
-  useEffect(() => {
-    let ticking = false;
-    let lastKnownScrollY = 0;
-    let rafId: number | null = null;
-
-    const updateScrollY = () => {
-      const heroSection = document.getElementById('hero');
-      if (heroSection) {
-        const rect = heroSection.getBoundingClientRect();
-        if (rect.bottom > 0 && rect.top < window.innerHeight) {
-          // Only update if scroll changed significantly (15px threshold for better performance)
-          if (Math.abs(lastKnownScrollY - lastScrollYRef.current) >= 15) {
-            setScrollY(lastKnownScrollY);
-            lastScrollYRef.current = lastKnownScrollY;
-          }
-        } else {
-          // Reset when out of viewport
-          if (lastScrollYRef.current !== 0) {
-            setScrollY(0);
-            lastScrollYRef.current = 0;
-          }
-        }
-      }
-      ticking = false;
-      rafId = null;
-    };
-
-    const handleScroll = () => {
-      lastKnownScrollY = window.scrollY;
-      
-      if (!ticking && rafId === null) {
-        rafId = requestAnimationFrame(updateScrollY);
-        rafIdRef.current = rafId;
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-      }
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-    };
-  }, []);
+  // Disabled parallax for better performance
 
   const backgroundStyle: CSSProperties = useMemo(() => heroSettings?.backgroundImage
     ? {
@@ -108,14 +56,10 @@ export const Hero: FC = memo(() => {
     : {}, [heroSettings?.backgroundImage]);
 
   const handleWhatsApp = useCallback(() => {
-    // Trigger firework effect on button click
-    setFireworkTrigger(prev => prev + 1);
     window.open(generateWhatsAppLink(undefined, undefined), '_blank');
   }, []);
 
   const handleEmail = useCallback(() => {
-    // Trigger firework effect on button click
-    setFireworkTrigger(prev => prev + 1);
     window.location.href = generateMailtoLink();
   }, []);
 
@@ -170,24 +114,17 @@ export const Hero: FC = memo(() => {
         background: 'linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%)'
       }}
     >
-      {/* Firework Effect - Triggered on CTA button clicks */}
-      <FireworkEffect
+      {/* Disabled FireworkEffect for better performance */}
+      {/* <FireworkEffect
         trigger={fireworkTrigger}
         intensity="medium"
         count={2}
         position={{ x: 50, y: 50 }}
         duration={2500}
-      />
+      /> */}
       
       {/* Enhanced Parallax Background Layers - Optimized */}
-      <div 
-        className="absolute inset-0 parallax-element" 
-        style={{ 
-          transform: `translate3d(0, ${scrollY * 0.3}px, 0)`,
-          willChange: 'auto',
-          backfaceVisibility: 'hidden'
-        }}
-      >
+      <div className="absolute inset-0">
         {heroSettings.backgroundVideo ? (
           <video
             autoPlay
@@ -196,56 +133,13 @@ export const Hero: FC = memo(() => {
             playsInline
             preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ 
-              transform: `scale(1.1) translate3d(0, ${scrollY * 0.2}px, 0)`,
-              willChange: 'auto',
-              backfaceVisibility: 'hidden'
-            }}
           >
             <source src={heroSettings.backgroundVideo} type="video/mp4" />
           </video>
         ) : (
           <div className="absolute inset-0" style={backgroundStyle}>
-            <div 
-              className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80"
-              style={{ 
-                transform: `translate3d(0, ${scrollY * 0.15}px, 0)`,
-                willChange: 'auto',
-                backfaceVisibility: 'hidden'
-              }}
-            />
+            <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80" />
             <div className="absolute inset-0 bg-black/30" />
-            {/* Enhanced animated musical overlay with more depth and parallax */}
-            <div className="absolute inset-0 opacity-25">
-              <div 
-                className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 bg-gold-600/50 rounded-full blur-3xl animate-musical-pulse shadow-[0_0_60px_rgba(255,194,51,0.3)]"
-                style={{ 
-                  transform: `translate3d(0, ${scrollY * 0.2}px, 0)`,
-                  willChange: 'auto',
-                  backfaceVisibility: 'hidden'
-                }}
-              ></div>
-              <div 
-                className="absolute bottom-1/4 right-1/4 w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 bg-musical-600/50 rounded-full blur-3xl animate-musical-pulse shadow-[0_0_60px_rgba(168,85,247,0.3)]" 
-                style={{ 
-                  animationDelay: '1s', 
-                  transform: `translate3d(0, ${scrollY * 0.15}px, 0)`,
-                  willChange: 'auto',
-                  backfaceVisibility: 'hidden'
-                }}
-              ></div>
-              <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 bg-gold-500/40 rounded-full blur-3xl animate-musical-pulse shadow-[0_0_80px_rgba(255,194,51,0.25)]" 
-                style={{ 
-                  animationDelay: '0.5s', 
-                  transform: `translate3d(-50%, calc(-50% + ${scrollY * 0.18}px), 0)`,
-                  willChange: 'auto',
-                  backfaceVisibility: 'hidden'
-                }}
-              ></div>
-            </div>
-            {/* Animated gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-900/10 to-transparent animate-gradient" style={{ backgroundSize: '200% 200%' }}></div>
           </div>
         )}
       </div>
@@ -261,23 +155,9 @@ export const Hero: FC = memo(() => {
         <div className="absolute bottom-1/2 right-1/4 text-xl sm:text-2xl lg:text-3xl text-musical-400/20 sm:text-musical-400/15 animate-float-advanced font-musical select-none drop-shadow-[0_0_10px_rgba(168,85,247,0.2)]" style={{ animationDelay: '2.5s' }}>♫</div>
       </div>
 
-      {/* Enhanced Content with Advanced Effects and Parallax - Optimized */}
-      <div 
-        className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in"
-        style={{ 
-          transform: `translate3d(0, ${scrollY * 0.05}px, 0)`,
-          willChange: 'auto',
-          backfaceVisibility: 'hidden',
-          opacity: 1
-        }}
-      >
+      {/* Enhanced Content with Advanced Effects - Optimized */}
+      <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">
         <div className="relative inline-block mb-4 sm:mb-5 md:mb-6 lg:mb-8">
-          {/* Enhanced multi-layer glow effect */}
-          <div className="absolute -inset-4 sm:-inset-5 lg:-inset-6 bg-gold-500/25 rounded-full blur-3xl opacity-70 animate-pulse"></div>
-          <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gold-500/15 rounded-full blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute -inset-8 sm:-inset-10 lg:-inset-14 bg-musical-500/15 rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute -inset-10 sm:-inset-12 lg:-inset-18 bg-gold-400/10 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-          
           <h1 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-elegant font-bold mb-2 sm:mb-2.5 lg:mb-3 leading-[1.1] gradient-text-animated text-reveal px-2 sm:px-3 lg:px-4" style={{ textShadow: '0 4px 20px rgba(255, 194, 51, 0.3), 0 2px 10px rgba(168, 85, 247, 0.2)' }}>
             {heroSettings.title}
             <span className="absolute -top-1 sm:-top-2 lg:-top-3 -right-4 sm:-right-6 lg:-right-8 xl:-right-12 text-xl sm:text-2xl lg:text-3xl xl:text-4xl opacity-60 animate-float-advanced font-musical pointer-events-none neon-glow">♪</span>
@@ -286,7 +166,7 @@ export const Hero: FC = memo(() => {
         </div>
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl mb-6 sm:mb-7 md:mb-9 lg:mb-11 xl:mb-14 text-gray-50 leading-relaxed font-normal font-sans max-w-3xl mx-auto relative inline-block animate-fade-in-up text-reveal px-3 sm:px-4" style={{ animationDelay: '0.3s' }}>
           {heroSettings.subtitle}
-          <span className="absolute -bottom-1.5 sm:-bottom-2 lg:-bottom-3 left-1/2 -translate-x-1/2 w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56 h-0.5 bg-gradient-to-r from-transparent via-gold-400/70 to-musical-500/70 to-transparent opacity-70 rounded-full shimmer-advanced"></span>
+          <span className="absolute -bottom-1.5 sm:-bottom-2 lg:-bottom-3 left-1/2 -translate-x-1/2 w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56 h-0.5 bg-gradient-to-r from-transparent via-gold-400/70 to-musical-500/70 to-transparent opacity-70 rounded-full"></span>
         </p>
         <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 lg:gap-4 xl:gap-5 justify-center items-center max-w-md sm:max-w-lg mx-auto animate-fade-in-up px-3 sm:px-4" style={{ animationDelay: '0.6s' }}>
           <Button
@@ -296,7 +176,7 @@ export const Hero: FC = memo(() => {
             className="glass-effect-strong hover-lift-advanced neon-glow group relative overflow-hidden"
           >
             <span className="relative z-10">{heroSettings.ctaWhatsApp.text}</span>
-            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer-advanced"></span>
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
           </Button>
           <Button
             variant="outline"
@@ -305,7 +185,7 @@ export const Hero: FC = memo(() => {
             onClick={handleEmail}
           >
             <span className="relative z-10">{heroSettings.ctaEmail.text}</span>
-            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer-advanced"></span>
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
           </Button>
         </div>
       </div>

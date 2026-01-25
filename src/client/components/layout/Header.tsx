@@ -148,7 +148,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
                 </button>
                 {isAdminMenuOpen && (
                   <div 
-                    className="absolute right-0 mt-2 w-40 sm:w-48 bg-jazz-900/98 backdrop-blur-lg rounded-lg sm:rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.2)_inset] py-1 z-50 border-2 border-gold-900/40 hover:border-gold-800/50 transition-colors duration-300"
+                    className="absolute right-0 mt-2 w-40 sm:w-48 bg-jazz-900/98 rounded-lg sm:rounded-xl shadow-lg py-1 z-50 border-2 border-gold-900/40 hover:border-gold-800/50 transition-colors duration-200"
                     role="menu"
                     aria-label="Admin menu"
                   >
@@ -202,7 +202,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
         {isMenuOpen && (
           <div 
             id="mobile-menu"
-            className="md:hidden py-3 sm:py-4 lg:py-5 space-y-1.5 sm:space-y-2 lg:space-y-3 bg-jazz-900/98 backdrop-blur-xl rounded-lg sm:rounded-xl mt-2 sm:mt-3 lg:mt-4 border-2 border-gold-900/50 hover:border-gold-800/60 shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,194,51,0.2)_inset] animate-fade-in transition-colors duration-300"
+            className="md:hidden py-3 sm:py-4 lg:py-5 space-y-1.5 sm:space-y-2 lg:space-y-3 bg-jazz-900/98 rounded-lg sm:rounded-xl mt-2 sm:mt-3 lg:mt-4 border-2 border-gold-900/50 hover:border-gold-800/60 shadow-lg animate-fade-in transition-colors duration-200"
             role="menu"
             aria-label="Mobile navigation menu"
           >

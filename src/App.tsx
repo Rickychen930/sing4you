@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, useState, Suspense, lazy, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { ErrorBoundary } from './client/components/ui/ErrorBoundary';
@@ -76,13 +76,25 @@ const LoadingFallback: React.FC = () => (
 
 const ScrollRevealHandler: React.FC = () => {
   const location = useLocation();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      initScrollRevealWithFallback();
-    }, 200);
+    // Clear any existing timer to prevent accumulation
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
 
-    return () => clearTimeout(timer);
+    timerRef.current = setTimeout(() => {
+      initScrollRevealWithFallback();
+      timerRef.current = null;
+    }, 100); // Reduced from 200ms to 100ms
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [location.pathname]);
 
   return null;

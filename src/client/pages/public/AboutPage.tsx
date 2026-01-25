@@ -46,7 +46,6 @@ export const AboutPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
           <div className="relative inline-block mb-5 sm:mb-6 lg:mb-8">
             {/* Glow effect behind title */}
-            <div className="absolute -inset-3 sm:-inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-60 animate-pulse"></div>
             <h1 className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2)' }}>
               About Christina Sings4U
             </h1>
@@ -130,7 +129,6 @@ export const AboutPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
           <div className="relative inline-block mb-5 sm:mb-6 lg:mb-8">
             {/* Glow effect behind title */}
-            <div className="absolute -inset-3 sm:-inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-60 animate-pulse"></div>
             <h2 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 xl:mb-8 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-4" style={{ textShadow: '0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2)' }}>
               Let's Create Something Beautiful Together
             </h2>

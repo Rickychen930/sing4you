@@ -38,12 +38,7 @@ export const initScrollReveal = () => {
       const rect = element.getBoundingClientRect();
       const isVisible = rect.top < viewportHeight + 500 && rect.bottom > -200;
       if (isVisible) {
-        requestAnimationFrame(() => {
-          element.classList.add('revealed');
-          if (element instanceof HTMLElement) {
-            setTimeout(() => { element.style.willChange = 'auto'; }, 600);
-          }
-        });
+        element.classList.add('revealed');
         return true;
       }
       return false;
@@ -53,14 +48,8 @@ export const initScrollReveal = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          const el = entry.target;
-          requestAnimationFrame(() => {
-            el.classList.add('revealed');
-            if (el instanceof HTMLElement) {
-              setTimeout(() => { el.style.willChange = 'auto'; }, 600);
-            }
-          });
-          observer.unobserve(el);
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
         });
       },
       { threshold: 0.01, rootMargin: '0px 0px -80px 0px' }
@@ -73,7 +62,7 @@ export const initScrollReveal = () => {
     hiddenElements.forEach((el) => observer.observe(el));
 
     isInitializing = false;
-  }, 50);
+  }, 100);
 };
 
 let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
@@ -90,19 +79,19 @@ function setupScrollRevealFallback() {
       el.classList.add('revealed');
     });
     fallbackTimer = null;
-  }, 1500);
+  }, 2000);
 
   let ticks = 0;
   fallbackCheckInterval = setInterval(() => {
     ticks++;
     const unrevealed = document.querySelectorAll('.scroll-reveal-io:not(.revealed)');
-    if (unrevealed.length === 0 || ticks >= 30) {
+    if (unrevealed.length === 0 || ticks >= 10) {
       if (fallbackTimer) clearTimeout(fallbackTimer);
       if (fallbackCheckInterval) clearInterval(fallbackCheckInterval);
       fallbackTimer = null;
       fallbackCheckInterval = null;
     }
-  }, 500);
+  }, 1000);
 }
 
 export const initScrollRevealWithFallback = () => {

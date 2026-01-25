@@ -120,20 +120,10 @@
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    /* Optimize scroll performance - only set will-change when needed */
-    will-change: scroll-position;
-  }
-  
-  /* Remove will-change when page is idle to save resources */
-  html:not(:hover):not(:focus-within) {
-    will-change: auto;
-  }
 
   body {
     /* Using CSS variables for consistency */
     background: linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 20s ease infinite;
     /* Optimize rendering performance */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -178,8 +168,6 @@
     pointer-events: none;
     z-index: 0;
     animation: gentlePulse 20s ease-in-out infinite, musicalGlow 15s ease-in-out infinite;
-    /* Optimize for better scroll performance */
-    will-change: opacity, filter;
     transform: translateZ(0); /* Force GPU acceleration */
     backface-visibility: hidden;
     contain: layout style paint; /* Isolate rendering */
@@ -614,10 +602,8 @@
 
 /* Enhanced page transitions */
 main > * {
-  animation: pageEnter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  will-change: opacity, transform;
+  animation: pageEnter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   backface-visibility: hidden;
-  transform: translateZ(0);
 }
 
 /* Smooth scale animation for dialogs and modals */

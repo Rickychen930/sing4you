@@ -21,7 +21,8 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
       <a href="#main-content" className="skip-to-main">
         Skip to main content
       </a>
-      {!isAdmin && <MusicalBackground intensity="medium" />}
+      {/* Disabled MusicalBackground for better performance */}
+      {/* {!isAdmin && <MusicalBackground intensity="low" />} */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold-900/5 to-jazz-900/10 pointer-events-none z-0" />
       <div className="absolute inset-0 bg-gradient-to-r from-musical-900/5 via-transparent to-gold-900/5 pointer-events-none z-0" />
       <div className="absolute top-16 sm:top-20 left-4 sm:left-5 lg:left-10 text-3xl sm:text-4xl lg:text-5xl text-gold-900/8 sm:text-gold-900/6 pointer-events-none z-0 font-musical select-none drop-shadow-[0_0_15px_rgba(255,194,51,0.1)]">♪</div>
