@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Request, type Response, type NextFunction } from 'express';
 import multer from 'multer';
 import { HeroController } from '../controllers/HeroController';
 import { SectionController } from '../controllers/SectionController';
@@ -129,7 +129,7 @@ router.delete('/api/admin/media/:id', authMiddleware, mediaController.delete);
 // Admin Media Upload (protected)
 const mediaUploadController = new MediaUploadController();
 // Wrap multer middleware to handle errors properly
-const handleUpload = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const handleUpload = (req: Request, res: Response, next: NextFunction) => {
   uploadMiddleware(req, res, (err: any) => {
     if (err) {
       // Multer errors (file size, file type, etc.)
