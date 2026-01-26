@@ -139,8 +139,8 @@ export const AboutPage: React.FC = () => {
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-8 sm:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
             Ready to make your event unforgettable? Get in touch to discuss your musical needs and let's bring your vision to life.
           </p>
-          <Link to="/contact">
-            <Button variant="primary" size="lg" className="group">
+          <Link to="/contact" className="inline-block">
+            <Button variant="primary" size="lg" className="group" aria-label="Navigate to contact page">
               <span>Contact Me</span>
               <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />

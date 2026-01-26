@@ -17,10 +17,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
   login: async (credentials: LoginCredentials) => {
     try {
       const response = await authService.login(credentials);
-      // Ensure token is stored before updating state
-      if (response.accessToken) {
-        localStorage.setItem('accessToken', response.accessToken);
+      // Token is already stored in authService.login, just verify it exists
+      if (!response || !response.accessToken) {
+        throw new Error('Invalid login response');
       }
+      // Update state synchronously after successful login
       set({
         isAuthenticated: true,
         user: response.user,
@@ -59,9 +60,20 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   checkAuth: () => {
     const token = authService.getAccessToken();
-    set({
-      isAuthenticated: !!token,
-      accessToken: token,
-    });
+    // Only update state if token exists, otherwise keep current state
+    // This prevents clearing state if checkAuth is called before login
+    if (token) {
+      set({
+        isAuthenticated: true,
+        accessToken: token,
+      });
+    } else {
+      // Only clear if we're sure there's no token
+      set({
+        isAuthenticated: false,
+        accessToken: null,
+        user: null,
+      });
+    }
   },
 }));

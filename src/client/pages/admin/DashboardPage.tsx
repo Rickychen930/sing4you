@@ -274,35 +274,35 @@ export const DashboardPage: React.FC = () => {
                 <CardBody compact>
                   <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>🎭</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.performances}</div>
-                  <div className="text-xs sm:text-sm text-gray-400 mt-1">Performances</div>
+                  <div className="text-xs sm:text-sm text-gray-300 mt-1">Performances</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
                 <CardBody compact>
                   <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>💬</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.testimonials}</div>
-                  <div className="text-xs sm:text-sm text-gray-400 mt-1">Testimonials</div>
+                  <div className="text-xs sm:text-sm text-gray-300 mt-1">Testimonials</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
                 <CardBody compact>
                   <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>📂</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.categories}</div>
-                  <div className="text-xs sm:text-sm text-gray-400 mt-1">Categories</div>
+                  <div className="text-xs sm:text-sm text-gray-300 mt-1">Categories</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
                 <CardBody compact>
                   <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>🎨</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.variations}</div>
-                  <div className="text-xs sm:text-sm text-gray-400 mt-1">Variations</div>
+                  <div className="text-xs sm:text-sm text-gray-300 mt-1">Variations</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
                 <CardBody compact>
                   <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>📋</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.sections}</div>
-                  <div className="text-xs sm:text-sm text-gray-400 mt-1">Sections</div>
+                  <div className="text-xs sm:text-sm text-gray-300 mt-1">Sections</div>
                 </CardBody>
               </Card>
             </div>

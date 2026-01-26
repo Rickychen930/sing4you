@@ -72,7 +72,31 @@ export const ToastComponent: React.FC<ToastProps> = memo(({ toast, onClose }) =>
           {icons[toast.type]}
         </div>
       </div>
-      <p className="flex-1 text-sm sm:text-base lg:text-lg font-semibold leading-relaxed relative z-10 group-hover:text-current/95 transition-colors duration-300">{toast.message}</p>
+      <div className="flex-1 min-w-0 relative z-10">
+        <p className="text-sm sm:text-base lg:text-lg font-semibold leading-relaxed group-hover:text-current/95 transition-colors duration-300 mb-2 sm:mb-2.5">
+          {toast.message}
+        </p>
+        {toast.action && (
+          <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-2.5">
+            <button
+              onClick={() => {
+                toast.action?.onClick();
+                onClose(toast.id);
+              }}
+              className={cn(
+                'text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 min-h-[44px] sm:min-h-[48px] flex items-center justify-center touch-manipulation',
+                toast.type === 'error' && 'bg-red-800/50 hover:bg-red-700/60 text-red-100 border border-red-600/50 hover:border-red-500/70',
+                toast.type === 'success' && 'bg-green-800/50 hover:bg-green-700/60 text-green-100 border border-green-600/50 hover:border-green-500/70',
+                toast.type === 'info' && 'bg-blue-800/50 hover:bg-blue-700/60 text-blue-100 border border-blue-600/50 hover:border-blue-500/70',
+                toast.type === 'warning' && 'bg-yellow-800/50 hover:bg-yellow-700/60 text-yellow-100 border border-yellow-600/50 hover:border-yellow-500/70',
+              )}
+              aria-label={toast.action.label}
+            >
+              {toast.action.label}
+            </button>
+          </div>
+        )}
+      </div>
       <button
         onClick={() => onClose(toast.id)}
         className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-105 active:scale-95 p-1.5 sm:p-2 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-transparent min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center relative z-10 touch-manipulation shadow-[0_0_8px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_currentColor]"
@@ -91,6 +115,7 @@ export const ToastComponent: React.FC<ToastProps> = memo(({ toast, onClose }) =>
     prevProps.toast.message === nextProps.toast.message &&
     prevProps.toast.type === nextProps.toast.type &&
     prevProps.toast.duration === nextProps.toast.duration &&
+    JSON.stringify(prevProps.toast.action) === JSON.stringify(nextProps.toast.action) &&
     prevProps.onClose === nextProps.onClose
   );
 });
@@ -122,7 +147,11 @@ export const ToastContainer: React.FC<ToastContainerProps> = memo(({ toasts, onC
   if (prevProps.toasts.length !== nextProps.toasts.length) return false;
   return prevProps.toasts.every((toast, index) => {
     const nextToast = nextProps.toasts[index];
-    return nextToast && toast.id === nextToast.id && toast.message === nextToast.message && toast.type === nextToast.type;
+    return nextToast && 
+           toast.id === nextToast.id && 
+           toast.message === nextToast.message && 
+           toast.type === nextToast.type &&
+           JSON.stringify(toast.action) === JSON.stringify(nextToast.action);
   }) && prevProps.onClose === nextProps.onClose;
 });
 

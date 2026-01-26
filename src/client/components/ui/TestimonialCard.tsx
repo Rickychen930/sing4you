@@ -24,7 +24,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = memo(({ testimoni
               'w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 transition-all duration-300',
               i < testimonial.rating! 
                 ? 'text-gold-400 fill-gold-400 group-hover:scale-105 group-hover:text-gold-300' 
-                : 'text-gray-600 fill-gray-600'
+                : 'text-gray-500/60 fill-gray-500/60'
             )}
             fill="currentColor"
             viewBox="0 0 20 20"

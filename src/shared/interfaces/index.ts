@@ -57,6 +57,14 @@ export interface ISEOSettings {
   defaultDescription: string;
   defaultImage: string;
   siteUrl: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  socialMedia?: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    youtube?: string;
+  };
 }
 
 export interface IAdminUser {

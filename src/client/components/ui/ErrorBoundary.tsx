@@ -87,7 +87,10 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <details className="mb-5 sm:mb-6">
-                  <summary className="text-xs sm:text-sm text-gold-400 cursor-pointer mb-2 sm:mb-3 font-semibold hover:text-gold-300 transition-colors min-h-[32px] sm:min-h-[36px] flex items-center">
+                  <summary 
+                    className="text-xs sm:text-sm text-gold-400 cursor-pointer mb-2 sm:mb-3 font-semibold hover:text-gold-300 transition-colors min-h-[44px] sm:min-h-[48px] flex items-center focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1"
+                    aria-label="Toggle error details"
+                  >
                     Error Details (Development Only)
                   </summary>
                   <pre className="text-xs sm:text-sm bg-gradient-to-br from-jazz-900/90 to-jazz-800/90 p-3 sm:p-4 rounded-lg sm:rounded-xl overflow-auto max-h-40 sm:max-h-48 border border-gold-900/40 text-gray-200 font-mono leading-relaxed">

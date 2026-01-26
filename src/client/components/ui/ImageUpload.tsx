@@ -126,11 +126,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                   src={preview}
                   className="w-full h-full object-cover"
                   controls
+                  aria-label="Video preview"
                 />
               ) : (
                 <img
                   src={preview}
-                  alt="Preview"
+                  alt={`${label} preview`}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                 />
               )}
@@ -197,13 +198,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
             )}
           </button>
           {value && (
-            <span className="text-xs sm:text-sm text-gray-400 flex items-center justify-center sm:justify-start">
+            <span className="text-xs sm:text-sm text-gray-300 flex items-center justify-center sm:justify-start">
               or{' '}
               <button
                 type="button"
                 onClick={handleRemove}
                 aria-label="Remove current image"
-                className="text-red-400 hover:text-red-300 underline font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1 min-h-[32px] sm:min-h-[36px] flex items-center hover:drop-shadow-[0_0_6px_rgba(239,68,68,0.4)]"
+                className="text-red-400 hover:text-red-300 underline font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1 min-h-[44px] sm:min-h-[48px] flex items-center hover:drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] touch-manipulation"
               >
                 remove
               </button>
@@ -218,7 +219,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
           </div>
         )}
 
-        <p className="text-xs sm:text-sm text-gray-400">
+        <p className="text-xs sm:text-sm text-gray-300">
           Max file size: {maxSizeMB}MB. Supported: Images (PNG, JPG, JPEG, HEIF, GIF, WebP) and Videos (MP4, WebM)
         </p>
       </div>

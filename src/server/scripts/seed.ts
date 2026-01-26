@@ -13,7 +13,7 @@ import { MediaModel } from '../models/MediaModel';
 
 dotenv.config();
 
-const seedDatabase = async (): Promise<void> => {
+export const seedDatabase = async (): Promise<void> => {
   try {
     // Connect to database
     const dbUri = process.env.MONGODB_URI || 'mongodb+srv://sings4you:<db_password>@sings4you.qahkyi2.mongodb.net/christinasings4u';
@@ -50,11 +50,11 @@ const seedDatabase = async (): Promise<void> => {
       backgroundImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&h=1080&fit=crop',
       ctaWhatsApp: {
         text: 'Book via WhatsApp',
-        link: 'https://wa.me/61400000000',
+        link: 'https://wa.me/61410606328',
       },
       ctaEmail: {
         text: 'Contact via Email',
-        link: 'mailto:hello@christinasings4u.com.au',
+        link: 'mailto:bookings@christinasings4u.com.au',
       },
     });
     console.log('✅ Hero Settings created');
@@ -482,36 +482,48 @@ const seedDatabase = async (): Promise<void> => {
       defaultDescription: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
       defaultImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=630&fit=crop',
       siteUrl: 'https://christina-sings4you.com.au',
+      contactEmail: 'bookings@christinasings4u.com.au',
+      contactPhone: '+61410606328',
+      socialMedia: {
+        facebook: 'https://www.facebook.com/christinasings4u/',
+        twitter: 'https://x.com/christinasingss',
+        instagram: 'https://www.instagram.com/_christinasings4u_/',
+        youtube: 'https://www.youtube.com/channel/UCqcGJFQYlYNCmEljLBGK3ZA',
+      },
     });
     console.log('✅ SEO Settings created');
 
     // 9. Admin User (only if no admin exists)
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminPassword) {
-      console.error('❌ Please set ADMIN_PASSWORD in .env file!');
-      process.exit(1);
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@christinasings4u.com.au';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'; // Default password for development
+    
+    if (!adminPassword || adminPassword === 'admin123') {
+      console.warn('⚠️  WARNING: Using default password "admin123"');
+      console.warn('   Please set ADMIN_PASSWORD in .env file for production!');
     }
     
-    const existingAdmin = await AdminUserModel.getModel().findOne({ email: 'admin@christinasings4u.com.au' });
+    const existingAdmin = await AdminUserModel.getModel().findOne({ email: adminEmail });
     if (!existingAdmin) {
-      console.log('📝 Creating default admin user...');
+      console.log(`📝 Creating default admin user (email: ${adminEmail})...`);
       // Don't hash password here - the pre-save hook in AdminUserModel will handle it
       await AdminUserModel.getModel().create({
-        email: 'admin@christinasings4u.com.au',
+        email: adminEmail,
         password: adminPassword, // Plain password - will be hashed by pre-save hook
         name: 'Admin User',
       });
-      console.log('✅ Admin user created (email: admin@christinasings4u.com.au)');
+      console.log(`✅ Admin user created (email: ${adminEmail})`);
+      console.log(`   Password: ${adminPassword === 'admin123' ? 'admin123 (default - please change!)' : '***'}`);
     } else {
-      console.log('ℹ️  Admin user already exists');
-      // Fix password if it was double-hashed (common issue)
-      // This will reset password and hash it correctly
-      const adminUser = await AdminUserModel.getModel().findOne({ email: 'admin@christinasings4u.com.au' });
-      if (adminUser) {
-        console.log('🔧 Resetting admin password to fix double-hashing issue...');
-        adminUser.password = adminPassword; // Will be hashed correctly by pre-save hook
-        await adminUser.save();
-        console.log('✅ Admin password reset (correctly hashed)');
+      console.log(`ℹ️  Admin user already exists (email: ${adminEmail})`);
+      // Optionally update password if ADMIN_PASSWORD is set
+      if (process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD !== 'admin123') {
+        const adminUser = await AdminUserModel.getModel().findOne({ email: adminEmail });
+        if (adminUser) {
+          console.log('🔧 Updating admin password...');
+          adminUser.password = adminPassword; // Will be hashed correctly by pre-save hook
+          await adminUser.save();
+          console.log('✅ Admin password updated (correctly hashed)');
+        }
       }
     }
 
@@ -527,11 +539,35 @@ const seedDatabase = async (): Promise<void> => {
     console.log(`   - SEO Settings: 1`);
     console.log('\n🌐 You can now view the website at http://localhost:5173');
 
-    process.exit(0);
+    // Don't exit if called from server (auto-seed mode)
+    if (process.env.AUTO_SEED !== 'true') {
+      process.exit(0);
+    }
   } catch (error) {
     console.error('❌ Error seeding database:', error);
-    process.exit(1);
+    if (process.env.AUTO_SEED !== 'true') {
+      process.exit(1);
+    }
+    throw error; // Re-throw if called from server
   }
 };
 
-seedDatabase();
+// Only run directly if this file is executed (not imported)
+// Check if this script is being run directly by checking if it's the main module
+const runAsScript = () => {
+  // In ES modules, we check if this file is being executed directly
+  // by comparing the import.meta.url with the process.argv[1]
+  const filePath = new URL(import.meta.url).pathname;
+  const scriptPath = process.argv[1];
+  
+  // Check if the script path matches our file path
+  return scriptPath && (
+    scriptPath.includes('seed.ts') || 
+    scriptPath.includes('seed.js') ||
+    filePath.includes('seed')
+  );
+};
+
+if (runAsScript()) {
+  seedDatabase();
+}

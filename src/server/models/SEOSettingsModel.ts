@@ -21,6 +21,26 @@ const seoSettingsSchema = new Schema<ISEOSettings>(
       required: true,
       default: 'https://christina-sings4you.com.au',
     },
+    contactEmail: {
+      type: String,
+    },
+    contactPhone: {
+      type: String,
+    },
+    socialMedia: {
+      facebook: {
+        type: String,
+      },
+      twitter: {
+        type: String,
+      },
+      instagram: {
+        type: String,
+      },
+      youtube: {
+        type: String,
+      },
+    },
   },
   {
     timestamps: true,

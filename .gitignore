@@ -30,7 +30,12 @@ build
 .env.development
 .env.test
 .env.staging
+.env.production.local
+.env.development.local
+.env.test.local
 *.env
+*.env.local
+*.env.*.local
 
 # Secrets and credentials
 *.key
@@ -40,11 +45,20 @@ build
 *.crt
 *.cert
 *.cer
+*.jks
+*.keystore
 secrets/
 credentials/
 *.secret
 *.password
 *.token
+*.credentials
+config/secrets.*
+config/credentials.*
+**/secrets.*
+**/credentials.*
+**/*.secrets
+**/*.credentials
 
 # SSL Certificates
 *.crt
@@ -114,6 +128,9 @@ coverage/
 # PM2
 .pm2/
 ecosystem.config.local.js
+ecosystem.config.*.js
+!ecosystem.config.cjs
+ecosystem.config.local.*
 
 # Deployment
 deployment/*.env
@@ -121,10 +138,42 @@ deployment/*.key
 deployment/*.pem
 deployment/secrets/
 deployment/credentials/
+deployment/**/*.env
+deployment/**/*.key
+deployment/**/*.pem
+deployment/**/secrets/
+deployment/**/credentials/
 
 # Local development
 .local
 *.local
+*.local.*
+
+# Configuration files that might contain secrets
+config.local.*
+config.*.local
+*.config.local.*
+*.config.*.local
+
+# NPM/Yarn config that might contain tokens
+.npmrc
+.yarnrc
+.yarnrc.yml
+.npmrc.local
+.yarnrc.local
+
+# IDE settings that might contain secrets
+.vscode/settings.json.local
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dataSources.*
+.idea/dataSources.local.xml
+
+# Docker secrets
+docker-compose.override.yml
+docker-compose.local.yml
+*.docker.env
+.dockerignore.local
 
 # Package manager locks (optional - uncomment if you want to ignore)
 # package-lock.json

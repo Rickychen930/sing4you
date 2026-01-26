@@ -110,8 +110,15 @@ class ApiClient {
       // Create request promise
       const requestPromise = this.client.get<IApiResponse<T>>(url)
         .then((response) => {
-          if (!response.data.success && response.data.error) {
-            throw new Error(response.data.error);
+          // Check for success flag
+          if (!response.data.success) {
+            const errorMessage = response.data.error || 'Request failed';
+            throw new Error(errorMessage);
+          }
+          
+          // Ensure data exists
+          if (response.data.data === undefined) {
+            throw new Error('No data received from server');
           }
           
           const data = response.data.data as T;
@@ -159,8 +166,14 @@ class ApiClient {
   async post<T>(url: string, data?: unknown): Promise<T> {
     try {
       const response = await this.client.post<IApiResponse<T>>(url, data);
-      if (!response.data.success && response.data.error) {
-        throw new Error(response.data.error);
+      // Check for success flag
+      if (!response.data.success) {
+        const errorMessage = response.data.error || 'Request failed';
+        throw new Error(errorMessage);
+      }
+      // Return data, ensuring it exists
+      if (response.data.data === undefined) {
+        throw new Error('No data received from server');
       }
       return response.data.data as T;
     } catch (error: unknown) {
@@ -174,8 +187,12 @@ class ApiClient {
         throw new Error(errorMessage);
       }
       
+      // Extract error message from response
       if (axiosError.response?.data?.error) {
         throw new Error(axiosError.response.data.error);
+      }
+      if (axiosError.response?.data?.message) {
+        throw new Error(axiosError.response.data.message);
       }
       throw error;
     }
@@ -184,8 +201,14 @@ class ApiClient {
   async put<T>(url: string, data?: unknown): Promise<T> {
     try {
       const response = await this.client.put<IApiResponse<T>>(url, data);
-      if (!response.data.success && response.data.error) {
-        throw new Error(response.data.error);
+      // Check for success flag
+      if (!response.data.success) {
+        const errorMessage = response.data.error || 'Update failed';
+        throw new Error(errorMessage);
+      }
+      // Return data, ensuring it exists
+      if (response.data.data === undefined) {
+        throw new Error('No data received from server');
       }
       return response.data.data as T;
     } catch (error: unknown) {
@@ -199,8 +222,12 @@ class ApiClient {
         throw new Error(errorMessage);
       }
       
+      // Extract error message from response
       if (axiosError.response?.data?.error) {
         throw new Error(axiosError.response.data.error);
+      }
+      if (axiosError.response?.data?.message) {
+        throw new Error(axiosError.response.data.message);
       }
       throw error;
     }
@@ -209,10 +236,14 @@ class ApiClient {
   async delete<T>(url: string): Promise<T> {
     try {
       const response = await this.client.delete<IApiResponse<T>>(url);
-      if (!response.data.success && response.data.error) {
-        throw new Error(response.data.error);
+      // Check for success flag
+      if (!response.data.success) {
+        const errorMessage = response.data.error || 'Delete failed';
+        throw new Error(errorMessage);
       }
-      return response.data.data as T;
+      // For delete operations, data might be undefined (just success message)
+      // Return data if exists, otherwise return empty object as T
+      return (response.data.data ?? {}) as T;
     } catch (error: unknown) {
       const axiosError = error as AxiosErrorResponse;
       
@@ -224,8 +255,12 @@ class ApiClient {
         throw new Error(errorMessage);
       }
       
+      // Extract error message from response
       if (axiosError.response?.data?.error) {
         throw new Error(axiosError.response.data.error);
+      }
+      if (axiosError.response?.data?.message) {
+        throw new Error(axiosError.response.data.message);
       }
       throw error;
     }

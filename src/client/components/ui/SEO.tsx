@@ -11,6 +11,14 @@ interface SEOProps {
   author?: string;
   noindex?: boolean;
   nofollow?: boolean;
+  contactEmail?: string;
+  contactPhone?: string;
+  socialMedia?: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    youtube?: string;
+  };
 }
 
 export const SEO: React.FC<SEOProps> = memo(({
@@ -23,6 +31,9 @@ export const SEO: React.FC<SEOProps> = memo(({
   author = 'Christina Sings4U',
   noindex = false,
   nofollow = false,
+  contactEmail,
+  contactPhone,
+  socialMedia,
 }) => {
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
   const fullUrl = useMemo(() => url || siteUrl, [url, siteUrl]);
@@ -65,6 +76,24 @@ export const SEO: React.FC<SEOProps> = memo(({
       <meta property="og:locale" content="en_AU" />
       <meta property="og:locale:alternate" content="en_US" />
       <meta property="article:author" content="Christina Sings4U" />
+      
+      {/* Twitter Card Meta Tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={ogImage} />
+      {socialMedia?.twitter && <meta name="twitter:site" content={socialMedia.twitter} />}
+      {socialMedia?.twitter && <meta name="twitter:creator" content={socialMedia.twitter} />}
+      
+      {/* Social Media Links */}
+      {socialMedia?.facebook && <link rel="me" href={socialMedia.facebook} />}
+      {socialMedia?.twitter && <link rel="me" href={socialMedia.twitter} />}
+      {socialMedia?.instagram && <link rel="me" href={socialMedia.instagram} />}
+      {socialMedia?.youtube && <link rel="me" href={socialMedia.youtube} />}
+      
+      {/* Contact Information Meta Tags */}
+      {contactEmail && <meta name="contact" content={contactEmail} />}
+      {contactPhone && <meta name="telephone" content={contactPhone} />}
       
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />

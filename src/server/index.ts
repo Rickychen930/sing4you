@@ -170,6 +170,32 @@ const startServer = async (): Promise<void> => {
           )
         ]);
         console.log('✅ Connected to MongoDB');
+        
+        // Auto-seed database on startup (only if AUTO_SEED env is set to 'true')
+        // Also auto-seed in development if AUTO_SEED is not explicitly set to 'false'
+        const shouldAutoSeed = process.env.AUTO_SEED === 'true' || 
+                              (process.env.NODE_ENV === 'development' && process.env.AUTO_SEED !== 'false');
+        
+        if (shouldAutoSeed) {
+          console.log('🌱 Auto-seeding database...');
+          try {
+            // Set flag to prevent seed from exiting
+            const originalAutoSeed = process.env.AUTO_SEED;
+            process.env.AUTO_SEED = 'true';
+            const { seedDatabase } = await import('./scripts/seed.js');
+            await seedDatabase();
+            // Restore original value
+            if (originalAutoSeed) {
+              process.env.AUTO_SEED = originalAutoSeed;
+            } else {
+              delete process.env.AUTO_SEED;
+            }
+            console.log('✅ Auto-seed completed');
+          } catch (seedError) {
+            console.error('⚠️  Auto-seed failed (continuing anyway):', seedError);
+            // Don't exit - server should continue even if seed fails
+          }
+        }
       } catch {
         console.error('❌ Failed to connect to MongoDB');
         console.warn('📦 Using mock data for development');

@@ -41,7 +41,7 @@ export const NotFoundPage: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 justify-center">
             <Link to="/" className="inline-block w-full sm:w-auto">
-              <Button variant="primary" size="lg" className="w-full sm:w-auto group">
+              <Button variant="primary" size="lg" className="w-full sm:w-auto group" aria-label="Navigate to homepage">
                 <span className="text-sm sm:text-base">Go to Homepage</span>
                 <svg className="w-3 h-3 sm:w-4 sm:h-5 lg:h-5 ml-1.5 sm:ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />

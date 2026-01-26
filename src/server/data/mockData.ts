@@ -405,4 +405,12 @@ export const mockSEOSettings: ISEOSettings = {
   defaultDescription: 'Professional singer available for weddings, corporate events, and private performances in Sydney, Australia.',
   defaultImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200',
   siteUrl: 'https://christina-sings4you.com.au',
+  contactEmail: 'bookings@christinasings4u.com.au',
+  contactPhone: '+61410606328',
+  socialMedia: {
+    facebook: 'https://www.facebook.com/christinasings4u/',
+    twitter: 'https://x.com/christinasingss',
+    instagram: 'https://www.instagram.com/_christinasings4u_/',
+    youtube: 'https://www.youtube.com/channel/UCqcGJFQYlYNCmEljLBGK3ZA',
+  },
 };

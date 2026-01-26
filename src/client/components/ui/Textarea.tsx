@@ -6,6 +6,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   error?: string;
   helperText?: string;
   autoResize?: boolean;
+  showSuccess?: boolean;
 }
 
 export const Textarea: React.FC<TextareaProps> = memo(({
@@ -13,6 +14,7 @@ export const Textarea: React.FC<TextareaProps> = memo(({
   error,
   helperText,
   autoResize = false,
+  showSuccess = false,
   className,
   id,
   ...props
@@ -71,15 +73,23 @@ export const Textarea: React.FC<TextareaProps> = memo(({
             'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gold-900/50 disabled:hover:bg-jazz-900/80',
             'touch-manipulation',
             error && 'border-red-500/90 focus:ring-red-500/70 focus:border-red-400 bg-red-900/30 focus:shadow-[0_0_0_4px_rgba(239,68,68,0.25),0_8px_24px_rgba(239,68,68,0.3),0_0_40px_rgba(239,68,68,0.15)]',
-            !error && 'focus:bg-jazz-900/98',
+            !error && showSuccess && 'border-green-500/70 focus:border-green-400 focus:ring-green-500/60',
+            !error && !showSuccess && 'focus:bg-jazz-900/98',
             className
           )}
           {...props}
         />
+        {showSuccess && !error && (
+          <div className="absolute right-4 sm:right-5 lg:right-6 top-4 sm:top-5 lg:top-6 pointer-events-none z-10" aria-hidden="true">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 animate-fade-in" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        )}
         <div className="absolute inset-0 rounded-xl opacity-0 focus-within:opacity-100 pointer-events-none transition-opacity duration-300 bg-gradient-to-r from-gold-500/20 via-gold-400/15 to-gold-500/20 blur-sm" aria-hidden />
         {/* Character count if maxLength is set */}
         {props.maxLength && (
-          <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 text-xs sm:text-sm text-gray-400/90 group-focus-within:text-gray-200 pointer-events-none font-medium font-sans transition-colors duration-300 bg-jazz-900/60 px-2 py-1 rounded backdrop-blur-sm">
+          <div className={`absolute bottom-3 right-3 sm:bottom-4 sm:right-4 text-xs sm:text-sm text-gray-300/90 group-focus-within:text-gray-200 pointer-events-none font-medium font-sans transition-colors duration-300 bg-jazz-900/60 px-2 py-1 rounded backdrop-blur-sm ${showSuccess && !error ? 'right-12 sm:right-14' : ''}`}>
             {(props.value?.toString().length || 0)} / {props.maxLength}
           </div>
         )}
@@ -113,6 +123,7 @@ export const Textarea: React.FC<TextareaProps> = memo(({
     prevProps.value === nextProps.value &&
     prevProps.error === nextProps.error &&
     prevProps.helperText === nextProps.helperText &&
+    prevProps.showSuccess === nextProps.showSuccess &&
     prevProps.disabled === nextProps.disabled &&
     prevProps.maxLength === nextProps.maxLength &&
     prevProps.id === nextProps.id &&

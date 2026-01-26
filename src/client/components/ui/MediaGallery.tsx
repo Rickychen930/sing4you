@@ -104,6 +104,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
               className="w-full h-full object-cover"
               controls
               preload="metadata"
+              aria-label={`Performance video ${index + 1} - Christina Sings4U`}
             />
           ) : (
             <>

@@ -19,12 +19,14 @@ export class AuthService {
     try {
       const response = await apiClient.post<LoginResponse>('/api/admin/auth/login', credentials);
       // Ensure token is stored
-      if (response.accessToken) {
+      if (response && response.accessToken) {
         localStorage.setItem('accessToken', response.accessToken);
+        return response;
       } else {
+        // Clear token if no valid response
+        localStorage.removeItem('accessToken');
         throw new Error('No access token received from server');
       }
-      return response;
     } catch (error) {
       // Clear token on error
       localStorage.removeItem('accessToken');

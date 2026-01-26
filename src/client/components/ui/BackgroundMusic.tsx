@@ -240,7 +240,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
         {/* Play/Pause Button */}
         <button
           onClick={togglePlay}
-          className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] shadow-[0_4px_12px_rgba(255,194,51,0.35)] hover:shadow-[0_6px_16px_rgba(255,194,51,0.45)] group/play"
+          className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] shadow-[0_4px_12px_rgba(255,194,51,0.35)] hover:shadow-[0_6px_16px_rgba(255,194,51,0.45)] group/play"
           aria-label={isPlaying ? 'Pause' : 'Play'}
           title={isPlaying ? 'Pause music' : 'Play music'}
         >
@@ -279,7 +279,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
           {/* Mute Button */}
           <button
             onClick={toggleMute}
-            className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 text-gold-200 hover:text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 rounded min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
+            className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 text-gold-200 hover:text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 rounded min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] flex items-center justify-center touch-manipulation"
             aria-label={isMuted ? 'Unmute' : 'Mute'}
             title={isMuted ? 'Unmute' : 'Mute'}
           >

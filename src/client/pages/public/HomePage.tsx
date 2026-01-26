@@ -7,6 +7,7 @@ import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 import { testimonialService } from '../../services/testimonialService';
 import type { ITestimonial } from '../../../shared/interfaces';
+import { CONTACT_EMAIL, WHATSAPP_NUMBER, SOCIAL_MEDIA } from '../../../shared/constants';
 
 export const HomePage: React.FC = () => {
   useSmoothScroll();
@@ -34,7 +35,14 @@ export const HomePage: React.FC = () => {
         addressCountry: 'AU',
       },
       url: siteUrl,
-      sameAs: [] as string[],
+      email: CONTACT_EMAIL,
+      telephone: WHATSAPP_NUMBER,
+      sameAs: [
+        SOCIAL_MEDIA.FACEBOOK,
+        SOCIAL_MEDIA.TWITTER,
+        SOCIAL_MEDIA.INSTAGRAM,
+        SOCIAL_MEDIA.YOUTUBE,
+      ].filter(Boolean) as string[],
       knowsAbout: ['Singing', 'Live Performance', 'Wedding Entertainment', 'Corporate Events', 'Music'],
       offers: {
         '@type': 'Offer',
@@ -61,8 +69,8 @@ export const HomePage: React.FC = () => {
       description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW. Solo, duo, trio, and full band performances available.',
       image: `${siteUrl}/og-image.jpg`,
       url: siteUrl,
-      telephone: '+61-XXX-XXX-XXX', // Update with actual phone number
-      email: 'info@christina-sings4you.com.au', // Update with actual email
+      telephone: WHATSAPP_NUMBER,
+      email: CONTACT_EMAIL,
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Sydney',
@@ -182,10 +190,17 @@ export const HomePage: React.FC = () => {
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'Booking Inquiries',
+        telephone: WHATSAPP_NUMBER,
+        email: CONTACT_EMAIL,
         availableLanguage: ['English'],
         areaServed: 'AU',
       },
-      sameAs: [] as string[],
+      sameAs: [
+        SOCIAL_MEDIA.FACEBOOK,
+        SOCIAL_MEDIA.TWITTER,
+        SOCIAL_MEDIA.INSTAGRAM,
+        SOCIAL_MEDIA.YOUTUBE,
+      ].filter(Boolean) as string[],
     }),
     [siteUrl]
   );
@@ -216,6 +231,14 @@ export const HomePage: React.FC = () => {
         description="Professional singer in Sydney offering live vocals for weddings, corporate events & private occasions. Solo, duo, trio & full band available. Book today!"
         keywords="professional singer Sydney, wedding singer Sydney, corporate event singer, live vocals Sydney, solo performer, band performances, Christina Sings4U, Sydney vocalist, live music entertainment, wedding entertainment Sydney, corporate entertainment Sydney, private event singer, live music Sydney NSW, professional vocalist, event singer booking"
         url={siteUrl}
+        contactEmail={CONTACT_EMAIL}
+        contactPhone={WHATSAPP_NUMBER}
+        socialMedia={{
+          facebook: SOCIAL_MEDIA.FACEBOOK as string,
+          twitter: SOCIAL_MEDIA.TWITTER as string,
+          instagram: SOCIAL_MEDIA.INSTAGRAM as string,
+          youtube: SOCIAL_MEDIA.YOUTUBE as string,
+        }}
       />
       <JSONLDSchema schema={artistSchema} />
       <JSONLDSchema schema={organizationSchema} />

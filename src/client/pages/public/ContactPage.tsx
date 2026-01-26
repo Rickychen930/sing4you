@@ -11,6 +11,7 @@ import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { useToastStore } from '../../stores/toastStore';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { generateMailtoLink } from '../../../shared/utils/email';
+import { SOCIAL_MEDIA } from '../../../shared/constants';
 
 export const ContactPage: React.FC = () => {
   const toast = useToastStore((state) => state);
@@ -24,8 +25,50 @@ export const ContactPage: React.FC = () => {
     message: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof IContactForm, string>>>({});
+  const [touched, setTouched] = useState<Partial<Record<keyof IContactForm, boolean>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const validateField = (name: keyof IContactForm, value: string): string | undefined => {
+    switch (name) {
+      case 'name':
+        if (!value.trim()) {
+          return 'Name is required';
+        } else if (value.trim().length < 2) {
+          return 'Name must be at least 2 characters long';
+        }
+        return undefined;
+      case 'email':
+        if (!value.trim()) {
+          return 'Email is required';
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) {
+            return 'Please provide a valid email address';
+          }
+        }
+        return undefined;
+      case 'phone':
+        if (value && value.trim()) {
+          const phoneRegex = /^[\d\s\-+()]+$/;
+          if (!phoneRegex.test(value)) {
+            return 'Please provide a valid phone number';
+          }
+        }
+        return undefined;
+      case 'message':
+        if (!value.trim()) {
+          return 'Message is required';
+        } else if (value.trim().length < 10) {
+          return 'Message must be at least 10 characters long';
+        } else if (value.trim().length > 2000) {
+          return 'Message must be less than 2000 characters';
+        }
+        return undefined;
+      default:
+        return undefined;
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -35,13 +78,38 @@ export const ContactPage: React.FC = () => {
       ...formData,
       [name]: value,
     });
-    // Clear error for this field when user starts typing
-    if (errors[name as keyof IContactForm]) {
+    // Real-time validation for touched fields
+    if (touched[name as keyof IContactForm]) {
+      const error = validateField(name as keyof IContactForm, value);
       setErrors({
         ...errors,
-        [name]: undefined,
+        [name]: error,
       });
+    } else {
+      // Clear error when user starts typing
+      if (errors[name as keyof IContactForm]) {
+        setErrors({
+          ...errors,
+          [name]: undefined,
+        });
+      }
     }
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setTouched({
+      ...touched,
+      [name]: true,
+    });
+    // Validate on blur
+    const error = validateField(name as keyof IContactForm, value);
+    setErrors({
+      ...errors,
+      [name]: error,
+    });
   };
 
   const validateForm = (): boolean => {
@@ -126,6 +194,7 @@ export const ContactPage: React.FC = () => {
         message: '',
       });
       setErrors({}); // Clear errors on success
+      setTouched({}); // Clear touched state on success
     } catch (error) {
       const err = error as Error;
       setSubmitStatus('error');
@@ -216,6 +285,55 @@ export const ContactPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Social Media Links Section */}
+          <div className="mb-12 sm:mb-14 lg:mb-18 xl:mb-22">
+            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-center text-gold-200 mb-6 sm:mb-8 lg:mb-10 drop-shadow-[0_2px_8px_rgba(255,194,51,0.25)]">
+              Follow Us on Social Media
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto">
+              <a
+                href={SOCIAL_MEDIA.FACEBOOK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-105 border-2 border-gold-900/50 hover:border-gold-700/70 group relative overflow-hidden card-hover-lift"
+              >
+                <div className="absolute -inset-2 bg-blue-500/15 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden />
+                <div className="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 text-blue-400 group-hover:text-blue-300 transition-all duration-300 group-hover:scale-110" aria-hidden>📘</div>
+                <p className="text-sm sm:text-base lg:text-lg text-gold-200 group-hover:text-gold-100 font-semibold transition-colors duration-300">Facebook</p>
+              </a>
+              <a
+                href={SOCIAL_MEDIA.TWITTER}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-105 border-2 border-gold-900/50 hover:border-gold-700/70 group relative overflow-hidden card-hover-lift"
+              >
+                <div className="absolute -inset-2 bg-sky-500/15 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden />
+                <div className="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 text-sky-400 group-hover:text-sky-300 transition-all duration-300 group-hover:scale-110" aria-hidden>🐦</div>
+                <p className="text-sm sm:text-base lg:text-lg text-gold-200 group-hover:text-gold-100 font-semibold transition-colors duration-300">Twitter</p>
+              </a>
+              <a
+                href={SOCIAL_MEDIA.INSTAGRAM}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-105 border-2 border-gold-900/50 hover:border-gold-700/70 group relative overflow-hidden card-hover-lift"
+              >
+                <div className="absolute -inset-2 bg-pink-500/15 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden />
+                <div className="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 text-pink-400 group-hover:text-pink-300 transition-all duration-300 group-hover:scale-110" aria-hidden>📷</div>
+                <p className="text-sm sm:text-base lg:text-lg text-gold-200 group-hover:text-gold-100 font-semibold transition-colors duration-300">Instagram</p>
+              </a>
+              <a
+                href={SOCIAL_MEDIA.YOUTUBE}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-105 border-2 border-gold-900/50 hover:border-gold-700/70 group relative overflow-hidden card-hover-lift"
+              >
+                <div className="absolute -inset-2 bg-red-500/15 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden />
+                <div className="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 text-red-400 group-hover:text-red-300 transition-all duration-300 group-hover:scale-110" aria-hidden>📺</div>
+                <p className="text-sm sm:text-base lg:text-lg text-gold-200 group-hover:text-gold-100 font-semibold transition-colors duration-300">YouTube</p>
+              </a>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7 lg:space-y-8">
             <Input
               label="Name"
@@ -224,7 +342,9 @@ export const ContactPage: React.FC = () => {
               required
               value={formData.name}
               onChange={handleChange}
+              onBlur={handleBlur}
               error={errors.name}
+              showSuccess={touched.name && !errors.name && formData.name.trim().length >= 2}
               placeholder="Your full name"
             />
             <Input
@@ -234,7 +354,9 @@ export const ContactPage: React.FC = () => {
               required
               value={formData.email}
               onChange={handleChange}
+              onBlur={handleBlur}
               error={errors.email}
+              showSuccess={touched.email && !errors.email && formData.email.trim().length > 0}
               placeholder="your.email@example.com"
             />
             <Input
@@ -243,8 +365,10 @@ export const ContactPage: React.FC = () => {
               type="tel"
               value={formData.phone}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="+61 400 000 000"
               error={errors.phone}
+              showSuccess={touched.phone && !errors.phone && formData.phone.trim().length > 0}
               helperText="Include country code for international numbers"
             />
             <Select
@@ -252,6 +376,7 @@ export const ContactPage: React.FC = () => {
               name="eventType"
               value={formData.eventType}
               onChange={handleChange}
+              onBlur={handleBlur}
               options={[
                 { value: '', label: 'Select event type' },
                 { value: 'wedding', label: 'Wedding' },
@@ -269,6 +394,7 @@ export const ContactPage: React.FC = () => {
               type="date"
               value={formData.eventDate}
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             <Input
               label="Location"
@@ -276,6 +402,7 @@ export const ContactPage: React.FC = () => {
               type="text"
               value={formData.location}
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             <Textarea
               label="Message"
@@ -284,7 +411,9 @@ export const ContactPage: React.FC = () => {
               required
               value={formData.message}
               onChange={handleChange}
+              onBlur={handleBlur}
               error={errors.message}
+              showSuccess={touched.message && !errors.message && formData.message.trim().length >= 10}
               placeholder="Tell us about your event, preferred dates, location, and any special requests..."
               maxLength={2000}
               helperText={`${formData.message.length}/2000 characters`}

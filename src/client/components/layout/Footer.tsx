@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { generateMailtoLink } from '../../../shared/utils/email';
+import { SOCIAL_MEDIA } from '../../../shared/constants';
 
 export const Footer: React.FC = memo(() => {
   return (
@@ -18,7 +19,7 @@ export const Footer: React.FC = memo(() => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-12 lg:mb-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-12 lg:mb-14">
           <div className="relative">
             <div className="absolute -inset-2 bg-gold-500/10 rounded-2xl blur-xl opacity-40 pointer-events-none" aria-hidden />
             <div className="relative">
@@ -47,7 +48,7 @@ export const Footer: React.FC = memo(() => {
                   <li key={to}>
                     <Link
                       to={to}
-                      className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group"
+                      className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
                     >
                       <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
                       <span>{label}</span>
@@ -68,7 +69,8 @@ export const Footer: React.FC = memo(() => {
                     href={generateWhatsAppLink()}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group"
+                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
+                    aria-label="Contact via WhatsApp"
                   >
                     <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
                     <span>WhatsApp</span>
@@ -77,10 +79,78 @@ export const Footer: React.FC = memo(() => {
                 <li>
                   <a
                     href={generateMailtoLink()}
-                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group"
+                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
+                    aria-label="Contact via Email"
                   >
                     <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
                     <span>Email</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`tel:+61410606328`}
+                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
+                    aria-label="Call phone number 0410 606 328"
+                  >
+                    <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
+                    <span>Phone: 0410 606 328</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="relative" aria-labelledby="footer-social">
+            <div className="absolute -inset-2 bg-musical-500/10 rounded-2xl blur-xl opacity-40 pointer-events-none" aria-hidden />
+            <div className="relative">
+              <h4 id="footer-social" className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-5 lg:mb-6 text-gold-200 font-elegant">Follow Us</h4>
+              <ul className="space-y-3 sm:space-y-3.5 lg:space-y-4 text-sm sm:text-base md:text-lg lg:text-xl">
+                <li>
+                  <a
+                    href={SOCIAL_MEDIA.FACEBOOK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
+                    aria-label="Follow us on Facebook"
+                  >
+                    <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
+                    <span>Facebook</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={SOCIAL_MEDIA.TWITTER}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
+                    aria-label="Follow us on Twitter"
+                  >
+                    <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
+                    <span>Twitter</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={SOCIAL_MEDIA.INSTAGRAM}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
+                    aria-label="Follow us on Instagram"
+                  >
+                    <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
+                    <span>Instagram</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={SOCIAL_MEDIA.YOUTUBE}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-200 hover:text-gold-200 transition-all duration-300 font-medium hover:translate-x-1 inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1.5 min-h-[44px] sm:min-h-[48px]"
+                    aria-label="Follow us on YouTube"
+                  >
+                    <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
+                    <span>YouTube</span>
                   </a>
                 </li>
               </ul>
@@ -93,7 +163,7 @@ export const Footer: React.FC = memo(() => {
           <p className="text-sm sm:text-base md:text-lg text-gray-200 font-medium leading-relaxed font-sans">
             &copy; {new Date().getFullYear()} <span className="text-gold-300 font-elegant font-semibold">Christina Sings4U</span>. All rights reserved.
           </p>
-          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-400 font-sans">
+          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-300 font-sans">
             Professional Singer · Sydney, NSW, Australia
           </p>
         </div>

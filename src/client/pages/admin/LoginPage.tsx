@@ -207,7 +207,7 @@ export const LoginPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 sm:right-4 top-[2.5rem] sm:top-[2.75rem] text-gray-400 hover:text-gold-400 transition-colors duration-200 focus:outline-none focus:text-gold-500 min-w-[32px] min-h-[32px] sm:min-w-[40px] sm:min-h-[40px] flex items-center justify-center"
+                        className="absolute right-3 sm:right-4 top-[2.5rem] sm:top-[2.75rem] text-gray-400 hover:text-gold-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1 py-1 focus:text-gold-500 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] flex items-center justify-center touch-manipulation"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                         tabIndex={0}
                       >
@@ -225,13 +225,14 @@ export const LoginPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 cursor-pointer group min-h-[32px] sm:min-h-[36px]">
+                    <label className="flex items-center gap-2 cursor-pointer group min-h-[44px] sm:min-h-[48px] px-2 py-1 rounded focus-within:outline-none focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900">
                       <input
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
                         disabled={isLoading}
-                        className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gold-900/50 bg-jazz-900/70 text-gold-500 focus:ring-gold-500 focus:ring-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                        className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gold-900/50 bg-jazz-900/70 text-gold-500 focus:ring-gold-500 focus:ring-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 touch-manipulation"
+                        aria-label="Remember me"
                       />
                       <span className="text-xs sm:text-sm text-gray-200 font-sans group-hover:text-gray-100 transition-colors">Remember me</span>
                     </label>

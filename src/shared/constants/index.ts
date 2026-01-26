@@ -29,8 +29,16 @@ export const DEFAULT_CITY = 'Sydney';
 export const DEFAULT_STATE = 'NSW';
 export const DEFAULT_COUNTRY = 'Australia';
 
-export const WHATSAPP_NUMBER = '+61400000000'; // Replace with actual number
-export const CONTACT_EMAIL = 'christina@sings4u.com.au'; // Replace with actual email
+export const WHATSAPP_NUMBER = '+61410606328'; // Christina Sings4U contact number
+export const CONTACT_EMAIL = 'bookings@christinasings4u.com.au'; // Booking inquiries email
+
+// Social Media Links
+export const SOCIAL_MEDIA = {
+  FACEBOOK: 'https://www.facebook.com/christinasings4u/',
+  TWITTER: 'https://x.com/christinasingss',
+  INSTAGRAM: 'https://www.instagram.com/_christinasings4u_/',
+  YOUTUBE: 'https://www.youtube.com/channel/UCqcGJFQYlYNCmEljLBGK3ZA',
+} as const;
 
 export const WHATSAPP_MESSAGE_TEMPLATE = (location: string = 'Sydney/NSW') =>
   `Hi Christina, I'd like to book you for an event in [${location}].`;

@@ -67,7 +67,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className })
               ) : item.path ? (
                 <Link
                   to={item.path}
-                  className="text-gray-200 hover:text-gold-200 transition-all duration-300 hover:underline focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 sm:px-2.5 py-1.5 font-medium min-h-[36px] sm:min-h-[40px] flex items-center hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.35)] leading-relaxed"
+                  className="text-gray-200 hover:text-gold-200 transition-all duration-300 hover:underline focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 sm:px-2.5 py-1.5 font-medium min-h-[44px] sm:min-h-[48px] flex items-center hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.35)] leading-relaxed touch-manipulation"
                 >
                   {item.label}
                 </Link>

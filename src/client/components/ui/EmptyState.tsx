@@ -61,22 +61,45 @@ export const EmptyState: React.FC<EmptyStateProps> = memo(({
       <div className="max-w-md mx-auto relative z-10">
         <div className="mb-5 sm:mb-6 lg:mb-8">
           {typeof icon === 'string' ? (
-            <div className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl mb-3 sm:mb-4 opacity-80 sm:opacity-70 animate-float inline-block drop-shadow-[0_0_12px_rgba(255,194,51,0.25)]" aria-hidden>
+            <div 
+              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl mb-3 sm:mb-4 opacity-80 sm:opacity-70 animate-float inline-block drop-shadow-[0_0_12px_rgba(255,194,51,0.25)] hover:scale-110 transition-transform duration-300 cursor-default" 
+              aria-hidden
+              style={{ animationDelay: '0.2s' }}
+            >
               {icon}
             </div>
           ) : (
-            <div className="mb-3 sm:mb-4 animate-fade-in" aria-hidden="true">{icon}</div>
+            <div 
+              className="mb-3 sm:mb-4 animate-fade-in-up hover:scale-105 transition-transform duration-300" 
+              aria-hidden="true"
+              style={{ animationDelay: '0.2s' }}
+            >
+              {icon}
+            </div>
           )}
         </div>
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight empty-state-title">
+        <h3 
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight empty-state-title animate-fade-in-up hover:scale-105 transition-transform duration-300"
+          style={{ animationDelay: '0.3s' }}
+        >
           {title}
         </h3>
         {description && (
-          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 mb-7 sm:mb-9 lg:mb-11 leading-relaxed max-w-lg mx-auto font-sans empty-state-description">
+          <p 
+            className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 mb-7 sm:mb-9 lg:mb-11 leading-relaxed max-w-lg mx-auto font-sans empty-state-description animate-fade-in-up"
+            style={{ animationDelay: '0.4s' }}
+          >
             {description}
           </p>
         )}
-        {actionElement}
+        {actionElement && (
+          <div 
+            className="animate-fade-in-up"
+            style={{ animationDelay: '0.5s' }}
+          >
+            {actionElement}
+          </div>
+        )}
       </div>
     </div>
   );

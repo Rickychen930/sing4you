@@ -102,7 +102,7 @@ export class AuthService {
           console.log(`   Expected email: ${mockUser.email}, Got: ${email}`);
           console.log(`💡 Using mock data. Default credentials:`);
           console.log(`   Email: ${mockUser.email}`);
-          console.log(`   Password: ${mockUser.password}`);
+          console.log(`   Password: *** (hidden for security)`);
         }
         throw new Error('Invalid credentials');
       }

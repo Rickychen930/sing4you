@@ -247,36 +247,66 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           </div>
 
           <button
-            className="md:hidden text-gray-200 hover:text-gold-300 transition-all duration-300 p-2.5 -mr-2 min-w-[48px] sm:min-w-[52px] min-h-[48px] sm:min-h-[52px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg active:scale-95 touch-manipulation"
+            className="md:hidden text-gray-200 hover:text-gold-300 transition-all duration-300 p-2.5 -mr-2 min-w-[48px] sm:min-w-[52px] min-h-[48px] sm:min-h-[52px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg active:scale-95 touch-manipulation relative"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
           >
-            <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg 
+              className={`h-5 w-5 sm:h-6 sm:w-6 transition-transform duration-300 ${isMenuOpen ? 'rotate-90' : ''}`}
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
               {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M6 18L18 6M6 6l12 12"
+                  className="animate-fade-in"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M4 6h16M4 12h16M4 18h16"
+                  className="animate-fade-in"
+                />
               )}
             </svg>
           </button>
         </div>
 
+        {/* Mobile menu backdrop */}
         {isMenuOpen && (
-          <div 
-            id="mobile-menu"
-            className="md:hidden py-3 sm:py-4 lg:py-5 space-y-1.5 sm:space-y-2 lg:space-y-3 bg-jazz-900/98 rounded-lg sm:rounded-xl mt-2 sm:mt-3 lg:mt-4 border-2 border-gold-900/50 hover:border-gold-800/60 shadow-lg animate-fade-in transition-colors duration-200"
-            role="menu"
-            aria-label="Mobile navigation menu"
-          >
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+            onClick={closeMobileMenu}
+            aria-hidden="true"
+          />
+        )}
+        {/* Mobile menu */}
+        <div 
+          id="mobile-menu"
+          className={`md:hidden fixed top-14 sm:top-16 lg:top-18 xl:top-20 left-0 right-0 bottom-0 overflow-y-auto z-50 transform transition-transform duration-300 ease-out ${
+            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          role="menu"
+          aria-label="Mobile navigation menu"
+          aria-hidden={!isMenuOpen}
+        >
+          <div className="py-3 sm:py-4 lg:py-5 px-4 sm:px-6 space-y-1.5 sm:space-y-2 lg:space-y-3 bg-jazz-900/98 backdrop-blur-md rounded-lg sm:rounded-xl mt-2 sm:mt-3 lg:mt-4 mx-4 sm:mx-6 border-2 border-gold-900/50 hover:border-gold-800/60 shadow-lg">
             <Link
               to="/"
-              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed animate-fade-in-up ${
                 isActiveRoute('/')
                   ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
                   : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
               }`}
+              style={{ animationDelay: isMenuOpen ? '0.1s' : '0s' }}
               onClick={closeMobileMenu}
               role="menuitem"
               aria-current={isActiveRoute('/') ? 'page' : undefined}
@@ -294,11 +324,12 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/about"
-              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed animate-fade-in-up ${
                 isActiveRoute('/about')
                   ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
                   : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
               }`}
+              style={{ animationDelay: isMenuOpen ? '0.15s' : '0s' }}
               onClick={closeMobileMenu}
               role="menuitem"
               aria-current={isActiveRoute('/about') ? 'page' : undefined}
@@ -311,11 +342,12 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/categories"
-              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed animate-fade-in-up ${
                 isActiveRoute('/categories')
                   ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
                   : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
               }`}
+              style={{ animationDelay: isMenuOpen ? '0.2s' : '0s' }}
               onClick={closeMobileMenu}
               role="menuitem"
               aria-current={isActiveRoute('/categories') ? 'page' : undefined}
@@ -328,11 +360,12 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/performances"
-              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed animate-fade-in-up ${
                 isActiveRoute('/performances')
                   ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
                   : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
               }`}
+              style={{ animationDelay: isMenuOpen ? '0.25s' : '0s' }}
               onClick={closeMobileMenu}
               role="menuitem"
               aria-current={isActiveRoute('/performances') ? 'page' : undefined}
@@ -345,11 +378,12 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             </Link>
             <Link
               to="/contact"
-              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed animate-fade-in-up ${
                 isActiveRoute('/contact')
                   ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
                   : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
               }`}
+              style={{ animationDelay: isMenuOpen ? '0.3s' : '0s' }}
               onClick={closeMobileMenu}
               role="menuitem"
               aria-current={isActiveRoute('/contact') ? 'page' : undefined}
@@ -393,7 +427,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               </Link>
             )}
           </div>
-        )}
+        </div>
       </nav>
     </header>
   );

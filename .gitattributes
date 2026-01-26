@@ -1,0 +1,19 @@
+# Prevent showing secrets in diffs (if accidentally staged)
+# This prevents secrets from appearing in git diff output
+*.env -diff -merge
+*.key -diff -merge
+*.pem -diff -merge
+*.secret -diff -merge
+*.password -diff -merge
+*.token -diff -merge
+*.credentials -diff -merge
+
+# Text files
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
