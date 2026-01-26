@@ -10,6 +10,7 @@ interface AxiosErrorResponse {
   response?: {
     data?: {
       error?: string;
+      message?: string;
       success?: boolean;
     };
     status?: number;
