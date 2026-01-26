@@ -61,7 +61,7 @@ export const VariationsPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
-                <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-5 sm:p-6 lg:p-8 border border-gold-900/50 backdrop-blur-md h-full">
+                <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-5 sm:p-6 lg:p-8 border border-gold-900/50 backdrop-blur-sm h-full">
                   <div className="h-6 sm:h-7 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
                   <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
                   <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
@@ -87,7 +87,7 @@ export const VariationsPage: React.FC = () => {
           <div className="text-center py-10 sm:py-12 lg:py-16">
             <div className="text-5xl sm:text-6xl lg:text-7xl mb-3 sm:mb-4 opacity-50">🎵</div>
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-gray-100 mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Category not found</h2>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed">The category you're looking for doesn't exist or has been removed.</p>
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-sans mb-6 sm:mb-8 leading-relaxed">The category you're looking for doesn't exist or has been removed.</p>
             <BackButton to="/categories" variant="primary" label="Back to Categories" />
           </div>
         </SectionWrapper>

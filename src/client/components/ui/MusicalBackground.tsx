@@ -9,7 +9,6 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
   const animationFrameRef = useRef<number | null>(null);
   const isVisibleRef = useRef(true);
   const lastFrameTimeRef = useRef(0);
-  const throttleMs = 16; // ~60fps
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -67,8 +66,8 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
       noteIndex: number;
     }> = [];
 
-    // Reduced particle count for better performance
-    const particleCount = intensity === 'high' ? 20 : intensity === 'medium' ? 12 : 6;
+    // OPTIMIZED: Further reduced particle count for better performance
+    const particleCount = intensity === 'high' ? 12 : intensity === 'medium' ? 8 : 4;
     const notes = ['♪', '♫', '♬', '♩'];
     const colors = ['rgba(255, 194, 51,', 'rgba(168, 85, 247,', 'rgba(232, 168, 34,', 'rgba(147, 51, 234,'];
 
@@ -77,10 +76,10 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3, // Slower for better performance
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 15 + 12, // Smaller
-        opacity: Math.random() * 0.25 + 0.1,
+        vx: (Math.random() - 0.5) * 0.2, // OPTIMIZED: Even slower for better performance
+        vy: (Math.random() - 0.5) * 0.2,
+        size: Math.random() * 12 + 10, // OPTIMIZED: Smaller particles
+        opacity: Math.random() * 0.2 + 0.08, // OPTIMIZED: Lower opacity
         color: colors[Math.floor(Math.random() * colors.length)],
         type: Math.random() > 0.8 ? 'wave' : 'note', // More notes, fewer waves
         noteIndex: Math.floor(Math.random() * notes.length),
@@ -90,8 +89,9 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
     let timeOffset = 0;
 
     const animate = (currentTime: number) => {
-      // Throttle to ~60fps
-      if (currentTime - lastFrameTimeRef.current < throttleMs) {
+      // OPTIMIZED: Throttle to ~30fps for better performance
+      const optimizedThrottle = 33; // ~30fps instead of 60fps
+      if (currentTime - lastFrameTimeRef.current < optimizedThrottle) {
         animationFrameRef.current = requestAnimationFrame(animate);
         return;
       }
@@ -134,16 +134,16 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
           ctx.textBaseline = 'middle';
           ctx.fillText(note, particle.x, particle.y);
         } else {
-          // Simplified wave drawing - fewer points
+          // OPTIMIZED: Further simplified wave drawing - even fewer points
           ctx.beginPath();
           ctx.moveTo(particle.x, particle.y);
-          for (let i = 0; i < 20; i++) { // Reduced from 30
-            const x = particle.x + i * 3;
-            const y = particle.y + Math.sin(i * 0.4 + timeOffset + index) * 10;
+          for (let i = 0; i < 12; i++) { // OPTIMIZED: Reduced from 20 to 12
+            const x = particle.x + i * 4;
+            const y = particle.y + Math.sin(i * 0.5 + timeOffset + index) * 8;
             ctx.lineTo(x, y);
           }
-          ctx.strokeStyle = particle.color + '0.4)';
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = particle.color + '0.3)';
+          ctx.lineWidth = 1;
           ctx.stroke();
         }
 
@@ -172,9 +172,11 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
       style={{ 
-        opacity: 0.4,
-        willChange: 'transform',
+        opacity: 0.3,
+        /* OPTIMIZED: Removed will-change - only set when animating */
         transform: 'translateZ(0)', // Force GPU acceleration
+        /* OPTIMIZED: Use content-visibility for better performance */
+        contentVisibility: 'auto',
       }}
     />
   );

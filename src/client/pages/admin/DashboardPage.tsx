@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { Layout } from '../../components/layout/Layout';
@@ -13,6 +13,7 @@ import { performanceService } from '../../services/performanceService';
 import { testimonialService } from '../../services/testimonialService';
 import { variationService } from '../../services/variationService';
 import { sectionService } from '../../services/sectionService';
+import { useDebounce } from '../../hooks/useDebounce';
 
 interface DashboardItem {
   id: string;
@@ -32,12 +33,68 @@ interface DashboardStats {
   sections: number;
 }
 
+interface DashboardItemCardProps {
+  item: DashboardItem;
+  index: number;
+}
+
+const DashboardItemCard = memo<DashboardItemCardProps>(({ item, index }) => {
+  return (
+    <Card 
+      hover
+      className="card-entrance"
+      style={{ animationDelay: `${index * 50}ms` }}
+    >
+      <CardHeader className="p-4 sm:p-5 lg:p-6">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1">
+            <span className="text-2xl sm:text-3xl lg:text-4xl" role="img" aria-label={item.title}>
+              {item.icon}
+            </span>
+            <h2 className="text-base sm:text-lg md:text-xl font-elegant font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+              {item.title}
+            </h2>
+          </div>
+          {item.count !== undefined && (
+            <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 bg-gold-900/30 border border-gold-700/50 rounded-full">
+              <span className="text-xs sm:text-sm font-bold text-gold-300">{item.count}</span>
+            </div>
+          )}
+        </div>
+      </CardHeader>
+      <CardBody className="p-4 sm:p-5 lg:p-6">
+        <p className="text-xs sm:text-sm md:text-base text-gray-200 font-sans mb-3 sm:mb-4 min-h-[2.5rem] sm:min-h-[3rem]">
+          {item.description}
+        </p>
+        <Link to={item.path} className="block group/link">
+          <Button variant="primary" size="sm" className="w-full group">
+            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+              <span className="text-xs sm:text-sm">Manage</span>
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </span>
+          </Button>
+        </Link>
+      </CardBody>
+    </Card>
+  );
+}, (prevProps, nextProps) => {
+  return prevProps.item.id === nextProps.item.id &&
+         prevProps.item.count === nextProps.item.count &&
+         prevProps.item.title === nextProps.item.title &&
+         prevProps.item.description === nextProps.item.description;
+});
+
+DashboardItemCard.displayName = 'DashboardItemCard';
+
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'content' | 'settings' | 'management'>('all');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [stats, setStats] = useState<DashboardStats>({
     categories: 0,
     performances: 0,
@@ -48,8 +105,12 @@ export const DashboardPage: React.FC = () => {
   const [loadingStats, setLoadingStats] = useState(true);
   const [logoutConfirm, setLogoutConfirm] = useState(false);
 
-  // Load statistics
+  const hasLoadedStatsRef = useRef(false);
+  
   useEffect(() => {
+    // Only load stats once - portfolio doesn't need continuous updates
+    if (hasLoadedStatsRef.current) return;
+    
     const loadStats = async () => {
       try {
         const [categories, performances, testimonials, variations, sections] = await Promise.allSettled([
@@ -92,6 +153,7 @@ export const DashboardPage: React.FC = () => {
           variations: variations.status === 'fulfilled' ? variations.value.length : 0,
           sections: sections.status === 'fulfilled' ? sections.value.length : 0,
         });
+        hasLoadedStatsRef.current = true;
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('Error loading dashboard stats:', error);
@@ -102,7 +164,7 @@ export const DashboardPage: React.FC = () => {
     };
 
     loadStats();
-  }, []);
+  }, []); // Empty deps - only load once on mount
 
   const dashboardItems: DashboardItem[] = useMemo(() => [
     { id: 'hero', title: 'Hero Settings', description: 'Manage hero section content and CTA buttons', path: '/admin/hero', icon: '🏠', category: 'content' },
@@ -114,42 +176,53 @@ export const DashboardPage: React.FC = () => {
     { id: 'seo', title: 'SEO Settings', description: 'Manage SEO metadata and settings', path: '/admin/seo', icon: '🔍', category: 'settings' },
   ], [stats]);
 
+  // OPTIMIZED: Use debounced search query for filtering
   const filteredItems = useMemo(() => {
     return dashboardItems.filter(item => {
-      const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = item.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+                           item.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [dashboardItems, searchQuery, selectedCategory]);
+  }, [dashboardItems, debouncedSearchQuery, selectedCategory]);
 
-  // Keyboard shortcut for search (Ctrl+K or Cmd+K)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
-        searchInput?.focus();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+  // OPTIMIZED: Keyboard shortcut for search (Ctrl+K or Cmd+K) - memoized handler
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
+      searchInput?.focus();
+    }
   }, []);
 
-  const handleLogoutClick = () => {
-    setLogoutConfirm(true);
-  };
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown, { passive: true });
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
-  const handleLogoutConfirm = async () => {
+  // OPTIMIZED: Memoized handlers for better performance
+  const handleLogoutClick = useCallback(() => {
+    setLogoutConfirm(true);
+  }, []);
+
+  const handleLogoutConfirm = useCallback(async () => {
     await logout();
     navigate('/admin/login');
     setLogoutConfirm(false);
-  };
+  }, [logout, navigate]);
 
-  const handleLogoutCancel = () => {
+  const handleLogoutCancel = useCallback(() => {
     setLogoutConfirm(false);
-  };
+  }, []);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+  }, []);
+
+  const handleCategoryChange = useCallback((cat: 'all' | 'content' | 'settings' | 'management') => {
+    setSelectedCategory(cat);
+  }, []);
 
   return (
     <Layout isAdmin>
@@ -188,7 +261,8 @@ export const DashboardPage: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4 mb-5 sm:mb-6 lg:mb-8">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
-                  <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-3 sm:p-4 lg:p-6 border border-gold-900/50 backdrop-blur-md">
+                  {/* OPTIMIZED: Reduced backdrop-blur-md to backdrop-blur-sm, increased bg opacity */}
+                  <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-3 sm:p-4 lg:p-6 border border-gold-900/50 backdrop-blur-sm">
                     <div className="h-5 sm:h-6 lg:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 sm:mb-3 w-2/3 mx-auto animate-pulse-soft skeleton-shimmer"></div>
                     <div className="h-6 sm:h-8 lg:h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-lg w-1/2 mx-auto animate-pulse-soft skeleton-shimmer"></div>
                   </div>
@@ -264,7 +338,7 @@ export const DashboardPage: React.FC = () => {
                       key={cat}
                       variant={selectedCategory === cat ? 'primary' : 'outline'}
                       size="sm"
-                      onClick={() => setSelectedCategory(cat)}
+                      onClick={() => handleCategoryChange(cat)}
                       className="capitalize transition-all duration-200 text-xs sm:text-sm"
                     >
                       <span className="flex items-center gap-1 sm:gap-1.5">
@@ -280,7 +354,7 @@ export const DashboardPage: React.FC = () => {
                 })}
               </div>
             </div>
-            {searchQuery && (
+            {debouncedSearchQuery && (
               <div className="flex items-center justify-between">
                 <p className="text-xs sm:text-sm text-gray-400">
                   Found <span className="text-gold-400 font-semibold">{filteredItems.length}</span> item{filteredItems.length !== 1 ? 's' : ''}
@@ -288,7 +362,7 @@ export const DashboardPage: React.FC = () => {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => setSearchQuery('')}
+                  onClick={handleClearSearch}
                   className="text-xs"
                 >
                   Clear
@@ -306,7 +380,7 @@ export const DashboardPage: React.FC = () => {
                 <p className="text-sm sm:text-base text-gray-400 mb-5 sm:mb-6">Try adjusting your search or filter</p>
                 <Button 
                   variant="outline" 
-                  onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
+                  onClick={handleClearSearch}
                   className="group"
                 >
                   <span className="flex items-center gap-1.5 sm:gap-2">
@@ -321,45 +395,11 @@ export const DashboardPage: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
               {filteredItems.map((item, index) => (
-                <Card 
-                  key={item.id} 
-                  hover
-                  className="card-entrance"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <CardHeader className="p-4 sm:p-5 lg:p-6">
-                    <div className="flex items-center justify-between gap-2 sm:gap-3">
-                      <div className="flex items-center gap-2 sm:gap-3 flex-1">
-                        <span className="text-2xl sm:text-3xl lg:text-4xl" role="img" aria-label={item.title}>
-                          {item.icon}
-                        </span>
-                        <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
-                          {item.title}
-                        </h2>
-                      </div>
-                      {item.count !== undefined && (
-                        <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 bg-gold-900/30 border border-gold-700/50 rounded-full">
-                          <span className="text-xs sm:text-sm font-bold text-gold-300">{item.count}</span>
-                        </div>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardBody className="p-4 sm:p-5 lg:p-6">
-                    <p className="text-xs sm:text-sm md:text-base text-gray-300 mb-3 sm:mb-4 min-h-[2.5rem] sm:min-h-[3rem]">
-                      {item.description}
-                    </p>
-                    <Link to={item.path} className="block group/link">
-                      <Button variant="primary" size="sm" className="w-full group">
-                        <span className="flex items-center justify-center gap-1.5 sm:gap-2">
-                          <span className="text-xs sm:text-sm">Manage</span>
-                          <svg className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </span>
-                      </Button>
-                    </Link>
-                  </CardBody>
-                </Card>
+                <DashboardItemCard
+                  key={item.id}
+                  item={item}
+                  index={index}
+                />
               ))}
             </div>
           )}

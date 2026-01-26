@@ -53,9 +53,9 @@ export const EmptyState: React.FC<EmptyStateProps> = memo(({
       aria-live="polite"
     >
       {/* Decorative background elements */}
-      <div className="absolute inset-0 pointer-events-none opacity-12 sm:opacity-10">
-        <div className="absolute top-1/4 left-1/4 w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-gold-500/25 sm:bg-gold-500/20 rounded-full blur-3xl animate-musical-pulse shadow-[0_0_40px_rgba(255,194,51,0.25)]"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 bg-musical-500/25 sm:bg-musical-500/20 rounded-full blur-3xl animate-musical-pulse shadow-[0_0_40px_rgba(168,85,247,0.25)]" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute inset-0 pointer-events-none opacity-[0.12] sm:opacity-10">
+        <div className="absolute top-1/4 left-1/4 w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-gold-500/25 sm:bg-gold-500/20 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_40px_rgba(255,194,51,0.25)]"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 bg-musical-500/25 sm:bg-musical-500/20 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_40px_rgba(168,85,247,0.25)]" style={{ animationDelay: '1s' }} aria-hidden />
       </div>
       
       <div className="max-w-md mx-auto relative z-10">
@@ -68,11 +68,11 @@ export const EmptyState: React.FC<EmptyStateProps> = memo(({
             <div className="mb-3 sm:mb-4 animate-fade-in" aria-hidden="true">{icon}</div>
           )}
         </div>
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold text-gray-50 mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-200 via-gold-100 to-gold-50 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(255,194,51,0.3)] leading-tight" style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}>
+        <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12)' }}>
           {title}
         </h3>
         {description && (
-          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-50/95 sm:text-gray-50 mb-7 sm:mb-9 lg:mb-11 leading-relaxed max-w-lg mx-auto" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.4)' }}>
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 mb-7 sm:mb-9 lg:mb-11 leading-relaxed max-w-lg mx-auto font-sans" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.4)' }}>
             {description}
           </p>
         )}
@@ -80,13 +80,11 @@ export const EmptyState: React.FC<EmptyStateProps> = memo(({
       </div>
     </div>
   );
-}, (prevProps, nextProps) => {
-  return (
-    prevProps.title === nextProps.title &&
-    prevProps.description === nextProps.description &&
-    prevProps.icon === nextProps.icon &&
-    JSON.stringify(prevProps.action) === JSON.stringify(nextProps.action)
-  );
-});
+}, (prevProps, nextProps) =>
+  prevProps.title === nextProps.title &&
+  prevProps.description === nextProps.description &&
+  prevProps.icon === nextProps.icon &&
+  JSON.stringify(prevProps.action) === JSON.stringify(nextProps.action)
+);
 
 EmptyState.displayName = 'EmptyState';

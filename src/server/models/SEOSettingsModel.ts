@@ -54,12 +54,13 @@ export class SEOSettingsModel {
       
       // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
       if (settings) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
         const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
         return cleanSettings as ISEOSettings;
       }
       
       return null;
-    } catch (error) {
+    } catch {
       // Return default settings if database query fails
       return {
         defaultTitle: 'Christina Sings4U | Professional Singer in Sydney',
@@ -82,6 +83,7 @@ export class SEOSettingsModel {
         throw new Error('Failed to update SEO settings');
       }
       // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
       const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
       return cleanSettings as ISEOSettings;
     } catch (error) {

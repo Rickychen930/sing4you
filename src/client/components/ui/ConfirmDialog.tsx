@@ -107,25 +107,31 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   const dialog = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 lg:p-6 bg-black/97 animate-fade-in"
+      /* OPTIMIZED: Removed backdrop-blur-xl, increased bg opacity instead */
       onClick={onCancel}
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-message"
     >
-      {/* Enhanced backdrop with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-jazz-900/90 to-black/95"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-jazz-900/90 to-black/95" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-r from-gold-500/5 via-transparent to-musical-500/5 pointer-events-none" aria-hidden />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.08] sm:opacity-[0.06]" aria-hidden>
+        <span className="absolute top-10 left-10 text-3xl sm:text-4xl lg:text-5xl text-gold-400/30 font-musical animate-float">♪</span>
+        <span className="absolute bottom-10 right-10 text-2xl sm:text-3xl lg:text-4xl text-musical-400/30 font-musical animate-float" style={{ animationDelay: '1s' }}>♫</span>
+      </div>
       
       <div
         ref={dialogRef}
         className={cn(
-          'relative bg-gradient-to-br from-jazz-800/95 via-jazz-900/98 to-musical-900/95 rounded-xl sm:rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.2)_inset] border-2 p-5 sm:p-6 lg:p-8 xl:p-10 max-w-md w-full backdrop-blur-xl hover:shadow-[0_35px_90px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,194,51,0.3)_inset] transition-all duration-500',
+          'relative bg-gradient-to-br from-jazz-800/97 via-jazz-900/98 to-musical-900/97 rounded-xl sm:rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.2)_inset] border-2 p-5 sm:p-6 lg:p-8 xl:p-10 max-w-md w-full backdrop-blur-sm hover:shadow-[0_28px_72px_rgba(0,0,0,0.65),0_0_0_1px_rgba(255,194,51,0.25)_inset] transition-all duration-300 group',
           variantStyles[variant],
           'animate-scale-in'
         )}
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/20 via-musical-500/15 to-gold-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg pointer-events-none" aria-hidden />
         {/* Icon based on variant */}
         <div className="mb-3 sm:mb-4 lg:mb-6 flex justify-center">
           <div className={cn(
@@ -154,33 +160,43 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         
         <h2
           id="confirm-dialog-title"
-          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-2 drop-shadow-[0_2px_12px_rgba(255,194,51,0.3)]"
-          style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-2"
+          style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12)' }}
         >
           {title}
         </h2>
         <p
           id="confirm-dialog-message"
-          className="text-sm sm:text-base md:text-lg text-gray-200/95 sm:text-gray-200 mb-5 sm:mb-6 lg:mb-8 leading-relaxed text-center"
+          className="text-sm sm:text-base md:text-lg text-gray-200 font-sans mb-5 sm:mb-6 lg:mb-8 leading-relaxed text-center"
           style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}
         >
           {message}
         </p>
-        <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 lg:gap-4 justify-end">
+        <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 lg:gap-4 justify-end relative z-10">
           <Button
             variant="outline"
             onClick={onCancel}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto group/btn"
           >
-            {cancelLabel}
+            <span className="flex items-center justify-center gap-2">
+              {cancelLabel}
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover/btn:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
           </Button>
           <Button
             ref={confirmButtonRef}
             variant={confirmVariant}
             onClick={onConfirm}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto group/btn"
           >
-            {confirmLabel}
+            <span className="flex items-center justify-center gap-2">
+              {confirmLabel}
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </span>
           </Button>
         </div>
       </div>

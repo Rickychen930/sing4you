@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
+import React, { useEffect, useRef, useState, useCallback, memo, useMemo } from 'react';
 
 /**
  * BackgroundMusic Component
@@ -34,7 +34,7 @@ type StateSetters = {
   setIsAvailable: React.Dispatch<React.SetStateAction<boolean>>;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
 };
-let globalStateSetters: Set<StateSetters> = new Set();
+const globalStateSetters: Set<StateSetters> = new Set();
 
 export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
   src,
@@ -59,12 +59,6 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
   const [error, setError] = useState<string | null>(null);
   const [isAvailable, setIsAvailable] = useState(true);
 
-  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
-    return null;
-  }
-
-  const defaultSrc = src || '/background_music.mp3';
-
   const unmute = useCallback(() => {
     if (hasUnmutedRef.current) return;
     hasUnmutedRef.current = true;
@@ -76,7 +70,11 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     }
   }, [currentVolume]);
 
+  // OPTIMIZED: Memoize defaultSrc to prevent unnecessary re-renders
+  const defaultSrcMemo = useMemo(() => src || '/background_music.mp3', [src]);
+
   useEffect(() => {
+    // Early return for admin paths
     if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
       return;
     }
@@ -103,7 +101,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
       audioEl.muted = true;
       audioEl.loop = loop;
       audioEl.preload = 'auto';
-      audioEl.src = defaultSrc;
+      audioEl.src = defaultSrcMemo;
 
       const notifyAllComponents = (updater: (s: StateSetters) => void) => {
         globalStateSetters.forEach(updater);
@@ -178,7 +176,9 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
       audioRef.current = null;
       // Don't destroy audio instance - keep it playing across route changes
     };
-  }, [defaultSrc, loop, autoPlay, unmute, volume]);
+    // OPTIMIZED: Use memoized defaultSrcMemo and stable dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSrcMemo, loop, autoPlay, volume]); // Removed unmute from deps - it's stable
 
   // Update volume
   useEffect(() => {
@@ -226,27 +226,29 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     'bottom-right': 'bottom-4 right-4',
   };
 
-  // Hide controls if not available or showControls is false
-  if (!showControls || !isAvailable) {
+  // Hide controls if not available, showControls is false, or admin path
+  if (!showControls || !isAvailable || (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin'))) {
     return null;
   }
 
   return (
     <div
-      className={`fixed ${positionClasses[controlsPosition]} z-50 bg-gold-900/90 backdrop-blur-sm rounded-lg sm:rounded-xl p-2.5 sm:p-3 shadow-lg border border-gold-700/50`}
+      className={`fixed ${positionClasses[controlsPosition]} z-50 bg-gold-900/97 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-3.5 lg:p-4 shadow-[0_12px_32px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.2)_inset] border-2 border-gold-700/60 hover:border-gold-600/80 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.3)_inset] group`}
       style={{ minWidth: 'clamp(180px, 200px, 240px)' }}
     >
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/25 via-musical-500/15 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-md pointer-events-none" aria-hidden />
+      <div className="flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 relative z-10">
         {/* Play/Pause Button */}
         <button
           onClick={togglePlay}
-          className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold-600 hover:bg-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px]"
+          className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] shadow-[0_4px_12px_rgba(255,194,51,0.4)] hover:shadow-[0_8px_20px_rgba(255,194,51,0.6)] group/play"
           aria-label={isPlaying ? 'Pause' : 'Play'}
           title={isPlaying ? 'Pause music' : 'Play music'}
         >
+          <div className="absolute -inset-1 bg-gold-400/40 rounded-full opacity-0 group-hover/play:opacity-100 transition-opacity duration-300 blur-sm pointer-events-none" aria-hidden />
           {isPlaying ? (
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover/play:scale-110"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -259,7 +261,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
             </svg>
           ) : (
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5"
+              className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5 relative z-10 transition-transform duration-300 group-hover/play:scale-110"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -311,7 +313,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
             )}
           </button>
 
-          {/* Volume Slider */}
+          {/* Enhanced Volume Slider */}
           <input
             type="range"
             min="0"
@@ -319,9 +321,9 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
             step="0.01"
             value={isMuted ? 0 : currentVolume}
             onChange={handleVolumeChange}
-            className="flex-1 h-1.5 sm:h-2 bg-gold-800 rounded-lg appearance-none cursor-pointer accent-gold-400 min-w-0"
+            className="flex-1 h-1.5 sm:h-2 bg-gold-800/60 rounded-lg appearance-none cursor-pointer accent-gold-400 min-w-0 hover:accent-gold-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400/60 focus:ring-offset-2 focus:ring-offset-gold-900"
             style={{
-              background: `linear-gradient(to right, #ffc233 0%, #ffc233 ${(isMuted ? 0 : currentVolume) * 100}%, #4a5568 ${(isMuted ? 0 : currentVolume) * 100}%, #4a5568 100%)`,
+              background: `linear-gradient(to right, #ffc233 0%, #ffc233 ${(isMuted ? 0 : currentVolume) * 100}%, rgba(74, 85, 104, 0.6) ${(isMuted ? 0 : currentVolume) * 100}%, rgba(74, 85, 104, 0.6) 100%)`,
             }}
             aria-label="Volume"
           />
@@ -330,19 +332,25 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
 
       {/* Tap to unmute hint - when autoplay muted */}
       {isPlaying && isMuted && (
-        <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/90 text-center animate-pulse">
-          Tap anywhere to unmute
+        <div className="mt-2 sm:mt-2.5 text-xs sm:text-sm text-gold-300/95 text-center animate-pulse font-medium leading-relaxed relative z-10">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="text-base sm:text-lg animate-float">🎵</span>
+            <span>Tap anywhere to unmute</span>
+          </span>
         </div>
       )}
 
       {error && error !== 'File not found' && (
-        <div className="mt-1.5 sm:mt-2 text-xs text-red-300 bg-red-900/30 p-1.5 sm:p-2 rounded text-center">
+        <div className="mt-2 sm:mt-2.5 text-xs sm:text-sm text-red-300 bg-red-900/40 p-2 sm:p-2.5 rounded-lg text-center border border-red-700/50 relative z-10">
           {error}
         </div>
       )}
 
-      <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/70 text-center">
-        🎵 Background Music
+      <div className="mt-2 sm:mt-2.5 text-xs sm:text-sm text-gold-300/80 text-center font-medium leading-relaxed relative z-10">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="text-base sm:text-lg animate-float font-musical" style={{ animationDelay: '0.5s' }}>♪</span>
+          <span>Background Music</span>
+        </span>
       </div>
     </div>
   );

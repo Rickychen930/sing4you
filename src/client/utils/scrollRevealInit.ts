@@ -66,37 +66,24 @@ export const initScrollReveal = () => {
 };
 
 let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
-let fallbackCheckInterval: ReturnType<typeof setInterval> | null = null;
 
-/** Fallback: reveal any remaining elements after delay. Call on init + route change. */
+/** OPTIMIZED: Fallback: reveal any remaining elements after delay. Single check only. */
 function setupScrollRevealFallback() {
   if (typeof window === 'undefined') return;
   if (fallbackTimer) clearTimeout(fallbackTimer);
-  if (fallbackCheckInterval) clearInterval(fallbackCheckInterval);
 
+  // OPTIMIZED: Single timeout instead of setInterval - much more efficient
   fallbackTimer = setTimeout(() => {
     document.querySelectorAll('.scroll-reveal-io:not(.revealed)').forEach((el) => {
       el.classList.add('revealed');
     });
     fallbackTimer = null;
   }, 2000);
-
-  let ticks = 0;
-  fallbackCheckInterval = setInterval(() => {
-    ticks++;
-    const unrevealed = document.querySelectorAll('.scroll-reveal-io:not(.revealed)');
-    if (unrevealed.length === 0 || ticks >= 10) {
-      if (fallbackTimer) clearTimeout(fallbackTimer);
-      if (fallbackCheckInterval) clearInterval(fallbackCheckInterval);
-      fallbackTimer = null;
-      fallbackCheckInterval = null;
-    }
-  }, 1000);
 }
 
 export const initScrollRevealWithFallback = () => {
   if (fallbackTimer) clearTimeout(fallbackTimer);
-  if (fallbackCheckInterval) clearInterval(fallbackCheckInterval);
+  // OPTIMIZED: Removed fallbackCheckInterval - no longer used
   initScrollReveal();
   setupScrollRevealFallback();
 };

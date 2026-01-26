@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { MusicalBackground } from '../ui/MusicalBackground';
 import { ScrollToTop } from '../ui/ScrollToTop';
 import { CursorEffect } from '../ui/CursorEffect';
 import { BackgroundMusic } from '../ui/BackgroundMusic';
@@ -21,12 +20,11 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
       <a href="#main-content" className="skip-to-main">
         Skip to main content
       </a>
-      {/* Disabled MusicalBackground for better performance */}
-      {/* {!isAdmin && <MusicalBackground intensity="low" />} */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold-900/5 to-jazz-900/10 pointer-events-none z-0" />
-      <div className="absolute inset-0 bg-gradient-to-r from-musical-900/5 via-transparent to-gold-900/5 pointer-events-none z-0" />
-      <div className="absolute top-16 sm:top-20 left-4 sm:left-5 lg:left-10 text-3xl sm:text-4xl lg:text-5xl text-gold-900/8 sm:text-gold-900/6 pointer-events-none z-0 font-musical select-none drop-shadow-[0_0_15px_rgba(255,194,51,0.1)]">♪</div>
-      <div className="absolute top-32 sm:top-40 right-6 sm:right-10 lg:right-20 text-2xl sm:text-3xl lg:text-4xl text-musical-900/8 sm:text-musical-900/6 pointer-events-none z-0 font-musical select-none drop-shadow-[0_0_15px_rgba(168,85,247,0.1)]">♫</div>
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold-900/5 to-jazz-900/6 pointer-events-none z-0" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-r from-musical-900/5 via-transparent to-gold-900/5 pointer-events-none z-0" aria-hidden />
+      <span className="absolute top-20 left-6 lg:left-12 text-2xl sm:text-3xl text-gold-400/20 font-musical animate-float select-none pointer-events-none z-0" style={{ animationDelay: '0s' }} aria-hidden>♪</span>
+      <span className="absolute top-36 right-8 lg:right-16 text-xl sm:text-2xl text-musical-400/20 font-musical animate-float select-none pointer-events-none z-0" style={{ animationDelay: '2s' }} aria-hidden>♫</span>
+      
       <Header isAdmin={isAdmin} />
       <main id="main-content" className="flex-grow pt-14 sm:pt-16 lg:pt-18 xl:pt-20 relative z-10" tabIndex={-1}>
         {mainContent}

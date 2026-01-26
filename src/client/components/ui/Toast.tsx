@@ -52,21 +52,19 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
   return (
     <div
       className={cn(
-        'flex items-start gap-3 sm:gap-4 p-4 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-500 animate-slide-in hover:scale-[1.03] transform shadow-[0_12px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.1)_inset] hover:shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.15)_inset,0_0_30px_currentColor] backdrop-blur-lg relative overflow-hidden group',
+        'flex items-start gap-3 sm:gap-4 p-4 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 animate-slide-in hover:scale-[1.02] transform shadow-[0_8px_24px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.1)_inset] hover:shadow-[0_12px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.12)_inset,0_0_20px_currentColor] backdrop-blur-sm relative overflow-hidden group',
+        /* OPTIMIZED: Reduced backdrop-blur-lg to backdrop-blur-sm, duration, scale, and shadow complexity */
         variants[toast.type]
       )}
       role="alert"
       aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
       aria-atomic="true"
     >
-      {/* Enhanced multi-layer glow effect */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-30 pointer-events-none transition-opacity duration-500">
-        <div className="absolute top-0 left-0 w-40 h-40 sm:w-48 sm:h-48 rounded-full blur-2xl bg-current"></div>
-        <div className="absolute bottom-0 right-0 w-32 h-32 sm:w-40 sm:h-40 rounded-full blur-xl bg-current opacity-60"></div>
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-20 pointer-events-none transition-opacity duration-300" aria-hidden>
+        <div className="absolute top-0 left-0 w-32 h-32 sm:w-40 sm:h-40 rounded-full blur-lg bg-current" />
       </div>
-      {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
       </div>
       
       <div className="flex-shrink-0 mt-0.5 relative z-10" aria-hidden="true">

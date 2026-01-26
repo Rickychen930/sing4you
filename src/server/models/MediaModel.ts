@@ -48,7 +48,7 @@ export class MediaModel {
     try {
       const model = this.getModel();
       return await model.find().populate('variationId').sort({ order: 1, createdAt: 1 }).lean();
-    } catch (error) {
+    } catch {
       // If populate fails, return without populate
       const model = this.getModel();
       return await model.find().sort({ order: 1, createdAt: 1 }).lean();
@@ -63,7 +63,7 @@ export class MediaModel {
         return null;
       }
       return await model.findById(id).populate('variationId').lean();
-    } catch (error) {
+    } catch {
       // If populate fails, return without populate
       const model = this.getModel();
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -81,7 +81,7 @@ export class MediaModel {
         return [];
       }
       return await model.find({ variationId }).sort({ order: 1, createdAt: 1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -105,7 +105,7 @@ export class MediaModel {
       }
       const result = await model.findByIdAndUpdate(id, { $set: data }, { new: true }).populate('variationId').lean();
       return result;
-    } catch (error) {
+    } catch {
       // If populate fails, return without populate
       const model = this.getModel();
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -124,7 +124,7 @@ export class MediaModel {
       }
       const result = await model.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -138,7 +138,7 @@ export class MediaModel {
       }
       const result = await model.deleteMany({ variationId });
       return result.deletedCount > 0;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -43,9 +43,15 @@ export const VariationsManagementPage: React.FC = () => {
     id: null,
   });
 
+  // OPTIMIZED: Load data only once on mount - portfolio doesn't need real-time updates
+  const hasLoadedRef = useRef(false);
+  
   useEffect(() => {
-    loadData();
-  }, []);
+    if (!hasLoadedRef.current) {
+      loadData();
+      hasLoadedRef.current = true;
+    }
+  }, []); // Empty deps - only load once
 
   const loadData = async () => {
     try {

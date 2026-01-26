@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -19,9 +19,15 @@ export const HeroManagementPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  // OPTIMIZED: Load settings only once on mount - portfolio doesn't need real-time updates
+  const hasLoadedRef = useRef(false);
+  
   useEffect(() => {
-    loadSettings();
-  }, []);
+    if (!hasLoadedRef.current) {
+      loadSettings();
+      hasLoadedRef.current = true;
+    }
+  }, []); // Empty deps - only load once
 
   const loadSettings = async () => {
     try {

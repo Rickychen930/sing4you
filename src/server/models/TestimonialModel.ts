@@ -42,7 +42,7 @@ export class TestimonialModel {
     try {
       const model = this.getModel();
       return await model.find().sort({ createdAt: -1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -55,7 +55,7 @@ export class TestimonialModel {
         return null;
       }
       return await model.findById(id).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -78,7 +78,7 @@ export class TestimonialModel {
         return null;
       }
       return await model.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -92,7 +92,7 @@ export class TestimonialModel {
       }
       const result = await model.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

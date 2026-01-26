@@ -81,7 +81,7 @@ export const PerformanceSection: React.FC<PerformanceSectionProps> = memo(({
                 <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300" style={{ textShadow: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)' }}>
                   {section.title}
                 </h3>
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-50/95 sm:text-gray-50 mb-6 sm:mb-7 lg:mb-8 xl:mb-10 whitespace-pre-line leading-relaxed font-normal group-hover:text-gray-50 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)' }}>{section.description}</p>
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-sans mb-6 sm:mb-7 lg:mb-8 xl:mb-10 whitespace-pre-line leading-relaxed group-hover:text-gray-100 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)' }}>{section.description}</p>
                 {section.media && section.media.length > 0 && (
                   <div className="mb-6 sm:mb-7 lg:mb-8 xl:mb-10">
                     <MediaGallery media={section.media} />
@@ -92,13 +92,18 @@ export const PerformanceSection: React.FC<PerformanceSectionProps> = memo(({
                 <Button
                   variant="primary"
                   size="md"
-                  className="w-full transition-all duration-300 hover:shadow-[0_12px_32px_rgba(255,194,51,0.4)]"
+                  className="w-full transition-all duration-300 hover:shadow-[0_8px_24px_rgba(255,194,51,0.35)] group/btn"
                   onClick={() => {
                     const message = `Hi Christina, I'd like to know more about your ${section.title} service.`;
                     window.open(generateWhatsAppLink(message), '_blank');
                   }}
                 >
-                  More Information
+                  <span className="flex items-center justify-center gap-2">
+                    More Information
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
                 </Button>
               </CardFooter>
             </Card>

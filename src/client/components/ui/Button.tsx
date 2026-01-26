@@ -17,13 +17,17 @@ export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(({
   type = 'button',
   ...props
 }, ref) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus-ring-advanced disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none relative overflow-hidden group transform active:scale-[0.98] font-sans';
+  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none relative overflow-hidden group transform active:scale-[0.98] font-sans';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 hover:scale-[1.06] shadow-[0_6px_20px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.2)] hover:shadow-[0_16px_40px_rgba(255,194,51,0.7),0_0_0_2px_rgba(255,194,51,0.4),0_0_40px_rgba(255,194,51,0.5),0_0_60px_rgba(255,194,51,0.3)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/40 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-1000 before:ease-in-out after:absolute after:inset-0 after:rounded-xl after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-500 after:bg-gradient-to-r after:from-gold-400/30 after:via-transparent after:to-gold-400/30 hover-lift-advanced neon-glow',
-    secondary: 'bg-gradient-to-r from-jazz-800 via-musical-700 to-jazz-800 text-white hover:from-jazz-700 hover:via-musical-600 hover:to-jazz-700 hover:scale-[1.06] shadow-[0_6px_20px_rgba(168,85,247,0.5),0_0_0_1px_rgba(168,85,247,0.2)] hover:shadow-[0_16px_40px_rgba(168,85,247,0.7),0_0_0_2px_rgba(168,85,247,0.4),0_0_40px_rgba(168,85,247,0.5),0_0_60px_rgba(168,85,247,0.3)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-1000 hover-lift-advanced neon-glow-purple',
-    outline: 'border-2 border-gold-500/90 text-gold-300 glass-effect hover:bg-gradient-to-r hover:from-gold-900/80 hover:via-gold-800/70 hover:to-gold-900/80 hover:border-gold-400 hover:text-gold-200 hover:shadow-[0_8px_24px_rgba(255,194,51,0.5),0_0_0_2px_rgba(255,194,51,0.3),0_0_30px_rgba(255,194,51,0.4)] hover:scale-[1.06] hover-lift-advanced backdrop-blur-md',
-    ghost: 'text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/70 hover:to-gold-800/60 hover:text-gold-200 hover:scale-[1.06] hover:shadow-[0_6px_16px_rgba(255,194,51,0.4)] hover-lift-advanced',
+    primary: 'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 hover:scale-[1.04] shadow-[0_4px_16px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.2)] hover:shadow-[0_8px_24px_rgba(255,194,51,0.5),0_0_0_2px_rgba(255,194,51,0.3),0_0_20px_rgba(255,194,51,0.3)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700 before:ease-in-out',
+    /* OPTIMIZED: Reduced scale, shadow complexity, removed neon-glow and hover-lift-advanced */
+    secondary: 'bg-gradient-to-r from-jazz-800 via-musical-700 to-jazz-800 text-white hover:from-jazz-700 hover:via-musical-600 hover:to-jazz-700 hover:scale-[1.04] shadow-[0_4px_16px_rgba(168,85,247,0.4),0_0_0_1px_rgba(168,85,247,0.2)] hover:shadow-[0_8px_24px_rgba(168,85,247,0.5),0_0_0_2px_rgba(168,85,247,0.3),0_0_20px_rgba(168,85,247,0.3)] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700',
+    /* OPTIMIZED: Reduced scale, shadow complexity, removed neon-glow-purple and hover-lift-advanced */
+    outline: 'border-2 border-gold-500/90 text-gold-300 glass-effect hover:bg-gradient-to-r hover:from-gold-900/70 hover:via-gold-800/60 hover:to-gold-900/70 hover:border-gold-400 hover:text-gold-200 hover:shadow-[0_6px_18px_rgba(255,194,51,0.4),0_0_0_2px_rgba(255,194,51,0.25),0_0_15px_rgba(255,194,51,0.3)] hover:scale-[1.04] backdrop-blur-sm',
+    /* OPTIMIZED: Reduced backdrop-blur-md to backdrop-blur-sm, reduced scale and shadow complexity */
+    ghost: 'text-gold-300 hover:bg-gradient-to-r hover:from-gold-900/60 hover:to-gold-800/50 hover:text-gold-200 hover:scale-[1.04] hover:shadow-[0_4px_12px_rgba(255,194,51,0.3)]',
+    /* OPTIMIZED: Reduced scale and shadow complexity */
   };
 
   const sizes = {
@@ -42,35 +46,9 @@ export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(({
       aria-disabled={disabled || isLoading}
       {...props}
     >
-      {/* Enhanced shimmer effect with advanced animation */}
-      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden rounded-xl">
-        <span className="absolute inset-0 shimmer-advanced"></span>
-        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
+      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none overflow-hidden rounded-xl" aria-hidden>
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
       </span>
-      
-      {variant === 'primary' && (
-        <>
-          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <span className="absolute top-2 right-2 text-sm text-white/90 font-musical animate-float-advanced glow-pulse-advanced">♪</span>
-            <span className="absolute bottom-2 left-2 text-sm text-white/70 font-musical animate-float-advanced glow-pulse-advanced" style={{ animationDelay: '0.5s' }}>♫</span>
-            <span className="absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 text-xs text-white/50 font-musical animate-float-advanced" style={{ animationDelay: '1s' }}>♬</span>
-          </span>
-          {/* Enhanced multi-layer glow effect on hover */}
-          <span className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl blur-lg bg-gradient-to-r from-gold-400/50 via-gold-500/60 to-gold-400/50"></span>
-          <span className="absolute -inset-4 opacity-0 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none rounded-xl blur-xl bg-gradient-to-r from-gold-500/30 via-musical-500/30 to-gold-500/30"></span>
-        </>
-      )}
-      
-      {variant === 'secondary' && (
-        <>
-          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <span className="absolute top-2 right-2 text-sm text-white/90 font-musical animate-float-advanced glow-pulse-advanced">♫</span>
-            <span className="absolute bottom-2 left-2 text-sm text-white/70 font-musical animate-float-advanced glow-pulse-advanced" style={{ animationDelay: '0.5s' }}>♪</span>
-          </span>
-          <span className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl blur-lg bg-gradient-to-r from-musical-500/50 via-musical-600/60 to-musical-500/50"></span>
-        </>
-      )}
-      
       {isLoading ? (
         <span className="relative z-10 flex items-center justify-center gap-2 sm:gap-3" aria-live="polite">
           <svg 
@@ -91,15 +69,16 @@ export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(({
     </button>
   );
 }), (prevProps, nextProps) => {
-  // Memo comparison - only re-render if props actually change
+  // OPTIMIZED: Memo comparison - only re-render if props actually change
+  // Skip className comparison for better performance (className changes frequently)
   return (
     prevProps.children === nextProps.children &&
     prevProps.variant === nextProps.variant &&
     prevProps.size === nextProps.size &&
     prevProps.isLoading === nextProps.isLoading &&
     prevProps.disabled === nextProps.disabled &&
-    prevProps.className === nextProps.className &&
     prevProps.onClick === nextProps.onClick
+    // Removed className comparison - it changes too frequently
   );
 });
 

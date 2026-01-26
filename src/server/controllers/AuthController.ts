@@ -57,16 +57,33 @@ export class AuthController {
       });
     } catch (error) {
       const err = error as Error;
-      // Log error for debugging (only in development)
+      
+      // Log error for debugging
+      console.error('❌ Login error:', err.message);
       if (process.env.NODE_ENV === 'development') {
-        console.error('❌ Login error:', err.message);
         console.error('   Stack:', err.stack);
       }
-      // For auth errors, return 401 directly (not 500)
-      res.status(401).json({ 
-        success: false, 
-        error: err.message || 'Invalid credentials' 
-      });
+      
+      // Check if it's an authentication error (should return 401)
+      const isAuthError = err.message.includes('Invalid credentials') || 
+                          err.message.includes('User not found') ||
+                          err.message.includes('Invalid or expired');
+      
+      if (isAuthError) {
+        // For auth errors, return 401
+        res.status(401).json({ 
+          success: false, 
+          error: err.message || 'Invalid credentials' 
+        });
+      } else {
+        // For other errors (database, JWT, etc.), return 500
+        res.status(500).json({ 
+          success: false, 
+          error: process.env.NODE_ENV === 'production' 
+            ? 'Internal server error. Please try again later.' 
+            : err.message || 'An unexpected error occurred'
+        });
+      }
     }
   };
 

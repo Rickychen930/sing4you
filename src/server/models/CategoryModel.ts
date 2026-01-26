@@ -38,7 +38,7 @@ export class CategoryModel {
     try {
       const model = this.getModel();
       return await model.find().sort({ order: 1, createdAt: 1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -51,7 +51,7 @@ export class CategoryModel {
         return null;
       }
       return await model.findById(id).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -60,7 +60,7 @@ export class CategoryModel {
     try {
       const model = this.getModel();
       return await model.findOne({ name }).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -83,7 +83,7 @@ export class CategoryModel {
         return null;
       }
       return await model.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -97,7 +97,7 @@ export class CategoryModel {
       }
       const result = await model.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

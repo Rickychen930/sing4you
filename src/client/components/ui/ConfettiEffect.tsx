@@ -261,26 +261,12 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
       }
     };
 
-    // Check immediately and use RAF instead of setInterval
     checkAndStartAnimation();
-    let rafCheckId: number | null = null;
-    const rafCheck = () => {
-      checkAndStartAnimation();
-      if (isAnimating || confettiRef.current.length > 0) {
-        rafCheckId = requestAnimationFrame(rafCheck);
-      } else {
-        rafCheckId = null;
-      }
-    };
-    rafCheckId = requestAnimationFrame(rafCheck);
 
     return () => {
       isAnimating = false;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (rafCheckId !== null) {
-        cancelAnimationFrame(rafCheckId);
       }
       window.removeEventListener('resize', resizeCanvas);
     };

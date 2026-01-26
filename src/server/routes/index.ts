@@ -130,6 +130,7 @@ router.delete('/api/admin/media/:id', authMiddleware, mediaController.delete);
 const mediaUploadController = new MediaUploadController();
 // Wrap multer middleware to handle errors properly
 const handleUpload = (req: Request, res: Response, next: NextFunction) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uploadMiddleware(req, res, (err: any) => {
     if (err) {
       // Multer errors (file size, file type, etc.)

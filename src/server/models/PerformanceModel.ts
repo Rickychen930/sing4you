@@ -55,7 +55,7 @@ export class PerformanceModel {
     try {
       const model = this.getModel();
       return await model.find().sort({ date: 1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -65,7 +65,7 @@ export class PerformanceModel {
       const model = this.getModel();
       const now = new Date();
       return await model.find({ date: { $gte: now } }).sort({ date: 1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -78,7 +78,7 @@ export class PerformanceModel {
         return null;
       }
       return await model.findById(id).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -101,7 +101,7 @@ export class PerformanceModel {
         return null;
       }
       return await model.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -115,7 +115,7 @@ export class PerformanceModel {
       }
       const result = await model.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

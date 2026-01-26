@@ -180,26 +180,38 @@ export const ContactPage: React.FC = () => {
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 lg:gap-9 xl:gap-11 mb-12 sm:mb-14 lg:mb-18 xl:mb-22">
-            <div className="text-center p-6 sm:p-7 lg:p-9 xl:p-11 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-200 hover:shadow-lg border-2 border-gold-900/50 hover:border-gold-700/70 group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
-              <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 transition-colors duration-200" aria-hidden="true">📱</div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gold-100 group-hover:text-gold-50 mb-4 sm:mb-5 lg:mb-6 xl:mb-7 transition-colors duration-200 leading-tight">WhatsApp</h3>
+            <div className="text-center p-6 sm:p-7 lg:p-9 xl:p-11 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 border-gold-900/50 hover:border-gold-700/70 group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden card-hover-lift">
+              <div className="absolute -inset-2 bg-gold-500/15 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden />
+              <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 transition-all duration-300 group-hover:scale-105 group-hover:rotate-6" aria-hidden>📱</div>
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-gold-200 group-hover:text-gold-100 mb-4 sm:mb-5 lg:mb-6 xl:mb-7 transition-colors duration-300 leading-tight drop-shadow-[0_2px_8px_rgba(255,194,51,0.25)]">WhatsApp</h3>
               <a
                 href={generateWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-base sm:text-lg lg:text-xl text-gold-300 hover:text-gold-100 font-semibold transition-colors duration-200 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 min-h-[48px] sm:min-h-[52px] flex items-center justify-center mx-auto relative z-10 leading-relaxed"
+                className="text-base sm:text-lg lg:text-xl text-gold-300 hover:text-gold-100 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 min-h-[48px] sm:min-h-[52px] flex items-center justify-center mx-auto relative z-10 leading-relaxed hover:scale-105 magnetic-hover"
               >
-                Message us on WhatsApp
+                <span className="flex items-center gap-2">
+                  Message us on WhatsApp
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
               </a>
             </div>
-            <div className="text-center p-6 sm:p-7 lg:p-9 xl:p-11 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-200 hover:shadow-lg border-2 border-gold-900/50 hover:border-gold-700/70 group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden">
-              <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 transition-colors duration-200" aria-hidden="true">✉️</div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gold-100 group-hover:text-gold-50 mb-4 sm:mb-5 lg:mb-6 xl:mb-7 transition-colors duration-200 leading-tight">Email</h3>
+            <div className="text-center p-6 sm:p-7 lg:p-9 xl:p-11 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 border-gold-900/50 hover:border-gold-700/70 group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden card-hover-lift">
+              <div className="absolute -inset-2 bg-gold-500/15 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden />
+              <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 transition-all duration-300 group-hover:scale-105 group-hover:rotate-6" aria-hidden>✉️</div>
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-gold-200 group-hover:text-gold-100 mb-4 sm:mb-5 lg:mb-6 xl:mb-7 transition-colors duration-300 leading-tight drop-shadow-[0_2px_8px_rgba(255,194,51,0.25)]">Email</h3>
               <a
                 href={generateMailtoLink()}
-                className="text-base sm:text-lg lg:text-xl text-gold-300 hover:text-gold-100 font-semibold transition-colors duration-200 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 min-h-[48px] sm:min-h-[52px] flex items-center justify-center mx-auto relative z-10 leading-relaxed"
+                className="text-base sm:text-lg lg:text-xl text-gold-300 hover:text-gold-100 font-semibold transition-all duration-300 hover:underline inline-block focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 min-h-[48px] sm:min-h-[52px] flex items-center justify-center mx-auto relative z-10 leading-relaxed hover:scale-105 magnetic-hover"
               >
-                Send us an email
+                <span className="flex items-center gap-2">
+                  Send us an email
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </span>
               </a>
             </div>
           </div>
@@ -301,8 +313,8 @@ export const ContactPage: React.FC = () => {
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-base sm:text-lg lg:text-xl xl:text-2xl mb-2 sm:mb-2.5 lg:mb-3 leading-relaxed">Submission failed</p>
-                    <p className="text-sm sm:text-base lg:text-lg text-red-100/95 leading-relaxed">There was an error submitting your form. Please try again.</p>
+                    <p className="font-elegant font-semibold text-base sm:text-lg lg:text-xl xl:text-2xl mb-2 sm:mb-2.5 lg:mb-3 leading-relaxed">Submission failed</p>
+                    <p className="text-sm sm:text-base lg:text-lg text-red-100/95 font-sans leading-relaxed">There was an error submitting your form. Please try again.</p>
                   </div>
                 </div>
               </div>

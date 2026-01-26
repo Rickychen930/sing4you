@@ -81,12 +81,13 @@ export class HeroSettingsModel {
       
       // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
       if (settings) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
         const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
         return cleanSettings as IHeroSettings;
       }
       
       return null;
-    } catch (error) {
+    } catch {
       // Return default settings if database query fails
       return {
         title: 'Christina Sings4U',
@@ -115,6 +116,7 @@ export class HeroSettingsModel {
         throw new Error('Failed to update hero settings');
       }
       // Remove Mongoose-specific properties (_id, createdAt, updatedAt) before returning
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
       const { _id, createdAt, updatedAt, ...cleanSettings } = settings as any;
       return cleanSettings as IHeroSettings;
     } catch (error) {

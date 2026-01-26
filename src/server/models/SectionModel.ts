@@ -56,7 +56,7 @@ export class SectionModel {
     try {
       const model = this.getModel();
       return await model.find().sort({ createdAt: -1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -69,7 +69,7 @@ export class SectionModel {
         return null;
       }
       return await model.findById(id).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -78,7 +78,7 @@ export class SectionModel {
     try {
       const model = this.getModel();
       return await model.findOne({ slug }).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -87,7 +87,7 @@ export class SectionModel {
     try {
       const model = this.getModel();
       return await model.find({ type }).sort({ createdAt: -1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -110,7 +110,7 @@ export class SectionModel {
         return null;
       }
       return await model.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -124,7 +124,7 @@ export class SectionModel {
       }
       const result = await model.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

@@ -53,7 +53,7 @@ export class VariationModel {
     try {
       const model = this.getModel();
       return await model.find().populate('categoryId').sort({ order: 1, createdAt: 1 }).lean();
-    } catch (error) {
+    } catch {
       // If populate fails (e.g., invalid reference), return without populate
       const model = this.getModel();
       return await model.find().sort({ order: 1, createdAt: 1 }).lean();
@@ -68,7 +68,7 @@ export class VariationModel {
         return null;
       }
       return await model.findById(id).populate('categoryId').lean();
-    } catch (error) {
+    } catch {
       // If populate fails, return without populate
       const model = this.getModel();
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -86,7 +86,7 @@ export class VariationModel {
         return [];
       }
       return await model.find({ categoryId }).sort({ order: 1, createdAt: 1 }).lean();
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -95,7 +95,7 @@ export class VariationModel {
     try {
       const model = this.getModel();
       return await model.findOne({ slug }).populate('categoryId').lean();
-    } catch (error) {
+    } catch {
       // If populate fails, return without populate
       const model = this.getModel();
       return await model.findOne({ slug }).lean();
@@ -121,7 +121,7 @@ export class VariationModel {
       }
       const result = await model.findByIdAndUpdate(id, { $set: data }, { new: true }).populate('categoryId').lean();
       return result;
-    } catch (error) {
+    } catch {
       // If populate fails, return without populate
       const model = this.getModel();
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -140,7 +140,7 @@ export class VariationModel {
       }
       const result = await model.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

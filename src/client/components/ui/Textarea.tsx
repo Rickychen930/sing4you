@@ -63,7 +63,7 @@ export const Textarea: React.FC<TextareaProps> = memo(({
           className={cn(
             'w-full px-5 sm:px-6 lg:px-7 py-4 sm:py-4.5 lg:py-5 min-h-[140px] sm:min-h-[160px] lg:min-h-[180px] border-2 border-gold-900/50 rounded-xl',
             'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500',
-            'transition-all duration-300 bg-jazz-900/80 text-gray-50',
+            'transition-all duration-300 bg-jazz-900/80 text-gray-200',
             autoResize ? 'resize-none' : 'resize-vertical',
             'backdrop-blur-sm placeholder:text-gray-400/70 placeholder:font-normal text-base sm:text-lg leading-relaxed',
             'hover:border-gold-700/80 hover:bg-jazz-900/95 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2),0_0_0_1px_rgba(255,194,51,0.1)]',
@@ -76,12 +76,10 @@ export const Textarea: React.FC<TextareaProps> = memo(({
           )}
           {...props}
         />
-        {/* Enhanced focus indicator glow */}
-        <div className="absolute inset-0 rounded-xl opacity-0 focus-within:opacity-100 pointer-events-none transition-opacity duration-500 bg-gradient-to-r from-gold-500/20 via-gold-400/15 to-gold-500/20 blur-md"></div>
-        <div className="absolute -inset-1 rounded-xl opacity-0 focus-within:opacity-60 pointer-events-none transition-opacity duration-700 bg-gradient-to-r from-gold-500/30 via-transparent to-musical-500/30 blur-lg"></div>
+        <div className="absolute inset-0 rounded-xl opacity-0 focus-within:opacity-100 pointer-events-none transition-opacity duration-300 bg-gradient-to-r from-gold-500/20 via-gold-400/15 to-gold-500/20 blur-sm" aria-hidden />
         {/* Character count if maxLength is set */}
         {props.maxLength && (
-          <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 text-xs sm:text-sm text-gray-400/90 group-focus-within:text-gray-300 pointer-events-none font-medium transition-colors duration-300 bg-jazz-900/60 px-2 py-1 rounded backdrop-blur-sm">
+          <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 text-xs sm:text-sm text-gray-400/90 group-focus-within:text-gray-200 pointer-events-none font-medium font-sans transition-colors duration-300 bg-jazz-900/60 px-2 py-1 rounded backdrop-blur-sm">
             {(props.value?.toString().length || 0)} / {props.maxLength}
           </div>
         )}
@@ -102,7 +100,7 @@ export const Textarea: React.FC<TextareaProps> = memo(({
       {helperText && !error && (
         <p 
           id={helperId}
-          className="mt-3 sm:mt-3.5 text-base sm:text-lg text-gray-300/90 font-normal leading-relaxed"
+          className="mt-3 sm:mt-3.5 text-base sm:text-lg text-gray-200 font-sans font-normal leading-relaxed"
         >
           {helperText}
         </p>
@@ -110,14 +108,16 @@ export const Textarea: React.FC<TextareaProps> = memo(({
     </div>
   );
 }, (prevProps, nextProps) => {
-  // Memo comparison
+  // OPTIMIZED: Memo comparison - skip className for better performance
   return (
     prevProps.value === nextProps.value &&
     prevProps.error === nextProps.error &&
     prevProps.helperText === nextProps.helperText &&
-    prevProps.className === nextProps.className &&
     prevProps.disabled === nextProps.disabled &&
-    prevProps.maxLength === nextProps.maxLength
+    prevProps.maxLength === nextProps.maxLength &&
+    prevProps.id === nextProps.id &&
+    prevProps.name === nextProps.name
+    // Removed className comparison - it changes too frequently
   );
 });
 

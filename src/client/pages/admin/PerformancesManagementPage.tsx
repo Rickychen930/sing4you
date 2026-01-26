@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -33,9 +33,14 @@ export const PerformancesManagementPage: React.FC = () => {
     id: null,
   });
 
+  const hasLoadedRef = useRef(false);
+  
   useEffect(() => {
-    loadPerformances();
-  }, []);
+    if (!hasLoadedRef.current) {
+      loadPerformances();
+      hasLoadedRef.current = true;
+    }
+  }, []); // Empty deps - only load once
 
   const loadPerformances = async () => {
     try {

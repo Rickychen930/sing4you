@@ -68,7 +68,13 @@ export interface ITokenPayload {
 
 export class AuthService {
   private useMockData(): boolean {
-    return !Database.getInstance().isConnectedToDb();
+    try {
+      return !Database.getInstance().isConnectedToDb();
+    } catch (error) {
+      // If there's an error checking connection, assume not connected and use mock
+      console.error('❌ Error checking database connection:', (error as Error).message);
+      return true;
+    }
   }
 
   private getMockUser() {
@@ -129,68 +135,91 @@ export class AuthService {
       console.log('🔧 Using database for authentication');
     }
     
-    const user = await AdminUserModel.findByEmail(email);
-    if (!user) {
-      // Log for debugging in development
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`❌ Login attempt failed: User not found for email: ${email}`);
-        console.log('💡 Tip: Run "npm run seed" to create admin user');
-        console.log('   Default admin credentials after seeding:');
-        console.log('   Email: admin@christinasings4u.com.au');
-        console.log('   Password: admin123');
+    try {
+      const user = await AdminUserModel.findByEmail(email);
+      if (!user) {
+        // Log for debugging in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`❌ Login attempt failed: User not found for email: ${email}`);
+          console.log('💡 Tip: Run "npm run seed" to create admin user');
+          console.log('   Default admin credentials after seeding:');
+          console.log('   Email: admin@christinasings4u.com.au');
+          console.log('   Password: admin123');
+        }
+        throw new Error('Invalid credentials');
       }
-      throw new Error('Invalid credentials');
-    }
 
-    const isPasswordValid = await AdminUserModel.comparePassword(password, user.password);
-    if (!isPasswordValid) {
-      // Log for debugging in development
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`❌ Login attempt failed: Invalid password for email: ${email}`);
-        console.log('💡 Possible issues:');
-        console.log('   1. Password might be double-hashed (run "npm run seed" to fix)');
-        console.log('   2. Wrong password entered');
-        console.log('   3. Password in database was manually changed');
-        console.log('   Expected password: admin123');
+      const isPasswordValid = await AdminUserModel.comparePassword(password, user.password);
+      if (!isPasswordValid) {
+        // Log for debugging in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`❌ Login attempt failed: Invalid password for email: ${email}`);
+          console.log('💡 Possible issues:');
+          console.log('   1. Password might be double-hashed (run "npm run seed" to fix)');
+          console.log('   2. Wrong password entered');
+          console.log('   3. Password in database was manually changed');
+          console.log('   Expected password: admin123');
+        }
+        throw new Error('Invalid credentials');
       }
-      throw new Error('Invalid credentials');
-    }
 
-    if (!user._id) {
-      throw new Error('User ID is missing');
-    }
+      if (!user._id) {
+        throw new Error('User ID is missing');
+      }
 
-    const payload: ITokenPayload = {
-      userId: user._id.toString(),
-      email: user.email,
-    };
-
-    const accessToken = this.generateAccessToken(payload);
-    const refreshToken = this.generateRefreshToken(payload);
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ Login successful for user: ${user.email}`);
-    }
-
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: user._id.toString(),
+      const payload: ITokenPayload = {
+        userId: user._id.toString(),
         email: user.email,
-        name: user.name,
-      },
-    };
+      };
+
+      const accessToken = this.generateAccessToken(payload);
+      const refreshToken = this.generateRefreshToken(payload);
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ Login successful for user: ${user.email}`);
+      }
+
+      return {
+        accessToken,
+        refreshToken,
+        user: {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+        },
+      };
+    } catch (error) {
+      // Re-throw auth errors as-is
+      if (error instanceof Error && error.message === 'Invalid credentials') {
+        throw error;
+      }
+      // Wrap database errors
+      const err = error as Error;
+      console.error('❌ Database error during login:', err.message);
+      throw new Error(`Database error: ${err.message}`);
+    }
   }
 
   public generateAccessToken(payload: ITokenPayload): string {
-    const options: jwt.SignOptions = { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
-    return jwt.sign(payload, getJWTSecretLazy(), options);
+    try {
+      const options: jwt.SignOptions = { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
+      return jwt.sign(payload, getJWTSecretLazy(), options);
+    } catch (error) {
+      const err = error as Error;
+      console.error('❌ Error generating access token:', err.message);
+      throw new Error(`Failed to generate access token: ${err.message}`);
+    }
   }
 
   public generateRefreshToken(payload: ITokenPayload): string {
-    const options: jwt.SignOptions = { expiresIn: JWT_REFRESH_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
-    return jwt.sign(payload, getJWTRefreshSecretLazy(), options);
+    try {
+      const options: jwt.SignOptions = { expiresIn: JWT_REFRESH_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
+      return jwt.sign(payload, getJWTRefreshSecretLazy(), options);
+    } catch (error) {
+      const err = error as Error;
+      console.error('❌ Error generating refresh token:', err.message);
+      throw new Error(`Failed to generate refresh token: ${err.message}`);
+    }
   }
 
   public verifyAccessToken(token: string): ITokenPayload {

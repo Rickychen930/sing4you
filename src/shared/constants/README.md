@@ -96,6 +96,10 @@ CSS custom properties (variables) are defined in `src/index.css` under `:root`. 
 4. **Keep consistency** - Always use constants instead of hardcoded values
 5. **Update Tailwind config** - If you add new colors, update both `tailwind.config.js` and `colors.ts`
 
+## Design System (Harmony)
+
+See **[DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md)** for senior-designer rules on **colors**, **fonts**, and **effects**. Use it to keep the UI harmonized.
+
 ## Color System
 
 The color system is organized into palettes:

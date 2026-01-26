@@ -55,7 +55,7 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
         },
         {
           threshold: 0.01,
-          rootMargin: '150px', // Load images 150px before they come into view (optimized)
+          rootMargin: '100px', // OPTIMIZED: Reduced from 150px for better performance
         }
       );
 
@@ -123,12 +123,15 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
           onLoad={handleLoad}
           onError={handleError}
           className={cn(
-            'w-full h-full object-cover transition-opacity duration-500',
+            'w-full h-full object-cover transition-opacity duration-300',
+            /* OPTIMIZED: Faster fade-in for better performance */
             fadeIn && !isLoaded && 'opacity-0',
             fadeIn && isLoaded && 'opacity-100 image-fade-in',
             className
           )}
           loading="lazy"
+          decoding="async"
+          fetchPriority="low"
           {...props}
         />
       )}

@@ -170,11 +170,11 @@ export const SHADOWS = {
   purpleGlow: '0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3)',
 } as const;
 
-// Text shadow definitions
+// Text shadow definitions — harmonized (see DESIGN_SYSTEM.md)
 export const TEXT_SHADOWS = {
-  h1: '0 4px 20px rgba(255, 194, 51, 0.3), 0 2px 10px rgba(168, 85, 247, 0.2)',
-  h2: '0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15)',
+  h1: '0 4px 16px rgba(255, 194, 51, 0.25), 0 2px 8px rgba(168, 85, 247, 0.15)',
+  h2: '0 3px 12px rgba(255, 194, 51, 0.22), 0 1px 6px rgba(168, 85, 247, 0.12)',
   h3: '0 2px 10px rgba(255, 194, 51, 0.2)',
-  base: '0 2px 12px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.15)',
+  base: '0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12)',
   link: '0 0 8px rgba(255, 194, 51, 0.4)',
 } as const;

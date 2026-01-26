@@ -27,48 +27,37 @@ export const Card: React.FC<CardProps> = memo(({
         'after:absolute after:inset-0 after:opacity-0 after:transition-all after:duration-400 after:rounded-2xl',
         // Enhanced shadow system with depth
         'shadow-[0_10px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.2)_inset,0_4px_12px_rgba(255,194,51,0.15)]',
-        hover && 'card-3d-tilt hover-lift-advanced transition-all duration-500 hover:scale-[1.03] active:scale-[0.97] hover:shadow-[0_35px_90px_rgba(255,194,51,0.4),0_25px_60px_rgba(168,85,247,0.3),0_15px_40px_rgba(0,0,0,0.7),inset_0_2px_0_rgba(255,255,255,0.25),0_0_50px_rgba(255,194,51,0.3),0_0_80px_rgba(255,194,51,0.15)] hover:border-gold-500/80 hover:before:to-gold-800/70 hover:after:opacity-100 hover:after:bg-gradient-to-br hover:after:from-gold-900/40 hover:after:via-musical-900/40 hover:after:to-transparent hover:ring-2 hover:ring-gold-500/60 hover:ring-offset-2 hover:ring-offset-jazz-900 magnetic-hover-advanced group',
-        !hover && 'transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.7),inset_0_2px_0_rgba(255,255,255,0.15),0_0_30px_rgba(255,194,51,0.2)]',
+        hover && 'card-3d-tilt transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_50px_rgba(255,194,51,0.3),0_10px_30px_rgba(168,85,247,0.2),0_8px_20px_rgba(0,0,0,0.6)] hover:border-gold-500/70 hover:before:to-gold-800/60 hover:after:opacity-100 hover:after:bg-gradient-to-br hover:after:from-gold-900/30 hover:after:via-musical-900/30 hover:after:to-transparent hover:ring-2 hover:ring-gold-500/50 hover:ring-offset-2 hover:ring-offset-jazz-900 group',
+        /* OPTIMIZED: Reduced hover effects, duration, and shadow complexity for better performance */
+        !hover && 'transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,0,0,0.6),inset_0_2px_0_rgba(255,255,255,0.1),0_0_20px_rgba(255,194,51,0.15)]',
+        /* OPTIMIZED: Reduced duration and shadow complexity */
         className
       )}
       {...props}
     >
-      {/* Enhanced animated border on hover */}
-      {hover && (
-          <div className="absolute -inset-0.5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-gold-500/60 via-musical-500/60 to-gold-500/60 blur-sm animate-gradient" style={{ backgroundSize: '200% 200%' }}></div>
-        </div>
-      )}
-      
-      {/* Enhanced musical accent on hover with glow */}
+      {/* OPTIMIZED: Simplified hover effects for better performance */}
       {hover && (
         <>
-          <div className="absolute top-3 right-3 text-2xl sm:text-3xl text-gold-500 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-90 hover:opacity-90 animate-float-advanced neon-glow drop-shadow-[0_0_10px_rgba(255,194,51,0.6)]">
+          <div className="absolute top-2 right-2 text-xl sm:text-2xl text-gold-500/80 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 animate-float" aria-hidden>
             ♪
           </div>
-          <div className="absolute bottom-3 left-3 text-xl sm:text-2xl text-musical-500 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 hover:opacity-70 animate-float-advanced neon-glow-purple drop-shadow-[0_0_10px_rgba(168,85,247,0.6)]" style={{ animationDelay: '1s' }}>
+          <div className="absolute bottom-2 left-2 text-lg sm:text-xl text-musical-500/70 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-60 animate-float" style={{ animationDelay: '1s' }} aria-hidden>
             ♫
           </div>
-          <div className="absolute top-1/2 right-4 text-lg sm:text-xl text-gold-400 transition-all duration-500 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-50 hover:opacity-50 animate-float-advanced drop-shadow-[0_0_8px_rgba(255,194,51,0.4)]" style={{ animationDelay: '0.5s' }}>
-            ♬
-          </div>
         </>
       )}
       
-      {/* Enhanced multi-layer glow effect on hover */}
+      {/* OPTIMIZED: Simplified glow effect - single layer only */}
       {hover && (
-        <>
-          <div className="absolute -inset-2 bg-gradient-to-r from-gold-500 via-gold-500 to-musical-500 rounded-2xl opacity-0 group-hover:opacity-30 hover:opacity-30 transition-opacity duration-500 blur-2xl pointer-events-none -z-10" />
-          <div className="absolute -inset-4 bg-gradient-to-r from-musical-500 via-gold-500 to-musical-500 rounded-2xl opacity-0 group-hover:opacity-20 hover:opacity-20 transition-opacity duration-700 blur-3xl pointer-events-none -z-10" />
-          <div className="absolute -inset-6 bg-gradient-to-r from-gold-500 via-transparent to-musical-500 rounded-2xl opacity-0 group-hover:opacity-10 hover:opacity-10 transition-opacity duration-1000 blur-[40px] pointer-events-none -z-10" />
-        </>
+        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/40 via-musical-500/40 to-gold-500/40 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-lg pointer-events-none -z-10" aria-hidden />
       )}
       
-      {/* Enhanced shimmer effect overlay */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl overflow-hidden">
-        <div className="absolute inset-0 shimmer-advanced"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-      </div>
+      {/* OPTIMIZED: Simplified shimmer effect */}
+      {hover && (
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" aria-hidden />
+        </div>
+      )}
       
       <div className="relative z-30 h-full">
         {children}
@@ -76,13 +65,13 @@ export const Card: React.FC<CardProps> = memo(({
     </div>
   );
 }, (prevProps, nextProps) => {
-  // Memo comparison
+  // OPTIMIZED: Memo comparison - skip className for better performance
   return (
     prevProps.children === nextProps.children &&
-    prevProps.className === nextProps.className &&
     prevProps.hover === nextProps.hover &&
     prevProps.role === nextProps.role &&
     prevProps['aria-label'] === nextProps['aria-label']
+    // Removed className comparison - it changes too frequently
   );
 });
 

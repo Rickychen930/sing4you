@@ -110,7 +110,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-2 sm:mb-2.5 lg:mb-3">
+        <label className="block text-sm sm:text-base font-medium text-gray-200 font-sans mb-2 sm:mb-2.5 lg:mb-3">
           {label}
         </label>
       )}
@@ -119,7 +119,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
         {/* Preview */}
         {showPreview && preview && (
           <div className="relative w-full max-w-md mx-auto sm:mx-0">
-            <div className="relative aspect-video rounded-lg sm:rounded-xl overflow-hidden border-2 border-gold-900/60 sm:border-gold-900/50 hover:border-gold-800/70 bg-gradient-to-br from-jazz-900/80 sm:from-jazz-900/70 to-jazz-800/80 sm:to-jazz-800/70 shadow-[0_10px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.15)_inset] hover:shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.25)_inset] backdrop-blur-sm group transition-all duration-500">
+            <div className="relative aspect-video rounded-lg sm:rounded-xl overflow-hidden border-2 border-gold-900/60 sm:border-gold-900/50 hover:border-gold-800/70 bg-gradient-to-br from-jazz-900/80 sm:from-jazz-900/70 to-jazz-800/80 sm:to-jazz-800/70 shadow-[0_10px_28px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,194,51,0.12)_inset] hover:shadow-[0_14px_36px_rgba(255,194,51,0.25),0_0_0_1px_rgba(255,194,51,0.2)_inset] backdrop-blur-sm group transition-all duration-300 hover:scale-[1.01]">
+              <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/20 via-musical-500/15 to-gold-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-md pointer-events-none" aria-hidden />
               {preview.startsWith('data:video') || preview.includes('video') ? (
                 <video
                   src={preview}
@@ -130,13 +131,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                 <img
                   src={preview}
                   alt="Preview"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                 />
               )}
               <button
                 type="button"
                 onClick={handleRemove}
-                className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-red-600/95 sm:bg-red-600/90 hover:bg-red-600 text-white rounded-full p-1.5 sm:p-2 hover:scale-110 active:scale-95 transition-all duration-300 shadow-[0_8px_24px_rgba(239,68,68,0.4)] hover:shadow-[0_12px_32px_rgba(239,68,68,0.6),0_0_30px_rgba(239,68,68,0.3)] backdrop-blur-sm border-2 border-red-500/60 sm:border-red-500/50 hover:border-red-400/80 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center hover:drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]"
+                className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-red-600/95 sm:bg-red-600/90 hover:bg-red-600 text-white rounded-full p-1.5 sm:p-2 hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_6px_18px_rgba(239,68,68,0.35)] hover:shadow-[0_8px_24px_rgba(239,68,68,0.45)] backdrop-blur-sm border-2 border-red-500/60 sm:border-red-500/50 hover:border-red-400/80 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center hover:drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"
                 aria-label="Remove image"
               >
                 <svg
@@ -175,10 +176,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
             className={cn(
               'px-4 sm:px-5 lg:px-6 py-2.5 sm:py-3 border-2 border-gold-900/60 sm:border-gold-900/50 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold',
               'text-gray-200 bg-jazz-900/90 sm:bg-jazz-900/80 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-gold-800/50',
-              'hover:border-gold-700/80 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2),0_0_0_1px_rgba(255,194,51,0.1)]',
+              'hover:border-gold-700/80 hover:shadow-[0_8px_20px_rgba(255,194,51,0.3),0_0_0_1px_rgba(255,194,51,0.15)]',
               'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-jazz-900/80',
-              'transition-all duration-300 min-h-[44px] sm:min-h-[48px] flex items-center justify-center w-full sm:w-auto hover:drop-shadow-[0_0_8px_rgba(255,194,51,0.3)]'
+              'transition-all duration-300 min-h-[44px] sm:min-h-[48px] flex items-center justify-center w-full sm:w-auto hover:drop-shadow-[0_0_10px_rgba(255,194,51,0.4)] hover:scale-[1.02] active:scale-[0.98] group/upload'
             )}
           >
             {isUploading ? (
@@ -186,10 +187,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                 <LoadingSpinner size="sm" />
                 <span className="text-sm sm:text-base">Uploading...</span>
               </span>
-            ) : value ? (
-              'Change Image'
             ) : (
-              'Upload Image'
+              <span className="flex items-center gap-2">
+                {value ? 'Change Image' : 'Upload Image'}
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover/upload:translate-y-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </span>
             )}
           </button>
           {value && (
@@ -209,7 +213,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
 
         {/* Current URL Display */}
         {value && !preview && (
-          <div className="text-xs sm:text-sm text-gray-300/95 sm:text-gray-300 break-all">
+          <div className="text-xs sm:text-sm text-gray-200 font-sans break-all">
             Current: <a href={value} target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]">{value}</a>
           </div>
         )}
@@ -221,14 +225,15 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
     </div>
   );
 }, (prevProps, nextProps) => {
+  // OPTIMIZED: Memo comparison - skip className for better performance
   return (
     prevProps.value === nextProps.value &&
     prevProps.label === nextProps.label &&
-    prevProps.className === nextProps.className &&
     prevProps.accept === nextProps.accept &&
     prevProps.maxSizeMB === nextProps.maxSizeMB &&
     prevProps.showPreview === nextProps.showPreview &&
     prevProps.onChange === nextProps.onChange
+    // Removed className comparison - it changes too frequently
   );
 });
 

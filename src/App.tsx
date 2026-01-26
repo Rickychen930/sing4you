@@ -34,19 +34,27 @@ const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const [isChecking, setIsChecking] = useState(true);
+  const hasCheckedRef = useRef(false);
 
   useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        checkAuth();
-        // Small delay to ensure token is checked
-        await new Promise(resolve => setTimeout(resolve, 100));
-      } finally {
-        setIsChecking(false);
-      }
-    };
-    verifyAuth();
-  }, [checkAuth]);
+    // OPTIMIZED: Only check auth once - no need to re-check repeatedly for portfolio
+    if (!hasCheckedRef.current) {
+      const verifyAuth = async () => {
+        try {
+          checkAuth();
+          // Small delay to ensure token is checked
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } finally {
+          setIsChecking(false);
+          hasCheckedRef.current = true;
+        }
+      };
+      verifyAuth();
+    } else {
+      setIsChecking(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only check once on mount
 
   if (isChecking) {
     return (
@@ -101,13 +109,20 @@ const ScrollRevealHandler: React.FC = () => {
 };
 
 function App() {
+  // OPTIMIZED: Use selector to get stable reference - checkAuth is stable from Zustand
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  const hasCheckedAuthRef = useRef(false);
 
   useEffect(() => {
-    checkAuth();
+    // OPTIMIZED: Only check auth once on mount for portfolio (no need to check repeatedly)
+    if (!hasCheckedAuthRef.current) {
+      checkAuth();
+      hasCheckedAuthRef.current = true;
+    }
     // Scroll reveal will be handled by ScrollRevealHandler and auto-init
     // No need to call again here to avoid duplicate calls
-  }, [checkAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only run once on mount
 
   const toasts = useToastStore((state) => state.toasts);
   const removeToast = useToastStore((state) => state.removeToast);

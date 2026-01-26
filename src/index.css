@@ -120,6 +120,7 @@
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
+  }
 
   body {
     /* Using CSS variables for consistency */
@@ -157,32 +158,22 @@
     left: 0;
     right: 0;
     bottom: 0;
+    /* REDUCED gradient layers for better performance */
     background-image: 
-      radial-gradient(circle at 20% 50%, rgba(255, 194, 51, 0.25) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
-      radial-gradient(circle at 40% 20%, rgba(16, 42, 67, 0.4) 0%, transparent 60%),
-      radial-gradient(circle at 60% 60%, rgba(232, 168, 34, 0.15) 0%, transparent 70%),
-      radial-gradient(circle at 90% 30%, rgba(147, 51, 234, 0.18) 0%, transparent 50%),
-      radial-gradient(circle at 10% 80%, rgba(255, 194, 51, 0.1) 0%, transparent 40%),
-      radial-gradient(circle at 70% 15%, rgba(168, 85, 247, 0.12) 0%, transparent 45%);
+      radial-gradient(circle at 20% 50%, rgba(255, 194, 51, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(16, 42, 67, 0.3) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
-    animation: gentlePulse 20s ease-in-out infinite, musicalGlow 15s ease-in-out infinite;
+    /* SIMPLIFIED animation - removed musicalGlow for better performance */
+    animation: gentlePulse 25s ease-in-out infinite;
     transform: translateZ(0); /* Force GPU acceleration */
     backface-visibility: hidden;
-    contain: layout style paint; /* Isolate rendering */
+    contain: strict; /* More aggressive containment */
+    /* OPTIMIZED: Removed will-change - gentlePulse animation is slow enough (25s) */
   }
   
-  @keyframes musicalGlow {
-    0%, 100% {
-      filter: blur(0px);
-      opacity: 1;
-    }
-    50% {
-      filter: blur(2px);
-      opacity: 0.9;
-    }
-  }
+  /* REMOVED musicalGlow animation - too expensive for performance */
   
   body::after {
     content: '';
@@ -191,36 +182,33 @@
     left: 0;
     right: 0;
     bottom: 0;
+    /* SIMPLIFIED background - removed complex patterns for better performance */
     background-image: 
-      /* Musical notes pattern */
-      url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='20' fill='rgba(255,194,51,0.03)' font-size='24' font-family='serif'%3E♪%3C/text%3E%3Ctext x='40' y='50' fill='rgba(168,85,247,0.03)' font-size='28' font-family='serif'%3E♫%3C/text%3E%3Ctext x='70' y='80' fill='rgba(255,194,51,0.03)' font-size='22' font-family='serif'%3E♬%3C/text%3E%3Ctext x='20' y='65' fill='rgba(147,51,234,0.03)' font-size='26' font-family='serif'%3E♩%3C/text%3E%3C/svg%3E"),
       repeating-linear-gradient(
         45deg,
         transparent,
-        transparent 2px,
-        rgba(255, 194, 51, 0.015) 2px,
-        rgba(255, 194, 51, 0.015) 4px
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 3px,
-        rgba(168, 85, 247, 0.01) 3px,
-        rgba(168, 85, 247, 0.01) 6px
+        transparent 4px,
+        rgba(255, 194, 51, 0.01) 4px,
+        rgba(255, 194, 51, 0.01) 8px
       );
-    background-size: 200px 200px, 20px 20px, 30px 30px;
-    animation: musicalPatternMove 30s linear infinite;
+    background-size: 40px 40px;
+    /* SLOWER animation for better performance */
+    animation: musicalPatternMove 60s linear infinite;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.6;
+    opacity: 0.4;
+    /* Optimize rendering */
+    contain: strict;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   
   @keyframes musicalPatternMove {
     0% {
-      background-position: 0% 0%, 0 0, 0 0;
+      background-position: 0% 0%;
     }
     100% {
-      background-position: 200px 200px, 20px 20px, 30px 30px;
+      background-position: 40px 40px;
     }
   }
   
@@ -229,7 +217,7 @@
       opacity: 1;
     }
     50% {
-      opacity: 0.85;
+      opacity: 0.9;
     }
   }
   
@@ -246,37 +234,34 @@
       background-position: 100% 50%;
     }
   }
-  /* Typography System - Harmonized */
+  /* Typography — Harmonized (see shared/constants/DESIGN_SYSTEM.md) */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1.2;
-    text-shadow: 0 2px 12px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.15);
+    text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12);
     margin-bottom: 0.75em;
     font-feature-settings: 'liga', 'kern';
   }
-  
+
   h1 {
     @apply text-gold-100;
     font-size: clamp(2.5rem, 5vw, 4.5rem);
-    font-weight: 700;
     letter-spacing: -0.02em;
-    line-height: 1.2;
-    text-shadow: 0 4px 20px rgba(255, 194, 51, 0.3), 0 2px 10px rgba(168, 85, 247, 0.2);
+    text-shadow: 0 4px 16px rgba(255, 194, 51, 0.25), 0 2px 8px rgba(168, 85, 247, 0.15);
     margin-bottom: 1.25rem;
   }
-  
+
   h2 {
     @apply text-gold-50;
     font-size: clamp(2rem, 4vw, 3.5rem);
-    font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.3;
-    text-shadow: 0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15);
+    text-shadow: 0 3px 12px rgba(255, 194, 51, 0.22), 0 1px 6px rgba(168, 85, 247, 0.12);
     margin-bottom: 1rem;
   }
-  
+
   h3 {
     @apply text-gold-100;
     font-size: clamp(1.5rem, 3vw, 2.25rem);
@@ -286,37 +271,36 @@
     text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2);
     margin-bottom: 0.875rem;
   }
-  
+
   h4, h5, h6 {
     @apply text-gold-300;
     font-weight: 600;
     letter-spacing: -0.015em;
     text-shadow: 0 1px 6px rgba(255, 194, 51, 0.15);
   }
-  
+
   p {
-    @apply text-gray-100;
+    @apply text-gray-200;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height: 1.8;
     margin-bottom: 1.25em;
     font-weight: 400;
     letter-spacing: 0;
     font-size: clamp(1rem, 1.1vw, 1.125rem);
-    /* Enhanced readability */
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   strong, b {
     font-weight: 600;
     @apply text-gold-300;
   }
-  
+
   em, i {
     font-style: italic;
   }
-  
+
   a {
     @apply text-gold-300;
     text-decoration: none;
@@ -327,8 +311,8 @@
   }
 
   a:hover {
-    @apply text-gold-100;
-    text-shadow: 0 0 8px rgba(255, 194, 51, 0.5);
+    @apply text-gold-200;
+    text-shadow: 0 0 8px rgba(255, 194, 51, 0.4);
     transform: translateY(-1px);
   }
 
@@ -390,7 +374,7 @@
     max-width: 100%;
   }
   .prose blockquote {
-    @apply border-l-4 border-gold-500 pl-5 sm:pl-6 italic my-5 sm:my-6 text-base sm:text-lg bg-gold-900/25 text-gray-200 py-3 rounded-r-lg;
+    @apply border-l-4 border-gold-500 pl-5 sm:pl-6 italic my-5 sm:my-6 text-base sm:text-lg bg-gold-900/20 text-gray-200 py-3 rounded-r-lg;
     line-height: 1.7;
   }
   .line-clamp-2 {
@@ -471,21 +455,21 @@
 
 .animate-slide-in {
   animation: slide-in 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: opacity, transform;
+  /* OPTIMIZED: Removed will-change - animation is short-lived */
   backface-visibility: hidden;
   transform: translateZ(0);
 }
 
 .animate-fade-in {
   animation: fade-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: opacity;
+  /* OPTIMIZED: Removed will-change - animation is short-lived */
   backface-visibility: hidden;
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   animation-fill-mode: forwards;
-  will-change: opacity, transform;
+  /* OPTIMIZED: Removed will-change - animation is short-lived */
   backface-visibility: hidden;
   transform: translateZ(0);
 }
@@ -529,14 +513,13 @@
 }
 
 /* Image fade-in animation */
+/* OPTIMIZED: Image fade-in animation - Faster and simpler */
 @keyframes imageFadeIn {
   from {
     opacity: 0;
-    transform: scale(1.05);
   }
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
@@ -586,7 +569,8 @@
 }
 
 .image-fade-in {
-  animation: imageFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: imageFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* OPTIMIZED: Faster animation for better performance */
 }
 
 .skeleton-shimmer {
@@ -656,34 +640,35 @@ p, li, span {
   text-rendering: optimizeLegibility;
 }
 
-/* Performance optimizations for animations */
+/* Performance optimizations for animations - OPTIMIZED */
 .card-hover-lift,
 .button-ripple,
 .magnetic-hover,
 .scroll-reveal,
 .scroll-reveal-io {
-  will-change: auto;
+  /* Removed will-change: auto - only set on hover */
   transform: translateZ(0); /* Force GPU acceleration */
   backface-visibility: hidden;
-  perspective: 1000px;
+  /* Removed perspective - only when needed */
   contain: layout style paint; /* Isolate rendering */
-  /* Only set will-change on hover for better performance */
 }
 
-.card-hover-lift:hover,
-.button-ripple:active,
+/* OPTIMIZED: Only set will-change during active hover/active states - removed for better performance */
+/* Removed will-change from hover states - browser handles optimization automatically */
+/* Modern browsers optimize transforms without explicit will-change */
+.card-hover-lift:hover {
+  /* Removed will-change - browser optimizes automatically */
+}
+
+.button-ripple:active {
+  /* Removed will-change - browser optimizes automatically */
+}
+
 .magnetic-hover:hover {
-  will-change: transform, opacity, box-shadow;
+  /* Removed will-change - browser optimizes automatically */
 }
 
-/* Remove will-change when not hovering for better performance */
-.card-hover-lift:not(:hover),
-.button-ripple:not(:active),
-.magnetic-hover:not(:hover) {
-  will-change: auto;
-}
-
-/* Optimize all animated elements for smooth 60fps */
+/* Optimize all animated elements for smooth 60fps - OPTIMIZED */
 .animate-float,
 .animate-float-advanced,
 .animate-pulse,
@@ -692,10 +677,11 @@ p, li, span {
 .animate-shimmer,
 .animate-shimmer-advanced,
 .animate-gradient {
-  will-change: transform, opacity;
+  /* Removed will-change - only set when animation is active */
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: layout style paint;
+  /* Use transform and opacity only for better performance */
 }
 
 /* Fade animations - optimized for smooth performance */
@@ -705,7 +691,7 @@ p, li, span {
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: layout style paint;
-  /* will-change will be removed after animation via JS */
+  /* No will-change - animations are short-lived */
 }
 
 /* Remove will-change after animation completes */
@@ -728,43 +714,48 @@ p, li, span {
   }
 }
 
-/* Optimize parallax elements for smooth scrolling */
+/* Optimize parallax elements for smooth scrolling - OPTIMIZED */
 .parallax-element {
-  will-change: auto;
+  /* Removed will-change: auto */
   transform: translateZ(0);
   backface-visibility: hidden;
-  perspective: 1000px;
+  /* Removed perspective - only when needed */
   /* Reduce repaints during scroll */
   contain: layout style paint;
 }
 
-/* Optimize canvas elements for smooth animations */
+/* Optimize canvas elements for smooth animations - OPTIMIZED */
 canvas {
-  will-change: auto;
+  /* Removed will-change: auto */
   transform: translateZ(0);
   backface-visibility: hidden;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  /* Only set will-change when canvas is actively animating */
 }
 
-/* Optimize images for smooth loading */
+/* Optimize images for smooth loading - OPTIMIZED */
 img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  will-change: auto;
+  /* Removed will-change: auto - not needed for static images */
   /* Prevent layout shift */
   max-width: 100%;
   height: auto;
+  /* Use content-visibility for better performance */
+  content-visibility: auto;
 }
 
-/* Optimize video elements */
+/* Optimize video elements - OPTIMIZED */
 video {
-  will-change: auto;
+  /* Removed will-change: auto */
   transform: translateZ(0);
   backface-visibility: hidden;
   /* Prevent layout shift */
   max-width: 100%;
   height: auto;
+  /* Optimize video rendering */
+  object-fit: cover;
 }
 
 /* Prevent layout shifts */
@@ -772,7 +763,7 @@ img[loading="lazy"] {
   aspect-ratio: attr(width) / attr(height);
 }
 
-/* Smooth scroll container optimization */
+/* Smooth scroll container optimization - OPTIMIZED */
 section,
 .scroll-container {
   scroll-behavior: smooth;
@@ -780,23 +771,18 @@ section,
   /* Optimize scrolling performance */
   transform: translateZ(0);
   backface-visibility: hidden;
-  /* Only set will-change during active scroll */
+  /* Removed will-change - not needed for scroll containers */
   contain: layout style paint;
+  /* Use content-visibility for better scroll performance */
+  content-visibility: auto;
 }
 
-/* Optimize scroll performance without will-change overhead */
-html:not(:hover) {
-  will-change: auto;
-}
+/* Optimize scroll performance - REMOVED unnecessary will-change */
+/* Removed html:not(:hover) will-change rule - not needed */
 
-/* Optimize expensive properties */
-@supports (will-change: transform) {
-  .card-hover-lift:hover,
-  .button-ripple:active,
-  .magnetic-hover:hover {
-    will-change: transform, box-shadow;
-  }
-}
+/* Optimize expensive properties - OPTIMIZED */
+/* OPTIMIZED: Removed will-change from @supports block - modern browsers optimize automatically */
+/* Will-change can cause performance issues if overused - browser handles optimization better */
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
@@ -889,20 +875,26 @@ button:not(:disabled):active,
   transform: translateY(0);
 }
 
-/* Smooth image loading with performance optimization */
+/* OPTIMIZED: Smooth image loading with better performance */
 img {
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateZ(0); /* GPU acceleration */
-  will-change: opacity;
+  /* Use content-visibility for better performance */
+  content-visibility: auto;
+  /* Prevent layout shift */
+  aspect-ratio: attr(width) / attr(height);
 }
 
 img[loading="lazy"] {
   opacity: 0;
+  /* Use content-visibility for better performance */
+  content-visibility: auto;
 }
 
 img[loading="lazy"].loaded {
   opacity: 1;
-  will-change: auto; /* Remove will-change after load */
+  /* Removed will-change - not needed */
+  content-visibility: visible;
 }
 
 /* Optimize image rendering */
@@ -912,31 +904,33 @@ img {
   image-rendering: optimize-quality;
 }
 
-/* Enhanced card hover effects with performance optimization */
+/* OPTIMIZED: Enhanced card hover effects with better performance */
 .card-hover-lift {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, box-shadow;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Removed will-change - only set on hover */
   transform: translateZ(0); /* GPU acceleration */
   backface-visibility: hidden;
-  /* Smooth entrance */
-  animation: cardEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* OPTIMIZED: Faster entrance animation */
+  animation: cardEntrance 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .card-hover-lift:hover {
-  transform: translateY(-8px) scale(1.02) translateZ(0);
-  box-shadow: 0 25px 70px rgba(255, 194, 51, 0.25), 0 15px 40px rgba(168, 85, 247, 0.2);
-  border-color: rgba(255, 194, 51, 0.6);
+  transform: translateY(-4px) scale(1.01) translateZ(0);
+  box-shadow: 0 15px 40px rgba(255, 194, 51, 0.2), 0 8px 20px rgba(168, 85, 247, 0.15);
+  border-color: rgba(255, 194, 51, 0.5);
+  /* OPTIMIZED: Removed will-change - browser handles optimization automatically */
 }
 
 .card-hover-lift:active {
-  transform: translateY(-4px) scale(1.01) translateZ(0);
+  transform: translateY(-2px) scale(1.005) translateZ(0);
 }
 
-/* Remove will-change after animation to save resources */
+/* OPTIMIZED: Removed will-change cleanup - not needed */
 .card-hover-lift:not(:hover) {
-  will-change: auto;
+  /* Force GPU layer cleanup */
+  transform: translateZ(0);
 }
 
 /* Smooth scroll behavior enhancement - Optimized */
@@ -1015,22 +1009,20 @@ select:focus {
 ::-webkit-scrollbar-track {
   background: rgba(10, 14, 26, 0.5);
   border-radius: 5px;
-  /* Optimize for scroll performance */
-  will-change: background;
+  /* OPTIMIZED: Removed will-change - not needed for static track */
 }
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, var(--color-gold-500) 0%, var(--color-gold-600) 50%, var(--color-musical-700) 100%);
-  border-radius: 5px;
-  transition: background 0.3s ease;
-  /* Optimize for scroll performance */
-  will-change: background;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  /* Removed will-change - not needed */
   transform: translateZ(0); /* GPU acceleration */
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, var(--color-gold-600) 0%, var(--color-gold-700) 50%, var(--color-musical-800) 100%);
-  box-shadow: 0 0 10px rgba(255, 194, 51, 0.5);
+  box-shadow: 0 0 8px rgba(255, 194, 51, 0.4);
 }
 
 /* Loading pulse animation for better skeleton */
@@ -1165,22 +1157,8 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 0 3px var(--color-gold-500);
 }
 
-/* Musical/Jazz themed scrollbar - Dark Mode */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: linear-gradient(180deg, var(--color-black) 0%, var(--color-dark-navy) 50%, var(--color-dark-blue) 100%);
-  border-left: 1px solid rgba(255, 194, 51, 0.2);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--color-gold-500) 0%, var(--color-gold-600) 50%, var(--color-musical-700) 100%);
-  border-radius: 6px;
-  border: 2px solid rgba(10, 14, 26, 0.5);
-  box-shadow: 0 0 10px rgba(255, 194, 51, 0.3);
-}
+/* Musical/Jazz themed scrollbar - Dark Mode - OPTIMIZED (consolidated with above) */
+/* Removed duplicate scrollbar styles - using optimized version above */
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, var(--color-gold-600) 0%, var(--color-gold-700) 50%, var(--color-musical-800) 100%);
@@ -1212,17 +1190,19 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   }
 }
 
+/* OPTIMIZED: Glow animation - Simplified for better performance */
 @keyframes glow {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 194, 51, 0.4), 0 0 20px rgba(255, 194, 51, 0.2);
+    box-shadow: 0 0 10px rgba(255, 194, 51, 0.3), 0 0 20px rgba(255, 194, 51, 0.15);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 194, 51, 0.8), 0 0 50px rgba(168, 85, 247, 0.6), 0 0 70px rgba(232, 168, 34, 0.4);
+    box-shadow: 0 0 20px rgba(255, 194, 51, 0.5), 0 0 40px rgba(168, 85, 247, 0.3);
   }
 }
 
 .animate-glow {
-  animation: glow 3s ease-in-out infinite;
+  animation: glow 4s ease-in-out infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
 /* Musical wave animations */
@@ -1244,16 +1224,13 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   }
 }
 
-/* Harmonized Float Animation - Consistent across all musical notes */
+/* OPTIMIZED: Harmonized Float Animation - Reduced complexity */
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(0px);
   }
-  33% {
-    transform: translateY(-12px) rotate(3deg);
-  }
-  66% {
-    transform: translateY(12px) rotate(-3deg);
+  50% {
+    transform: translateY(-8px);
   }
 }
 
@@ -1268,25 +1245,19 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   }
 }
 
+/* OPTIMIZED: Musical Pulse - Simplified for better performance */
 @keyframes musicalPulse {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.6;
-  }
-  25% {
-    transform: scale(1.1);
-    opacity: 0.8;
+    opacity: 0.7;
   }
   50% {
-    transform: scale(1.2);
-    opacity: 1;
-  }
-  75% {
     transform: scale(1.1);
-    opacity: 0.8;
+    opacity: 0.9;
   }
 }
 
+/* OPTIMIZED: Shimmer Musical - Slower for better performance */
 @keyframes shimmerMusical {
   0% {
     background-position: -200% center;
@@ -1338,7 +1309,8 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
 }
 
 .animate-float {
-  animation: float 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: float 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
 /* Harmonized Float Delays */
@@ -1363,7 +1335,8 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
 }
 
 .animate-musical-pulse {
-  animation: musicalPulse 2s ease-in-out infinite;
+  animation: musicalPulse 3s ease-in-out infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
 .animate-shimmer-musical {
@@ -1492,6 +1465,7 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
 }
 
 /* Gradient Animation for Backgrounds */
+/* OPTIMIZED: Gradient Shift - Slower for better performance */
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -1506,40 +1480,40 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
 
 .animate-gradient {
   background-size: 200% 200%;
-  animation: gradientShift 8s ease infinite;
+  animation: gradientShift 12s ease infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
 /* Enhanced Text Glow Animation */
+/* OPTIMIZED: Text Glow - Simplified for better performance */
 @keyframes textGlow {
   0%, 100% {
-    text-shadow: 0 0 10px rgba(255, 194, 51, 0.5),
-                 0 0 20px rgba(255, 194, 51, 0.3),
-                 0 0 30px rgba(168, 85, 247, 0.2);
+    text-shadow: 0 0 10px rgba(255, 194, 51, 0.4),
+                 0 0 20px rgba(255, 194, 51, 0.2);
   }
   50% {
-    text-shadow: 0 0 20px rgba(255, 194, 51, 0.8),
-                 0 0 40px rgba(255, 194, 51, 0.5),
-                 0 0 60px rgba(168, 85, 247, 0.4);
+    text-shadow: 0 0 20px rgba(255, 194, 51, 0.6),
+                 0 0 40px rgba(255, 194, 51, 0.3);
   }
 }
 
 .animate-text-glow {
-  animation: textGlow 3s ease-in-out infinite;
-  will-change: text-shadow;
+  animation: textGlow 4s ease-in-out infinite;
+  /* Removed will-change - not needed for text-shadow */
 }
 
-/* Subtle text glow for headings */
+/* OPTIMIZED: Subtle text glow for headings - Reduced complexity */
 h1, h2, h3, h4, h5, h6 {
-  transition: text-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: text-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 h1:hover, h2:hover, h3:hover {
-  text-shadow: 0 0 20px rgba(255, 194, 51, 0.4),
-               0 0 40px rgba(255, 194, 51, 0.2),
-               0 0 60px rgba(168, 85, 247, 0.15);
+  text-shadow: 0 0 15px rgba(255, 194, 51, 0.3),
+               0 0 30px rgba(255, 194, 51, 0.15);
+  /* OPTIMIZED: Reduced shadow layers for better performance */
 }
 
-/* Shimmer Effect for Text */
+/* OPTIMIZED: Shimmer Effect for Text - Slower for better performance */
 @keyframes shimmerText {
   0% {
     background-position: -200% center;
@@ -1552,52 +1526,49 @@ h1:hover, h2:hover, h3:hover {
 .shimmer-text {
   background: linear-gradient(
     90deg,
-    rgba(255, 194, 51, 0.3) 0%,
-    rgba(255, 194, 51, 0.8) 50%,
-    rgba(255, 194, 51, 0.3) 100%
+    rgba(255, 194, 51, 0.2) 0%,
+    rgba(255, 194, 51, 0.6) 50%,
+    rgba(255, 194, 51, 0.2) 100%
   );
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmerText 3s linear infinite;
+  animation: shimmerText 4s linear infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
-/* Floating Elements with More Dynamic Movement */
+/* OPTIMIZED: Floating Elements - Simplified for better performance */
 @keyframes floatDynamic {
   0%, 100% {
-    transform: translateY(0px) translateX(0px) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-15px) translateX(10px) rotate(5deg);
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(-25px) translateX(-5px) rotate(-5deg);
-  }
-  75% {
-    transform: translateY(-10px) translateX(-10px) rotate(3deg);
+    transform: translateY(-10px);
   }
 }
 
 .animate-float-dynamic {
-  animation: floatDynamic 8s ease-in-out infinite;
+  animation: floatDynamic 10s ease-in-out infinite;
+  /* OPTIMIZED: Slower and simpler animation */
 }
 
 /* Pulse Glow for Interactive Elements */
+/* OPTIMIZED: Pulse Glow - Simplified for better performance */
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 194, 51, 0.4),
-                0 0 20px rgba(255, 194, 51, 0.2);
+    box-shadow: 0 0 10px rgba(255, 194, 51, 0.3),
+                0 0 20px rgba(255, 194, 51, 0.15);
   }
   50% {
-    box-shadow: 0 0 20px rgba(255, 194, 51, 0.8),
-                0 0 40px rgba(255, 194, 51, 0.5),
-                0 0 60px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 0 20px rgba(255, 194, 51, 0.5),
+                0 0 40px rgba(255, 194, 51, 0.3);
   }
 }
 
 .animate-pulse-glow {
-  animation: pulseGlow 2s ease-in-out infinite;
+  animation: pulseGlow 3s ease-in-out infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
 /* Smooth Scale on Hover - Enhanced */
@@ -1614,16 +1585,7 @@ h1:hover, h2:hover, h3:hover {
 
 .animate-scale-in {
   animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  will-change: transform, opacity;
-}
-
-/* Remove will-change after animation */
-.animate-scale-in {
-  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-scale-in[style*="animation"] {
-  will-change: auto;
+  /* OPTIMIZED: Removed will-change - animation is short-lived */
 }
 
 /* Rotating Gradient Border */
@@ -1712,15 +1674,11 @@ h1:hover, h2:hover, h3:hover {
 .magnetic-hover {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateZ(0); /* GPU acceleration */
-  will-change: transform;
+  /* OPTIMIZED: Removed will-change - browser handles optimization automatically */
 }
 
 .magnetic-hover:hover {
   transform: translateY(-4px) scale(1.02) translateZ(0);
-}
-
-.magnetic-hover:not(:hover) {
-  will-change: auto;
 }
 
 /* Stagger Animation for Lists */
@@ -1801,17 +1759,17 @@ select:focus-visible {
               0 6px 20px rgba(255, 194, 51, 0.4);
 }
 
-/* Subtle Parallax Effect */
+/* OPTIMIZED: Subtle Parallax Effect - removed will-change */
 .parallax-slow {
   transition: transform 0.3s ease-out;
-  will-change: transform;
+  /* OPTIMIZED: Removed will-change - browser handles optimization automatically */
 }
 
-/* Enhanced Card Entrance */
+/* OPTIMIZED: Enhanced Card Entrance - faster animation */
 @keyframes cardEntrance {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    transform: translateY(20px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -1820,17 +1778,18 @@ select:focus-visible {
 }
 
 .card-entrance {
-  animation: cardEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: cardEntrance 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .animate-shimmer-musical {
-  animation: shimmerMusical 3s linear infinite;
+  animation: shimmerMusical 4s linear infinite;
+  /* OPTIMIZED: Slower animation for better performance */
   background-image: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 194, 51, 0.3),
-    rgba(168, 85, 247, 0.3),
-    rgba(255, 194, 51, 0.3),
+    rgba(255, 194, 51, 0.2),
+    rgba(168, 85, 247, 0.2),
+    rgba(255, 194, 51, 0.2),
     transparent
   );
 }
@@ -1934,7 +1893,7 @@ select:focus-visible {
 .card-3d-tilt {
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-  will-change: transform;
+  /* OPTIMIZED: Removed will-change - browser handles optimization automatically */
 }
 
 .card-3d-tilt:hover {
@@ -1967,53 +1926,45 @@ select:focus-visible {
 /* Neon Glow Effects */
 .neon-glow {
   box-shadow: 
-    0 0 10px rgba(255, 194, 51, 0.5),
-    0 0 20px rgba(255, 194, 51, 0.4),
-    0 0 30px rgba(255, 194, 51, 0.3),
-    0 0 40px rgba(255, 194, 51, 0.2);
-  animation: neonPulse 2s ease-in-out infinite;
+    0 0 10px rgba(255, 194, 51, 0.4),
+    0 0 20px rgba(255, 194, 51, 0.3);
+  animation: neonPulse 3s ease-in-out infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
 .neon-glow-purple {
   box-shadow: 
-    0 0 10px rgba(168, 85, 247, 0.5),
-    0 0 20px rgba(168, 85, 247, 0.4),
-    0 0 30px rgba(168, 85, 247, 0.3),
-    0 0 40px rgba(168, 85, 247, 0.2);
-  animation: neonPulsePurple 2s ease-in-out infinite;
+    0 0 10px rgba(168, 85, 247, 0.4),
+    0 0 20px rgba(168, 85, 247, 0.3);
+  animation: neonPulsePurple 3s ease-in-out infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
+/* OPTIMIZED: Neon Pulse - Simplified for better performance */
 @keyframes neonPulse {
   0%, 100% {
     box-shadow: 
-      0 0 10px rgba(255, 194, 51, 0.5),
-      0 0 20px rgba(255, 194, 51, 0.4),
-      0 0 30px rgba(255, 194, 51, 0.3),
-      0 0 40px rgba(255, 194, 51, 0.2);
+      0 0 10px rgba(255, 194, 51, 0.4),
+      0 0 20px rgba(255, 194, 51, 0.3);
   }
   50% {
     box-shadow: 
-      0 0 20px rgba(255, 194, 51, 0.8),
-      0 0 40px rgba(255, 194, 51, 0.6),
-      0 0 60px rgba(255, 194, 51, 0.4),
-      0 0 80px rgba(255, 194, 51, 0.3);
+      0 0 20px rgba(255, 194, 51, 0.6),
+      0 0 40px rgba(255, 194, 51, 0.4);
   }
 }
 
+/* OPTIMIZED: Neon Pulse Purple - Simplified for better performance */
 @keyframes neonPulsePurple {
   0%, 100% {
     box-shadow: 
-      0 0 10px rgba(168, 85, 247, 0.5),
-      0 0 20px rgba(168, 85, 247, 0.4),
-      0 0 30px rgba(168, 85, 247, 0.3),
-      0 0 40px rgba(168, 85, 247, 0.2);
+      0 0 10px rgba(168, 85, 247, 0.4),
+      0 0 20px rgba(168, 85, 247, 0.3);
   }
   50% {
     box-shadow: 
-      0 0 20px rgba(168, 85, 247, 0.8),
-      0 0 40px rgba(168, 85, 247, 0.6),
-      0 0 60px rgba(168, 85, 247, 0.4),
-      0 0 80px rgba(168, 85, 247, 0.3);
+      0 0 20px rgba(168, 85, 247, 0.6),
+      0 0 40px rgba(168, 85, 247, 0.4);
   }
 }
 
@@ -2034,6 +1985,7 @@ select:focus-visible {
 }
 
 /* Gradient Text Animation */
+/* OPTIMIZED: Gradient Text - Slower for better performance */
 @keyframes gradientText {
   0% {
     background-position: 0% 50%;
@@ -2059,12 +2011,13 @@ select:focus-visible {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientText 4s linear infinite;
+  animation: gradientText 6s linear infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
-/* Parallax Effect */
+/* OPTIMIZED: Parallax Effect - removed will-change */
 .parallax-element {
-  will-change: transform;
+  /* OPTIMIZED: Removed will-change - browser handles optimization automatically */
   transform: translateZ(0);
 }
 
@@ -2075,6 +2028,7 @@ select:focus-visible {
 }
 
 /* Animated Gradient Border */
+/* OPTIMIZED: Border Rotate - Slower for better performance */
 @keyframes borderRotate {
   0% {
     background-position: 0% 50%;
@@ -2102,20 +2056,20 @@ select:focus-visible {
   padding: 2px;
   background: linear-gradient(
     45deg,
-    rgba(255, 194, 51, 0.8),
-    rgba(168, 85, 247, 0.8),
-    rgba(255, 194, 51, 0.8),
-    rgba(232, 168, 34, 0.8)
+    rgba(255, 194, 51, 0.6),
+    rgba(168, 85, 247, 0.6),
+    rgba(255, 194, 51, 0.6)
   );
-  background-size: 300% 300%;
-  animation: borderRotate 4s ease infinite;
+  background-size: 200% 200%;
+  animation: borderRotate 6s ease infinite;
+  /* OPTIMIZED: Slower animation and reduced gradient complexity */
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   z-index: -1;
 }
 
-/* Particle Effect Background */
+/* OPTIMIZED: Particle Effect Background - Reduced complexity */
 .particle-bg {
   position: relative;
   overflow: hidden;
@@ -2128,32 +2082,25 @@ select:focus-visible {
   left: 0;
   width: 100%;
   height: 100%;
+  /* REDUCED: Only 3 gradients instead of 6 for better performance */
   background-image: 
-    radial-gradient(2px 2px at 20% 30%, rgba(255, 194, 51, 0.3), transparent),
-    radial-gradient(2px 2px at 60% 70%, rgba(168, 85, 247, 0.3), transparent),
-    radial-gradient(1px 1px at 50% 50%, rgba(255, 194, 51, 0.2), transparent),
-    radial-gradient(1px 1px at 80% 10%, rgba(168, 85, 247, 0.2), transparent),
-    radial-gradient(2px 2px at 90% 40%, rgba(255, 194, 51, 0.2), transparent),
-    radial-gradient(1px 1px at 33% 60%, rgba(168, 85, 247, 0.2), transparent);
-  background-size: 200% 200%;
-  background-position: 0% 0%, 100% 100%, 50% 50%, 0% 100%, 100% 0%, 50% 0%;
-  animation: particleMove 20s ease infinite;
+    radial-gradient(2px 2px at 20% 30%, rgba(255, 194, 51, 0.2), transparent),
+    radial-gradient(2px 2px at 60% 70%, rgba(168, 85, 247, 0.2), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(255, 194, 51, 0.15), transparent);
+  background-size: 150% 150%;
+  background-position: 0% 0%, 100% 100%, 50% 50%;
+  animation: particleMove 30s ease infinite;
+  /* OPTIMIZED: Slower animation for better performance */
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
 @keyframes particleMove {
   0%, 100% {
-    background-position: 0% 0%, 100% 100%, 50% 50%, 0% 100%, 100% 0%, 50% 0%;
-  }
-  25% {
-    background-position: 100% 0%, 0% 100%, 0% 50%, 100% 0%, 0% 100%, 50% 100%;
+    background-position: 0% 0%, 100% 100%, 50% 50%;
   }
   50% {
-    background-position: 100% 100%, 0% 0%, 50% 0%, 100% 100%, 0% 0%, 0% 50%;
-  }
-  75% {
-    background-position: 0% 100%, 100% 0%, 100% 50%, 0% 0%, 100% 100%, 50% 0%;
+    background-position: 100% 100%, 0% 0%, 50% 0%;
   }
 }
 
@@ -2173,6 +2120,7 @@ select:focus-visible {
 }
 
 /* Shimmer Effect Enhanced */
+/* OPTIMIZED: Shimmer Advanced - Slower for better performance */
 @keyframes shimmerAdvanced {
   0% {
     background-position: -200% center;
@@ -2186,51 +2134,47 @@ select:focus-visible {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.1) 20%,
-    rgba(255, 194, 51, 0.3) 50%,
-    rgba(255, 255, 255, 0.1) 80%,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 194, 51, 0.2) 50%,
+    rgba(255, 255, 255, 0.08) 80%,
     transparent 100%
   );
   background-size: 200% auto;
-  animation: shimmerAdvanced 3s linear infinite;
+  animation: shimmerAdvanced 4s linear infinite;
+  /* OPTIMIZED: Slower animation for better performance */
 }
 
-/* Floating Animation Enhanced */
+/* OPTIMIZED: Floating Animation - Simplified for better performance */
 @keyframes floatAdvanced {
   0%, 100% {
-    transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateY(-20px) translateX(10px) rotate(5deg) scale(1.05);
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(-30px) translateX(-5px) rotate(-5deg) scale(1.1);
-  }
-  75% {
-    transform: translateY(-15px) translateX(-10px) rotate(3deg) scale(1.05);
+    transform: translateY(-12px);
   }
 }
 
 .animate-float-advanced {
-  animation: floatAdvanced 8s ease-in-out infinite;
+  animation: floatAdvanced 10s ease-in-out infinite;
+  /* OPTIMIZED: Slower and simpler animation */
 }
 
 /* Glow Pulse Enhanced */
+/* OPTIMIZED: Glow Pulse Advanced - Simplified for better performance */
 @keyframes glowPulseAdvanced {
   0%, 100% {
-    filter: drop-shadow(0 0 10px rgba(255, 194, 51, 0.5))
-            drop-shadow(0 0 20px rgba(255, 194, 51, 0.3))
-            drop-shadow(0 0 30px rgba(168, 85, 247, 0.2));
+    filter: drop-shadow(0 0 8px rgba(255, 194, 51, 0.4))
+            drop-shadow(0 0 16px rgba(255, 194, 51, 0.2));
   }
   50% {
-    filter: drop-shadow(0 0 20px rgba(255, 194, 51, 0.8))
-            drop-shadow(0 0 40px rgba(255, 194, 51, 0.6))
-            drop-shadow(0 0 60px rgba(168, 85, 247, 0.4));
+    filter: drop-shadow(0 0 16px rgba(255, 194, 51, 0.6))
+            drop-shadow(0 0 32px rgba(168, 85, 247, 0.3));
   }
 }
 
 .glow-pulse-advanced {
-  animation: glowPulseAdvanced 3s ease-in-out infinite;
+  animation: glowPulseAdvanced 4s ease-in-out infinite;
+  /* OPTIMIZED: Slower and simpler animation */
 }
 
 /* Depth Layers */

@@ -342,28 +342,17 @@ export const FireworkEffect: React.FC<FireworkEffectProps> = memo(({
       }
     };
 
-    // Check immediately and use RAF instead of setInterval
+    // OPTIMIZED: Only start RAF check when there's actually fireworks to animate
+    // Removed continuous RAF check loop - only check when needed
     checkAndStartAnimation();
-    let rafCheckId: number | null = null;
-    const rafCheck = () => {
-      checkAndStartAnimation();
-      if (isAnimating || fireworksRef.current.length > 0 || particlesRef.current.length > 0) {
-        rafCheckId = requestAnimationFrame(rafCheck);
-      } else {
-        rafCheckId = null;
-      }
-    };
-    rafCheckId = requestAnimationFrame(rafCheck);
 
     return () => {
       isAnimating = false;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      if (rafCheckId !== null) {
-        cancelAnimationFrame(rafCheckId);
-      }
       window.removeEventListener('resize', resizeCanvas);
+      // OPTIMIZED: Removed rafCheckId cleanup - no longer used
     };
   }, [duration, onComplete]);
 

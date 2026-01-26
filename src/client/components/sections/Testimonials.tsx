@@ -51,7 +51,7 @@ export const Testimonials: React.FC = memo(() => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
-              <div className="bg-gradient-to-br from-jazz-800/85 via-jazz-900/90 to-musical-900/85 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-6 sm:p-8 border border-gold-900/50 backdrop-blur-md h-full">
+              <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-6 sm:p-8 border border-gold-900/50 backdrop-blur-sm h-full">
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (
                     <div key={j} className="h-6 w-6 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded animate-pulse-soft skeleton-shimmer"></div>
@@ -77,7 +77,7 @@ export const Testimonials: React.FC = memo(() => {
     >
       {testimonials.length === 0 ? (
         <div className="text-center py-10 sm:py-12 lg:py-16">
-          <p className="text-gray-400 text-base sm:text-lg lg:text-xl">No testimonials available yet. Check back soon!</p>
+          <p className="text-gray-200 font-sans text-base sm:text-lg lg:text-xl">No testimonials available yet. Check back soon!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">

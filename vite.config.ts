@@ -32,22 +32,26 @@ export default defineConfig({
     outDir: 'dist/client',
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks: (id) => {
+          // OPTIMIZED: Better code splitting for performance
           // Vendor chunks
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'helmet-vendor': ['@dr.pogodin/react-helmet'],
-          'axios-vendor': ['axios'],
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@dr.pogodin/react-helmet')) {
+              return 'helmet-vendor';
+            }
+            if (id.includes('axios')) {
+              return 'axios-vendor';
+            }
+            // Other vendor libraries
+            return 'vendor';
+          }
           // Admin pages chunk (separate from public)
-          'admin-pages': [
-            './src/client/pages/admin/DashboardPage',
-            './src/client/pages/admin/HeroManagementPage',
-            './src/client/pages/admin/SectionsManagementPage',
-            './src/client/pages/admin/PerformancesManagementPage',
-            './src/client/pages/admin/TestimonialsManagementPage',
-            './src/client/pages/admin/SEOManagementPage',
-            './src/client/pages/admin/CategoriesManagementPage',
-            './src/client/pages/admin/VariationsManagementPage',
-          ],
+          if (id.includes('/pages/admin/')) {
+            return 'admin-pages';
+          }
         },
         // Optimize chunk file names
         chunkFileNames: 'assets/js/[name]-[hash].js',
@@ -55,20 +59,24 @@ export default defineConfig({
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
     },
-    // Optimize chunk size
-    chunkSizeWarningLimit: 1000,
-    // Enable source maps for production debugging (optional)
+    // OPTIMIZED: Better chunk size limits
+    chunkSizeWarningLimit: 800,
+    // Disable source maps in production for better performance
     sourcemap: process.env.NODE_ENV === 'production' ? false : true,
     // Minify and optimize - using esbuild (faster and built-in)
     minify: 'esbuild',
     // Note: esbuild automatically drops console in production builds
-    // Optimize asset inlining
-    assetsInlineLimit: 4096, // Inline assets smaller than 4kb
+    // OPTIMIZED: Reduced asset inlining limit
+    assetsInlineLimit: 2048, // Inline assets smaller than 2kb (reduced from 4kb)
     // Report compressed size
     reportCompressedSize: true,
     // CSS code splitting
     cssCodeSplit: true,
     // Performance optimizations
     target: 'esnext',
+    // OPTIMIZED: Better minification options
+    cssMinify: true,
+    // OPTIMIZED: Reduce asset file size
+    assetsDir: 'assets',
   },
 })

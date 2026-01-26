@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 
 interface HeaderProps {
@@ -12,6 +12,15 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Helper function to check if a route is active
+  const isActiveRoute = useCallback((path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  }, [location.pathname]);
 
   const closeMobileMenu = useCallback(() => {
     setIsMenuOpen(false);
@@ -69,9 +78,9 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   return (
     <header className="glass-effect-strong shadow-elegant fixed w-full top-0 left-0 right-0 z-50 border-b border-gold-900/50 relative overflow-hidden transition-all duration-300">
       {/* Simplified decorative elements - reduced for performance */}
-      <div className="absolute inset-0 pointer-events-none opacity-8 sm:opacity-6">
-        <div className="absolute top-1/2 left-8 sm:left-10 text-xl sm:text-2xl text-gold-400/60 sm:text-gold-400/50 font-musical drop-shadow-[0_0_10px_rgba(255,194,51,0.2)]">♪</div>
-        <div className="absolute top-1/2 right-8 sm:right-10 text-lg sm:text-xl text-musical-400/60 sm:text-musical-400/50 font-musical drop-shadow-[0_0_10px_rgba(168,85,247,0.2)]">♫</div>
+      <div className="absolute inset-0 pointer-events-none opacity-[0.08] sm:opacity-[0.06]">
+        <span className="absolute top-1/2 left-8 sm:left-10 text-xl sm:text-2xl text-gold-400/30 font-musical animate-float" aria-hidden>♪</span>
+        <span className="absolute top-1/2 right-8 sm:right-10 text-lg sm:text-xl text-musical-400/30 font-musical animate-float" style={{ animationDelay: '1.5s' }} aria-hidden>♫</span>
       </div>
       
       {/* Simplified gradient overlay - removed shimmer for performance */}
@@ -81,7 +90,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
         <div className="flex justify-between items-center h-14 sm:h-16 lg:h-18 xl:h-20">
           <Link 
             to="/" 
-            className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-elegant font-bold gradient-text-animated hover:scale-110 transition-all duration-300 transform relative group scale-on-hover"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 relative group"
             aria-label="Home - Christina Sings4U"
           >
             <span className="relative z-10 drop-shadow-[0_2px_8px_rgba(255,194,51,0.3)]">Christina Sings4U</span>
@@ -92,43 +101,98 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           <div className="hidden md:flex items-center space-x-0.5 lg:space-x-1 xl:space-x-2 2xl:space-x-3">
             <Link
               to="/"
-              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/40 hover:shadow-[0_4px_12px_rgba(255,194,51,0.2)] link-underline magnetic-hover-advanced hover-lift-advanced min-h-[48px] flex items-center leading-relaxed"
+              className={`px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/40 hover:shadow-[0_4px_12px_rgba(255,194,51,0.2)] link-underline magnetic-hover-advanced hover-lift-advanced min-h-[48px] flex items-center leading-relaxed ${
+                isActiveRoute('/') 
+                  ? 'text-gold-200 bg-gold-900/40 shadow-[0_2px_8px_rgba(255,194,51,0.2)]' 
+                  : 'text-gray-200 hover:text-gold-200'
+              }`}
               aria-label="Navigate to home page"
+              aria-current={isActiveRoute('/') ? 'page' : undefined}
             >
-              <span className="relative z-10 group-hover:drop-shadow-[0_0_8px_rgba(255,194,51,0.4)] transition-all duration-300">Home</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-500 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_8px_rgba(255,194,51,0.5)]" />
+              <span className={`relative z-10 transition-all duration-300 ${
+                isActiveRoute('/') 
+                  ? 'drop-shadow-[0_0_10px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_8px_rgba(255,194,51,0.4)]'
+              }`}>Home</span>
+              <span className={`absolute bottom-0 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-500 rounded-full shadow-[0_0_8px_rgba(255,194,51,0.5)] transition-all duration-300 ${
+                isActiveRoute('/') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`} />
             </Link>
             <Link
               to="/about"
-              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
+              className={`px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed ${
+                isActiveRoute('/about') 
+                  ? 'text-gold-200 bg-gold-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]' 
+                  : 'text-gray-200 hover:text-gold-200'
+              }`}
               aria-label="Navigate to about page"
+              aria-current={isActiveRoute('/about') ? 'page' : undefined}
             >
-              <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">About</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
+              <span className={`relative z-10 transition-all duration-300 ${
+                isActiveRoute('/about') 
+                  ? 'drop-shadow-[0_0_10px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)]'
+              }`}>About</span>
+              <span className={`absolute bottom-0 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300 ${
+                isActiveRoute('/about') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`} />
             </Link>
             <Link
               to="/categories"
-              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
+              className={`px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed ${
+                isActiveRoute('/categories') 
+                  ? 'text-gold-200 bg-gold-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]' 
+                  : 'text-gray-200 hover:text-gold-200'
+              }`}
               aria-label="Navigate to categories page"
+              aria-current={isActiveRoute('/categories') ? 'page' : undefined}
             >
-              <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">Services</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
+              <span className={`relative z-10 transition-all duration-300 ${
+                isActiveRoute('/categories') 
+                  ? 'drop-shadow-[0_0_10px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)]'
+              }`}>Services</span>
+              <span className={`absolute bottom-0 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300 ${
+                isActiveRoute('/categories') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`} />
             </Link>
             <Link
               to="/performances"
-              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
+              className={`px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed ${
+                isActiveRoute('/performances') 
+                  ? 'text-gold-200 bg-gold-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]' 
+                  : 'text-gray-200 hover:text-gold-200'
+              }`}
               aria-label="Navigate to performances page"
+              aria-current={isActiveRoute('/performances') ? 'page' : undefined}
             >
-              <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">Performances</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
+              <span className={`relative z-10 transition-all duration-300 ${
+                isActiveRoute('/performances') 
+                  ? 'drop-shadow-[0_0_10px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)]'
+              }`}>Performances</span>
+              <span className={`absolute bottom-0 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300 ${
+                isActiveRoute('/performances') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`} />
             </Link>
             <Link
               to="/contact"
-              className="px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg text-gray-50 hover:text-gold-200 transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed"
+              className={`px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg transition-all duration-300 font-medium rounded-lg relative group hover:bg-gold-900/30 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] link-underline magnetic-hover min-h-[48px] flex items-center leading-relaxed ${
+                isActiveRoute('/contact') 
+                  ? 'text-gold-200 bg-gold-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]' 
+                  : 'text-gray-200 hover:text-gold-200'
+              }`}
               aria-label="Navigate to contact page"
+              aria-current={isActiveRoute('/contact') ? 'page' : undefined}
             >
-              <span className="relative z-10 group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)] transition-all duration-300">Contact</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 group-hover:w-full transition-all duration-300 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)]" />
+              <span className={`relative z-10 transition-all duration-300 ${
+                isActiveRoute('/contact') 
+                  ? 'drop-shadow-[0_0_10px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.3)]'
+              }`}>Contact</span>
+              <span className={`absolute bottom-0 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 rounded-full shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300 ${
+                isActiveRoute('/contact') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`} />
             </Link>
             
             {/* Admin Menu */}
@@ -136,7 +200,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               <div className="relative admin-menu-container">
                 <button
                   onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
-                  className="flex items-center space-x-1 text-gray-50 hover:text-gold-300 transition-all duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-sm sm:text-base min-h-[48px] leading-relaxed"
+                  className="flex items-center space-x-1 text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-sm sm:text-base min-h-[48px] leading-relaxed"
                   aria-label="Admin menu"
                   aria-expanded={isAdminMenuOpen}
                   aria-haspopup="true"
@@ -154,7 +218,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
                   >
                     <Link
                       to="/admin/dashboard"
-                      className="block px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-50 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
+                      className="block px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
                       onClick={() => setIsAdminMenuOpen(false)}
                       role="menuitem"
                     >
@@ -162,7 +226,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-50 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
+                      className="block w-full text-left px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
                       role="menuitem"
                       aria-label="Logout from admin account"
                     >
@@ -174,7 +238,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             ) : (
               <Link
                 to="/admin/login"
-                className="text-gray-50 hover:text-gold-300 transition-all duration-300 font-medium relative after:absolute after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-gold-400 after:to-gold-300 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg min-h-[48px] flex items-center leading-relaxed"
+                className="text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium relative after:absolute after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-gold-400 after:to-gold-300 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg min-h-[48px] flex items-center leading-relaxed"
                 aria-label="Navigate to admin login page"
               >
                 Admin
@@ -183,7 +247,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           </div>
 
           <button
-            className="md:hidden text-gray-50 hover:text-gold-300 transition-all duration-300 p-2.5 -mr-2 min-w-[48px] sm:min-w-[52px] min-h-[48px] sm:min-h-[52px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg active:scale-95 touch-manipulation"
+            className="md:hidden text-gray-200 hover:text-gold-300 transition-all duration-300 p-2.5 -mr-2 min-w-[48px] sm:min-w-[52px] min-h-[48px] sm:min-h-[52px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg active:scale-95 touch-manipulation"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen}
@@ -208,46 +272,93 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           >
             <Link
               to="/"
-              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+                isActiveRoute('/')
+                  ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
+                  : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
+              }`}
               onClick={closeMobileMenu}
               role="menuitem"
+              aria-current={isActiveRoute('/') ? 'page' : undefined}
             >
               <span className="flex items-center">
-                <span className="mr-1.5 sm:mr-2 text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs sm:text-sm drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]">♪</span>
-                <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300">Home</span>
+                <span className={`mr-1.5 sm:mr-2 text-gold-500 transition-opacity text-xs sm:text-sm drop-shadow-[0_0_8px_rgba(255,194,51,0.5)] ${
+                  isActiveRoute('/') ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                }`}>♪</span>
+                <span className={`transition-all duration-300 ${
+                  isActiveRoute('/') 
+                    ? 'drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]' 
+                    : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]'
+                }`}>Home</span>
               </span>
             </Link>
             <Link
               to="/about"
-              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+                isActiveRoute('/about')
+                  ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
+                  : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
+              }`}
               onClick={closeMobileMenu}
               role="menuitem"
+              aria-current={isActiveRoute('/about') ? 'page' : undefined}
             >
-              <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300">About</span>
+              <span className={`transition-all duration-300 ${
+                isActiveRoute('/about') 
+                  ? 'drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]'
+              }`}>About</span>
             </Link>
             <Link
               to="/categories"
-              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+                isActiveRoute('/categories')
+                  ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
+                  : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
+              }`}
               onClick={closeMobileMenu}
               role="menuitem"
+              aria-current={isActiveRoute('/categories') ? 'page' : undefined}
             >
-              <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300">Services</span>
+              <span className={`transition-all duration-300 ${
+                isActiveRoute('/categories') 
+                  ? 'drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]'
+              }`}>Services</span>
             </Link>
             <Link
               to="/performances"
-              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+                isActiveRoute('/performances')
+                  ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
+                  : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
+              }`}
               onClick={closeMobileMenu}
               role="menuitem"
+              aria-current={isActiveRoute('/performances') ? 'page' : undefined}
             >
-              <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300">Performances</span>
+              <span className={`transition-all duration-300 ${
+                isActiveRoute('/performances') 
+                  ? 'drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]'
+              }`}>Performances</span>
             </Link>
             <Link
               to="/contact"
-              className="block text-base sm:text-lg text-gray-50 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-musical-900/50 px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed"
+              className={`block text-base sm:text-lg px-4 sm:px-5 py-3 sm:py-3.5 lg:py-4 rounded-lg transition-all duration-300 font-medium transform hover:translate-x-1 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 min-h-[48px] sm:min-h-[52px] flex items-center touch-manipulation group leading-relaxed ${
+                isActiveRoute('/contact')
+                  ? 'text-gold-200 bg-gradient-to-r from-gold-900/60 to-musical-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.3)]'
+                  : 'text-gray-200 hover:text-gold-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40'
+              }`}
               onClick={closeMobileMenu}
               role="menuitem"
+              aria-current={isActiveRoute('/contact') ? 'page' : undefined}
             >
-              <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300">Contact</span>
+              <span className={`transition-all duration-300 ${
+                isActiveRoute('/contact') 
+                  ? 'drop-shadow-[0_0_8px_rgba(255,194,51,0.5)]' 
+                  : 'group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]'
+              }`}>Contact</span>
             </Link>
             {isAuthenticated ? (
               <>

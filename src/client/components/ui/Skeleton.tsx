@@ -68,7 +68,8 @@ Skeleton.displayName = 'Skeleton';
 export const SkeletonCard: React.FC = memo(() => {
   return (
     <div 
-      className="bg-gradient-to-br from-jazz-800/90 sm:from-jazz-800/85 via-jazz-900/95 sm:via-jazz-900/90 to-musical-900/90 sm:to-musical-900/85 rounded-xl sm:rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.15)_inset] overflow-hidden p-5 sm:p-6 lg:p-8 border-2 border-gold-900/60 sm:border-gold-900/50 backdrop-blur-md hover:border-gold-800/70 transition-colors duration-300"
+      className="bg-gradient-to-br from-jazz-800/92 sm:from-jazz-800/88 via-jazz-900/96 sm:via-jazz-900/92 to-musical-900/92 sm:to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.15)_inset] overflow-hidden p-5 sm:p-6 lg:p-8 border-2 border-gold-900/60 sm:border-gold-900/50 backdrop-blur-sm hover:border-gold-800/70 transition-colors duration-300"
+      /* OPTIMIZED: Reduced backdrop-blur-md to backdrop-blur-sm, increased bg opacity */
       aria-label="Loading card"
     >
       <Skeleton variant="rectangular" height="clamp(180px, 30vw, 240px)" className="mb-4 sm:mb-5 lg:mb-6 rounded-lg sm:rounded-xl" />

@@ -42,7 +42,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
           className={cn(
             'w-full px-5 sm:px-6 lg:px-7 py-4 sm:py-4.5 lg:py-5 min-h-[52px] sm:min-h-[56px] lg:min-h-[60px] border-2 border-gold-900/50 rounded-xl',
             'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500',
-            'transition-all duration-300 bg-jazz-900/80 text-gray-50 backdrop-blur-sm',
+            'transition-all duration-300 bg-jazz-900/80 text-gray-200 backdrop-blur-sm',
             'placeholder:text-gray-400/70 placeholder:font-normal text-base sm:text-lg leading-relaxed',
             'hover:border-gold-700/80 hover:bg-jazz-900/95 hover:shadow-[0_6px_16px_rgba(255,194,51,0.2),0_0_0_1px_rgba(255,194,51,0.1)]',
             'focus:shadow-[0_0_0_4px_rgba(255,194,51,0.25),0_8px_24px_rgba(255,194,51,0.3),0_0_40px_rgba(255,194,51,0.15)] focus:scale-[1.01] focus-ring focus:bg-jazz-900/98 focus:border-gold-400',
@@ -54,9 +54,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
           )}
           {...props}
         />
-        {/* Enhanced focus indicator glow */}
-        <div className="absolute inset-0 rounded-xl opacity-0 focus-within:opacity-100 pointer-events-none transition-opacity duration-500 bg-gradient-to-r from-gold-500/20 via-gold-400/15 to-gold-500/20 blur-md"></div>
-        <div className="absolute -inset-1 rounded-xl opacity-0 focus-within:opacity-60 pointer-events-none transition-opacity duration-700 bg-gradient-to-r from-gold-500/30 via-transparent to-musical-500/30 blur-lg"></div>
+        <div className="absolute inset-0 rounded-xl opacity-0 focus-within:opacity-100 pointer-events-none transition-opacity duration-300 bg-gradient-to-r from-gold-500/20 via-gold-400/15 to-gold-500/20 blur-sm" aria-hidden />
       </div>
       {error && (
         <p 
@@ -74,7 +72,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
       {helperText && !error && (
         <p 
           id={helperId}
-          className="mt-3 sm:mt-3.5 text-base sm:text-lg text-gray-300/90 font-normal leading-relaxed"
+          className="mt-3 sm:mt-3.5 text-base sm:text-lg text-gray-200 font-sans font-normal leading-relaxed"
         >
           {helperText}
         </p>
@@ -86,12 +84,14 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(({
 InputComponent.displayName = 'Input';
 
 export const Input = memo(InputComponent, (prevProps, nextProps) => {
-  // Memo comparison - only re-render if props actually change
+  // OPTIMIZED: Memo comparison - skip className for better performance
   return (
     prevProps.value === nextProps.value &&
     prevProps.error === nextProps.error &&
     prevProps.helperText === nextProps.helperText &&
-    prevProps.className === nextProps.className &&
-    prevProps.disabled === nextProps.disabled
+    prevProps.disabled === nextProps.disabled &&
+    prevProps.id === nextProps.id &&
+    prevProps.name === nextProps.name
+    // Removed className comparison - it changes too frequently
   );
 });
