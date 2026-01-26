@@ -1,6 +1,8 @@
 import { SectionModel } from '../models/SectionModel';
 import { PerformanceModel } from '../models/PerformanceModel';
 import { SEOSettingsModel } from '../models/SEOSettingsModel';
+import { CategoryModel } from '../models/CategoryModel';
+import { VariationModel } from '../models/VariationModel';
 
 export class SitemapGenerator {
   public static async generate(): Promise<string> {
@@ -9,6 +11,8 @@ export class SitemapGenerator {
 
     const sections = await SectionModel.findAll();
     const performances = await PerformanceModel.findAll();
+    const categories = await CategoryModel.findAll();
+    const variations = await VariationModel.findAll();
 
     const urls: Array<{ loc: string; changefreq: string; priority: string; lastmod?: string }> = [
       { loc: `${baseUrl}/`, changefreq: 'daily', priority: '1.0' },
@@ -34,6 +38,28 @@ export class SitemapGenerator {
         priority: '0.7',
         lastmod: performance.updatedAt ? new Date(performance.updatedAt).toISOString() : undefined,
       });
+    });
+
+    categories.forEach((category) => {
+      if (category._id) {
+        urls.push({
+          loc: `${baseUrl}/categories/${category._id}`,
+          changefreq: 'weekly',
+          priority: '0.8',
+          lastmod: category.updatedAt ? new Date(category.updatedAt).toISOString() : undefined,
+        });
+      }
+    });
+
+    variations.forEach((variation) => {
+      if (variation._id) {
+        urls.push({
+          loc: `${baseUrl}/variations/${variation._id}`,
+          changefreq: 'weekly',
+          priority: '0.7',
+          lastmod: variation.updatedAt ? new Date(variation.updatedAt).toISOString() : undefined,
+        });
+      }
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>

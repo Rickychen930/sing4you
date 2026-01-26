@@ -68,13 +68,16 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
   // Calculate particle count based on intensity
   const particleCount = count || (intensity === 'high' ? 150 : intensity === 'medium' ? 100 : 50);
 
-  // Default colors matching the theme (gold and purple) - memoized to prevent re-creation
+  // Enhanced color palette with better distribution - memoized to prevent re-creation
   const defaultColors = useMemo(() => colors || [
-    'rgba(255, 194, 51,', // gold-400
-    'rgba(232, 168, 34,', // gold-500
-    'rgba(168, 85, 247,', // musical-500
-    'rgba(147, 51, 234,', // musical-600
-    'rgba(255, 215, 0,',  // gold-300
+    'rgba(255, 194, 51,',  // gold-400 - primary
+    'rgba(232, 168, 34,',  // gold-500 - primary dark
+    'rgba(255, 215, 0,',   // gold-300 - bright accent
+    'rgba(168, 85, 247,',  // musical-500 - secondary
+    'rgba(147, 51, 234,',  // musical-600 - secondary dark
+    'rgba(196, 132, 252,', // musical-400 - bright accent
+    'rgba(255, 230, 102,', // gold-200 - light accent
+    'rgba(126, 34, 206,',  // musical-700 - deep accent
   ], [colors]);
 
   // Check for reduced motion preference
@@ -95,18 +98,20 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
     const colorIndex = Math.floor(Math.random() * defaultColors.length);
     const color = defaultColors[colorIndex];
 
+    // Enhanced particle properties for more dynamic effect
+    const baseSize = Math.random() * 8 + 4;
     return {
       x: Math.random() * canvas.width,
       y: -10,
       vx: (Math.random() - 0.5) * 4,
       vy: Math.random() * 3 + 2,
       rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.2,
-      size: Math.random() * 8 + 4,
+      rotationSpeed: (Math.random() - 0.5) * 0.25, // Slightly faster rotation
+      size: baseSize,
       color,
       shape: shapes[Math.floor(Math.random() * shapes.length)],
       life: 1,
-      decay: Math.random() * 0.02 + 0.01,
+      decay: Math.random() * 0.015 + 0.008, // More consistent decay
     };
   }, [defaultColors]);
 
@@ -176,16 +181,25 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
       ctx.save();
       ctx.translate(piece.x, piece.y);
       ctx.rotate(piece.rotation);
-      ctx.fillStyle = piece.color + piece.life + ')';
+      
+      // Enhanced rendering with subtle glow effect
+      const alpha = piece.life;
+      ctx.fillStyle = piece.color + alpha + ')';
+      
+      // Add subtle stroke for better visibility
+      ctx.strokeStyle = piece.color + Math.min(alpha + 0.2, 1) + ')';
+      ctx.lineWidth = 0.5;
 
       switch (piece.shape) {
         case 'square':
           ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
+          ctx.strokeRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
           break;
         case 'circle':
           ctx.beginPath();
           ctx.arc(0, 0, piece.size / 2, 0, Math.PI * 2);
           ctx.fill();
+          ctx.stroke();
           break;
         case 'triangle':
           ctx.beginPath();
@@ -194,6 +208,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
           ctx.lineTo(piece.size / 2, piece.size / 2);
           ctx.closePath();
           ctx.fill();
+          ctx.stroke();
           break;
       }
 
@@ -250,6 +265,8 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
         animationFrameRef.current = requestAnimationFrame(animate);
       } else {
         isAnimating = false;
+        // Clear canvas when animation completes
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     };
 
@@ -267,8 +284,13 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
       isAnimating = false;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
       window.removeEventListener('resize', resizeCanvas);
+      // Clear canvas on cleanup
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
     };
   }, [duration, onComplete]);
 
@@ -287,11 +309,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = memo(({
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-50"
-      style={{ 
-        opacity: 1,
-        mixBlendMode: 'screen',
-      }}
+      className="fixed inset-0 pointer-events-none z-50 confetti-canvas"
       aria-hidden="true"
     />
   );

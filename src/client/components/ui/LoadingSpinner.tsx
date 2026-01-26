@@ -26,9 +26,9 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = memo(({
   const spinner = variant === 'dots' ? (
     <div className={cn('flex items-center justify-center gap-2', className)}>
       <div className="flex gap-1 sm:gap-1.5">
-        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce loading-spinner-dot-1"></div>
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce loading-spinner-dot-2"></div>
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gold-500 rounded-full animate-bounce loading-spinner-dot-3"></div>
       </div>
     </div>
   ) : variant === 'minimal' ? (
@@ -101,11 +101,11 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = memo(({
         {/* Animated background elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gold-900/35 pointer-events-none animate-gradient"></div>
         <div className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-40 sm:h-40 bg-gold-500/12 sm:bg-gold-500/8 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_40px_rgba(255,194,51,0.15)]" aria-hidden />
-        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-48 sm:h-48 bg-musical-500/12 sm:bg-musical-500/8 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_40px_rgba(168,85,247,0.15)]" style={{ animationDelay: '1s' }} aria-hidden />
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-48 sm:h-48 bg-musical-500/12 sm:bg-musical-500/8 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_40px_rgba(168,85,247,0.15)] loading-spinner-pulse" aria-hidden />
         <div className="relative z-10 flex flex-col items-center gap-3 sm:gap-4 lg:gap-5">
           {spinner}
           {text && (
-            <p className="text-gold-200 text-lg sm:text-xl lg:text-2xl font-sans font-medium animate-pulse leading-relaxed" style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.3)' }}>{text}</p>
+            <p className="text-gold-200 text-lg sm:text-xl lg:text-2xl font-sans font-medium animate-pulse leading-relaxed loading-spinner-text">{text}</p>
           )}
         </div>
       </div>

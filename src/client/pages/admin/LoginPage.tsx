@@ -148,15 +148,15 @@ export const LoginPage: React.FC = () => {
           {/* Login Card */}
           <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] sm:min-h-[calc(100vh-12rem)]">
             <Card className="w-full max-w-md shadow-2xl relative">
-              <CardHeader className="p-5 sm:p-6 lg:p-8 text-center border-b border-gold-900/40">
+              <CardHeader className="text-center">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                   Admin Login
                 </h1>
-                <p className="mt-2 text-xs sm:text-sm md:text-base text-gray-300">
+                <p className="mt-2 text-xs sm:text-sm md:text-base text-gray-200 font-sans">
                   Access the administration panel
                 </p>
               </CardHeader>
-              <CardBody className="p-5 sm:p-6 lg:p-8">
+              <CardBody>
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 lg:space-y-6" noValidate>
                   {error && (
                     <div className="p-3 sm:p-4 bg-red-900/50 border-2 border-red-700/50 text-red-100 rounded-xl text-xs sm:text-sm md:text-base flex items-start gap-2 sm:gap-3 backdrop-blur-sm animate-fade-in">
@@ -233,7 +233,7 @@ export const LoginPage: React.FC = () => {
                         disabled={isLoading}
                         className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gold-900/50 bg-jazz-900/70 text-gold-500 focus:ring-gold-500 focus:ring-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                       />
-                      <span className="text-xs sm:text-sm text-gray-300 group-hover:text-gray-200 transition-colors">Remember me</span>
+                      <span className="text-xs sm:text-sm text-gray-200 font-sans group-hover:text-gray-100 transition-colors">Remember me</span>
                     </label>
                   </div>
                   <Button 

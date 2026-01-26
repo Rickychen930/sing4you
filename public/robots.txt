@@ -12,7 +12,10 @@ Disallow: /api/
 Allow: /
 Allow: /about
 Allow: /categories
+Allow: /categories/*
+Allow: /variations/*
 Allow: /performances
+Allow: /performances/*
 Allow: /contact
 
 # Sitemap location
@@ -20,3 +23,22 @@ Sitemap: https://christina-sings4you.com.au/sitemap.xml
 
 # Crawl-delay (optional, adjust as needed)
 Crawl-delay: 1
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /

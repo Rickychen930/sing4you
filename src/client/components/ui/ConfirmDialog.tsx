@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../utils/helpers';
 import { Button } from './Button';
@@ -14,7 +14,7 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+export const ConfirmDialog: React.FC<ConfirmDialogProps> = memo(({
   isOpen,
   title,
   message,
@@ -38,7 +38,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         confirmButtonRef.current?.focus();
       }, 100);
 
-      // Trap focus within the dialog - memoize querySelector
+      // Trap focus within the dialog
       const dialog = dialogRef.current;
       let focusableElements: NodeListOf<HTMLElement> | null = null;
       
@@ -119,7 +119,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       <div className="absolute inset-0 bg-gradient-to-r from-gold-500/5 via-transparent to-musical-500/5 pointer-events-none" aria-hidden />
       <div className="absolute inset-0 pointer-events-none opacity-[0.08] sm:opacity-[0.06]" aria-hidden>
         <span className="absolute top-10 left-10 text-3xl sm:text-4xl lg:text-5xl text-gold-400/30 font-musical animate-float">♪</span>
-        <span className="absolute bottom-10 right-10 text-2xl sm:text-3xl lg:text-4xl text-musical-400/30 font-musical animate-float" style={{ animationDelay: '1s' }}>♫</span>
+        <span className="absolute bottom-10 right-10 text-2xl sm:text-3xl lg:text-4xl text-musical-400/30 font-musical animate-float confirm-dialog-musical-note">♫</span>
       </div>
       
       <div
@@ -160,15 +160,13 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         
         <h2
           id="confirm-dialog-title"
-          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-2"
-          style={{ textShadow: '0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12)' }}
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-2 confirm-dialog-title"
         >
           {title}
         </h2>
         <p
           id="confirm-dialog-message"
-          className="text-sm sm:text-base md:text-lg text-gray-200 font-sans mb-5 sm:mb-6 lg:mb-8 leading-relaxed text-center"
-          style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}
+          className="text-sm sm:text-base md:text-lg text-gray-200 font-sans mb-5 sm:mb-6 lg:mb-8 leading-relaxed text-center confirm-dialog-message"
         >
           {message}
         </p>
@@ -204,4 +202,18 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   );
 
   return createPortal(dialog, document.body);
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if dialog state or content changes
+  return (
+    prevProps.isOpen === nextProps.isOpen &&
+    prevProps.title === nextProps.title &&
+    prevProps.message === nextProps.message &&
+    prevProps.confirmLabel === nextProps.confirmLabel &&
+    prevProps.cancelLabel === nextProps.cancelLabel &&
+    prevProps.variant === nextProps.variant &&
+    prevProps.onConfirm === nextProps.onConfirm &&
+    prevProps.onCancel === nextProps.onCancel
+  );
+});
+
+ConfirmDialog.displayName = 'ConfirmDialog';

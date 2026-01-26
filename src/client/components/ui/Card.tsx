@@ -38,10 +38,10 @@ export const Card: React.FC<CardProps> = memo(({
       {/* OPTIMIZED: Simplified hover effects for better performance */}
       {hover && (
         <>
-          <div className="absolute top-2 right-2 text-xl sm:text-2xl text-gold-500/80 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 animate-float" aria-hidden>
+          <div className="absolute top-2 right-2 text-xl sm:text-2xl text-gold-500/80 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 animate-float card-hover-musical-1" aria-hidden>
             ♪
           </div>
-          <div className="absolute bottom-2 left-2 text-lg sm:text-xl text-musical-500/70 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-60 animate-float" style={{ animationDelay: '1s' }} aria-hidden>
+          <div className="absolute bottom-2 left-2 text-lg sm:text-xl text-musical-500/70 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-60 animate-float card-hover-musical-2" aria-hidden>
             ♫
           </div>
         </>
@@ -80,26 +80,83 @@ Card.displayName = 'Card';
 interface CardHeaderProps {
   children: React.ReactNode;
   className?: string;
+  /** Use larger padding for content-heavy cards */
+  large?: boolean;
+  /** Use compact padding for admin/dashboard cards */
+  compact?: boolean;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ children, className }) => {
-  return <div className={cn('px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7 border-b border-gold-900/40 bg-gradient-to-r from-gold-900/25 via-jazz-900/35 to-gold-900/25', className)}>{children}</div>;
-};
+export const CardHeader: React.FC<CardHeaderProps> = memo(({ children, className, large = false, compact = false }) => {
+  return (
+    <div className={cn(
+      large 
+        ? 'px-5 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-6 lg:py-8 xl:py-10'
+        : compact
+        ? 'px-4 sm:px-5 lg:px-6 py-4 sm:py-5 lg:py-6'
+        : 'px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7',
+      'border-b border-gold-900/40',
+      'bg-gradient-to-r from-gold-900/25 via-jazz-900/35 to-gold-900/25',
+      'relative z-10',
+      className
+    )}>
+      {children}
+    </div>
+  );
+});
+
+CardHeader.displayName = 'CardHeader';
 
 interface CardBodyProps {
   children: React.ReactNode;
   className?: string;
+  /** Use larger padding for content-heavy cards */
+  large?: boolean;
+  /** Use compact padding for admin/dashboard cards */
+  compact?: boolean;
 }
 
-export const CardBody: React.FC<CardBodyProps> = ({ children, className }) => {
-  return <div className={cn('px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7', className)}>{children}</div>;
-};
+export const CardBody: React.FC<CardBodyProps> = memo(({ children, className, large = false, compact = false }) => {
+  return (
+    <div className={cn(
+      large 
+        ? 'px-5 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-6 lg:py-8 xl:py-10'
+        : compact
+        ? 'px-3 sm:px-4 lg:px-5 py-3 sm:py-4 lg:py-5'
+        : 'px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7',
+      'relative z-10',
+      className
+    )}>
+      {children}
+    </div>
+  );
+});
+
+CardBody.displayName = 'CardBody';
 
 interface CardFooterProps {
   children: React.ReactNode;
   className?: string;
+  /** Use larger padding for content-heavy cards */
+  large?: boolean;
+  /** Remove top padding for seamless connection with CardBody */
+  noTopPadding?: boolean;
 }
 
-export const CardFooter: React.FC<CardFooterProps> = ({ children, className }) => {
-  return <div className={cn('px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7 bg-gradient-to-r from-gold-900/25 via-musical-900/25 to-gold-900/35 border-t border-gold-900/40', className)}>{children}</div>;
-};
+export const CardFooter: React.FC<CardFooterProps> = memo(({ children, className, large = false, noTopPadding = false }) => {
+  return (
+    <div className={cn(
+      large 
+        ? 'px-5 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-6 lg:py-8 xl:py-10'
+        : 'px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7',
+      noTopPadding && 'pt-0',
+      'bg-gradient-to-r from-gold-900/25 via-musical-900/25 to-gold-900/35',
+      'border-t border-gold-900/40',
+      'relative z-10',
+      className
+    )}>
+      {children}
+    </div>
+  );
+});
+
+CardFooter.displayName = 'CardFooter';

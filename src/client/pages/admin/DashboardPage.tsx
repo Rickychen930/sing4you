@@ -42,10 +42,10 @@ const DashboardItemCard = memo<DashboardItemCardProps>(({ item, index }) => {
   return (
     <Card 
       hover
-      className="card-entrance"
-      style={{ animationDelay: `${index * 50}ms` }}
+      className="dashboard-item-card"
+      style={{ '--animation-delay': `${index * 50}ms` } as React.CSSProperties}
     >
-      <CardHeader className="p-4 sm:p-5 lg:p-6">
+      <CardHeader>
         <div className="flex items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-2 sm:gap-3 flex-1">
             <span className="text-2xl sm:text-3xl lg:text-4xl" role="img" aria-label={item.title}>
@@ -62,7 +62,7 @@ const DashboardItemCard = memo<DashboardItemCardProps>(({ item, index }) => {
           )}
         </div>
       </CardHeader>
-      <CardBody className="p-4 sm:p-5 lg:p-6">
+      <CardBody>
         <p className="text-xs sm:text-sm md:text-base text-gray-200 font-sans mb-3 sm:mb-4 min-h-[2.5rem] sm:min-h-[3rem]">
           {item.description}
         </p>
@@ -235,7 +235,7 @@ export const DashboardPage: React.FC = () => {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                 Admin Dashboard
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2">
+              <p className="text-xs sm:text-sm md:text-base text-gray-200 font-sans mt-1 sm:mt-2">
                 Welcome back, <span className="text-gold-400 font-semibold">{user?.name || user?.email}</span>!
               </p>
             </div>
@@ -260,8 +260,7 @@ export const DashboardPage: React.FC = () => {
           {loadingStats ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4 mb-5 sm:mb-6 lg:mb-8">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
-                  {/* OPTIMIZED: Reduced backdrop-blur-md to backdrop-blur-sm, increased bg opacity */}
+                <div key={i} className="animate-fade-in-up dashboard-skeleton-item" style={{ '--animation-delay': `${i * 100}ms` } as React.CSSProperties}>
                   <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-3 sm:p-4 lg:p-6 border border-gold-900/50 backdrop-blur-sm">
                     <div className="h-5 sm:h-6 lg:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 sm:mb-3 w-2/3 mx-auto animate-pulse-soft skeleton-shimmer"></div>
                     <div className="h-6 sm:h-8 lg:h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-lg w-1/2 mx-auto animate-pulse-soft skeleton-shimmer"></div>
@@ -272,36 +271,36 @@ export const DashboardPage: React.FC = () => {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4 mb-5 sm:mb-6 lg:mb-8">
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
-                <CardBody className="p-3 sm:p-4 lg:p-5">
-                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-110">🎭</div>
+                <CardBody compact>
+                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>🎭</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.performances}</div>
                   <div className="text-xs sm:text-sm text-gray-400 mt-1">Performances</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
-                <CardBody className="p-3 sm:p-4 lg:p-5">
-                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-110">💬</div>
+                <CardBody compact>
+                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>💬</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.testimonials}</div>
                   <div className="text-xs sm:text-sm text-gray-400 mt-1">Testimonials</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
-                <CardBody className="p-3 sm:p-4 lg:p-5">
-                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-110">📂</div>
+                <CardBody compact>
+                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>📂</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.categories}</div>
                   <div className="text-xs sm:text-sm text-gray-400 mt-1">Categories</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
-                <CardBody className="p-3 sm:p-4 lg:p-5">
-                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-110">🎨</div>
+                <CardBody compact>
+                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>🎨</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.variations}</div>
                   <div className="text-xs sm:text-sm text-gray-400 mt-1">Variations</div>
                 </CardBody>
               </Card>
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
-                <CardBody className="p-3 sm:p-4 lg:p-5">
-                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-110">📋</div>
+                <CardBody compact>
+                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>📋</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.sections}</div>
                   <div className="text-xs sm:text-sm text-gray-400 mt-1">Sections</div>
                 </CardBody>
@@ -320,12 +319,12 @@ export const DashboardPage: React.FC = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pr-10 sm:pr-12"
                 />
-                <div className="absolute right-3 sm:right-4 top-[2.5rem] sm:top-[2.75rem] flex items-center gap-1 text-xs text-gray-400 pointer-events-none">
-                  <kbd className="px-1 sm:px-1.5 py-0.5 bg-jazz-900/50 border border-gold-900/30 rounded text-gold-400 font-mono text-xs">
+                <div className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-gray-400 pointer-events-none">
+                  <kbd className="px-1.5 sm:px-2 py-0.5 bg-jazz-900/50 border border-gold-900/30 rounded text-gold-400 font-mono text-xs">
                     {typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}
                   </kbd>
                   <span className="text-gray-400 text-xs">+</span>
-                  <kbd className="px-1 sm:px-1.5 py-0.5 bg-jazz-900/50 border border-gold-900/30 rounded text-gold-400 font-mono text-xs">K</kbd>
+                  <kbd className="px-1.5 sm:px-2 py-0.5 bg-jazz-900/50 border border-gold-900/30 rounded text-gold-400 font-mono text-xs">K</kbd>
                 </div>
               </div>
               <div className="flex gap-2 flex-wrap">
@@ -414,7 +413,7 @@ export const DashboardPage: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 lg:gap-4">
                 <Link to="/admin/performances" className="block">
                   <Card hover className="h-full">
-                    <CardBody className="p-3 sm:p-4 text-center">
+                    <CardBody compact className="text-center">
                       <div className="text-xl sm:text-2xl mb-1.5 sm:mb-2">🎭</div>
                       <div className="text-xs sm:text-sm font-medium text-gray-200">Add Performance</div>
                     </CardBody>
@@ -422,7 +421,7 @@ export const DashboardPage: React.FC = () => {
                 </Link>
                 <Link to="/admin/testimonials" className="block">
                   <Card hover className="h-full">
-                    <CardBody className="p-3 sm:p-4 text-center">
+                    <CardBody compact className="text-center">
                       <div className="text-xl sm:text-2xl mb-1.5 sm:mb-2">💬</div>
                       <div className="text-xs sm:text-sm font-medium text-gray-200">Add Testimonial</div>
                     </CardBody>
@@ -430,7 +429,7 @@ export const DashboardPage: React.FC = () => {
                 </Link>
                 <Link to="/admin/categories" className="block">
                   <Card hover className="h-full">
-                    <CardBody className="p-3 sm:p-4 text-center">
+                    <CardBody compact className="text-center">
                       <div className="text-xl sm:text-2xl mb-1.5 sm:mb-2">📂</div>
                       <div className="text-xs sm:text-sm font-medium text-gray-200">New Category</div>
                     </CardBody>

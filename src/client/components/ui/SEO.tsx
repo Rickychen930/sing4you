@@ -50,27 +50,21 @@ export const SEO: React.FC<SEOProps> = memo(({
       <meta name="googlebot" content="index, follow" />
       <meta name="bingbot" content="index, follow" />
       
-      {/* Open Graph / Facebook */}
+      {/* Open Graph / Facebook - Optimized for Google Search Results */}
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:secure_url" content={ogImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={fullTitle} />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:url" content={fullUrl} />
       <meta property="og:site_name" content="Christina Sings4U" />
       <meta property="og:locale" content="en_AU" />
       <meta property="og:locale:alternate" content="en_US" />
-      
-      {/* Twitter Card */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImage} />
-      <meta name="twitter:image:alt" content={fullTitle} />
-      <meta name="twitter:site" content="@christinasings4u" />
-      <meta name="twitter:creator" content="@christinasings4u" />
+      <meta property="article:author" content="Christina Sings4U" />
       
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
@@ -96,6 +90,14 @@ export const SEO: React.FC<SEOProps> = memo(({
       <meta name="revisit-after" content="7 days" />
       <meta name="distribution" content="global" />
       <meta name="rating" content="general" />
+      
+      {/* Professional Business Meta Tags */}
+      <meta name="classification" content="Entertainment, Music, Professional Services" />
+      <meta name="category" content="Professional Singer, Live Music Entertainment, Wedding Entertainment" />
+      <meta name="coverage" content="Sydney, NSW, Australia" />
+      <meta name="target" content="all" />
+      <meta name="audience" content="all" />
+      <meta name="copyright" content="Christina Sings4U" />
       
       {/* Verification Tags (add your verification codes) */}
       {/* <meta name="google-site-verification" content="your-verification-code" /> */}

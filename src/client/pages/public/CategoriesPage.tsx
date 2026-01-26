@@ -49,9 +49,9 @@ export const CategoriesPage: React.FC = () => {
   return (
     <>
       <SEO
-        title="Performance Categories | Christina Sings4U"
-        description="Explore our diverse performance categories including Solo, Duo, PocketRocker, and full band performances. Find the perfect musical experience for your wedding, corporate event, or special occasion in Sydney, NSW."
-        keywords="performance categories, solo singer, duo performance, band performances, wedding singer Sydney, corporate event entertainment, live music Sydney, PocketRocker"
+        title="Performance Categories | Professional Singer Sydney"
+        description="Explore performance categories: Solo, Duo, PocketRocker & full band. Find the perfect musical experience for your wedding, corporate event or special occasion in Sydney, NSW."
+        keywords="performance categories, solo singer Sydney, duo performance, band performances Sydney, wedding singer Sydney, corporate event entertainment, live music Sydney, PocketRocker, professional singer categories, event entertainment options, live music styles Sydney, singer performance types"
         url={`${siteUrl}/categories`}
       />
       <JSONLDSchema schema={collectionPageSchema} />

@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import type { IPerformance } from '../../../shared/interfaces';
 import { performanceService } from '../../services/performanceService';
 import { PerformanceCard } from '../../components/ui/PerformanceCard';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
+import { Card, CardBody, CardFooter } from '../../components/ui/Card';
 import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 
-export const PerformancesPage: React.FC = () => {
+export const PerformancesPage: React.FC = memo(() => {
   const [performances, setPerformances] = useState<IPerformance[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,9 +91,9 @@ export const PerformancesPage: React.FC = () => {
   return (
     <>
       <SEO
-        title="Upcoming Performances | Christina Sings4U"
-        description="View all upcoming performances and events featuring Christina Sings4U in Sydney and across NSW. Book tickets or contact us to book a performance for your event."
-        keywords="upcoming performances, live music events Sydney, Christina Sings4U concerts, music events NSW, book performance, live singer events"
+        title="Upcoming Performances | Live Music Events Sydney"
+        description="View upcoming performances & events featuring Christina Sings4U in Sydney & NSW. Book tickets or contact to book a performance for your event."
+        keywords="upcoming performances Sydney, live music events Sydney, Christina Sings4U concerts, music events NSW, book performance, live singer events, live music Sydney, upcoming concerts Sydney, music performances NSW, event calendar Sydney, professional singer events"
         url={`${siteUrl}/performances`}
       />
       {performances.length > 0 && <JSONLDSchema schema={collectionPageSchema} />}
@@ -105,18 +106,22 @@ export const PerformancesPage: React.FC = () => {
         className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25"
       >
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
-                <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-5 sm:p-6 lg:p-8 border border-gold-900/50 backdrop-blur-sm h-full flex flex-col">
-                  <div className="h-6 sm:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-3/4 animate-pulse-soft skeleton-shimmer"></div>
-                  <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-5 lg:mb-6 flex-grow">
-                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-full animate-pulse-soft skeleton-shimmer"></div>
-                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 animate-pulse-soft skeleton-shimmer"></div>
-                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-4/6 animate-pulse-soft skeleton-shimmer"></div>
-                  </div>
-                  <div className="h-10 sm:h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-lg sm:rounded-xl animate-pulse-soft skeleton-shimmer"></div>
-                </div>
+              <div key={i} className="animate-fade-in-up performances-page-skeleton-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
+                <Card className="h-full flex flex-col">
+                  <CardBody className="flex-grow flex flex-col">
+                    <div className="h-6 sm:h-7 lg:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 sm:mb-5 lg:mb-6 w-3/4 animate-pulse-soft skeleton-shimmer"></div>
+                    <div className="space-y-3 sm:space-y-4 lg:space-y-5 mb-4 sm:mb-5 lg:mb-6 flex-grow">
+                      <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-full animate-pulse-soft skeleton-shimmer"></div>
+                      <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 animate-pulse-soft skeleton-shimmer"></div>
+                      <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-4/6 animate-pulse-soft skeleton-shimmer"></div>
+                    </div>
+                  </CardBody>
+                  <CardFooter noTopPadding>
+                    <div className="w-full h-10 sm:h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-lg sm:rounded-xl animate-pulse-soft skeleton-shimmer"></div>
+                  </CardFooter>
+                </Card>
               </div>
             ))}
           </div>
@@ -143,12 +148,12 @@ export const PerformancesPage: React.FC = () => {
             }}
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {performances.map((performance, index) => (
               <div
                 key={performance._id}
-                className="animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="animate-fade-in-up performances-page-item"
+                style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
               >
                 <PerformanceCard performance={performance} />
               </div>
@@ -158,4 +163,6 @@ export const PerformancesPage: React.FC = () => {
       </SectionWrapper>
     </>
   );
-};
+});
+
+PerformancesPage.displayName = 'PerformancesPage';

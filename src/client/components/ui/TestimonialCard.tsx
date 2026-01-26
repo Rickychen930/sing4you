@@ -44,14 +44,14 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = memo(({ testimoni
       role="article"
       aria-label={`Testimonial from ${testimonial.clientName}`}
     >
-      <CardBody className="p-4 sm:p-5 lg:p-6 xl:p-7 relative flex-grow flex flex-col">
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-xl sm:text-2xl lg:text-3xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none" aria-hidden>♫</div>
-        <div className="absolute top-3 sm:top-4 left-3 sm:left-4 text-lg sm:text-xl lg:text-2xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none" style={{ animationDelay: '1s' }} aria-hidden>♪</div>
+      <CardBody className="relative flex-grow flex flex-col">
+        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-xl sm:text-2xl lg:text-3xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 testimonial-card-musical-1" aria-hidden>♫</div>
+        <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-lg sm:text-xl lg:text-2xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 testimonial-card-musical-2" aria-hidden>♪</div>
         <div className="relative z-10 flex-grow flex flex-col">
           <div className="mb-3 sm:mb-4">
             {renderStars}
           </div>
-          <blockquote className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 italic leading-relaxed font-sans font-normal relative flex-grow group-hover:text-gray-100 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)' }}>
+          <blockquote className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 italic leading-relaxed font-sans font-normal relative flex-grow group-hover:text-gray-100 transition-colors duration-300 testimonial-card-quote">
             <span 
               className="text-2xl sm:text-3xl lg:text-4xl text-gold-500/40 group-hover:text-gold-400/50 transition-colors duration-300 leading-none absolute -top-1 sm:-top-2 -left-1"
               aria-hidden="true"

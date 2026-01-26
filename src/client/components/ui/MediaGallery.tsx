@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect } from 'react';
+import React, { useState, memo, useEffect, useRef } from 'react';
 import { cn } from '../../utils/helpers';
 import { LazyImage } from './LazyImage';
 
@@ -9,10 +9,16 @@ interface MediaGalleryProps {
 
 export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, className }) => {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
 
-  // Handle ESC key to close modal
+  // Enhanced modal management with focus trap and accessibility
   useEffect(() => {
     if (!selectedMedia) return;
+
+    // Store the previously focused element
+    previousActiveElementRef.current = document.activeElement as HTMLElement;
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -20,13 +26,47 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
       }
     };
 
-    document.addEventListener('keydown', handleEscape, { passive: true });
+    // Focus trap: keep focus within modal
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || !modalRef.current) return;
+
+      const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleTabKey);
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
 
+    // Focus the close button when modal opens
+    setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 100);
+
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleTabKey);
       document.body.style.overflow = '';
+      // Return focus to the previously focused element
+      previousActiveElementRef.current?.focus();
     };
   }, [selectedMedia]);
 
@@ -98,26 +138,37 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
 
       {selectedMedia && (
         <div
+          ref={modalRef}
           className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-3 sm:p-4 lg:p-6 animate-fade-in"
-          onClick={() => setSelectedMedia(null)}
+          onClick={(e) => {
+            // Close modal when clicking backdrop
+            if (e.target === e.currentTarget) {
+              setSelectedMedia(null);
+            }
+          }}
           role="dialog"
           aria-modal="true"
+          aria-labelledby="media-viewer-title"
           aria-label="Media viewer"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-jazz-900/90 to-black/95" aria-hidden />
           <div className="absolute inset-0 bg-gradient-to-r from-gold-500/5 via-transparent to-musical-500/5 pointer-events-none" aria-hidden />
           <div className="absolute inset-0 pointer-events-none opacity-10" aria-hidden>
             <span className="absolute top-10 left-10 text-4xl sm:text-5xl lg:text-6xl text-gold-400/40 animate-float font-musical" aria-hidden>♪</span>
-            <span className="absolute bottom-10 right-10 text-3xl sm:text-4xl lg:text-5xl text-musical-400/40 animate-float font-musical" style={{ animationDelay: '1s' }} aria-hidden>♫</span>
+            <span className="absolute bottom-10 right-10 text-3xl sm:text-4xl lg:text-5xl text-musical-400/40 animate-float font-musical media-gallery-musical-note" aria-hidden>♫</span>
           </div>
           
           <div className="max-w-7xl max-h-full mx-2 sm:mx-4 lg:mx-6 relative z-10 group/media">
+            <h2 id="media-viewer-title" className="sr-only">
+              {isVideo(selectedMedia) ? 'Video viewer' : 'Image viewer'}
+            </h2>
             {isVideo(selectedMedia) ? (
               <video 
                 src={selectedMedia} 
                 controls 
                 autoPlay 
                 className="max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-xl sm:rounded-2xl shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(168,85,247,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
+                aria-label="Video content"
               />
             ) : (
               <img 
@@ -125,17 +176,20 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
                 alt="Full size media" 
                 className="max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-xl sm:rounded-2xl object-contain shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(126,34,206,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
                 decoding="async"
+                aria-label="Full size image"
               />
             )}
             <div className="absolute -inset-3 bg-gradient-to-r from-gold-500/15 via-musical-500/15 to-gold-500/15 rounded-2xl opacity-0 group-hover/media:opacity-70 transition-opacity duration-300 blur-lg pointer-events-none" aria-hidden />
           </div>
           <button
+            ref={closeButtonRef}
             className="absolute top-3 sm:top-4 lg:top-6 right-3 sm:right-4 lg:right-6 text-white hover:text-gold-300 transition-all duration-300 z-20 p-2 sm:p-3 rounded-full hover:bg-white/40 backdrop-blur-sm hover:scale-105 active:scale-95 border-2 border-white/50 hover:border-gold-400/90 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-black min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_24px_rgba(255,194,51,0.35)] hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.5)] group/close"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedMedia(null);
             }}
             aria-label="Close media viewer"
+            title="Close (Esc)"
           >
             <div className="absolute -inset-1 bg-gold-500/30 rounded-full opacity-0 group-hover/close:opacity-100 transition-opacity duration-300 blur-md pointer-events-none" aria-hidden />
             <svg className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 relative z-10 transition-transform duration-300 group-hover/close:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

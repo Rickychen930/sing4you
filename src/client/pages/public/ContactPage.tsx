@@ -168,9 +168,9 @@ export const ContactPage: React.FC = () => {
   return (
     <>
       <SEO
-        title="Contact | Christina Sings4U"
-        description="Get in touch with Christina Sings4U for booking inquiries. Professional singer available for weddings, corporate events, and private occasions in Sydney, NSW. Contact via email or WhatsApp."
-        keywords="contact Christina Sings4U, book singer Sydney, wedding singer contact, corporate event singer, professional singer booking, Sydney vocalist"
+        title="Contact | Book Professional Singer Sydney"
+        description="Book Christina Sings4U for weddings, corporate events & private occasions in Sydney. Contact via email or WhatsApp. Quick response guaranteed."
+        keywords="contact Christina Sings4U, book singer Sydney, wedding singer contact, corporate event singer, professional singer booking, Sydney vocalist, book live music Sydney, event singer booking, wedding entertainment booking, corporate entertainment contact, hire singer Sydney, live music booking Sydney NSW"
         url={`${siteUrl}/contact`}
       />
       <JSONLDSchema schema={contactPageSchema} />
@@ -179,7 +179,7 @@ export const ContactPage: React.FC = () => {
       </div>
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 lg:gap-9 xl:gap-11 mb-12 sm:mb-14 lg:mb-18 xl:mb-22">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 mb-12 sm:mb-14 lg:mb-18 xl:mb-22">
             <div className="text-center p-6 sm:p-7 lg:p-9 xl:p-11 bg-gradient-to-br from-jazz-800/90 via-jazz-900/95 to-musical-900/90 rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 border-gold-900/50 hover:border-gold-700/70 group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 relative overflow-hidden card-hover-lift">
               <div className="absolute -inset-2 bg-gold-500/15 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden />
               <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 lg:mb-5 xl:mb-6 text-gold-400 group-hover:text-gold-300 transition-all duration-300 group-hover:scale-105 group-hover:rotate-6" aria-hidden>📱</div>

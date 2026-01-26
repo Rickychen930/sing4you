@@ -196,12 +196,12 @@ export const TestimonialsManagementPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <div className="lg:col-span-1">
               <Card>
-                <CardHeader className="p-4 sm:p-5 lg:p-6">
+                <CardHeader compact>
                   <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Testimonial' : 'New Testimonial'}
                   </h2>
                 </CardHeader>
-                <CardBody className="p-4 sm:p-5 lg:p-6">
+                <CardBody compact>
                   <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                     <Input
                       label="Client Name"
@@ -279,7 +279,7 @@ export const TestimonialsManagementPage: React.FC = () => {
               <div className="space-y-3 sm:space-y-4">
                 {testimonials.map((testimonial) => (
                   <Card key={testimonial._id} hover>
-                    <CardBody className="p-4 sm:p-5 lg:p-6">
+                    <CardBody compact>
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">

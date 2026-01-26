@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { cn } from '../../utils/helpers';
 import type { Toast, ToastType } from '../../types/toast';
 
@@ -9,7 +9,7 @@ interface ToastProps {
   onClose: (id: string) => void;
 }
 
-export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
+export const ToastComponent: React.FC<ToastProps> = memo(({ toast, onClose }) => {
   useEffect(() => {
     const duration = toast.duration || 5000;
     const timer = setTimeout(() => {
@@ -67,15 +67,15 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
       </div>
       
-      <div className="flex-shrink-0 mt-0.5 relative z-10" aria-hidden="true">
-        <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_currentColor]">
+      <div className="flex-shrink-0 relative z-10 toast-icon-wrapper" aria-hidden="true">
+        <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
           {icons[toast.type]}
         </div>
       </div>
-      <p className="flex-1 text-base sm:text-lg lg:text-xl font-semibold leading-relaxed pt-0.5 relative z-10 group-hover:text-current/95 transition-colors duration-300">{toast.message}</p>
+      <p className="flex-1 text-sm sm:text-base lg:text-lg font-semibold leading-relaxed relative z-10 group-hover:text-current/95 transition-colors duration-300">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
-        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 p-1.5 sm:p-2 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-transparent min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center relative z-10 touch-manipulation shadow-[0_0_10px_rgba(0,0,0,0.2)] hover:shadow-[0_0_15px_currentColor]"
+        className="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-105 active:scale-95 p-1.5 sm:p-2 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-transparent min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center relative z-10 touch-manipulation shadow-[0_0_8px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_currentColor]"
         aria-label={`Close ${toast.type} notification`}
       >
         <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -84,14 +84,25 @@ export const ToastComponent: React.FC<ToastProps> = ({ toast, onClose }) => {
       </button>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if toast data changes
+  return (
+    prevProps.toast.id === nextProps.toast.id &&
+    prevProps.toast.message === nextProps.toast.message &&
+    prevProps.toast.type === nextProps.toast.type &&
+    prevProps.toast.duration === nextProps.toast.duration &&
+    prevProps.onClose === nextProps.onClose
+  );
+});
+
+ToastComponent.displayName = 'ToastComponent';
 
 interface ToastContainerProps {
   toasts: Toast[];
   onClose: (id: string) => void;
 }
 
-export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose }) => {
+export const ToastContainer: React.FC<ToastContainerProps> = memo(({ toasts, onClose }) => {
   if (toasts.length === 0) return null;
 
   return (
@@ -106,4 +117,13 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose 
       ))}
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if toasts array changes
+  if (prevProps.toasts.length !== nextProps.toasts.length) return false;
+  return prevProps.toasts.every((toast, index) => {
+    const nextToast = nextProps.toasts[index];
+    return nextToast && toast.id === nextToast.id && toast.message === nextToast.message && toast.type === nextToast.type;
+  }) && prevProps.onClose === nextProps.onClose;
+});
+
+ToastContainer.displayName = 'ToastContainer';

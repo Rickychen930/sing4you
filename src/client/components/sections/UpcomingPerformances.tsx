@@ -3,6 +3,7 @@ import type { IPerformance } from '../../../shared/interfaces';
 import { performanceService } from '../../services/performanceService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { PerformanceCard } from '../ui/PerformanceCard';
+import { Card, CardBody, CardFooter } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
 
 export const UpcomingPerformances: React.FC = memo(() => {
@@ -52,24 +53,20 @@ export const UpcomingPerformances: React.FC = memo(() => {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
-              <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-5 sm:p-6 lg:p-8 border border-gold-900/50 backdrop-blur-sm card-entrance">
-                <div className="h-40 sm:h-48 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg sm:rounded-xl mb-4 sm:mb-5 lg:mb-6 animate-pulse-soft skeleton-shimmer relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer-musical"></div>
-                </div>
-                <div className="h-6 sm:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-3/4 animate-pulse-soft skeleton-shimmer relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer-musical" style={{ animationDelay: '0.2s' }}></div>
-                </div>
-                <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer-musical" style={{ animationDelay: '0.4s' }}></div>
-                </div>
-                <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 sm:mb-5 lg:mb-6 w-2/3 animate-pulse-soft skeleton-shimmer relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer-musical" style={{ animationDelay: '0.6s' }}></div>
-                </div>
-                <div className="h-10 sm:h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-lg sm:rounded-xl animate-pulse-soft skeleton-shimmer relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer-musical" style={{ animationDelay: '0.8s' }}></div>
-                </div>
-              </div>
+            <div key={i} className="animate-fade-in-up upcoming-performances-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
+              <Card className="h-full flex flex-col">
+                <CardBody className="flex-grow flex flex-col">
+                  <div className="h-6 sm:h-7 lg:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 sm:mb-5 lg:mb-6 w-3/4 animate-pulse-soft skeleton-shimmer"></div>
+                  <div className="space-y-3 sm:space-y-4 lg:space-y-5 mb-4 sm:mb-5 lg:mb-6 flex-grow">
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-full animate-pulse-soft skeleton-shimmer"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 animate-pulse-soft skeleton-shimmer"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-4/6 animate-pulse-soft skeleton-shimmer"></div>
+                  </div>
+                </CardBody>
+                <CardFooter noTopPadding>
+                  <div className="w-full h-10 sm:h-12 bg-gradient-to-r from-gold-800/50 via-gold-900/50 to-gold-800/50 rounded-lg sm:rounded-xl animate-pulse-soft skeleton-shimmer"></div>
+                </CardFooter>
+              </Card>
             </div>
           ))}
         </div>
@@ -84,8 +81,8 @@ export const UpcomingPerformances: React.FC = memo(() => {
           {performances.map((performance, index) => (
             <div
               key={performance._id}
-              className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 150}ms` }}
+              className="animate-fade-in-up upcoming-performances-item"
+              style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
             >
               <PerformanceCard performance={performance} />
             </div>

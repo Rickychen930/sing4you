@@ -58,10 +58,38 @@ export class AuthController {
     } catch (error) {
       const err = error as Error;
       
-      // Log error for debugging
+      // Detailed error logging for debugging
       console.error('❌ Login error:', err.message);
-      if (process.env.NODE_ENV === 'development') {
+      console.error('   Error type:', err.constructor.name);
+      
+      // Check for specific error types
+      const isJWTSecretError = err.message.includes('JWT_SECRET') || 
+                                err.message.includes('JWT_REFRESH_SECRET') ||
+                                err.message.includes('must be set in production');
+      const isDatabaseError = err.message.includes('Database error') ||
+                              err.message.includes('Mongo') ||
+                              err.message.includes('connection');
+      const isTokenError = err.message.includes('Failed to generate') ||
+                          err.message.includes('token');
+      
+      if (process.env.NODE_ENV === 'development' || isJWTSecretError || isDatabaseError) {
         console.error('   Stack:', err.stack);
+        if (isJWTSecretError) {
+          console.error('💡 JWT Secret Error Detected!');
+          console.error('   This usually means JWT_SECRET or JWT_REFRESH_SECRET is not set in production.');
+          console.error('   Quick fix:');
+          console.error('     JWT_SECRET=$(node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))")');
+          console.error('     JWT_REFRESH_SECRET=$(node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))")');
+          console.error('     Add these to your .env file and restart the server.');
+        }
+        if (isDatabaseError) {
+          console.error('💡 Database Error Detected!');
+          console.error('   Check MONGODB_URI in .env file and database connection.');
+        }
+        if (isTokenError) {
+          console.error('💡 Token Generation Error!');
+          console.error('   This might be related to JWT secret configuration.');
+        }
       }
       
       // Check if it's an authentication error (should return 401)
@@ -77,11 +105,22 @@ export class AuthController {
         });
       } else {
         // For other errors (database, JWT, etc.), return 500
+        // Include more details in development
+        const errorMessage = process.env.NODE_ENV === 'production' 
+          ? 'Internal server error. Please try again later.' 
+          : err.message || 'An unexpected error occurred';
+        
         res.status(500).json({ 
           success: false, 
-          error: process.env.NODE_ENV === 'production' 
-            ? 'Internal server error. Please try again later.' 
-            : err.message || 'An unexpected error occurred'
+          error: errorMessage,
+          ...(process.env.NODE_ENV === 'development' && {
+            details: {
+              type: err.constructor.name,
+              isJWTSecretError,
+              isDatabaseError,
+              isTokenError,
+            }
+          })
         });
       }
     }

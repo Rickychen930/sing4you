@@ -66,6 +66,16 @@
   --duration-shimmer: 3s;
   --duration-gradient: 8s;
   
+  /* Animation Delays - Standardized */
+  --delay-instant: 0ms;
+  --delay-fast: 50ms;
+  --delay-normal: 100ms;
+  --delay-medium: 150ms;
+  --delay-slow: 200ms;
+  --delay-slower: 300ms;
+  --delay-musical-1: 1s;
+  --delay-musical-2: 2s;
+  
   /* Easing Functions */
   --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --easing-smooth: cubic-bezier(0.4, 0, 0.6, 1);
@@ -734,6 +744,31 @@ canvas {
   /* Only set will-change when canvas is actively animating */
 }
 
+/* Confetti canvas specific styling - Enhanced */
+.confetti-canvas {
+  opacity: 1;
+  mix-blend-mode: screen;
+  /* Enhanced visual effect with subtle glow */
+  filter: drop-shadow(0 0 2px rgba(255, 194, 51, 0.3));
+  /* Fallback for browsers that don't support mix-blend-mode */
+}
+
+@supports not (mix-blend-mode: screen) {
+  .confetti-canvas {
+    mix-blend-mode: normal;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 3px rgba(255, 194, 51, 0.4));
+  }
+}
+
+/* Enhanced confetti for high-end displays */
+@media (min-resolution: 2dppx) {
+  .confetti-canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
 /* Optimize images for smooth loading - OPTIMIZED */
 img {
   image-rendering: -webkit-optimize-contrast;
@@ -821,18 +856,20 @@ section,
 
 /* Enhanced focus visibility for keyboard navigation - Better visibility */
 *:focus-visible {
-  outline: 4px solid var(--color-gold-500);
-  outline-offset: 4px;
-  border-radius: 8px;
+  outline: 3px solid var(--color-gold-500);
+  outline-offset: 3px;
+  border-radius: 6px;
   z-index: 10;
-  /* Enhanced contrast for better visibility */
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 
-              0 0 0 6px rgba(255, 194, 51, 0.5),
-              0 0 25px rgba(255, 194, 51, 0.7),
-              0 0 40px rgba(255, 194, 51, 0.4);
+  /* Enhanced contrast for better visibility - refined for accessibility */
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), 
+              0 0 0 4px rgba(255, 194, 51, 0.6),
+              0 0 20px rgba(255, 194, 51, 0.5),
+              0 0 30px rgba(255, 194, 51, 0.3);
+  /* Smooth transition for focus */
+  transition: outline 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Focus states for interactive elements - Enhanced visibility */
+/* Focus states for interactive elements - Enhanced visibility with smooth transitions */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -840,13 +877,15 @@ textarea:focus-visible,
 select:focus-visible,
 [role="button"]:focus-visible,
 [tabindex]:focus-visible {
-  outline: 4px solid var(--color-gold-500);
-  outline-offset: 4px;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 
-              0 0 0 6px rgba(255, 194, 51, 0.5),
-              0 0 25px rgba(255, 194, 51, 0.7),
-              0 0 40px rgba(255, 194, 51, 0.4);
+  outline: 3px solid var(--color-gold-500);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), 
+              0 0 0 4px rgba(255, 194, 51, 0.6),
+              0 0 20px rgba(255, 194, 51, 0.5),
+              0 0 30px rgba(255, 194, 51, 0.3);
   z-index: 10;
+  /* Smooth transition for better UX */
+  transition: outline 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 /* Enhanced hover effects with better feedback */
@@ -1148,14 +1187,7 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
   }
 }
 
-/* Enhanced focus states - Improved contrast for accessibility */
-*:focus-visible {
-  outline: 3px solid var(--color-gold-500);
-  outline-offset: 3px;
-  border-radius: 6px;
-  z-index: 10;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 0 3px var(--color-gold-500);
-}
+/* Enhanced focus states - Improved contrast for accessibility (consolidated above) */
 
 /* Musical/Jazz themed scrollbar - Dark Mode - OPTIMIZED (consolidated with above) */
 /* Removed duplicate scrollbar styles - using optimized version above */
@@ -1748,15 +1780,18 @@ h1:hover, h2:hover, h3:hover {
   z-index: 10;
 }
 
-/* Better focus visibility for form elements */
+/* Better focus visibility for form elements - Enhanced */
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
   outline: 3px solid rgba(255, 194, 51, 0.9);
   outline-offset: 2px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 
-              0 0 0 4px rgba(255, 194, 51, 0.3),
-              0 6px 20px rgba(255, 194, 51, 0.4);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), 
+              0 0 0 4px rgba(255, 194, 51, 0.6),
+              0 6px 20px rgba(255, 194, 51, 0.5),
+              0 0 30px rgba(255, 194, 51, 0.3);
+  /* Smooth transition */
+  transition: outline 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* OPTIMIZED: Subtle Parallax Effect - removed will-change */
@@ -1844,6 +1879,351 @@ select:focus-visible {
     0 0 40px rgba(168, 85, 247, 0.2),
     0 0 60px rgba(255, 194, 51, 0.1);
   animation: glow 4s ease-in-out infinite;
+}
+
+/* Performance Card specific text shadows */
+.performance-card-title {
+  text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2);
+}
+
+.performance-card-title:hover {
+  text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2), 0 0 12px rgba(255, 194, 51, 0.4);
+}
+
+.performance-card-text {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Empty State text shadows - simplified for better performance */
+.empty-state-title {
+  text-shadow: 0 2px 8px rgba(255, 194, 51, 0.2);
+}
+
+.empty-state-description {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Toast component styling - consistent spacing */
+.toast-icon-wrapper {
+  margin-top: 0.125rem;
+  align-self: flex-start;
+}
+
+/* Confirm Dialog text shadows - consistent with design system */
+.confirm-dialog-title {
+  text-shadow: 0 2px 8px rgba(255, 194, 51, 0.2);
+}
+
+.confirm-dialog-message {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Performance Section text shadows */
+.performance-section-title {
+  text-shadow: 0 3px 15px rgba(255, 194, 51, 0.25), 0 1px 6px rgba(168, 85, 247, 0.15);
+}
+
+.performance-section-description {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Section Wrapper background gradients */
+.section-wrapper-glow-gold {
+  background: radial-gradient(circle, rgba(255, 194, 51, 0.2) 0%, transparent 70%);
+}
+
+.section-wrapper-glow-purple {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+}
+
+.section-wrapper-musical-delay {
+  animation-delay: 2s;
+}
+
+/* Layout musical notes animation delays */
+.layout-musical-note-1 {
+  animation-delay: 0s;
+}
+
+.layout-musical-note-2 {
+  animation-delay: 2s;
+}
+
+/* Performance Section staggered animation */
+.performance-section-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Testimonial Card styling */
+.testimonial-card-musical-delay {
+  animation-delay: var(--delay-musical-1);
+}
+
+.testimonial-card-quote {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Variation List staggered animation */
+.variation-list-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Design System: Standardized spacing utilities */
+.design-spacing-xs { margin: var(--spacing-xs); }
+.design-spacing-sm { margin: var(--spacing-sm); }
+.design-spacing-md { margin: var(--spacing-md); }
+.design-spacing-base { margin: var(--spacing-base); }
+.design-spacing-lg { margin: var(--spacing-lg); }
+.design-spacing-xl { margin: var(--spacing-xl); }
+
+/* Design System: Enhanced visual consistency */
+.design-glow-gold {
+  box-shadow: 0 0 20px rgba(255, 194, 51, 0.3),
+              0 0 40px rgba(255, 194, 51, 0.2),
+              0 0 60px rgba(255, 194, 51, 0.1);
+}
+
+.design-glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3),
+              0 0 40px rgba(168, 85, 247, 0.2),
+              0 0 60px rgba(168, 85, 247, 0.1);
+}
+
+/* Enhanced smooth transitions for all interactive elements */
+.design-transition-smooth {
+  transition: all var(--duration-normal) var(--easing-standard);
+}
+
+.design-transition-fast {
+  transition: all var(--duration-fast) var(--easing-standard);
+}
+
+/* Consistent border radius system */
+.design-radius-sm { border-radius: var(--radius-sm); }
+.design-radius-base { border-radius: var(--radius-base); }
+.design-radius-md { border-radius: var(--radius-md); }
+.design-radius-lg { border-radius: var(--radius-lg); }
+.design-radius-xl { border-radius: var(--radius-xl); }
+.design-radius-2xl { border-radius: var(--radius-2xl); }
+
+/* Hero Section background - consistent with design system */
+.hero-section-bg {
+  min-height: 100vh;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%);
+}
+
+/* Animation delay utilities - using design tokens */
+.design-delay-instant { animation-delay: var(--delay-instant); }
+.design-delay-fast { animation-delay: var(--delay-fast); }
+.design-delay-normal { animation-delay: var(--delay-normal); }
+.design-delay-medium { animation-delay: var(--delay-medium); }
+.design-delay-slow { animation-delay: var(--delay-slow); }
+.design-delay-slower { animation-delay: var(--delay-slower); }
+.design-delay-musical-1 { animation-delay: var(--delay-musical-1); }
+.design-delay-musical-2 { animation-delay: var(--delay-musical-2); }
+
+/* Hero Section specific delays */
+.hero-musical-note-1 { animation-delay: var(--delay-instant); }
+.hero-musical-note-2 { animation-delay: 1.5s; }
+.hero-musical-note-3 { animation-delay: 2.5s; }
+.hero-glow-delay { animation-delay: var(--delay-musical-1); }
+.hero-subtitle { text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4); }
+
+/* Variation Card specific delays */
+/* Variation Card specific delays - consistent with services and performance cards */
+.variation-card-musical-1 { animation-delay: 0.3s; }
+.variation-card-musical-2 { animation-delay: 0.6s; }
+.variation-card-text { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+
+/* Footer specific delays */
+.footer-musical-note-1 { animation-delay: var(--delay-instant); }
+.footer-musical-note-2 { animation-delay: var(--delay-musical-2); }
+.footer-musical-note-3 { animation-delay: var(--delay-musical-1); }
+.footer-musical-note-inline { animation-delay: 0.5s; }
+
+/* Error Boundary specific styling */
+.error-boundary-pulse-1 { animation-delay: var(--delay-musical-1); }
+.error-boundary-pulse-2 { animation-delay: 0.5s; }
+.error-boundary-musical-note { animation-delay: 1.5s; }
+.error-boundary-icon { filter: drop-shadow(0 0 12px rgba(255, 194, 51, 0.3)); }
+.error-boundary-title { text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12); }
+.error-boundary-message { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+
+/* Variation Detail styling */
+.variation-detail-title { text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12); }
+.variation-detail-description { text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); }
+
+/* CTA Section styling */
+.cta-section-glow-gold { background: radial-gradient(circle, rgba(255, 194, 51, 0.2) 0%, transparent 70%); }
+.cta-section-glow-purple { background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%); }
+.cta-section-musical-note { animation-delay: 1.5s; }
+
+/* Header specific delays */
+.header-musical-note { animation-delay: 1.5s; }
+
+/* Background Music controls */
+.background-music-controls {
+  min-width: clamp(180px, 200px, 240px);
+}
+.background-music-note { animation-delay: 0.5s; }
+
+/* Performance Card specific delays - consistent with services section */
+.performance-card-musical-1 { animation-delay: 0.3s; }
+.performance-card-musical-2 { animation-delay: 0.6s; }
+
+/* Confirm Dialog musical note */
+.confirm-dialog-musical-note { animation-delay: var(--delay-musical-1); }
+
+/* Empty State pulse delay */
+.empty-state-pulse-2 { animation-delay: var(--delay-musical-1); }
+
+/* Background Music volume slider - dynamic gradient */
+.background-music-volume-slider {
+  background: linear-gradient(
+    to right,
+    #ffc233 0%,
+    #ffc233 var(--volume-percent, 0%),
+    rgba(74, 85, 104, 0.6) var(--volume-percent, 0%),
+    rgba(74, 85, 104, 0.6) 100%
+  );
+}
+
+/* Media Gallery styling */
+.media-gallery-musical-note { animation-delay: var(--delay-musical-1); }
+
+/* Category List styling */
+.category-list-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+/* Category Card specific delays - consistent with services and performance cards */
+.category-card-musical-1 { animation-delay: 0.3s; }
+.category-card-musical-2 { animation-delay: 0.6s; }
+.category-card-text { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+
+/* Services Section styling */
+.services-section-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+.services-section-title {
+  text-shadow: 0 2px 8px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12);
+}
+.services-section-text { 
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); 
+}
+.services-card-musical-1 { animation-delay: 0.3s; }
+.services-card-musical-2 { animation-delay: 0.6s; }
+
+/* Breadcrumb styling */
+.breadcrumb-current { text-shadow: 0 2px 8px rgba(255, 194, 51, 0.3); }
+
+/* Description Section styling */
+.description-section-text { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+
+/* Loading Spinner styling */
+.loading-spinner-dot-1 { animation-delay: var(--delay-instant); }
+.loading-spinner-dot-2 { animation-delay: var(--delay-medium); }
+.loading-spinner-dot-3 { animation-delay: var(--delay-slower); }
+.loading-spinner-pulse { animation-delay: var(--delay-musical-1); }
+.loading-spinner-text { text-shadow: 0 2px 10px rgba(255, 194, 51, 0.3); }
+
+/* Testimonials styling */
+.testimonials-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Upcoming Performances styling */
+.upcoming-performances-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+.upcoming-performances-shimmer-1 { animation-delay: 0.2s; }
+.upcoming-performances-shimmer-2 { animation-delay: 0.4s; }
+.upcoming-performances-shimmer-3 { animation-delay: 0.6s; }
+.upcoming-performances-shimmer-4 { animation-delay: 0.8s; }
+
+/* Card hover musical notes - consistent delays */
+.card-hover-musical-1 { animation-delay: var(--delay-instant); }
+.card-hover-musical-2 { animation-delay: var(--delay-musical-1); }
+
+/* Testimonial Card musical notes - consistent positioning and delays */
+/* Testimonial Card specific delays - consistent with services and performance cards */
+.testimonial-card-musical-1 { animation-delay: 0.3s; }
+.testimonial-card-musical-2 { animation-delay: 0.6s; }
+
+/* Lazy Image error text */
+.lazy-image-error-text { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+
+/* About Page styling */
+.about-page-hero-title { 
+  text-shadow: 0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2); 
+}
+.about-page-section-title { 
+  text-shadow: 0 2px 10px rgba(255, 194, 51, 0.2), 0 1px 4px rgba(168, 85, 247, 0.12); 
+}
+.about-page-service-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+.about-page-service-text { 
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); 
+}
+.about-page-musical-1 { animation-delay: 0.5s; }
+.about-page-musical-2 { animation-delay: 1.5s; }
+.about-page-musical-3 { animation-delay: 2.5s; }
+.about-page-musical-4 { animation-delay: 3.5s; }
+
+/* NotFound Page styling */
+.not-found-musical-2 { animation-delay: 2s; }
+.not-found-musical-3 { animation-delay: 4s; }
+.not-found-pulse-2 { animation-delay: 1s; }
+.not-found-404-title { 
+  text-shadow: 0 0 60px rgba(255, 194, 51, 0.4), 0 0 120px rgba(168, 85, 247, 0.3); 
+}
+.not-found-page-title { 
+  text-shadow: 0 0 40px rgba(255, 194, 51, 0.3), 0 0 80px rgba(168, 85, 247, 0.2); 
+}
+
+/* Dashboard Page styling */
+.dashboard-item-card {
+  animation-delay: var(--animation-delay, 0ms);
+}
+.dashboard-skeleton-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Variations Page styling */
+.variations-page-skeleton-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Performances Page styling */
+.performances-page-skeleton-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+.performances-page-item {
+  animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Screen reader only class - for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Enhanced focus trap for modals and dialogs */
+[role="dialog"]:focus-within {
+  outline: none;
+}
+
+/* Ensure modals are properly announced to screen readers */
+[role="dialog"][aria-modal="true"] {
+  isolation: isolate;
 }
 
 /* Musical wave border */

@@ -12,9 +12,9 @@ export const Footer: React.FC = memo(() => {
       
       {/* Subtle musical accents — reduced for clarity */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.12] sm:opacity-10">
-        <span className="absolute top-12 left-1/4 text-2xl sm:text-3xl lg:text-4xl text-gold-400/30 font-musical animate-float select-none" style={{ animationDelay: '0s' }} aria-hidden>♪</span>
-        <span className="absolute bottom-24 right-1/4 text-xl sm:text-2xl lg:text-3xl text-musical-400/30 font-musical animate-float select-none" style={{ animationDelay: '2s' }} aria-hidden>♫</span>
-        <span className="absolute top-1/2 right-1/3 text-lg sm:text-xl text-gold-400/20 font-musical animate-float select-none" style={{ animationDelay: '1s' }} aria-hidden>♬</span>
+        <span className="absolute top-12 left-1/4 text-2xl sm:text-3xl lg:text-4xl text-gold-400/30 font-musical animate-float select-none footer-musical-note-1" aria-hidden>♪</span>
+        <span className="absolute bottom-24 right-1/4 text-xl sm:text-2xl lg:text-3xl text-musical-400/30 font-musical animate-float select-none footer-musical-note-2" aria-hidden>♫</span>
+        <span className="absolute top-1/2 right-1/3 text-lg sm:text-xl text-gold-400/20 font-musical animate-float select-none footer-musical-note-3" aria-hidden>♬</span>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -28,7 +28,7 @@ export const Footer: React.FC = memo(() => {
               <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed max-w-sm font-sans">
                 Elegant live vocals for your special moments in Sydney, NSW.
               </p>
-              <span className="mt-3 sm:mt-4 text-xl sm:text-2xl text-gold-400/30 font-musical animate-float inline-block" style={{ animationDelay: '0.5s' }} aria-hidden>♪</span>
+              <span className="mt-3 sm:mt-4 text-xl sm:text-2xl text-gold-400/30 font-musical animate-float inline-block footer-musical-note-inline" aria-hidden>♪</span>
             </div>
           </div>
 

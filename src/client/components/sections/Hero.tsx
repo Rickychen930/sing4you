@@ -91,7 +91,7 @@ export const Hero: FC = memo(() => {
 
   if (loading || !heroSettings) {
     return (
-      <section id="hero" className="relative w-full flex items-center justify-center -mt-16 sm:-mt-18 lg:-mt-20 pt-16 sm:pt-18 lg:pt-20 bg-black" style={{ minHeight: '100vh', height: '100vh', background: 'linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%)' }}>
+      <section id="hero" className="relative w-full flex items-center justify-center -mt-16 sm:-mt-18 lg:-mt-20 pt-16 sm:pt-18 lg:pt-20 bg-black hero-section-bg">
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-white text-center px-4 sm:px-6">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-elegant font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Christina Sings4U</h1>
@@ -106,13 +106,7 @@ export const Hero: FC = memo(() => {
   return (
     <section 
       id="hero" 
-      className="relative w-full flex items-center justify-center overflow-hidden particle-bg -mt-16 lg:-mt-20 pt-16 lg:pt-20" 
-      style={{ 
-        minHeight: '100vh', 
-        height: '100vh',
-        backgroundColor: 'var(--color-black)',
-        background: 'linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%)'
-      }}
+      className="relative w-full flex items-center justify-center overflow-hidden particle-bg -mt-16 lg:-mt-20 pt-16 lg:pt-20 hero-section-bg"
     >
       {/* Disabled FireworkEffect for better performance */}
       {/* <FireworkEffect
@@ -145,20 +139,20 @@ export const Hero: FC = memo(() => {
       </div>
 
       <div className="absolute inset-0 pointer-events-none z-[5] overflow-hidden" aria-hidden>
-        <span className="absolute top-1/4 left-8 sm:left-12 text-4xl sm:text-5xl lg:text-6xl text-gold-400/20 font-musical animate-float select-none" style={{ animationDelay: '0s' }}>♪</span>
-        <span className="absolute top-1/3 right-12 sm:right-16 text-3xl sm:text-4xl lg:text-5xl text-musical-400/20 font-musical animate-float select-none" style={{ animationDelay: '1.5s' }}>♫</span>
-        <span className="absolute bottom-1/3 left-1/4 text-4xl sm:text-5xl lg:text-6xl text-gold-400/15 font-musical animate-float select-none" style={{ animationDelay: '2.5s' }}>♬</span>
+        <span className="absolute top-1/4 left-8 sm:left-12 text-4xl sm:text-5xl lg:text-6xl text-gold-400/20 font-musical animate-float select-none hero-musical-note-1">♪</span>
+        <span className="absolute top-1/3 right-12 sm:right-16 text-3xl sm:text-4xl lg:text-5xl text-musical-400/20 font-musical animate-float select-none hero-musical-note-2">♫</span>
+        <span className="absolute bottom-1/3 left-1/4 text-4xl sm:text-5xl lg:text-6xl text-gold-400/15 font-musical animate-float select-none hero-musical-note-3">♬</span>
       </div>
 
       <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">
         <div className="relative inline-block mb-4 sm:mb-5 md:mb-6">
           <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gold-500/15 rounded-full blur-2xl opacity-70" aria-hidden />
-          <div className="absolute -inset-8 sm:-inset-12 bg-musical-500/10 rounded-full blur-2xl opacity-50" style={{ animationDelay: '1s' }} aria-hidden />
+          <div className="absolute -inset-8 sm:-inset-12 bg-musical-500/10 rounded-full blur-2xl opacity-50 hero-glow-delay" aria-hidden />
           <h1 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold leading-tight px-2 sm:px-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
             {heroSettings.title}
           </h1>
         </div>
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto relative pb-6" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto relative pb-6 hero-subtitle">
           {heroSettings.subtitle}
           <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/70 to-transparent rounded-full" aria-hidden />
         </p>

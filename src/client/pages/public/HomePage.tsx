@@ -1,14 +1,23 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { Hero } from '../../components/sections/Hero';
 import { ServicesSection } from '../../components/sections/ServicesSection';
 import { UpcomingPerformances } from '../../components/sections/UpcomingPerformances';
 import { Testimonials } from '../../components/sections/Testimonials';
 import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { useSmoothScroll } from '../../hooks/useSmoothScroll';
+import { testimonialService } from '../../services/testimonialService';
+import type { ITestimonial } from '../../../shared/interfaces';
 
 export const HomePage: React.FC = () => {
   useSmoothScroll();
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
+  const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);
+
+  useEffect(() => {
+    testimonialService.getAll().then(setTestimonials).catch(() => {
+      // Silently fail - testimonials are optional for schema
+    });
+  }, []);
 
   const artistSchema = useMemo(
     () => ({
@@ -43,6 +52,144 @@ export const HomePage: React.FC = () => {
     [siteUrl]
   );
 
+  const localBusinessSchema = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': `${siteUrl}#localbusiness`,
+      name: 'Christina Sings4U',
+      description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW. Solo, duo, trio, and full band performances available.',
+      image: `${siteUrl}/og-image.jpg`,
+      url: siteUrl,
+      telephone: '+61-XXX-XXX-XXX', // Update with actual phone number
+      email: 'info@christina-sings4you.com.au', // Update with actual email
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Sydney',
+        addressRegion: 'NSW',
+        addressCountry: 'AU',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: -33.8688,
+        longitude: 151.2093,
+      },
+      areaServed: {
+        '@type': 'City',
+        name: 'Sydney',
+        containedIn: {
+          '@type': 'State',
+          name: 'New South Wales',
+        },
+      },
+      priceRange: '$$',
+      openingHoursSpecification: {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '09:00',
+        closes: '21:00',
+      },
+      sameAs: [] as string[],
+      ...(testimonials.length > 0 && testimonials.some(t => t.rating) ? {
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: (testimonials.filter(t => t.rating).reduce((sum, t) => sum + (t.rating || 0), 0) / testimonials.filter(t => t.rating).length).toFixed(1),
+          reviewCount: testimonials.filter(t => t.rating).length,
+          bestRating: '5',
+          worstRating: '1',
+        },
+      } : {}),
+    }),
+    [siteUrl, testimonials]
+  );
+
+  const serviceSchema = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      '@id': `${siteUrl}#service`,
+      serviceType: 'Live Music Performance',
+      provider: { '@id': `${siteUrl}#localbusiness` },
+      areaServed: {
+        '@type': 'City',
+        name: 'Sydney',
+        containedIn: {
+          '@type': 'State',
+          name: 'New South Wales',
+        },
+      },
+      description: 'Professional live music performances including solo, duo, trio, and full band options for weddings, corporate events, and private occasions.',
+      offers: {
+        '@type': 'Offer',
+        description: 'Live music performance services',
+        priceCurrency: 'AUD',
+      },
+      category: ['Entertainment', 'Music', 'Wedding Services', 'Corporate Entertainment'],
+    }),
+    [siteUrl]
+  );
+
+  const reviewSchema = useMemo(() => {
+    if (testimonials.length === 0 || !testimonials.some(t => t.rating)) return null;
+    
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      '@id': `${siteUrl}#reviews`,
+      itemListElement: testimonials
+        .filter(t => t.rating)
+        .slice(0, 5)
+        .map((testimonial, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: testimonial.clientName,
+            },
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: testimonial.rating,
+              bestRating: '5',
+              worstRating: '1',
+            },
+            reviewBody: testimonial.message,
+            itemReviewed: {
+              '@type': 'Service',
+              '@id': `${siteUrl}#service`,
+            },
+          },
+        })),
+    };
+  }, [siteUrl, testimonials]);
+
+  const organizationSchema = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      '@id': `${siteUrl}#organization`,
+      name: 'Christina Sings4U',
+      url: siteUrl,
+      logo: `${siteUrl}/og-image.jpg`,
+      description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Sydney',
+        addressRegion: 'NSW',
+        addressCountry: 'AU',
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'Booking Inquiries',
+        availableLanguage: ['English'],
+        areaServed: 'AU',
+      },
+      sameAs: [] as string[],
+    }),
+    [siteUrl]
+  );
+
   const websiteSchema = useMemo(
     () => ({
       '@context': 'https://schema.org',
@@ -51,7 +198,7 @@ export const HomePage: React.FC = () => {
       url: siteUrl,
       name: 'Christina Sings4U',
       description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
-      publisher: { '@id': `${siteUrl}#person` },
+      publisher: { '@id': `${siteUrl}#organization` },
       inLanguage: 'en-AU',
       potentialAction: {
         '@type': 'SearchAction',
@@ -65,12 +212,16 @@ export const HomePage: React.FC = () => {
   return (
     <>
       <SEO
-        title="Christina Sings4U | Professional Singer in Sydney"
-        description="Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW. Solo, duo, trio, and full band performances available."
-        keywords="professional singer Sydney, wedding singer, corporate event singer, live vocals Sydney, solo performer, band performances, Christina Sings4U, Sydney vocalist, live music entertainment"
+        title="Christina Sings4U | Professional Singer Sydney | Wedding & Event Entertainment"
+        description="Professional singer in Sydney offering live vocals for weddings, corporate events & private occasions. Solo, duo, trio & full band available. Book today!"
+        keywords="professional singer Sydney, wedding singer Sydney, corporate event singer, live vocals Sydney, solo performer, band performances, Christina Sings4U, Sydney vocalist, live music entertainment, wedding entertainment Sydney, corporate entertainment Sydney, private event singer, live music Sydney NSW, professional vocalist, event singer booking"
         url={siteUrl}
       />
       <JSONLDSchema schema={artistSchema} />
+      <JSONLDSchema schema={organizationSchema} />
+      <JSONLDSchema schema={localBusinessSchema} />
+      <JSONLDSchema schema={serviceSchema} />
+      {reviewSchema && <JSONLDSchema schema={reviewSchema} />}
       <JSONLDSchema schema={websiteSchema} />
       <Hero />
       <ServicesSection

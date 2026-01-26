@@ -28,13 +28,13 @@ export const CTASection: React.FC<CTASectionProps> = memo(({
   return (
     <section className={cn('py-12 sm:py-16 lg:py-20 relative overflow-hidden', className)}>
       <div className="absolute inset-0 bg-gradient-to-br from-gold-900/20 via-jazz-900/25 to-musical-900/20" aria-hidden />
-      <div className="absolute inset-0 opacity-30 pointer-events-none" aria-hidden>
-        <div className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-64 sm:h-64 rounded-full blur-2xl" style={{ background: 'radial-gradient(circle, rgba(255, 194, 51, 0.2) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-2xl" style={{ background: 'radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%)' }} />
+      <div className="absolute inset-0 opacity-30 pointer-events-none cta-section-bg" aria-hidden>
+        <div className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-64 sm:h-64 rounded-full blur-2xl cta-section-glow-gold" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-2xl cta-section-glow-purple" />
       </div>
       <div className="absolute inset-0 pointer-events-none opacity-[0.12] sm:opacity-10" aria-hidden>
         <span className="absolute top-10 left-10 text-2xl sm:text-3xl text-gold-400/30 font-musical animate-float" aria-hidden>♪</span>
-        <span className="absolute bottom-12 right-10 text-xl sm:text-2xl text-musical-400/30 font-musical animate-float" style={{ animationDelay: '1.5s' }} aria-hidden>♫</span>
+        <span className="absolute bottom-12 right-10 text-xl sm:text-2xl text-musical-400/30 font-musical animate-float cta-section-musical-note" aria-hidden>♫</span>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

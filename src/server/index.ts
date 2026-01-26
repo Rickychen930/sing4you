@@ -33,17 +33,59 @@ const PORT = Number(process.env.PORT) || 3001;
 const allowedOrigins = [
   process.env.CLIENT_URL || 'http://localhost:5173',
   process.env.SITE_URL || 'https://christina-sings4you.com.au',
-];
+  // Domain utama: https://christina-sings4you.com.au (dengan hyphen)
+  'https://christina-sings4you.com.au',
+  'https://www.christina-sings4you.com.au',
+  // Add http versions for development/testing (if needed)
+  ...(process.env.NODE_ENV === 'development' ? [
+    'http://christina-sings4you.com.au',
+    'http://www.christina-sings4you.com.au',
+  ] : []),
+].filter(Boolean); // Remove any undefined values
+
+// Log allowed origins in development
+if (process.env.NODE_ENV === 'development') {
+  console.log('🌐 Allowed CORS origins:', allowedOrigins);
+}
 
 app.use(cors({
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (mobile apps, Postman, curl, server-to-server, etc.)
+    if (!origin) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ CORS: Allowing request with no origin (server-to-server/internal)');
+      }
+      return callback(null, true);
+    }
     
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+    // Normalize origin (remove trailing slash)
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    
+    // Check if origin is in allowed list
+    const isAllowed = allowedOrigins.some(allowed => {
+      const normalizedAllowed = allowed.replace(/\/$/, '');
+      return normalizedOrigin === normalizedAllowed || 
+             normalizedOrigin.startsWith(normalizedAllowed);
+    });
+    
+    // In development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ CORS: Allowing origin in development: ${normalizedOrigin}`);
+      }
+      return callback(null, true);
+    }
+    
+    if (isAllowed) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ CORS: Allowing origin: ${normalizedOrigin}`);
+      }
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // Log rejected origin for debugging
+      console.warn(`❌ CORS: Rejected origin: ${normalizedOrigin}`);
+      console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+      callback(new Error(`Not allowed by CORS. Origin: ${normalizedOrigin}`));
     }
   },
   credentials: true,

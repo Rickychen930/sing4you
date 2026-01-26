@@ -4,6 +4,7 @@ import { VariationList } from '../../components/sections/VariationList';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { BackButton } from '../../components/ui/BackButton';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
+import { Card, CardBody } from '../../components/ui/Card';
 import { categoryService } from '../../services/categoryService';
 import { useToastStore } from '../../stores/toastStore';
 import { SEO } from '../../components/ui/SEO';
@@ -58,15 +59,17 @@ export const VariationsPage: React.FC = () => {
           </div>
         </div>
         <SectionWrapper>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
-                <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-5 sm:p-6 lg:p-8 border border-gold-900/50 backdrop-blur-sm h-full">
-                  <div className="h-6 sm:h-7 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
-                  <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
-                  <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
-                  <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-4/6 animate-pulse-soft skeleton-shimmer"></div>
-                </div>
+              <div key={i} className="animate-fade-in-up variations-page-skeleton-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
+                <Card className="h-full min-h-[140px] sm:min-h-[160px]">
+                  <CardBody>
+                    <div className="h-6 sm:h-7 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-5/6 animate-pulse-soft skeleton-shimmer"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-4/6 animate-pulse-soft skeleton-shimmer"></div>
+                  </CardBody>
+                </Card>
               </div>
             ))}
           </div>
@@ -104,8 +107,9 @@ export const VariationsPage: React.FC = () => {
   return (
     <>
       <SEO
-        title={`${category.name} Variations | Christina Sings4U`}
-        description={category.description || `Explore ${category.name} performance variations and personas.`}
+        title={`${category.name} Variations | Professional Singer Sydney`}
+        description={category.description || `Explore ${category.name} performance variations. Professional singer available for weddings, corporate events & private occasions in Sydney, NSW.`}
+        keywords={`${category.name} variations, ${category.name} performances, professional singer ${category.name}, live music ${category.name} Sydney, ${category.name} entertainment, Christina Sings4U ${category.name}`}
         url={`${siteUrl}/categories/${categoryId}`}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">

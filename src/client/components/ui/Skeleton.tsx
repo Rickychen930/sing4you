@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { cn } from '../../utils/helpers';
+import { Card, CardBody } from './Card';
 
 interface SkeletonProps {
   className?: string;
@@ -67,16 +68,14 @@ Skeleton.displayName = 'Skeleton';
 
 export const SkeletonCard: React.FC = memo(() => {
   return (
-    <div 
-      className="bg-gradient-to-br from-jazz-800/92 sm:from-jazz-800/88 via-jazz-900/96 sm:via-jazz-900/92 to-musical-900/92 sm:to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.15)_inset] overflow-hidden p-5 sm:p-6 lg:p-8 border-2 border-gold-900/60 sm:border-gold-900/50 backdrop-blur-sm hover:border-gold-800/70 transition-colors duration-300"
-      /* OPTIMIZED: Reduced backdrop-blur-md to backdrop-blur-sm, increased bg opacity */
-      aria-label="Loading card"
-    >
-      <Skeleton variant="rectangular" height="clamp(180px, 30vw, 240px)" className="mb-4 sm:mb-5 lg:mb-6 rounded-lg sm:rounded-xl" />
-      <Skeleton variant="text" width="85%" height="clamp(20px, 4vw, 28px)" className="mb-3 sm:mb-4" />
-      <Skeleton variant="text" width="70%" height="clamp(16px, 3vw, 20px)" className="mb-3 sm:mb-4" />
-      <Skeleton variant="text" width="100%" height="clamp(16px, 3vw, 20px)" />
-    </div>
+    <Card aria-label="Loading card">
+      <CardBody>
+        <Skeleton variant="rectangular" height="clamp(180px, 30vw, 240px)" className="mb-4 sm:mb-5 lg:mb-6 rounded-lg sm:rounded-xl" />
+        <Skeleton variant="text" width="85%" height="clamp(20px, 4vw, 28px)" className="mb-3 sm:mb-4" />
+        <Skeleton variant="text" width="70%" height="clamp(16px, 3vw, 20px)" className="mb-3 sm:mb-4" />
+        <Skeleton variant="text" width="100%" height="clamp(16px, 3vw, 20px)" />
+      </CardBody>
+    </Card>
   );
 });
 

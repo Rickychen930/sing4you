@@ -30,21 +30,15 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
       id={id} 
       className={sectionClassName}
     >
-      <div className="absolute inset-0 opacity-20 pointer-events-none z-0" aria-hidden>
-        <div
-          className="absolute top-0 left-0 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full blur-2xl"
-          style={{ background: 'radial-gradient(circle, rgba(255, 194, 51, 0.2) 0%, transparent 70%)' }}
-        />
-        <div
-          className="absolute bottom-0 right-0 w-72 h-72 sm:w-96 sm:h-96 rounded-full blur-2xl"
-          style={{ background: 'radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%)' }}
-        />
+      <div className="absolute inset-0 opacity-20 pointer-events-none z-0 section-wrapper-bg" aria-hidden>
+        <div className="absolute top-0 left-0 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full blur-2xl section-wrapper-glow-gold" />
+        <div className="absolute bottom-0 right-0 w-72 h-72 sm:w-96 sm:h-96 rounded-full blur-2xl section-wrapper-glow-purple" />
       </div>
       
       {id && (
         <div className="absolute inset-0 pointer-events-none opacity-[0.08] sm:opacity-[0.06]" aria-hidden>
           <span className="absolute top-8 left-8 sm:left-12 text-xl sm:text-2xl text-gold-400/30 font-musical animate-float">♪</span>
-          <span className="absolute bottom-16 right-8 sm:right-12 text-lg sm:text-xl text-musical-400/30 font-musical animate-float" style={{ animationDelay: '2s' }}>♫</span>
+          <span className="absolute bottom-16 right-8 sm:right-12 text-lg sm:text-xl text-musical-400/30 font-musical animate-float section-wrapper-musical-delay">♫</span>
         </div>
       )}
       <div className="max-w-7xl mx-auto relative z-10">

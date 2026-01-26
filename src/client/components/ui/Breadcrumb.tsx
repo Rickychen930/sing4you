@@ -61,7 +61,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className })
                 </svg>
               )}
               {isLast ? (
-                <span className="text-gold-200 font-semibold text-base sm:text-lg lg:text-xl drop-shadow-[0_0_8px_rgba(255,194,51,0.4)] leading-relaxed" aria-current="page" style={{ textShadow: '0 2px 8px rgba(255, 194, 51, 0.3)' }}>
+                <span className="text-gold-200 font-semibold text-base sm:text-lg lg:text-xl drop-shadow-[0_0_8px_rgba(255,194,51,0.4)] leading-relaxed breadcrumb-current" aria-current="page">
                   {item.label}
                 </span>
               ) : item.path ? (

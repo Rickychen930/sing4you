@@ -202,22 +202,36 @@ export class AuthService {
 
   public generateAccessToken(payload: ITokenPayload): string {
     try {
+      const secret = getJWTSecretLazy();
       const options: jwt.SignOptions = { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
-      return jwt.sign(payload, getJWTSecretLazy(), options);
+      return jwt.sign(payload, secret, options);
     } catch (error) {
       const err = error as Error;
       console.error('❌ Error generating access token:', err.message);
+      
+      // Check if it's a JWT secret error
+      if (err.message.includes('JWT_SECRET') || err.message.includes('must be set')) {
+        throw err; // Re-throw to preserve the original error message
+      }
+      
       throw new Error(`Failed to generate access token: ${err.message}`);
     }
   }
 
   public generateRefreshToken(payload: ITokenPayload): string {
     try {
+      const secret = getJWTRefreshSecretLazy();
       const options: jwt.SignOptions = { expiresIn: JWT_REFRESH_EXPIRES_IN as jwt.SignOptions['expiresIn'] };
-      return jwt.sign(payload, getJWTRefreshSecretLazy(), options);
+      return jwt.sign(payload, secret, options);
     } catch (error) {
       const err = error as Error;
       console.error('❌ Error generating refresh token:', err.message);
+      
+      // Check if it's a JWT secret error
+      if (err.message.includes('JWT_REFRESH_SECRET') || err.message.includes('must be set')) {
+        throw err; // Re-throw to preserve the original error message
+      }
+      
       throw new Error(`Failed to generate refresh token: ${err.message}`);
     }
   }

@@ -104,12 +104,12 @@ export const SEOManagementPage: React.FC = () => {
 
           <form onSubmit={handleSubmit}>
             <Card>
-              <CardHeader className="p-4 sm:p-5 lg:p-6">
+              <CardHeader compact>
                 <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                   Default SEO Settings
                 </h2>
               </CardHeader>
-              <CardBody className="p-4 sm:p-5 lg:p-6 space-y-3 sm:space-y-4">
+              <CardBody compact className="space-y-3 sm:space-y-4">
                 <Input
                   label="Default Title"
                   required

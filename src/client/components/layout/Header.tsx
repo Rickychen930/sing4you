@@ -80,7 +80,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
       {/* Simplified decorative elements - reduced for performance */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.08] sm:opacity-[0.06]">
         <span className="absolute top-1/2 left-8 sm:left-10 text-xl sm:text-2xl text-gold-400/30 font-musical animate-float" aria-hidden>♪</span>
-        <span className="absolute top-1/2 right-8 sm:right-10 text-lg sm:text-xl text-musical-400/30 font-musical animate-float" style={{ animationDelay: '1.5s' }} aria-hidden>♫</span>
+        <span className="absolute top-1/2 right-8 sm:right-10 text-lg sm:text-xl text-musical-400/30 font-musical animate-float header-musical-note" aria-hidden>♫</span>
       </div>
       
       {/* Simplified gradient overlay - removed shimmer for performance */}

@@ -69,14 +69,16 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
   if (loading) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-fade-in-up" style={{ animationDelay: `${i * 150}ms` }}>
-              <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-5 sm:p-6 lg:p-8 border border-gold-900/50 backdrop-blur-sm h-full">
-                <div className="h-6 sm:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-3/4 mx-auto animate-pulse-soft skeleton-shimmer"></div>
-                <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
-                <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 mx-auto animate-pulse-soft skeleton-shimmer"></div>
-              </div>
+            <div key={i} className="animate-fade-in-up category-list-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
+              <Card className="h-full">
+                <CardBody className="text-center">
+                  <div className="h-6 sm:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-3/4 mx-auto animate-pulse-soft skeleton-shimmer"></div>
+                  <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
+                  <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 mx-auto animate-pulse-soft skeleton-shimmer"></div>
+                </CardBody>
+              </Card>
             </div>
           ))}
         </div>
@@ -115,12 +117,12 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
 
   return (
     <SectionWrapper title={title} subtitle={subtitle}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
         {categories.map((category, index) => (
-          <div
+            <div
             key={category._id}
-            className="animate-fade-in-up"
-            style={{ animationDelay: `${index * 150}ms` }}
+            className="animate-fade-in-up category-list-item"
+            style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
           >
             <Card 
               className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[120px] sm:min-h-[140px] group" 
@@ -136,16 +138,16 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
               tabIndex={0}
               aria-label={`View ${category.name} category`}
             >
-              <CardBody className="text-center flex flex-col h-full relative">
+              <CardBody className="text-center relative flex flex-col h-full">
                 {/* Enhanced musical note decoration */}
-                <div className="absolute top-2 right-2 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none" style={{ animationDelay: '0.5s' }} aria-hidden>♪</div>
-                <div className="absolute bottom-2 left-2 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none" style={{ animationDelay: '1.5s' }} aria-hidden>♫</div>
+                <div className="absolute top-2 right-2 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-1" aria-hidden>♪</div>
+                <div className="absolute bottom-2 left-2 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-2" aria-hidden>♫</div>
                 <div className="relative z-10 flex flex-col h-full">
                   <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300">
                     {category.name}
                   </h3>
                   {category.description && (
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}>
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 category-card-text">
                       {category.description}
                     </p>
                   )}

@@ -204,12 +204,12 @@ export const VariationsManagementPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             <div className="lg:col-span-1">
               <Card>
-                <CardHeader className="p-4 sm:p-5 lg:p-6">
+                <CardHeader compact>
                   <h2 className="text-base sm:text-lg md:text-xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                     {editingId ? 'Edit Variation' : 'New Variation'}
                   </h2>
                 </CardHeader>
-                <CardBody className="p-4 sm:p-5 lg:p-6">
+                <CardBody compact>
                   <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                     <div>
                       <label className="block text-sm sm:text-base font-medium text-gray-200 mb-1.5 sm:mb-2">
@@ -297,7 +297,7 @@ export const VariationsManagementPage: React.FC = () => {
                   
                   return (
                     <Card key={variation._id} hover>
-                      <CardBody className="p-4 sm:p-5 lg:p-6">
+                      <CardBody compact>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                           <div className="flex-1 min-w-0">
                             <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
