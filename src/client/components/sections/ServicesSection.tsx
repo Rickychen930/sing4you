@@ -7,7 +7,6 @@ import { Card, CardBody, CardFooter } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { EmptyState } from '../ui/EmptyState';
-import { MediaGallery } from '../ui/MediaGallery';
 import { LazyImage } from '../ui/LazyImage';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { cn } from '../../utils/helpers';
@@ -20,6 +19,8 @@ interface ServicesSectionProps {
 const btnBase = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 min-h-[52px] sm:min-h-[56px] px-6 sm:px-7 py-3 sm:py-3.5 text-base sm:text-lg lg:text-xl w-full focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900';
 const btnPrimary = 'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-white hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 hover:scale-[1.02] shadow-[0_4px_16px_rgba(255,194,51,0.4)] hover:shadow-[0_8px_24px_rgba(255,194,51,0.35)]';
 
+
+clas
 export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
   title = 'Our Services',
   subtitle = 'Choose the perfect performance style for your special event',
