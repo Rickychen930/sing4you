@@ -12,7 +12,7 @@ interface MultipleImageUploadProps {
   className?: string;
   accept?: string;
   maxSizeMB?: number;
-  maxFiles?: number;
+  maxFiles?: number; // Use Infinity for unlimited
 }
 
 export const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
@@ -22,7 +22,7 @@ export const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
   className,
   accept = 'image/png,image/jpeg,image/jpg,image/heic,image/heif,image/gif,image/webp',
   maxSizeMB = 10,
-  maxFiles = 10,
+  maxFiles = Infinity, // Default to unlimited
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
@@ -33,8 +33,8 @@ export const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    // Check max files limit
-    if (value.length + files.length > maxFiles) {
+    // Check max files limit (only if maxFiles is not Infinity)
+    if (maxFiles !== Infinity && value.length + files.length > maxFiles) {
       toast.error(`Maximum ${maxFiles} images allowed. You can add ${maxFiles - value.length} more.`);
       return;
     }
@@ -125,7 +125,7 @@ export const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
     <div className={cn('w-full', className)}>
       {label && (
         <label className="block text-sm sm:text-base font-medium text-gray-200 font-sans mb-2 sm:mb-2.5 lg:mb-3">
-          {label} ({value.length}/{maxFiles})
+          {label}{maxFiles !== Infinity && ` (${value.length}/${maxFiles})`}
         </label>
       )}
 
@@ -191,7 +191,7 @@ export const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
         )}
 
         {/* Upload Button */}
-        {value.length < maxFiles && (
+        {(maxFiles === Infinity || value.length < maxFiles) && (
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
             <input
               ref={fileInputRef}
@@ -234,7 +234,7 @@ export const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
         )}
 
         <p className="text-xs sm:text-sm text-gray-300">
-          Max file size: {maxSizeMB}MB per image. Supported: PNG, JPG, JPEG, HEIF, GIF, WebP. Max {maxFiles} images.
+          Max file size: {maxSizeMB}MB per image. Supported: PNG, JPG, JPEG, HEIF, GIF, WebP.{maxFiles === Infinity ? ' Unlimited images.' : ` Max ${maxFiles} images.`}
         </p>
       </div>
     </div>

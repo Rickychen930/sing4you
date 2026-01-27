@@ -12,11 +12,26 @@ import { initScrollRevealWithFallback } from './client/utils/scrollRevealInit';
 // Lazy load public pages for better code splitting
 const HomePage = lazy(() => import('./client/pages/public/HomePage'));
 const AboutPage = lazy(() => import('./client/pages/public/AboutPage').then(m => ({ default: m.AboutPage })));
-const PerformancesPage = lazy(() => import('./client/pages/public/PerformancesPage').then(m => ({ default: m.PerformancesPage })));
+const PerformancesPage = lazy(() => 
+  import('./client/pages/public/PerformancesPage')
+    .then(m => ({ default: m.PerformancesPage }))
+    .catch((error) => {
+      console.error('Failed to load PerformancesPage:', error);
+      return { default: () => <div>Failed to load page. Please refresh.</div> };
+    })
+);
 const PerformanceDetailPage = lazy(() => import('./client/pages/public/PerformanceDetailPage').then(m => ({ default: m.PerformanceDetailPage })));
 const ContactPage = lazy(() => import('./client/pages/public/ContactPage').then(m => ({ default: m.ContactPage })));
 const CategoriesPage = lazy(() => import('./client/pages/public/CategoriesPage').then(m => ({ default: m.CategoriesPage })));
-const VariationsPage = lazy(() => import('./client/pages/public/VariationsPage').then(m => ({ default: m.VariationsPage })));
+const VariationsPage = lazy(() => 
+  import('./client/pages/public/VariationsPage')
+    .then(m => ({ default: m.VariationsPage }))
+    .catch((error) => {
+      console.error('Failed to load VariationsPage:', error);
+      // Return a fallback component
+      return { default: () => <div>Failed to load page. Please refresh.</div> };
+    })
+);
 const VariationDetailPage = lazy(() => import('./client/pages/public/VariationDetailPage').then(m => ({ default: m.VariationDetailPage })));
 const NotFoundPage = lazy(() => import('./client/pages/public/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 

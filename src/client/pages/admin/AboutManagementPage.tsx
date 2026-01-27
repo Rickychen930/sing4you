@@ -284,7 +284,7 @@ export const AboutManagementPage: React.FC = () => {
                   label="Gallery Images"
                   value={settings.galleryImages}
                   onChange={(urls) => handleChange('galleryImages', urls)}
-                  maxFiles={20}
+                  maxFiles={Infinity}
                   maxSizeMB={10}
                 />
               </CardBody>

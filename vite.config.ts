@@ -34,6 +34,9 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist/client',
+    // Ensure base path is correct for production
+    base: '/',
+    // Ensure consistent chunk naming for better caching
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -57,7 +60,7 @@ export default defineConfig({
             return 'admin-pages';
           }
         },
-        // Optimize chunk file names
+        // Optimize chunk file names - use consistent naming
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',

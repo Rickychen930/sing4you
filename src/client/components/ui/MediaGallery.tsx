@@ -1,17 +1,176 @@
-import React, { useState, memo, useEffect, useRef } from 'react';
+import React, { useState, memo, useEffect, useRef, useCallback, useMemo } from 'react';
 import { cn } from '../../utils/helpers';
 import { LazyImage } from './LazyImage';
 
 interface MediaGalleryProps {
   media: string[];
   className?: string;
+  itemsPerPage?: number; // Number of items to show initially, then load more
+  enablePagination?: boolean; // Enable "Load More" button for large galleries
 }
 
-export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, className }) => {
+// Shared IntersectionObserver for better performance with many images
+let sharedObserver: IntersectionObserver | null = null;
+const observerCallbacks = new Map<Element, () => void>();
+
+const getSharedObserver = (): IntersectionObserver => {
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const callback = observerCallbacks.get(entry.target);
+          if (callback && entry.isIntersecting) {
+            callback();
+            // Unobserve after first intersection for better performance
+            sharedObserver?.unobserve(entry.target);
+            observerCallbacks.delete(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.01,
+        rootMargin: '200px', // Load images 200px before they come into view
+      }
+    );
+  }
+  return sharedObserver;
+};
+
+// Memoized Gallery Item Component for better performance
+interface GalleryItemProps {
+  url: string;
+  index: number;
+  isVideo: (url: string) => boolean;
+  onSelect: (url: string) => void;
+}
+
+const GalleryItem: React.FC<GalleryItemProps> = memo(({ url, index, isVideo, onSelect }) => {
+  const [shouldLoad, setShouldLoad] = useState(index < 6); // Load first 6 immediately
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (shouldLoad || index < 6) return;
+
+    const element = itemRef.current;
+    if (!element) return;
+
+    const observer = getSharedObserver();
+    const callback = () => {
+      setShouldLoad(true);
+    };
+
+    observerCallbacks.set(element, callback);
+    observer.observe(element);
+
+    return () => {
+      if (element && observerCallbacks.has(element)) {
+        observer.unobserve(element);
+        observerCallbacks.delete(element);
+      }
+    };
+  }, [shouldLoad, index]);
+
+  const handleClick = useCallback(() => {
+    onSelect(url);
+  }, [url, onSelect]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelect(url);
+    }
+  }, [url, onSelect]);
+
+  const video = isVideo(url);
+
+  return (
+    <div
+      ref={itemRef}
+      className="relative aspect-video cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.3)] hover:shadow-2xl border-2 border-gold-900/50 hover:border-gold-700/80 backdrop-blur-sm group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[120px] sm:min-h-[150px] card-hover-lift"
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${video ? 'video' : 'image'} ${index + 1} in full screen`}
+    >
+      <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/25 via-musical-500/25 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl pointer-events-none" aria-hidden />
+      {video ? (
+        shouldLoad ? (
+          <video
+            src={url}
+            className="w-full h-full object-cover"
+            controls
+            preload="metadata"
+            aria-label={`Performance video ${index + 1} - Christina Sings4U`}
+            onError={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              (e.target as HTMLVideoElement).style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-jazz-800/80 to-jazz-900/80 animate-pulse" />
+        )
+      ) : (
+        <>
+          {shouldLoad ? (
+            <LazyImage
+              src={url}
+              alt={`Performance gallery image ${index + 1} - Christina Sings4U`}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              fadeIn
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-jazz-800/80 to-jazz-900/80 animate-pulse" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden />
+          <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 text-white text-lg sm:text-xl lg:text-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 pointer-events-none drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.5)] bg-gold-500/80 group-hover:bg-gold-500 rounded-full p-2 sm:p-2.5 backdrop-blur-sm border-2 border-white/30 group-hover:border-gold-300/60 transition-all duration-300" aria-hidden>
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+            </svg>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}, (prevProps, nextProps) => {
+  // Only re-render if URL or index changes
+  return prevProps.url === nextProps.url && prevProps.index === nextProps.index;
+});
+
+GalleryItem.displayName = 'GalleryItem';
+
+export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ 
+  media, 
+  className,
+  itemsPerPage = 12, // Show 12 items initially (4 rows of 3)
+  enablePagination = true, // Enable pagination for galleries with more than itemsPerPage
+}) => {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(itemsPerPage);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
+  
+  // Reset visible count when media changes
+  useEffect(() => {
+    setVisibleCount(itemsPerPage);
+  }, [media.length, itemsPerPage]);
+
+  // Determine if pagination should be used
+  const shouldPaginate = enablePagination && media.length > itemsPerPage;
+  const visibleMedia = shouldPaginate ? media.slice(0, visibleCount) : media;
+  const hasMore = shouldPaginate && visibleCount < media.length;
+
+  // Memoize isVideo function
+  const isVideo = useCallback((url: string): boolean => {
+    return /\.(mp4|webm|ogg)$/i.test(url) || url.includes('video') || url.includes('youtube') || url.includes('vimeo');
+  }, []);
+
+  // Memoize handleSelect
+  const handleSelect = useCallback((url: string) => {
+    setSelectedMedia(url);
+  }, []);
 
   // Enhanced modal management with focus trap and accessibility
   useEffect(() => {
@@ -70,86 +229,61 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
     };
   }, [selectedMedia]);
 
+  // Cleanup shared observer on unmount
+  useEffect(() => {
+    return () => {
+      if (sharedObserver && observerCallbacks.size === 0) {
+        sharedObserver.disconnect();
+        sharedObserver = null;
+      }
+    };
+  }, []);
+
   if (media.length === 0) {
     return null;
   }
 
-  const isVideo = (url: string): boolean => {
-    return /\.(mp4|webm|ogg)$/i.test(url) || url.includes('video') || url.includes('youtube') || url.includes('vimeo');
-  };
+  // Memoize media items to prevent unnecessary re-renders
+  const mediaItems = useMemo(() => {
+    return visibleMedia.map((url, index) => (
+      <GalleryItem
+        key={url} // Use URL as key for better React reconciliation
+        url={url}
+        index={index}
+        isVideo={isVideo}
+        onSelect={handleSelect}
+      />
+    ));
+  }, [visibleMedia, isVideo, handleSelect]);
+
+  // Load more handler
+  const handleLoadMore = useCallback(() => {
+    setVisibleCount((prev) => Math.min(prev + itemsPerPage, media.length));
+  }, [itemsPerPage, media.length]);
 
   return (
-    <div className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 xl:gap-8', className)}>
-      {media.map((url, index) => (
-        <div
-          key={index}
-          className="relative aspect-video cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.3)] hover:shadow-2xl border-2 border-gold-900/50 hover:border-gold-700/80 backdrop-blur-sm group focus-within:ring-2 focus-within:ring-gold-500/60 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[120px] sm:min-h-[150px] card-hover-lift"
-          /* OPTIMIZED: Reduced backdrop-blur-md to backdrop-blur-sm, increased bg opacity */
-          /* OPTIMIZED: Reduced scale and duration for better performance */
-          onClick={() => setSelectedMedia(url)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              setSelectedMedia(url);
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          aria-label={`View ${isVideo(url) ? 'video' : 'image'} ${index + 1} in full screen`}
-        >
-          <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/25 via-musical-500/25 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl pointer-events-none" aria-hidden />
-          {isVideo(url) ? (
-            <video
-              src={url}
-              className="w-full h-full object-cover"
-              controls
-              preload="metadata"
-              aria-label={`Performance video ${index + 1} - Christina Sings4U`}
-              onError={(e) => {
-                // Prevent error from bubbling and showing in console
-                e.preventDefault();
-                e.stopPropagation();
-                // Hide broken video
-                (e.target as HTMLVideoElement).style.display = 'none';
-              }}
-            />
-          ) : (
-            <>
-              {/* Load first 3 images immediately, others lazy load */}
-              {index < 3 ? (
-                <img
-                  src={url}
-                  alt={`Performance gallery image ${index + 1} - Christina Sings4U`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority={index === 0 ? "high" : "low"}
-                  onError={(e) => {
-                    // Prevent error from bubbling and showing in console
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Hide broken image
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
-              ) : (
-                <LazyImage
-                  src={url}
-                  alt={`Performance gallery image ${index + 1} - Christina Sings4U`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  fadeIn
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden />
-              <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 text-white text-lg sm:text-xl lg:text-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 pointer-events-none drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.5)] bg-gold-500/80 group-hover:bg-gold-500 rounded-full p-2 sm:p-2.5 backdrop-blur-sm border-2 border-white/30 group-hover:border-gold-300/60 transition-all duration-300" aria-hidden>
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                </svg>
-              </div>
-            </>
-          )}
+    <>
+      <div className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 xl:gap-8', className)}>
+        {mediaItems}
+      </div>
+
+      {/* Load More Button */}
+      {hasMore && (
+        <div className="flex justify-center mt-8 sm:mt-10 lg:mt-12">
+          <button
+            onClick={handleLoadMore}
+            className="px-6 sm:px-8 lg:px-10 py-3 sm:py-4 border-2 border-gold-900/60 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold text-gray-200 bg-jazz-900/90 hover:bg-gradient-to-r hover:from-gold-900/50 hover:to-gold-800/50 hover:border-gold-700/80 hover:shadow-[0_8px_20px_rgba(255,194,51,0.3)] focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500 transition-all duration-300 min-h-[48px] sm:min-h-[52px] flex items-center justify-center hover:drop-shadow-[0_0_10px_rgba(255,194,51,0.4)] hover:scale-105 active:scale-95 group"
+            aria-label={`Load more images (${media.length - visibleCount} remaining)`}
+          >
+            <span className="flex items-center gap-2">
+              Load More ({media.length - visibleCount} remaining)
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </span>
+          </button>
         </div>
-      ))}
+      )}
 
       {selectedMedia && (
         <div
@@ -198,6 +332,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
                 alt="Full size media" 
                 className="max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-xl sm:rounded-2xl object-contain shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(126,34,206,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
                 decoding="async"
+                loading="eager"
                 aria-label="Full size image"
                 onError={(e) => {
                   // Prevent error from bubbling and showing in console
@@ -227,12 +362,15 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 }, (prevProps, nextProps) => {
   // Only re-render if media array changes
   if (prevProps.media.length !== nextProps.media.length) return false;
   if (prevProps.className !== nextProps.className) return false;
+  if (prevProps.itemsPerPage !== nextProps.itemsPerPage) return false;
+  if (prevProps.enablePagination !== nextProps.enablePagination) return false;
+  // Deep comparison of media URLs
   return prevProps.media.every((url, index) => url === nextProps.media[index]);
 });
 
