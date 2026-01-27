@@ -8,6 +8,7 @@ import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { performanceService } from '../../services/performanceService';
+import { apiClient } from '../../services/api';
 import { useToastStore } from '../../stores/toastStore';
 import type { IPerformance } from '../../../shared/interfaces';
 
@@ -42,8 +43,13 @@ export const PerformancesManagementPage: React.FC = () => {
     }
   }, []); // Empty deps - only load once
 
-  const loadPerformances = async () => {
+  const loadPerformances = async (forceRefresh: boolean = false) => {
     try {
+      // Clear cache if force refresh
+      if (forceRefresh) {
+        apiClient.clearCache();
+      }
+      
       const data = await performanceService.getAll();
       setPerformances(data);
     } catch (error) {
@@ -92,7 +98,9 @@ export const PerformancesManagementPage: React.FC = () => {
 
     try {
       await performanceService.delete(deleteConfirm.id);
-      await loadPerformances();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadPerformances(true); // Force refresh
       toast.success('Performance deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
@@ -121,7 +129,9 @@ export const PerformancesManagementPage: React.FC = () => {
         await performanceService.create(formData);
         toast.success('Performance created successfully!');
       }
-      await loadPerformances();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadPerformances(true); // Force refresh
       handleCreate();
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to save performance';

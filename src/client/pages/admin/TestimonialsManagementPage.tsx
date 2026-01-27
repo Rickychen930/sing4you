@@ -10,6 +10,7 @@ import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { testimonialService } from '../../services/testimonialService';
+import { apiClient } from '../../services/api';
 import { useToastStore } from '../../stores/toastStore';
 import type { ITestimonial } from '../../../shared/interfaces';
 
@@ -43,8 +44,13 @@ export const TestimonialsManagementPage: React.FC = () => {
     }
   }, []); // Empty deps - only load once
 
-  const loadTestimonials = async () => {
+  const loadTestimonials = async (forceRefresh: boolean = false) => {
     try {
+      // Clear cache if force refresh
+      if (forceRefresh) {
+        apiClient.clearCache();
+      }
+      
       const data = await testimonialService.getAll();
       setTestimonials(data);
     } catch (error) {
@@ -87,7 +93,9 @@ export const TestimonialsManagementPage: React.FC = () => {
 
     try {
       await testimonialService.delete(deleteConfirm.id);
-      await loadTestimonials();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadTestimonials(true); // Force refresh
       toast.success('Testimonial deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
@@ -144,7 +152,9 @@ export const TestimonialsManagementPage: React.FC = () => {
         await testimonialService.create(formData);
         toast.success('Testimonial created successfully!');
       }
-      await loadTestimonials();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadTestimonials(true); // Force refresh
       handleCreate();
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to save testimonial';

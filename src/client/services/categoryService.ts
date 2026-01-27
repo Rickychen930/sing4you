@@ -10,6 +10,14 @@ export class CategoryService {
     return apiClient.get<ICategory>(`/api/categories/${id}`);
   }
 
+  async getBySlug(slug: string): Promise<ICategory> {
+    return apiClient.get<ICategory>(`/api/categories/slug/${slug}`);
+  }
+
+  async getByType(type: string): Promise<ICategory[]> {
+    return apiClient.get<ICategory[]>(`/api/categories/type/${type}`);
+  }
+
   async create(data: Partial<ICategory>): Promise<ICategory> {
     return apiClient.post<ICategory>('/api/admin/categories', data);
   }

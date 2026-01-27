@@ -8,9 +8,12 @@ import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { MultipleImageUpload } from '../../components/ui/MultipleImageUpload';
 import { categoryService } from '../../services/categoryService';
+import { apiClient } from '../../services/api';
 import { useToastStore } from '../../stores/toastStore';
 import type { ICategory } from '../../../shared/interfaces';
+import { slugify } from '../../utils/helpers';
 
 export const CategoriesManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +23,11 @@ export const CategoriesManagementPage: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<ICategory>>({
     name: '',
+    slug: '',
     description: '',
+    type: undefined,
+    media: [],
+    priceRange: '',
     order: 0,
   });
   const [saving, setSaving] = useState(false);
@@ -41,8 +48,13 @@ export const CategoriesManagementPage: React.FC = () => {
     }
   }, []); // Empty deps - only load once
 
-  const loadCategories = async () => {
+  const loadCategories = async (forceRefresh: boolean = false) => {
     try {
+      // Clear cache if force refresh
+      if (forceRefresh) {
+        apiClient.clearCache();
+      }
+      
       const data = await categoryService.getAll();
       setCategories(data);
     } catch (error) {
@@ -59,7 +71,11 @@ export const CategoriesManagementPage: React.FC = () => {
     setEditingId(null);
     setFormData({
       name: '',
+      slug: '',
       description: '',
+      type: undefined,
+      media: [],
+      priceRange: '',
       order: 0,
     });
   };
@@ -69,7 +85,11 @@ export const CategoriesManagementPage: React.FC = () => {
     setEditingId(category._id);
     setFormData({
       name: category.name,
+      slug: category.slug || '',
       description: category.description || '',
+      type: category.type,
+      media: category.media || [],
+      priceRange: category.priceRange || '',
       order: category.order || 0,
     });
   };
@@ -83,7 +103,9 @@ export const CategoriesManagementPage: React.FC = () => {
 
     try {
       await categoryService.delete(deleteConfirm.id);
-      await loadCategories();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadCategories(true); // Force refresh
       toast.success('Category deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
@@ -108,12 +130,27 @@ export const CategoriesManagementPage: React.FC = () => {
       errors.name = 'Category name must be at least 2 characters long';
     }
 
+    if (formData.slug && !/^[a-z0-9-]+$/.test(formData.slug.trim())) {
+      errors.slug = 'Slug must contain only lowercase letters, numbers, and hyphens';
+    }
+
     if (formData.description && formData.description.trim().length > 500) {
       errors.description = 'Description must be less than 500 characters';
     }
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const handleNameChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      name: value,
+      slug: slugify(value),
+    }));
+    if (formErrors.name) {
+      setFormErrors((prev) => ({ ...prev, name: undefined }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,7 +173,9 @@ export const CategoriesManagementPage: React.FC = () => {
         await categoryService.create(formData);
         toast.success('Category created successfully!');
       }
-      await loadCategories();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadCategories(true); // Force refresh
       handleCreate(); // Reset form
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to save category';
@@ -199,14 +238,21 @@ export const CategoriesManagementPage: React.FC = () => {
                       label="Name"
                       required
                       value={formData.name || ''}
-                      onChange={(e) => {
-                        setFormData((prev) => ({ ...prev, name: e.target.value }));
-                        if (formErrors.name) {
-                          setFormErrors((prev) => ({ ...prev, name: undefined }));
-                        }
-                      }}
+                      onChange={(e) => handleNameChange(e.target.value)}
                       placeholder="e.g., Solo, Duo, PocketRocker"
                       error={formErrors.name}
+                    />
+                    <Input
+                      label="Slug (optional)"
+                      value={formData.slug || ''}
+                      onChange={(e) => {
+                        setFormData((prev) => ({ ...prev, slug: e.target.value }));
+                        if (formErrors.slug) {
+                          setFormErrors((prev) => ({ ...prev, slug: undefined }));
+                        }
+                      }}
+                      error={formErrors.slug}
+                      helperText="URL-friendly identifier (auto-generated from name)"
                     />
                     <Textarea
                       label="Description (optional)"
@@ -221,6 +267,46 @@ export const CategoriesManagementPage: React.FC = () => {
                       error={formErrors.description}
                       maxLength={500}
                       helperText={`${formData.description?.length || 0}/500 characters`}
+                    />
+                    <div>
+                      <label className="block text-sm sm:text-base font-medium text-gray-200 mb-1.5 sm:mb-2">
+                        Type (optional)
+                      </label>
+                      <select
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gold-900/50 rounded-lg bg-jazz-900/60 text-sm sm:text-base text-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-colors min-h-[44px] sm:min-h-[48px]"
+                        value={formData.type || ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') {
+                            setFormData((prev) => ({ ...prev, type: undefined }));
+                          } else if (['solo', 'duo', 'trio', 'band', 'wedding', 'corporate', 'other', 'pocketrocker'].includes(value)) {
+                            setFormData((prev) => ({ ...prev, type: value as ICategory['type'] }));
+                          }
+                        }}
+                      >
+                        <option value="">Select a type (optional)</option>
+                        <option value="solo">Solo</option>
+                        <option value="duo">Duo</option>
+                        <option value="trio">Trio</option>
+                        <option value="band">Band</option>
+                        <option value="wedding">Wedding</option>
+                        <option value="corporate">Corporate</option>
+                        <option value="pocketrocker">PocketRocker</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <MultipleImageUpload
+                      label="Media (Images)"
+                      value={formData.media || []}
+                      onChange={(urls) => setFormData((prev) => ({ ...prev, media: urls }))}
+                      maxFiles={10}
+                      maxSizeMB={10}
+                    />
+                    <Input
+                      label="Price Range (optional)"
+                      value={formData.priceRange || ''}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, priceRange: e.target.value }))}
+                      placeholder="e.g., $500 - $1000"
                     />
                     <Input
                       label="Order"
@@ -260,11 +346,23 @@ export const CategoriesManagementPage: React.FC = () => {
                             {category.name}
                           </h3>
                           <p className="text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
+                            {category.type && `Type: ${category.type} | `}
+                            {category.slug && `Slug: ${category.slug} | `}
                             Order: {category.order || 0}
                           </p>
                           {category.description && (
-                            <p className="text-xs sm:text-sm text-gray-300 line-clamp-2">
+                            <p className="text-xs sm:text-sm text-gray-300 line-clamp-2 mb-1.5 sm:mb-2">
                               {category.description}
+                            </p>
+                          )}
+                          {category.priceRange && (
+                            <p className="text-xs sm:text-sm text-gold-600 mt-1.5 sm:mt-2">
+                              {category.priceRange}
+                            </p>
+                          )}
+                          {category.media && category.media.length > 0 && (
+                            <p className="text-xs sm:text-sm text-gray-400 mt-1.5 sm:mt-2">
+                              {category.media.length} media file(s)
                             </p>
                           )}
                         </div>

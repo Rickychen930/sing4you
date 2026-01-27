@@ -10,6 +10,7 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { MultipleImageUpload } from '../../components/ui/MultipleImageUpload';
 import { sectionService } from '../../services/sectionService';
+import { apiClient } from '../../services/api';
 import { useToastStore } from '../../stores/toastStore';
 import type { ISection } from '../../../shared/interfaces';
 import { slugify } from '../../utils/helpers';
@@ -46,8 +47,13 @@ export const SectionsManagementPage: React.FC = () => {
     }
   }, []); // Empty deps - only load once
 
-  const loadSections = async () => {
+  const loadSections = async (forceRefresh: boolean = false) => {
     try {
+      // Clear cache if force refresh
+      if (forceRefresh) {
+        apiClient.clearCache();
+      }
+      
       const data = await sectionService.getAll();
       setSections(data);
     } catch (error) {
@@ -95,7 +101,9 @@ export const SectionsManagementPage: React.FC = () => {
 
     try {
       await sectionService.delete(deleteConfirm.id);
-      await loadSections();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadSections(true); // Force refresh
       toast.success('Section deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
@@ -160,7 +168,9 @@ export const SectionsManagementPage: React.FC = () => {
         await sectionService.create(formData);
         toast.success('Section created successfully!');
       }
-      await loadSections();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadSections(true); // Force refresh
       handleCreate(); // Reset form
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to save section';

@@ -11,6 +11,7 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { variationService } from '../../services/variationService';
 import { categoryService } from '../../services/categoryService';
 import { mediaService } from '../../services/mediaService';
+import { apiClient } from '../../services/api';
 import { useToastStore } from '../../stores/toastStore';
 import type { IVariation, ICategory, IMedia } from '../../../shared/interfaces';
 import { slugify } from '../../utils/helpers';
@@ -58,8 +59,13 @@ export const VariationsManagementPage: React.FC = () => {
     }
   }, []); // Empty deps - only load once
 
-  const loadData = async () => {
+  const loadData = async (forceRefresh: boolean = false) => {
     try {
+      // Clear cache if force refresh
+      if (forceRefresh) {
+        apiClient.clearCache();
+      }
+      
       const [variationsData, categoriesData] = await Promise.all([
         variationService.getAll(),
         categoryService.getAll(),
@@ -120,7 +126,9 @@ export const VariationsManagementPage: React.FC = () => {
 
     try {
       await variationService.delete(deleteConfirm.id);
-      await loadData();
+      // Clear cache and reload data
+      apiClient.clearCache();
+      await loadData(true); // Force refresh
       toast.success('Variation deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
@@ -206,7 +214,9 @@ export const VariationsManagementPage: React.FC = () => {
         await variationService.create(formData);
         toast.success('Variation created successfully!');
       }
-      await loadData();
+      // Clear cache and reload data to show latest changes
+      apiClient.clearCache();
+      await loadData(true); // Force refresh
       handleCreate(); // Reset form
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to save variation';

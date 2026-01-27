@@ -57,6 +57,31 @@ export class CategoryController {
     }
   };
 
+  public getBySlug = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const slug = getRequiredStringParam(req, 'slug');
+      const category = await this.categoryService.getBySlug(slug);
+      res.json({ success: true, data: category });
+    } catch (error) {
+      const err = error as Error;
+      if (err.message === 'Category not found') {
+        res.status(404).json({ success: false, error: err.message });
+      } else {
+        next(error);
+      }
+    }
+  };
+
+  public getByType = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const type = getRequiredStringParam(req, 'type');
+      const categories = await this.categoryService.getByType(type);
+      res.json({ success: true, data: categories });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = getRequiredStringParam(req, 'id');

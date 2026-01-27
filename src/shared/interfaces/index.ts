@@ -104,8 +104,13 @@ export interface IPaginationParams {
 export interface ICategory {
   _id?: string;
   name: string;
+  slug?: string; // URL-friendly identifier
   description?: string;
-  order?: number;
+  type?: 'solo' | 'duo' | 'trio' | 'band' | 'wedding' | 'corporate' | 'other' | 'pocketrocker'; // Performance type
+  media?: string[]; // Array of image/video URLs
+  audioSamples?: string[]; // Array of audio sample URLs
+  priceRange?: string; // Price range display (e.g., "$500 - $1,500")
+  order?: number; // Display order
   createdAt?: Date;
   updatedAt?: Date;
 }

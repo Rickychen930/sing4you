@@ -57,6 +57,8 @@ router.get('/api/testimonials/:id', testimonialController.getById);
 // Categories
 const categoryController = new CategoryController();
 router.get('/api/categories', categoryController.getAll);
+router.get('/api/categories/type/:type', categoryController.getByType);
+router.get('/api/categories/slug/:slug', categoryController.getBySlug);
 router.get('/api/categories/:id', categoryController.getById);
 
 // Variations

@@ -8,7 +8,27 @@ const categorySchema = new Schema<ICategory>(
       required: true,
       unique: true,
     },
+    slug: {
+      type: String,
+      lowercase: true,
+      sparse: true, // Allow null/undefined, but unique if present
+    },
     description: {
+      type: String,
+    },
+    type: {
+      type: String,
+      enum: ['solo', 'duo', 'trio', 'band', 'wedding', 'corporate', 'other', 'pocketrocker'],
+    },
+    media: {
+      type: [String],
+      default: [],
+    },
+    audioSamples: {
+      type: [String],
+      default: [],
+    },
+    priceRange: {
       type: String,
     },
     order: {
@@ -22,6 +42,8 @@ const categorySchema = new Schema<ICategory>(
 );
 
 categorySchema.index({ order: 1 });
+categorySchema.index({ slug: 1 }, { unique: true, sparse: true });
+categorySchema.index({ type: 1 });
 // name already has unique: true, so no need for separate index
 
 export class CategoryModel {
@@ -62,6 +84,24 @@ export class CategoryModel {
       return await model.findOne({ name }).lean();
     } catch {
       return null;
+    }
+  }
+
+  public static async findBySlug(slug: string): Promise<ICategory | null> {
+    try {
+      const model = this.getModel();
+      return await model.findOne({ slug }).lean();
+    } catch {
+      return null;
+    }
+  }
+
+  public static async findByType(type: string): Promise<ICategory[]> {
+    try {
+      const model = this.getModel();
+      return await model.find({ type }).sort({ order: 1, createdAt: 1 }).lean();
+    } catch {
+      return [];
     }
   }
 

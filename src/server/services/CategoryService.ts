@@ -91,6 +91,30 @@ export class CategoryService {
     return category;
   }
 
+  public async getBySlug(slug: string): Promise<ICategory> {
+    if (this.useMockData()) {
+      const categories = this.getMockCategories();
+      const category = categories.find(cat => cat.slug === slug);
+      if (!category) {
+        throw new Error('Category not found');
+      }
+      return category;
+    }
+    const category = await CategoryModel.findBySlug(slug);
+    if (!category) {
+      throw new Error('Category not found');
+    }
+    return category;
+  }
+
+  public async getByType(type: string): Promise<ICategory[]> {
+    if (this.useMockData()) {
+      const categories = this.getMockCategories();
+      return categories.filter(cat => cat.type === type);
+    }
+    return await CategoryModel.findByType(type);
+  }
+
   public async create(data: Partial<ICategory>): Promise<ICategory> {
     if (this.useMockData()) {
       throw new Error('Database not connected. Cannot create category.');

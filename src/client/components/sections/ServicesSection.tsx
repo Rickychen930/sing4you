@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo, useCallback, useRef } from 'react';
-import type { ISection } from '../../../shared/interfaces';
-import { sectionService } from '../../services/sectionService';
+import type { ICategory } from '../../../shared/interfaces';
+import { categoryService } from '../../services/categoryService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody, CardFooter } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -18,17 +18,17 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
   title = 'Our Services',
   subtitle = 'Choose the perfect performance style for your special event',
 }) => {
-  const [sections, setSections] = useState<ISection[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const isMountedRef = useRef(true);
 
-  const loadSections = useCallback(async () => {
+  const loadCategories = useCallback(async () => {
     setError(null);
     setLoading(true);
     try {
-      const data = await sectionService.getAll();
-      if (isMountedRef.current) setSections(data);
+      const data = await categoryService.getAll();
+      if (isMountedRef.current) setCategories(data);
     } catch (err) {
       if (!isMountedRef.current) return;
       const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
@@ -43,15 +43,15 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
 
   useEffect(() => {
     isMountedRef.current = true;
-    loadSections();
+    loadCategories();
     return () => {
       isMountedRef.current = false;
     };
-  }, [loadSections]);
+  }, [loadCategories]);
 
   const retry = useCallback(() => {
-    loadSections();
-  }, [loadSections]);
+    loadCategories();
+  }, [loadCategories]);
 
   if (loading) {
     return (
@@ -80,7 +80,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
     );
   }
 
-  if (sections.length === 0) {
+  if (categories.length === 0) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
         <EmptyState
@@ -95,9 +95,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
   return (
     <SectionWrapper id="services" title={title} subtitle={subtitle} className="scroll-smooth">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
-        {sections.map((section, index) => (
+        {categories.map((category, index) => (
           <div
-            key={section._id}
+            key={category._id}
             className="animate-fade-in-up services-section-item"
             style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
           >
@@ -111,22 +111,24 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
                   {/* Title with enhanced visual hierarchy */}
                   <div className="mb-4 sm:mb-5 lg:mb-6">
                     <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300 services-section-title">
-                      {section.title}
+                      {category.name}
                     </h3>
                   </div>
                   
                   {/* Description with better spacing and consistent line clamp */}
-                  <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 services-section-text">
-                    {section.description}
-                  </p>
+                  {category.description && (
+                    <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 services-section-text">
+                      {category.description}
+                    </p>
+                  )}
                   
                   {/* Media Gallery with enhanced styling and consistent border */}
-                  {section.media && section.media.length > 0 && (
+                  {category.media && category.media.length > 0 && (
                     <div className="mb-4 sm:mb-5 lg:mb-6 rounded-xl overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 border border-gold-900/30 group-hover:border-gold-700/50 relative">
                       <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 via-transparent to-musical-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl z-0" aria-hidden />
                       <div className="relative z-10">
                         <MediaGallery 
-                          media={section.media.slice(0, 4)} 
+                          media={category.media.slice(0, 4)} 
                           className="grid-cols-2"
                         />
                       </div>
@@ -142,10 +144,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
                   size="md"
                   className="w-full transition-all duration-300 hover:shadow-[0_8px_24px_rgba(255,194,51,0.35)] group/btn"
                   onClick={() => {
-                    const message = `Hi Christina, I'd like to know more about your ${section.title} service.`;
+                    const message = `Hi Christina, I'd like to know more about your ${category.name} service.`;
                     window.open(generateWhatsAppLink(message), '_blank', 'noopener,noreferrer');
                   }}
-                  aria-label={`Get more information about ${section.title} service via WhatsApp`}
+                  aria-label={`Get more information about ${category.name} service via WhatsApp`}
                 >
                   <span className="flex items-center justify-center gap-2">
                     More Information
