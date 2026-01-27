@@ -31,22 +31,33 @@ router.get('/api/admin/uploads/verify', authMiddleware, async (_req, res) => {
   try {
     const { getUploadDirectory } = await import('../controllers/MediaUploadController');
     const { existsSync, readdirSync, statSync } = await import('fs');
+    const { resolve } = await import('path');
     const uploadDir = getUploadDirectory();
     
     const dirExists = existsSync(uploadDir);
-    let files: Array<{ name: string; size: number; modified: Date }> = [];
+    let files: Array<{ name: string; size: number; modified: Date; path: string; exists: boolean }> = [];
     let error: string | null = null;
     
     if (dirExists) {
       try {
         const fileList = readdirSync(uploadDir);
         files = fileList.slice(0, 20).map(name => {
-          const filePath = `${uploadDir}/${name}`;
-          const stats = statSync(filePath);
+          const filePath = resolve(uploadDir, name);
+          const fileExists = existsSync(filePath);
+          let stats: ReturnType<typeof statSync> | null = null;
+          if (fileExists) {
+            try {
+              stats = statSync(filePath);
+            } catch {
+              // Ignore stat errors
+            }
+          }
           return {
             name,
-            size: stats.size,
-            modified: stats.mtime,
+            size: stats?.size || 0,
+            modified: stats?.mtime || new Date(),
+            path: filePath,
+            exists: fileExists,
           };
         });
       } catch (err) {
@@ -54,10 +65,17 @@ router.get('/api/admin/uploads/verify', authMiddleware, async (_req, res) => {
       }
     }
     
+    // Calculate project root from BACKEND_ROOT if available
+    let projectRoot: string | null = null;
+    if (process.env.BACKEND_ROOT) {
+      projectRoot = resolve(process.env.BACKEND_ROOT, '..');
+    }
+    
     res.json({
       success: true,
       data: {
         uploadDir,
+        projectRoot,
         exists: dirExists,
         readable: dirExists && !error,
         fileCount: files.length,
@@ -68,6 +86,50 @@ router.get('/api/admin/uploads/verify', authMiddleware, async (_req, res) => {
           BACKEND_ROOT: process.env.BACKEND_ROOT || 'not set',
           UPLOAD_DIR: process.env.UPLOAD_DIR || 'not set',
         },
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+// Check if specific file exists (admin only)
+router.get('/api/admin/uploads/check/:filename', authMiddleware, async (req, res) => {
+  try {
+    const { getUploadDirectory } = await import('../controllers/MediaUploadController');
+    const { existsSync, statSync } = await import('fs');
+    const { resolve } = await import('path');
+    const uploadDir = getUploadDirectory();
+    const filename = req.params.filename;
+    const filePath = resolve(uploadDir, filename);
+    
+    const fileExists = existsSync(filePath);
+    let stats: ReturnType<typeof statSync> | null = null;
+    let readable = false;
+    
+    if (fileExists) {
+      try {
+        stats = statSync(filePath);
+        readable = (stats.mode & parseInt('444', 8)) !== 0;
+      } catch {
+        // Ignore stat errors
+      }
+    }
+    
+    res.json({
+      success: true,
+      data: {
+        filename,
+        filePath,
+        exists: fileExists,
+        readable,
+        size: stats?.size || 0,
+        modified: stats?.mtime || null,
+        uploadDir,
+        url: `/uploads/${filename}`,
       },
     });
   } catch (error) {
