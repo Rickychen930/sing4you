@@ -232,6 +232,33 @@ jobs:
       - name: Create .env file for backend
         run: |
           echo "Creating .env file for backend deployment..."
+          
+          # Validate critical secrets before creating .env file
+          echo "Validating GitHub Secrets..."
+          MISSING_SECRETS=()
+          
+          if [ -z "${{ secrets.MONGODB_URI }}" ]; then
+            MISSING_SECRETS+=("MONGODB_URI")
+          fi
+          if [ -z "${{ secrets.JWT_SECRET }}" ]; then
+            MISSING_SECRETS+=("JWT_SECRET")
+          fi
+          if [ -z "${{ secrets.JWT_REFRESH_SECRET }}" ]; then
+            MISSING_SECRETS+=("JWT_REFRESH_SECRET")
+          fi
+          
+          if [ ${#MISSING_SECRETS[@]} -gt 0 ]; then
+            echo "❌ ERROR: The following required GitHub Secrets are not set:"
+            for secret in "${MISSING_SECRETS[@]}"; do
+              echo "   - $secret"
+            done
+            echo ""
+            echo "Please configure these secrets in GitHub Repository Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+          
+          echo "✅ All required secrets are set"
+          
           cat > .env.production << EOF
           # Server Configuration
           PORT=4000
@@ -270,11 +297,21 @@ jobs:
           SITE_NAME=${{ secrets.SITE_NAME || 'Christina Sings4U' }}
           EOF
           echo "✅ .env.production file created"
-          # Verify critical variables are set
-          if grep -q "MONGODB_URI=" .env.production && ! grep -q "MONGODB_URI=<" .env.production; then
+          
+          # Verify critical variables are set and not empty
+          if grep -q "^MONGODB_URI=" .env.production && ! grep -q "^MONGODB_URI=$" .env.production && ! grep -q "^MONGODB_URI=<" .env.production; then
             echo "✅ MONGODB_URI is set"
           else
-            echo "❌ ERROR: MONGODB_URI is not properly configured!"
+            echo "❌ ERROR: MONGODB_URI is missing or empty in .env.production!"
+            echo "   Please check GitHub Secrets > MONGODB_URI"
+            exit 1
+          fi
+          
+          if grep -q "^JWT_SECRET=" .env.production && ! grep -q "^JWT_SECRET=$" .env.production; then
+            echo "✅ JWT_SECRET is set"
+          else
+            echo "❌ ERROR: JWT_SECRET is missing or empty in .env.production!"
+            echo "   Please check GitHub Secrets > JWT_SECRET"
             exit 1
           fi
 
@@ -648,16 +685,31 @@ jobs:
               echo "📄 File size: $(wc -c < "$BACKEND_TARGET/.env") bytes"
               
               # Check for critical variables
-              if grep -q "^MONGODB_URI=" "$BACKEND_TARGET/.env" && ! grep -q "^MONGODB_URI=<" "$BACKEND_TARGET/.env" && ! grep -q "^MONGODB_URI=$" "$BACKEND_TARGET/.env"; then
+              MONGODB_URI_VALUE=$(grep "^MONGODB_URI=" "$BACKEND_TARGET/.env" | cut -d'=' -f2- | tr -d ' ')
+              if [ -z "$MONGODB_URI_VALUE" ]; then
+                echo "❌ ERROR: MONGODB_URI is missing or empty in .env file!"
+                echo ""
+                echo "   This usually means GitHub Secrets are not configured properly."
+                echo "   Please check:"
+                echo "   1. Go to GitHub Repository > Settings > Secrets and variables > Actions"
+                echo "   2. Ensure MONGODB_URI secret is set with your MongoDB connection string"
+                echo "   3. Format: mongodb+srv://username:password@cluster.mongodb.net/database"
+                echo ""
+                echo "   Current .env file contents (first 15 lines):"
+                head -15 "$BACKEND_TARGET/.env" || echo "   Could not read .env file"
+                echo ""
+                echo "   Available files in $BACKEND_TARGET:"
+                ls -la "$BACKEND_TARGET" | grep -E "\.env" || echo "   No .env files found"
+                exit 1
+              elif echo "$MONGODB_URI_VALUE" | grep -q "<db_password>"; then
+                echo "❌ ERROR: MONGODB_URI contains placeholder '<db_password>'!"
+                echo "   Please update GitHub Secrets > MONGODB_URI with actual database password"
+                exit 1
+              else
                 echo "✅ MONGODB_URI is set in .env"
                 # Show first few chars (without exposing full connection string)
                 MONGODB_PREVIEW=$(grep "^MONGODB_URI=" "$BACKEND_TARGET/.env" | cut -c1-30)
                 echo "   Preview: ${MONGODB_PREVIEW}..."
-              else
-                echo "❌ ERROR: MONGODB_URI is missing or not properly configured in .env!"
-                echo "   First few lines of .env:"
-                head -10 "$BACKEND_TARGET/.env" || echo "   Could not read .env file"
-                exit 1
               fi
               
               if grep -q "^NODE_ENV=production" "$BACKEND_TARGET/.env"; then
