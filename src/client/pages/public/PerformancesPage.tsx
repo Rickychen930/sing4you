@@ -142,7 +142,7 @@ export const PerformancesPage: React.FC = memo(() => {
             title="No performances scheduled"
             description="Check back soon for upcoming events and performances! You can also contact us to book a performance."
             action={{
-              label: "Contact Us",
+              label: "Book Now",
               to: "/contact",
               variant: "primary"
             }}

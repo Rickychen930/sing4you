@@ -8,8 +8,8 @@ import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { Card, CardBody } from '../../components/ui/Card';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { MediaGallery } from '../../components/ui/MediaGallery';
 import { DescriptionSection } from '../../components/sections/DescriptionSection';
+import { PerformanceMediaCarousel } from '../../components/ui/PerformanceMediaCarousel';
 import { useToastStore } from '../../stores/toastStore';
 import { performanceService } from '../../services/performanceService';
 import type { IPerformance } from '../../../shared/interfaces';
@@ -201,13 +201,13 @@ export const PerformanceDetailPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* Media Gallery */}
+                {/* Media Carousel */}
                 {performance.media && performance.media.length > 0 && (
                   <div className="mb-6 sm:mb-7 lg:mb-8">
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                       Performance Gallery
                     </h2>
-                    <MediaGallery media={performance.media} />
+                    <PerformanceMediaCarousel media={performance.media} />
                   </div>
                 )}
 

@@ -271,6 +271,25 @@ export const HeroManagementPage: React.FC = () => {
                   onChange={(url) => handleChange('backgroundImage', url)}
                   maxSizeMB={10}
                 />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div>
+                    <label className="block text-sm sm:text-base font-medium text-gray-200 font-sans mb-1.5">
+                      Background Image Position
+                    </label>
+                    <select
+                      value={settings.backgroundPosition || 'center'}
+                      onChange={(e) => handleChange('backgroundPosition', e.target.value)}
+                      className="w-full bg-jazz-900/80 border border-gold-900/60 rounded-lg px-3 py-2.5 text-sm sm:text-base text-gray-100 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:border-gold-500"
+                    >
+                      <option value="top">Top</option>
+                      <option value="center">Center</option>
+                      <option value="bottom">Bottom</option>
+                    </select>
+                    <p className="mt-1 text-xs sm:text-sm text-gray-400">
+                      Adjust how the hero background image is framed vertically (useful for tall images).
+                    </p>
+                  </div>
+                </div>
                 <ImageUpload
                   label="Background Video"
                   value={settings.backgroundVideo || ''}

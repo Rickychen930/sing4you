@@ -19,6 +19,11 @@ const heroSettingsSchema = new Schema<IHeroSettings>(
     backgroundVideo: {
       type: String,
     },
+    backgroundPosition: {
+      type: String,
+      enum: ['top', 'center', 'bottom'],
+      default: 'center',
+    },
     ctaWhatsApp: {
       text: {
         type: String,

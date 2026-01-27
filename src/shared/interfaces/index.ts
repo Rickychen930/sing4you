@@ -5,6 +5,12 @@ export interface IHeroSettings {
   subtitle: string;
   backgroundImage?: string;
   backgroundVideo?: string;
+  /**
+   * Background image vertical position.
+   * Allows fine-tuning how the hero background is framed.
+   * Defaults to 'center' when not set.
+   */
+  backgroundPosition?: 'top' | 'center' | 'bottom';
   ctaWhatsApp: {
     text: string;
     link: string;

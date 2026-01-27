@@ -9,6 +9,8 @@ interface SectionWrapperProps {
   subtitle?: string;
   /** Use alternate background tint for visual rhythm between sections. */
   alternate?: boolean;
+  /** Optional click handler for the title/header area (e.g. navigate on click). */
+  onTitleClick?: () => void;
 }
 
 export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
@@ -18,6 +20,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
   title,
   subtitle,
   alternate = false,
+  onTitleClick,
 }) => {
   const sectionClassName = useMemo(() => cn(
     'py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden',
@@ -47,10 +50,22 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
             {title && (
               <div className="relative inline-block mb-2 sm:mb-3">
                 <div className="absolute -inset-4 sm:-inset-6 bg-gold-500/10 rounded-full blur-2xl opacity-60" aria-hidden />
-                <h2 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
-                  {title}
-                  <span className="absolute -top-1 -right-2 sm:-right-4 text-base sm:text-lg lg:text-xl opacity-40 font-musical animate-float" aria-hidden>♪</span>
-                </h2>
+                {onTitleClick ? (
+                  <button
+                    type="button"
+                    onClick={onTitleClick}
+                    className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 hover:scale-[1.02] transition-transform duration-300"
+                    aria-label={title}
+                  >
+                    {title}
+                    <span className="absolute -top-1 -right-2 sm:-right-4 text-base sm:text-lg lg:text-xl opacity-40 font-musical animate-float" aria-hidden>♪</span>
+                  </button>
+                ) : (
+                  <h2 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+                    {title}
+                    <span className="absolute -top-1 -right-2 sm:-right-4 text-base sm:text-lg lg:text-xl opacity-40 font-musical animate-float" aria-hidden>♪</span>
+                  </h2>
+                )}
               </div>
             )}
             {subtitle && (

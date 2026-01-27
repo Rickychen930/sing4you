@@ -34,8 +34,9 @@ export const FloatingWhatsApp: React.FC = memo(() => {
   }, [handleScroll]);
 
   const baseBottom = '1rem';
-  const scrollToTopHeight = '3.5rem';
-  const gap = '0.5rem';
+  // Slightly larger height to ensure we always sit comfortably above ScrollToTop
+  const scrollToTopHeight = '4rem';
+  const gap = '0.75rem';
   const bottomWhenScrolled = `calc(${baseBottom} + ${scrollToTopHeight} + ${gap})`;
   const bottom = backToTopVisible ? bottomWhenScrolled : baseBottom;
 

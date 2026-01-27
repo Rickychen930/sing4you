@@ -72,13 +72,18 @@ export const Hero: FC = memo(() => {
 
   // Disabled parallax for better performance
 
-  const backgroundStyle: CSSProperties = useMemo(() => heroSettings?.backgroundImage
-    ? {
-        backgroundImage: `url(${heroSettings.backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }
-    : {}, [heroSettings?.backgroundImage]);
+  const backgroundStyle: CSSProperties = useMemo(() => {
+    if (!heroSettings?.backgroundImage) return {};
+
+    // Allow admin to control vertical framing of the hero background image
+    const position = heroSettings.backgroundPosition || 'center';
+
+    return {
+      backgroundImage: `url(${heroSettings.backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: position,
+    };
+  }, [heroSettings?.backgroundImage, heroSettings?.backgroundPosition]);
 
   const handleWhatsApp = useCallback(() => {
     window.open(generateWhatsAppLink(undefined, undefined), '_blank');
@@ -116,7 +121,7 @@ export const Hero: FC = memo(() => {
 
   if (loading || !heroSettings) {
     return (
-      <section id="hero" className="relative w-full flex items-center justify-center -mt-16 sm:-mt-18 lg:-mt-20 pt-16 sm:pt-18 lg:pt-20 bg-black hero-section-bg">
+      <section id="hero" className="relative w-full flex items-center justify-center -mt-16 sm:-mt-18 lg:-mt-20 pt-16 sm:pt-18 lg:pt-20 bg-[var(--color-black)] hero-section-bg">
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-white text-center px-4 sm:px-6">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-elegant font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Christina Sings4U</h1>

@@ -17,7 +17,7 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
   const mainContent = children ?? <Outlet />;
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-black">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-[var(--color-black)]">
       <a href="#main-content" className="skip-to-main">
         Skip to main content
       </a>
@@ -40,7 +40,7 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
           autoPlay={true}
           loop={true}
           showControls={true}
-          controlsPosition="bottom-right"
+          controlsPosition="bottom-left"
           disableOnMobile={true}
         />
       )}
