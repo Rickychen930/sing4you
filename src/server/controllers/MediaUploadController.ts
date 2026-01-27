@@ -1,13 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
-import { fileURLToPath } from 'url';
-import { dirname, resolve, join } from 'path';
+import { resolve, join } from 'path';
 import { existsSync, mkdirSync, unlinkSync } from 'fs';
 import { CloudinaryConfig } from '../config/cloudinary';
-
-// Get current directory in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Determine upload directory path
 // Priority: UPLOAD_DIR > BACKEND_ROOT/uploads > default paths
@@ -28,8 +23,10 @@ const getUploadDir = (): string => {
     }
   } 
   // In development, use project root/uploads
+  // Use process.cwd() to get project root (works in both dev and production)
   else {
-    uploadDir = resolve(__dirname, '../../uploads');
+    // process.cwd() returns the current working directory (project root)
+    uploadDir = resolve(process.cwd(), 'uploads');
   }
   
   // Create directory if it doesn't exist

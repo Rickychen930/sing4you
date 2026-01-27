@@ -167,8 +167,10 @@ const getUploadDir = (): string => {
     }
   } 
   // In development, use project root/uploads
+  // Use process.cwd() to get project root (works in both dev and production)
   else {
-    uploadDir = resolve(__dirname, '../../uploads');
+    // process.cwd() returns the current working directory (project root)
+    uploadDir = resolve(process.cwd(), 'uploads');
   }
   
   if (!existsSync(uploadDir)) {
@@ -180,6 +182,8 @@ const getUploadDir = (): string => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`📁 Static serve directory: ${uploadDir}`);
     console.log(`📁 Static serve directory exists: ${existsSync(uploadDir)}`);
+    console.log(`📁 Current working directory: ${process.cwd()}`);
+    console.log(`📁 __dirname: ${__dirname}`);
   }
   
   return uploadDir;

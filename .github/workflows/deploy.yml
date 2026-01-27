@@ -272,12 +272,18 @@ jobs:
             mkdir -p "$BACKEND_TARGET"
             mkdir -p "$BACKEND_TARGET/dist"
             mkdir -p "$BACKEND_TARGET/server"
+            # Create uploads directory with proper permissions (writable for file uploads)
             mkdir -p "$BACKEND_TARGET/uploads"
             mkdir -p "$BACKEND_TARGET/_incoming_backend"
             chmod -R 755 "$BACKEND_TARGET" || true
+            # Uploads directory needs to be writable for file uploads
+            chmod 755 "$BACKEND_TARGET/uploads" || true
             chmod 777 "$BACKEND_TARGET/_incoming_backend" || true
             # Try to set ownership (may fail if not root, that's ok)
             chown -R "$(whoami):$(whoami)" "$BACKEND_TARGET" 2>/dev/null || true
+            # Ensure uploads directory is writable
+            chmod 755 "$BACKEND_TARGET/uploads" || chmod 777 "$BACKEND_TARGET/uploads" || true
+            echo "✅ Uploads directory created at: $BACKEND_TARGET/uploads"
 
             # Verify directories are writable
             if [ ! -w "$FRONTEND_TARGET/_incoming" ]; then
@@ -393,6 +399,7 @@ jobs:
                     NODE_ENV: "production",
                     PORT: 4000,
                     BACKEND_ROOT: "${BACKEND_TARGET}",
+                    UPLOAD_DIR: "${BACKEND_TARGET}/uploads",
                   },
                   error_file: "./logs/pm2-error.log",
                   out_file: "./logs/pm2-out.log",
@@ -513,6 +520,15 @@ jobs:
             rm -rf "$DIST_DIR"
             mkdir -p "$DIST_DIR"
             cp -a "$INCOMING_BACKEND"/. "$DIST_DIR"/
+            
+            # Ensure uploads directory exists and is writable (preserve existing uploads)
+            echo "Ensuring uploads directory exists..."
+            mkdir -p "$BACKEND_TARGET/uploads"
+            chmod 755 "$BACKEND_TARGET/uploads" || chmod 777 "$BACKEND_TARGET/uploads" || true
+            # Try to set ownership for uploads directory
+            chown -R "$(whoami):$(whoami)" "$BACKEND_TARGET/uploads" 2>/dev/null || true
+            echo "✅ Uploads directory verified: $BACKEND_TARGET/uploads"
+            ls -ld "$BACKEND_TARGET/uploads" || true
 
             # Ensure .env file exists (create from secrets if needed, or keep existing)
             if [ ! -f "$ENV_FILE" ] && [ -f "$ENV_PROD_FILE" ]; then
@@ -643,6 +659,31 @@ jobs:
 
             # Cleanup incoming backend
             rm -rf "$BACKEND_TARGET/_incoming_backend"
+            
+            # Final verification: Ensure uploads directory exists and is writable
+            echo "=== Final Uploads Directory Verification ==="
+            if [ -d "$BACKEND_TARGET/uploads" ]; then
+              echo "✅ Uploads directory exists: $BACKEND_TARGET/uploads"
+              ls -ld "$BACKEND_TARGET/uploads"
+              # Ensure it's writable
+              chmod 755 "$BACKEND_TARGET/uploads" || chmod 777 "$BACKEND_TARGET/uploads" || true
+              # Test write permission
+              if touch "$BACKEND_TARGET/uploads/.write_test" 2>/dev/null; then
+                rm -f "$BACKEND_TARGET/uploads/.write_test"
+                echo "✅ Uploads directory is writable"
+              else
+                echo "⚠️  WARNING: Uploads directory may not be writable"
+                echo "   Attempting to fix permissions..."
+                chmod 777 "$BACKEND_TARGET/uploads" || true
+                chown -R "$(whoami):$(whoami)" "$BACKEND_TARGET/uploads" 2>/dev/null || true
+              fi
+            else
+              echo "⚠️  WARNING: Uploads directory does not exist, creating..."
+              mkdir -p "$BACKEND_TARGET/uploads"
+              chmod 755 "$BACKEND_TARGET/uploads" || chmod 777 "$BACKEND_TARGET/uploads" || true
+              chown -R "$(whoami):$(whoami)" "$BACKEND_TARGET/uploads" 2>/dev/null || true
+              echo "✅ Uploads directory created"
+            fi
 
             echo "✅ Backend deployment complete"
 
