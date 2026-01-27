@@ -26,6 +26,58 @@ router.get('/api/health', (_req, res) => {
   });
 });
 
+// Uploads directory verification endpoint (admin only)
+router.get('/api/admin/uploads/verify', authMiddleware, async (_req, res) => {
+  try {
+    const { getUploadDirectory } = await import('../controllers/MediaUploadController');
+    const { existsSync, readdirSync, statSync } = await import('fs');
+    const uploadDir = getUploadDirectory();
+    
+    const dirExists = existsSync(uploadDir);
+    let files: Array<{ name: string; size: number; modified: Date }> = [];
+    let error: string | null = null;
+    
+    if (dirExists) {
+      try {
+        const fileList = readdirSync(uploadDir);
+        files = fileList.slice(0, 20).map(name => {
+          const filePath = `${uploadDir}/${name}`;
+          const stats = statSync(filePath);
+          return {
+            name,
+            size: stats.size,
+            modified: stats.mtime,
+          };
+        });
+      } catch (err) {
+        error = err instanceof Error ? err.message : 'Unknown error reading directory';
+      }
+    }
+    
+    res.json({
+      success: true,
+      data: {
+        uploadDir,
+        exists: dirExists,
+        readable: dirExists && !error,
+        fileCount: files.length,
+        files: files.slice(0, 10), // Show first 10 files
+        error,
+        env: {
+          NODE_ENV: process.env.NODE_ENV,
+          BACKEND_ROOT: process.env.BACKEND_ROOT || 'not set',
+          UPLOAD_DIR: process.env.UPLOAD_DIR || 'not set',
+        },
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
 // Public routes
 const heroController = new HeroController();
 const sectionController = new SectionController();

@@ -194,18 +194,25 @@ const getUploadDir = (): string => {
 };
 
 const staticUploadDir = getUploadDir();
+
+// Enhanced static file serving with better error handling
 app.use('/uploads', express.static(staticUploadDir, {
   maxAge: '1y', // Cache for 1 year
   etag: true,
-  // Add cache busting support via query params
   setHeaders: (res, path) => {
-    // If URL has _t parameter, don't cache
+    // Log when file is served (only in development or with DEBUG env)
+    if (process.env.DEBUG === 'true' || process.env.NODE_ENV !== 'production') {
+      console.log(`📥 Serving static file: ${path}`);
+    }
+    // Add cache busting support via query params
     if (path.includes('_t=')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
     }
   },
+  // Don't fall through - return 404 if file not found
+  fallthrough: false,
 }));
 
 // API routes with no-cache headers for admin endpoints

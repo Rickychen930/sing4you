@@ -7,6 +7,7 @@ import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { EmptyState } from '../ui/EmptyState';
 import { MediaGallery } from '../ui/MediaGallery';
+import { LazyImage } from '../ui/LazyImage';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 
 interface ServicesSectionProps {
@@ -106,14 +107,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
                 {/* Featured Image - Hero image for the service card */}
                 {category.featuredImage && (
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
-                    <img
+                    <LazyImage
                       src={category.featuredImage}
                       alt={category.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => {
-                        // Hide image on error, show fallback
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

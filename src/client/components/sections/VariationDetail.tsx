@@ -6,6 +6,7 @@ import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
 import { MediaGallery } from '../ui/MediaGallery';
+import { LazyImage } from '../ui/LazyImage';
 import { DescriptionSection } from './DescriptionSection';
 
 interface VariationDetailProps {
@@ -121,14 +122,10 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
             {/* Featured Image - Hero image for the variation */}
             {variation.featuredImage && (
               <div className="relative w-full h-64 sm:h-80 lg:h-96 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
-                <img
+                <LazyImage
                   src={variation.featuredImage}
                   alt={variation.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  onError={(e) => {
-                    // Hide image on error, show fallback
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

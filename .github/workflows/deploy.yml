@@ -912,10 +912,22 @@ jobs:
               exit 1
             fi
             
-            # Reload nginx
-            echo "Reloading nginx..."
-            sudo systemctl reload nginx || sudo systemctl restart nginx
-            echo "✅ Nginx reloaded successfully"
+            # CRITICAL: Reload nginx after updating uploads config and all nginx setup
+            # This ensures uploads directory path changes are applied immediately
+            echo "Reloading nginx to apply uploads configuration changes and all nginx updates..."
+            if sudo systemctl reload nginx 2>/dev/null; then
+              echo "✅ Nginx reloaded successfully (graceful reload)"
+              echo "   📁 Uploads directory configured: $UPLOADS_DIR"
+              echo "   ✅ Nginx config updated and active"
+            elif sudo systemctl restart nginx 2>/dev/null; then
+              echo "✅ Nginx restarted successfully (fallback to restart)"
+              echo "   📁 Uploads directory configured: $UPLOADS_DIR"
+              echo "   ✅ Nginx config updated and active"
+            else
+              echo "⚠️  WARNING: Failed to reload/restart nginx"
+              echo "   Please manually reload nginx: sudo systemctl reload nginx"
+              echo "   📁 Uploads directory configured: $UPLOADS_DIR"
+            fi
             
             # Cleanup temp file
             rm -f "$TEMP_CONFIG"

@@ -164,15 +164,53 @@ export class MediaUploadController {
         // Generate URL: /uploads/filename
         const url = `/uploads/${filename}`;
 
+        // CRITICAL: Verify file actually exists after upload
+        if (!existsSync(filePath)) {
+          console.error(`❌ ERROR: File was not saved! Path: ${filePath}`);
+          res.status(500).json({
+            success: false,
+            error: 'File upload failed: file was not saved to disk.',
+            details: {
+              filename,
+              filePath,
+              uploadDir,
+              uploadDirExists: existsSync(uploadDir),
+            },
+          });
+          return;
+        }
+
+        // Verify file size matches
+        const fs = await import('fs/promises');
+        const stats = await fs.stat(filePath).catch(() => null);
+        if (!stats) {
+          console.error(`❌ ERROR: Cannot read file stats! Path: ${filePath}`);
+          res.status(500).json({
+            success: false,
+            error: 'File upload failed: cannot verify file.',
+            details: {
+              filename,
+              filePath,
+            },
+          });
+          return;
+        }
+
+        if (stats.size !== req.file.size) {
+          console.warn(`⚠️  WARNING: File size mismatch! Expected: ${req.file.size}, Actual: ${stats.size}`);
+        }
+
         // Log upload details (both dev and production for debugging)
         console.log(`📤 File uploaded successfully:`);
         console.log(`   - Filename: ${filename}`);
         console.log(`   - File path: ${filePath}`);
         console.log(`   - URL: ${url}`);
-        console.log(`   - Size: ${req.file.size} bytes`);
+        console.log(`   - Size: ${req.file.size} bytes (verified: ${stats.size} bytes)`);
         console.log(`   - File exists: ${existsSync(filePath)}`);
         console.log(`   - Upload directory: ${uploadDir}`);
         console.log(`   - Upload directory exists: ${existsSync(uploadDir)}`);
+        console.log(`   - File permissions: ${stats.mode.toString(8)}`);
+        console.log(`   - File readable: ${(stats.mode & parseInt('444', 8)) !== 0}`);
 
         res.json({
           success: true,
@@ -181,6 +219,7 @@ export class MediaUploadController {
             filename,
             size: req.file.size,
             mimetype: req.file.mimetype,
+            verified: true, // Indicate file was verified
           },
         });
       }

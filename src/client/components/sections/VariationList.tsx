@@ -4,6 +4,7 @@ import { variationService } from '../../services/variationService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
+import { LazyImage } from '../ui/LazyImage';
 import { useNavigate } from 'react-router-dom';
 
 interface VariationListProps {
@@ -150,14 +151,10 @@ export const VariationList: React.FC<VariationListProps> = memo(({
                 {/* Featured Image */}
                 {variation.featuredImage && (
                   <div className="relative w-full h-40 sm:h-48 lg:h-56 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
-                    <img
+                    <LazyImage
                       src={variation.featuredImage}
                       alt={variation.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => {
-                        // Hide image on error
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
