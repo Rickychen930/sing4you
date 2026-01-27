@@ -4,6 +4,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/', // Base path for production
   plugins: [react()],
   resolve: {
     alias: {
@@ -34,8 +35,6 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist/client',
-    // Ensure base path is correct for production
-    base: '/',
     // Ensure consistent chunk naming for better caching
     rollupOptions: {
       output: {
