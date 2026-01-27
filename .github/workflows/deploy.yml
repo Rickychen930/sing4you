@@ -849,7 +849,11 @@ jobs:
             UPLOADS_DIR="$BACKEND_TARGET/uploads"
             echo "Updating nginx uploads directory to: $UPLOADS_DIR"
             echo "Backend target: $BACKEND_TARGET"
-            # Update alias path for /uploads location (try multiple patterns)
+            # Update root/alias path for /uploads location (try multiple patterns)
+            # First try root (preferred method)
+            sudo sed -i "s|root /var/www/christina-sings4you;|root $(dirname $UPLOADS_DIR);|g" "$NGINX_CONFIG_FILE" || true
+            sudo sed -i "s|root /var/www/christina-sings4you/backend;|root $(dirname $UPLOADS_DIR);|g" "$NGINX_CONFIG_FILE" || true
+            # Also update alias (for backward compatibility)
             sudo sed -i "s|alias /var/www/christina-sings4you/backend/uploads|alias $UPLOADS_DIR|g" "$NGINX_CONFIG_FILE"
             sudo sed -i "s|alias /var/www/christina-sings4you/uploads|alias $UPLOADS_DIR|g" "$NGINX_CONFIG_FILE"
             # Also update any other possible patterns
