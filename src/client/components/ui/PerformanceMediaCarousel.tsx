@@ -1,18 +1,28 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useEffect } from 'react';
 import { cn } from '../../utils/helpers';
 import { LazyImage } from './LazyImage';
 
 interface PerformanceMediaCarouselProps {
   media: string[];
   className?: string;
+  autoPlay?: boolean;
+  autoPlayIntervalMs?: number;
+  pauseOnHover?: boolean;
 }
 
 const isVideo = (url: string): boolean => {
   return /\.(mp4|webm|ogg)$/i.test(url) || url.includes('video') || url.includes('youtube') || url.includes('vimeo');
 };
 
-export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> = memo(({ media, className }) => {
+export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> = memo(({
+  media,
+  className,
+  autoPlay = false,
+  autoPlayIntervalMs = 5000,
+  pauseOnHover = true,
+}) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   if (!media || media.length === 0) return null;
 
@@ -32,8 +42,25 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
     setActiveIndex((prev) => (prev + 1) % media.length);
   }, [media.length]);
 
+  useEffect(() => {
+    if (!autoPlay || media.length <= 1) return;
+    if (pauseOnHover && isHovered) return;
+
+    const id = window.setInterval(() => {
+      goNext();
+    }, autoPlayIntervalMs);
+
+    return () => {
+      window.clearInterval(id);
+    };
+  }, [autoPlay, autoPlayIntervalMs, media.length, goNext, pauseOnHover, isHovered]);
+
   return (
-    <div className={cn('space-y-4 sm:space-y-5 lg:space-y-6', className)}>
+    <div
+      className={cn('space-y-4 sm:space-y-5 lg:space-y-6', className)}
+      onMouseEnter={() => pauseOnHover && setIsHovered(true)}
+      onMouseLeave={() => pauseOnHover && setIsHovered(false)}
+    >
       {/* Main media */}
       <div className="relative w-full aspect-video bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 rounded-xl sm:rounded-2xl overflow-hidden group">
         {/* Glow */}

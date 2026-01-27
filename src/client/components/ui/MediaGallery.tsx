@@ -316,7 +316,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({
                 src={selectedMedia} 
                 controls 
                 autoPlay 
-                className="max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-xl sm:rounded-2xl shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(168,85,247,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
+                className="w-auto h-auto max-w-[96vw] max-h-[88vh] rounded-xl sm:rounded-2xl shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(168,85,247,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
                 aria-label="Video content"
                 onError={(e) => {
                   // Prevent error from bubbling and showing in console
@@ -330,7 +330,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({
               <img 
                 src={selectedMedia} 
                 alt="Full size media" 
-                className="max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-xl sm:rounded-2xl object-contain shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(126,34,206,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
+                className="w-auto h-auto max-w-[96vw] max-h-[88vh] rounded-xl sm:rounded-2xl object-contain shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(126,34,206,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
                 decoding="async"
                 loading="eager"
                 aria-label="Full size image"

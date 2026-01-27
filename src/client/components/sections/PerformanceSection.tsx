@@ -2,7 +2,6 @@ import React, { useEffect, useState, memo } from 'react';
 import type { ICategory } from '../../../shared/interfaces';
 import { categoryService } from '../../services/categoryService';
 import { SectionWrapper } from '../ui/SectionWrapper';
-import { MediaGallery } from '../ui/MediaGallery';
 import { Card, CardBody, CardFooter } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
@@ -82,12 +81,9 @@ export const PerformanceSection: React.FC<PerformanceSectionProps> = memo(({
                   {category.name}
                 </h3>
                 {category.description && (
-                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-sans mb-6 sm:mb-7 lg:mb-8 xl:mb-10 whitespace-pre-line leading-relaxed group-hover:text-gray-100 transition-colors duration-300 performance-section-description">{category.description}</p>
-                )}
-                {category.media && category.media.length > 0 && (
-                  <div className="mb-6 sm:mb-7 lg:mb-8 xl:mb-10">
-                    <MediaGallery media={category.media} />
-                  </div>
+                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-sans mb-2 sm:mb-3 lg:mb-4 xl:mb-5 whitespace-pre-line leading-relaxed group-hover:text-gray-100 transition-colors duration-300 performance-section-description">
+                    {category.description}
+                  </p>
                 )}
               </CardBody>
               <CardFooter noTopPadding>

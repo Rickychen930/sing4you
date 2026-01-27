@@ -126,9 +126,9 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
                 <LazyImage
                   src={variation.featuredImage}
                   alt={variation.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-contain bg-black transition-transform duration-500 group-hover:scale-[1.02]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             )}
@@ -146,7 +146,11 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
 
               {mediaUrls.length > 0 && (
                 <div className="mb-6 sm:mb-7 lg:mb-8 xl:mb-10">
-                  <PerformanceMediaCarousel media={mediaUrls} />
+                  <PerformanceMediaCarousel
+                    media={mediaUrls}
+                    autoPlay
+                    autoPlayIntervalMs={4000}
+                  />
                 </div>
               )}
 

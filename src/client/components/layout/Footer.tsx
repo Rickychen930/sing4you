@@ -93,7 +93,7 @@ export const Footer: React.FC = memo(() => {
                     aria-label="Call phone number 0410 606 328"
                   >
                     <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 text-base">→</span>
-                    <span>Phone: 0410 606 328</span>
+                    <span>Phone</span>
                   </a>
                 </li>
               </ul>

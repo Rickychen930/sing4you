@@ -10,7 +10,7 @@ import { useToastStore } from '../../stores/toastStore';
 import { SEO } from '../../components/ui/SEO';
 import type { ICategory } from '../../../shared/interfaces';
 import { apiClient } from '../../services/api';
-import { MediaGallery } from '../../components/ui/MediaGallery';
+import { PerformanceMediaCarousel } from '../../components/ui/PerformanceMediaCarousel';
 
 export const VariationsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -161,28 +161,30 @@ export const VariationsPage: React.FC = () => {
             </p>
           )}
           {category.featuredImage && (
-            <div className="mt-8 sm:mt-10 lg:mt-12 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-gold-900/40">
+            <div className="mt-8 sm:mt-10 lg:mt-12 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-gold-900/40 bg-black">
               <img
                 src={category.featuredImage}
                 alt={category.name}
-                className="w-full h-auto max-h-[400px] sm:max-h-[500px] object-cover"
+                className="w-full h-auto max-h-[420px] sm:max-h-[520px] object-contain"
               />
             </div>
           )}
         </div>
       </SectionWrapper>
 
-      {/* Mini gallery for this category */}
+      {/* Mini carousel gallery for this category */}
       {category.media && category.media.length > 0 && (
         <SectionWrapper
           id="variations-gallery"
-          className="pt-4 sm:pt-6 lg:pt-8 pb-6 sm:pb-8 lg:pb-10"
+          className="pt-2 sm:pt-4 lg:pt-6 pb-6 sm:pb-8 lg:pb-10"
           title={`Highlights from ${category.name}`}
           subtitle="A glimpse of performances in this category"
         >
-          <div className="rounded-2xl overflow-hidden border border-gold-900/40 bg-jazz-900/40 backdrop-blur-sm shadow-[0_18px_60px_rgba(0,0,0,0.7)]">
-            <MediaGallery media={category.media} itemsPerPage={6} />
-          </div>
+          <PerformanceMediaCarousel
+            media={category.media}
+            autoPlay
+            autoPlayIntervalMs={4000}
+          />
         </SectionWrapper>
       )}
 

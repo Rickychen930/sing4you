@@ -157,9 +157,9 @@ export const PerformanceDetailPage: React.FC = () => {
                   <LazyImage
                     src={performance.featuredImage}
                     alt={performance.eventName}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-contain bg-black transition-transform duration-500 group-hover:scale-[1.02]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent" />
                   <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               )}
@@ -207,7 +207,11 @@ export const PerformanceDetailPage: React.FC = () => {
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                       Performance Gallery
                     </h2>
-                    <PerformanceMediaCarousel media={performance.media} />
+                    <PerformanceMediaCarousel
+                      media={performance.media}
+                      autoPlay
+                      autoPlayIntervalMs={4000}
+                    />
                   </div>
                 )}
 

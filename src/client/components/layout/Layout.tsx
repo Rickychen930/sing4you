@@ -17,12 +17,12 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
   const mainContent = children ?? <Outlet />;
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-[#070017] via-[#100328] to-[#050013]">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-[#14003b] via-[#2a0a7a] to-[#0b0120]">
       <a href="#main-content" className="skip-to-main">
         Skip to main content
       </a>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold-900/5 to-jazz-900/6 pointer-events-none z-0" aria-hidden />
-      <div className="absolute inset-0 bg-gradient-to-r from-musical-900/5 via-transparent to-gold-900/5 pointer-events-none z-0" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 via-purple-900/30 to-black/60 pointer-events-none z-0" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-transparent to-indigo-500/15 pointer-events-none z-0" aria-hidden />
       <span className="absolute top-20 left-6 lg:left-12 text-2xl sm:text-3xl text-gold-400/20 font-musical animate-float select-none pointer-events-none z-0 layout-musical-note-1" aria-hidden>♪</span>
       <span className="absolute top-36 right-8 lg:right-16 text-xl sm:text-2xl text-musical-400/20 font-musical animate-float select-none pointer-events-none z-0 layout-musical-note-2" aria-hidden>♫</span>
       
