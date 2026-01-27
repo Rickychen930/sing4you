@@ -848,12 +848,47 @@ jobs:
             BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
             UPLOADS_DIR="$BACKEND_TARGET/uploads"
             echo "Updating nginx uploads directory to: $UPLOADS_DIR"
-            # Update alias path for /uploads location
+            echo "Backend target: $BACKEND_TARGET"
+            # Update alias path for /uploads location (try multiple patterns)
             sudo sed -i "s|alias /var/www/christina-sings4you/backend/uploads|alias $UPLOADS_DIR|g" "$NGINX_CONFIG_FILE"
             sudo sed -i "s|alias /var/www/christina-sings4you/uploads|alias $UPLOADS_DIR|g" "$NGINX_CONFIG_FILE"
+            # Also update any other possible patterns
+            sudo sed -i "s|alias [^;]*uploads[^;]*;|alias $UPLOADS_DIR;|g" "$NGINX_CONFIG_FILE" || true
             # Verify the update
-            UPDATED_UPLOADS=$(grep -A 1 "location /uploads" "$NGINX_CONFIG_FILE" | grep "alias" | sed 's/.*alias\s\+\([^;]*\);.*/\1/')
+            UPDATED_UPLOADS=$(grep -A 1 "location /uploads" "$NGINX_CONFIG_FILE" | grep "alias" | sed 's/.*alias\s\+\([^;]*\);.*/\1/' || echo "not found")
             echo "✅ Nginx uploads directory updated to: $UPDATED_UPLOADS"
+            # Verify directory exists
+            if [ -d "$UPLOADS_DIR" ]; then
+              echo "✅ Uploads directory exists: $UPLOADS_DIR"
+              ls -ld "$UPLOADS_DIR"
+              # List some files to verify
+              echo "Files in uploads directory:"
+              ls -la "$UPLOADS_DIR" | head -10 || echo "Directory is empty or cannot list"
+            else
+              echo "⚠️  WARNING: Uploads directory does not exist: $UPLOADS_DIR"
+              echo "   Creating directory..."
+              mkdir -p "$UPLOADS_DIR"
+              chmod 755 "$UPLOADS_DIR" || chmod 777 "$UPLOADS_DIR" || true
+              # Try to set ownership
+              chown -R "$(whoami):$(whoami)" "$UPLOADS_DIR" 2>/dev/null || true
+              echo "✅ Uploads directory created"
+            fi
+            
+            # Test if nginx can access the directory
+            echo "Testing nginx access to uploads directory..."
+            if sudo test -r "$UPLOADS_DIR"; then
+              echo "✅ Nginx can read uploads directory"
+            else
+              echo "⚠️  WARNING: Nginx may not be able to read uploads directory"
+              echo "   Attempting to fix permissions..."
+              sudo chmod 755 "$UPLOADS_DIR" || sudo chmod 777 "$UPLOADS_DIR" || true
+            fi
+            
+            # Run fix-uploads script for additional verification
+            if [ -f "$BACKEND_TARGET/deployment/scripts/fix-uploads.sh" ]; then
+              echo "Running fix-uploads script..."
+              BACKEND_ROOT="$BACKEND_TARGET" bash "$BACKEND_TARGET/deployment/scripts/fix-uploads.sh" || echo "⚠️  Fix script encountered issues"
+            fi
             
             # Create symlink if not exists
             if [ ! -L "${NGINX_SITES_ENABLED}/${DOMAIN}.conf" ]; then
@@ -898,7 +933,7 @@ jobs:
           timeout: 60s
           command_timeout: 2m
           use_insecure_cipher: false
-          source: "deployment/scripts/start-pm2.sh,deployment/scripts/check-deployment.sh"
+          source: "deployment/scripts/start-pm2.sh,deployment/scripts/check-deployment.sh,deployment/scripts/fix-uploads.sh"
           target: "${{ secrets.BACKEND_TARGET_DIR }}/deployment/scripts"
           overwrite: true
 
@@ -916,6 +951,7 @@ jobs:
             BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
             chmod +x "$BACKEND_TARGET/deployment/scripts/start-pm2.sh"
             chmod +x "$BACKEND_TARGET/deployment/scripts/check-deployment.sh"
+            chmod +x "$BACKEND_TARGET/deployment/scripts/fix-uploads.sh"
             echo "✅ Scripts are now executable"
 
       # ✅ Run Diagnostic Check
