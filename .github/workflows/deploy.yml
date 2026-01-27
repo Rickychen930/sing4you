@@ -272,10 +272,18 @@ jobs:
             mkdir -p "$BACKEND_TARGET"
             mkdir -p "$BACKEND_TARGET/dist"
             mkdir -p "$BACKEND_TARGET/server"
-            # Create uploads directory with proper permissions (writable for file uploads)
-            mkdir -p "$BACKEND_TARGET/uploads"
             mkdir -p "$BACKEND_TARGET/_incoming_backend"
             chmod -R 755 "$BACKEND_TARGET" || true
+            
+            # Create SHARED uploads directory at project root (RECOMMENDED)
+            # This is safer - never deleted during frontend/backend deployments
+            PROJECT_ROOT="$(dirname $BACKEND_TARGET)"
+            SHARED_UPLOADS_DIR="$PROJECT_ROOT/uploads"
+            echo "Creating shared uploads directory at project root..."
+            mkdir -p "$SHARED_UPLOADS_DIR"
+            chmod 755 "$SHARED_UPLOADS_DIR" || chmod 777 "$SHARED_UPLOADS_DIR" || true
+            chown -R "$(whoami):$(whoami)" "$SHARED_UPLOADS_DIR" 2>/dev/null || true
+            echo "✅ Shared uploads directory created: $SHARED_UPLOADS_DIR"
             # Uploads directory needs to be writable for file uploads
             chmod 755 "$BACKEND_TARGET/uploads" || true
             chmod 777 "$BACKEND_TARGET/_incoming_backend" || true
@@ -386,6 +394,9 @@ jobs:
             set -e
             BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
             mkdir -p "$BACKEND_TARGET"
+            # Determine PROJECT_ROOT for PM2 config (shared uploads location)
+            PROJECT_ROOT_FOR_PM2="$(dirname $BACKEND_TARGET)"
+            
             cat > "$BACKEND_TARGET/ecosystem.config.cjs" << EOF
             module.exports = {
               apps: [
@@ -399,7 +410,7 @@ jobs:
                     NODE_ENV: "production",
                     PORT: 4000,
                     BACKEND_ROOT: "${BACKEND_TARGET}",
-                    UPLOAD_DIR: "${BACKEND_TARGET}/uploads",
+                    UPLOAD_DIR: "${PROJECT_ROOT_FOR_PM2}/uploads",
                   },
                   error_file: "./logs/pm2-error.log",
                   out_file: "./logs/pm2-out.log",
@@ -447,6 +458,9 @@ jobs:
 
             mkdir -p "$NEW"
             cp -a "$INCOMING"/. "$NEW"/
+            
+            # Note: Uploads are now in shared location at project root
+            # No need to preserve from frontend build - they're separate
 
             # atomic switch
             rm -f "$CURRENT"
@@ -457,9 +471,18 @@ jobs:
               rm -rf "$BUILD_ROOT"
             fi
             ln -s "$NEW" "$BUILD_ROOT"
+            
+            # Note: Uploads are in shared location at project root, not in frontend build
+            # Verify shared uploads directory exists (created in backend deployment step)
 
             chmod -R 755 "$NEW"
             rm -rf "$FRONTEND_TARGET/_incoming"
+            
+            # Uploads directory already created and preserved above, just verify
+            if [ -d "$NEW/uploads" ]; then
+              echo "✅ Uploads directory verified: $NEW/uploads"
+              ls -ld "$NEW/uploads"
+            fi
 
             echo "✅ Frontend activated"
             echo "Current -> $(readlink $CURRENT)"
@@ -521,14 +544,20 @@ jobs:
             mkdir -p "$DIST_DIR"
             cp -a "$INCOMING_BACKEND"/. "$DIST_DIR"/
             
-            # Ensure uploads directory exists and is writable (preserve existing uploads)
-            echo "Ensuring uploads directory exists..."
-            mkdir -p "$BACKEND_TARGET/uploads"
-            chmod 755 "$BACKEND_TARGET/uploads" || chmod 777 "$BACKEND_TARGET/uploads" || true
+            # Ensure SHARED uploads directory exists and is writable (at project root)
+            # This directory is NEVER deleted during deployments
+            PROJECT_ROOT="$(dirname $BACKEND_TARGET)"
+            SHARED_UPLOADS_DIR="$PROJECT_ROOT/uploads"
+            echo "Ensuring shared uploads directory exists at project root..."
+            mkdir -p "$SHARED_UPLOADS_DIR"
+            chmod 755 "$SHARED_UPLOADS_DIR" || chmod 777 "$SHARED_UPLOADS_DIR" || true
             # Try to set ownership for uploads directory
-            chown -R "$(whoami):$(whoami)" "$BACKEND_TARGET/uploads" 2>/dev/null || true
-            echo "✅ Uploads directory verified: $BACKEND_TARGET/uploads"
-            ls -ld "$BACKEND_TARGET/uploads" || true
+            chown -R "$(whoami):$(whoami)" "$SHARED_UPLOADS_DIR" 2>/dev/null || true
+            echo "✅ Shared uploads directory verified: $SHARED_UPLOADS_DIR"
+            ls -ld "$SHARED_UPLOADS_DIR" || true
+            # List files to verify
+            echo "Files in shared uploads directory:"
+            ls -la "$SHARED_UPLOADS_DIR" | head -10 || echo "Directory is empty"
 
             # Ensure .env file exists (create from secrets if needed, or keep existing)
             if [ ! -f "$ENV_FILE" ] && [ -f "$ENV_PROD_FILE" ]; then
@@ -845,22 +874,49 @@ jobs:
             sudo sed -i "s|proxy_pass http://localhost:4000|proxy_pass http://127.0.0.1:4000|g" "$NGINX_CONFIG_FILE"
             
             # Update uploads directory path in nginx config
+            # RECOMMENDED: Use shared uploads at project root (safest, never deleted)
             BACKEND_TARGET="${{ secrets.BACKEND_TARGET_DIR }}"
-            UPLOADS_DIR="$BACKEND_TARGET/uploads"
+            PROJECT_ROOT="$(dirname $BACKEND_TARGET)"
+            UPLOADS_DIR="$PROJECT_ROOT/uploads"
             echo "Updating nginx uploads directory to: $UPLOADS_DIR"
+            echo "Project root: $PROJECT_ROOT"
             echo "Backend target: $BACKEND_TARGET"
             # Update root/alias path for /uploads location (try multiple patterns)
-            # First try root (preferred method)
-            sudo sed -i "s|root /var/www/christina-sings4you;|root $(dirname $UPLOADS_DIR);|g" "$NGINX_CONFIG_FILE" || true
-            sudo sed -i "s|root /var/www/christina-sings4you/backend;|root $(dirname $UPLOADS_DIR);|g" "$NGINX_CONFIG_FILE" || true
-            # Also update alias (for backward compatibility)
-            sudo sed -i "s|alias /var/www/christina-sings4you/backend/uploads|alias $UPLOADS_DIR|g" "$NGINX_CONFIG_FILE"
-            sudo sed -i "s|alias /var/www/christina-sings4you/uploads|alias $UPLOADS_DIR|g" "$NGINX_CONFIG_FILE"
-            # Also update any other possible patterns
-            sudo sed -i "s|alias [^;]*uploads[^;]*;|alias $UPLOADS_DIR;|g" "$NGINX_CONFIG_FILE" || true
-            # Verify the update
-            UPDATED_UPLOADS=$(grep -A 1 "location /uploads" "$NGINX_CONFIG_FILE" | grep "alias" | sed 's/.*alias\s\+\([^;]*\);.*/\1/' || echo "not found")
-            echo "✅ Nginx uploads directory updated to: $UPDATED_UPLOADS"
+            # CRITICAL: Fix root path - must be PROJECT ROOT (parent of backend)
+            # IMPORTANT: Only update root INSIDE location /uploads block, not the global root!
+            EXPECTED_UPLOADS_ROOT="$PROJECT_ROOT"
+            # Use sed with range to only update root inside /uploads location block
+            # This ensures we don't accidentally change the global frontend root
+            sudo sed -i '/location \/uploads/,/^    }/ {
+              s|root /var/www/christina-sings4you/frontend/build/dist/client;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+              s|root /var/www/christina-sings4you/frontend.*;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+              s|root /var/www/christina-sings4you;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+              s|root /var/www/christina-sings4you/backend;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+            }' "$NGINX_CONFIG_FILE" || true
+            # Also update alias (for backward compatibility) - only in /uploads location
+            sudo sed -i '/location \/uploads/,/^    }/ {
+              s|alias /var/www/christina-sings4you/backend/uploads|alias '"$UPLOADS_DIR"'|g
+              s|alias /var/www/christina-sings4you/uploads|alias '"$UPLOADS_DIR"'|g
+              s|alias [^;]*uploads[^;]*;|alias '"$UPLOADS_DIR"';|g
+            }' "$NGINX_CONFIG_FILE" || true
+            # Verify the update - check both root and alias
+            UPDATED_ROOT=$(grep -A 5 "location /uploads" "$NGINX_CONFIG_FILE" | grep "root" | sed 's/.*root\s\+\([^;]*\);.*/\1/' || echo "not found")
+            UPDATED_ALIAS=$(grep -A 5 "location /uploads" "$NGINX_CONFIG_FILE" | grep "alias" | sed 's/.*alias\s\+\([^;]*\);.*/\1/' || echo "not found")
+            EXPECTED_ROOT="$(dirname $UPLOADS_DIR)"
+            if [ "$UPDATED_ROOT" != "not found" ]; then
+              echo "✅ Nginx uploads root updated to: $UPDATED_ROOT"
+              echo "   Expected root: $EXPECTED_ROOT"
+              if [ "$UPDATED_ROOT" = "$EXPECTED_ROOT" ]; then
+                echo "   ✅ Root path is correct!"
+              else
+                echo "   ⚠️  Root path mismatch (expected: $EXPECTED_ROOT, got: $UPDATED_ROOT)"
+              fi
+            elif [ "$UPDATED_ALIAS" != "not found" ]; then
+              echo "✅ Nginx uploads alias updated to: $UPDATED_ALIAS"
+            else
+              echo "⚠️  Could not verify nginx uploads configuration"
+            fi
+            echo "   📁 Uploads directory: $UPLOADS_DIR"
             # Verify directory exists
             if [ -d "$UPLOADS_DIR" ]; then
               echo "✅ Uploads directory exists: $UPLOADS_DIR"
@@ -877,6 +933,9 @@ jobs:
               chown -R "$(whoami):$(whoami)" "$UPLOADS_DIR" 2>/dev/null || true
               echo "✅ Uploads directory created"
             fi
+            
+            # Note: Uploads are now in shared location at project root
+            # No need to create in frontend builds - they're separate and persistent
             
             # Test if nginx can access the directory
             echo "Testing nginx access to uploads directory..."

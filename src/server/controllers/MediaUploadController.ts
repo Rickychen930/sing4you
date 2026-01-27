@@ -13,12 +13,18 @@ const getUploadDir = (): string => {
   if (process.env.UPLOAD_DIR) {
     uploadDir = resolve(process.env.UPLOAD_DIR);
   } 
-  // In production/VPS, use BACKEND_ROOT/uploads if set
+  // In production/VPS, use UPLOAD_DIR > PROJECT_ROOT/uploads > default paths
+  // RECOMMENDED: Shared uploads directory at project root (safest, never deleted)
   else if (process.env.NODE_ENV === 'production') {
+    // Priority 1: UPLOAD_DIR (explicitly set - highest priority)
+    // Priority 2: PROJECT_ROOT/uploads (recommended - shared, safe location)
     if (process.env.BACKEND_ROOT) {
-      uploadDir = resolve(process.env.BACKEND_ROOT, 'uploads');
-    } else {
-      // Default VPS path
+      // Use parent directory of BACKEND_ROOT as project root
+      const projectRoot = resolve(process.env.BACKEND_ROOT, '..');
+      uploadDir = resolve(projectRoot, 'uploads');
+    } 
+    // Priority 3: Default VPS path (project root/uploads)
+    else {
       uploadDir = resolve('/var/www/christina-sings4you/uploads');
     }
   } 
@@ -46,6 +52,11 @@ console.log(`📁 Upload directory exists: ${existsSync(uploadDir)}`);
 if (process.env.NODE_ENV === 'production') {
   console.log(`📁 Production mode - BACKEND_ROOT: ${process.env.BACKEND_ROOT || 'not set'}`);
   console.log(`📁 Production mode - UPLOAD_DIR: ${process.env.UPLOAD_DIR || 'not set'}`);
+  if (process.env.BACKEND_ROOT) {
+    const projectRoot = resolve(process.env.BACKEND_ROOT, '..');
+    console.log(`📁 Production mode - Project Root: ${projectRoot}`);
+    console.log(`📁 Production mode - Uploads will be at: ${resolve(projectRoot, 'uploads')}`);
+  }
 }
 
 // Configure multer for disk storage (local file system)
