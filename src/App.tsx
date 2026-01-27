@@ -23,7 +23,6 @@ const NotFoundPage = lazy(() => import('./client/pages/public/NotFoundPage').the
 const LoginPage = lazy(() => import('./client/pages/admin/LoginPage').then(m => ({ default: m.LoginPage })));
 const DashboardPage = lazy(() => import('./client/pages/admin/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const HeroManagementPage = lazy(() => import('./client/pages/admin/HeroManagementPage').then(m => ({ default: m.HeroManagementPage })));
-const SectionsManagementPage = lazy(() => import('./client/pages/admin/SectionsManagementPage').then(m => ({ default: m.SectionsManagementPage })));
 const PerformancesManagementPage = lazy(() => import('./client/pages/admin/PerformancesManagementPage').then(m => ({ default: m.PerformancesManagementPage })));
 const TestimonialsManagementPage = lazy(() => import('./client/pages/admin/TestimonialsManagementPage').then(m => ({ default: m.TestimonialsManagementPage })));
 const SEOManagementPage = lazy(() => import('./client/pages/admin/SEOManagementPage').then(m => ({ default: m.SEOManagementPage })));
@@ -161,14 +160,6 @@ function App() {
                 element={
                   <PrivateRoute>
                     <HeroManagementPage />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/admin/sections"
-                element={
-                  <PrivateRoute>
-                    <SectionsManagementPage />
                   </PrivateRoute>
                 }
               />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { Dropdown, DropdownItem } from '../ui/Dropdown';
 
 interface HeaderProps {
   isAdmin?: boolean;
@@ -8,7 +9,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false); // Used by Dropdown component
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
@@ -26,24 +27,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
     setIsMenuOpen(false);
   }, []);
 
-  // Close admin dropdown when clicking outside - optimized with passive
-  useEffect(() => {
-    if (!isAdminMenuOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.admin-menu-container')) {
-        setIsAdminMenuOpen(false);
-      }
-    };
-
-    // Use capture phase for better performance
-    document.addEventListener('mousedown', handleClickOutside, { capture: true, passive: true });
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside, { capture: true });
-    };
-  }, [isAdminMenuOpen]);
+  // Note: Admin dropdown now uses Dropdown component with built-in click outside handling
 
   // Close mobile menu when clicking outside - optimized with passive
   useEffect(() => {
@@ -197,44 +181,42 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
             
             {/* Admin Menu */}
             {isAuthenticated ? (
-              <div className="relative admin-menu-container">
-                <button
-                  onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
-                  className="flex items-center space-x-1 text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-sm sm:text-base min-h-[48px] leading-relaxed"
-                  aria-label="Admin menu"
-                  aria-expanded={isAdminMenuOpen}
-                  aria-haspopup="true"
-                >
-                  <span>Admin</span>
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300" style={{ transform: isAdminMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {isAdminMenuOpen && (
-                  <div 
-                    className="absolute right-0 mt-2 w-40 sm:w-48 bg-jazz-900/98 rounded-lg sm:rounded-xl shadow-lg py-1 z-50 border-2 border-gold-900/40 hover:border-gold-800/50 transition-colors duration-200"
-                    role="menu"
+              <Dropdown
+                align="right"
+                onOpenChange={(open) => {
+                  setIsAdminMenuOpen(open);
+                }}
+                trigger={
+                  <button
+                    className="flex items-center space-x-1 text-gray-200 hover:text-gold-300 transition-all duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-sm sm:text-base min-h-[48px] leading-relaxed"
                     aria-label="Admin menu"
+                    aria-haspopup="true"
+                    aria-expanded={isAdminMenuOpen}
                   >
-                    <Link
-                      to="/admin/dashboard"
-                      className="block px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
-                      onClick={() => setIsAdminMenuOpen(false)}
-                      role="menuitem"
-                    >
-                      <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300">Dashboard</span>
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-200 hover:bg-gradient-to-r hover:from-gold-900/40 hover:to-musical-900/40 hover:text-gold-200 hover:shadow-[0_4px_12px_rgba(255,194,51,0.15)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-inset rounded-lg mx-1 min-h-[44px] sm:min-h-[48px] flex items-center group leading-relaxed"
-                      role="menuitem"
-                      aria-label="Logout from admin account"
-                    >
-                      <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] transition-all duration-300">Logout</span>
-                    </button>
-                  </div>
-                )}
-              </div>
+                    <span>Admin</span>
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300" style={{ transform: isAdminMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                }
+                menuClassName="w-40 sm:w-48"
+              >
+                <DropdownItem
+                  as="link"
+                  to="/admin/dashboard"
+                  onClick={() => setIsAdminMenuOpen(false)}
+                >
+                  Dashboard
+                </DropdownItem>
+                <DropdownItem
+                  onClick={() => {
+                    handleLogout();
+                    setIsAdminMenuOpen(false);
+                  }}
+                >
+                  Logout
+                </DropdownItem>
+              </Dropdown>
             ) : (
               <Link
                 to="/admin/login"

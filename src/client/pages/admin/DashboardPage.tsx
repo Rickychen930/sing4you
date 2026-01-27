@@ -12,7 +12,6 @@ import { categoryService } from '../../services/categoryService';
 import { performanceService } from '../../services/performanceService';
 import { testimonialService } from '../../services/testimonialService';
 import { variationService } from '../../services/variationService';
-import { sectionService } from '../../services/sectionService';
 import { useDebounce } from '../../hooks/useDebounce';
 
 interface DashboardItem {
@@ -30,7 +29,6 @@ interface DashboardStats {
   performances: number;
   testimonials: number;
   variations: number;
-  sections: number;
 }
 
 interface DashboardItemCardProps {
@@ -100,7 +98,6 @@ export const DashboardPage: React.FC = () => {
     performances: 0,
     testimonials: 0,
     variations: 0,
-    sections: 0,
   });
   const [loadingStats, setLoadingStats] = useState(true);
   const [logoutConfirm, setLogoutConfirm] = useState(false);
@@ -113,7 +110,7 @@ export const DashboardPage: React.FC = () => {
     
     const loadStats = async () => {
       try {
-        const [categories, performances, testimonials, variations, sections] = await Promise.allSettled([
+        const [categories, performances, testimonials, variations] = await Promise.allSettled([
           categoryService.getAll().catch((error) => {
             if (process.env.NODE_ENV === 'development') {
               console.error('Error loading categories:', error);
@@ -138,12 +135,6 @@ export const DashboardPage: React.FC = () => {
             }
             return [];
           }),
-          sectionService.getAll().catch((error) => {
-            if (process.env.NODE_ENV === 'development') {
-              console.error('Error loading sections:', error);
-            }
-            return [];
-          }),
         ]);
 
         setStats({
@@ -151,7 +142,6 @@ export const DashboardPage: React.FC = () => {
           performances: performances.status === 'fulfilled' ? performances.value.length : 0,
           testimonials: testimonials.status === 'fulfilled' ? testimonials.value.length : 0,
           variations: variations.status === 'fulfilled' ? variations.value.length : 0,
-          sections: sections.status === 'fulfilled' ? sections.value.length : 0,
         });
         hasLoadedStatsRef.current = true;
       } catch (error) {
@@ -168,10 +158,9 @@ export const DashboardPage: React.FC = () => {
 
   const dashboardItems: DashboardItem[] = useMemo(() => [
     { id: 'hero', title: 'Hero Settings', description: 'Manage hero section content and CTA buttons', path: '/admin/hero', icon: '🏠', category: 'content' },
-    { id: 'sections', title: 'Sections', description: 'Manage performance sections (Solo, Duo, etc.)', path: '/admin/sections', icon: '📋', category: 'content', count: stats.sections },
     { id: 'performances', title: 'Performances', description: 'Manage upcoming performances and events', path: '/admin/performances', icon: '🎭', category: 'content', count: stats.performances },
     { id: 'testimonials', title: 'Testimonials', description: 'Manage client testimonials', path: '/admin/testimonials', icon: '💬', category: 'content', count: stats.testimonials },
-    { id: 'categories', title: 'Categories', description: 'Manage performance categories', path: '/admin/categories', icon: '📂', category: 'management', count: stats.categories },
+    { id: 'categories', title: 'Categories', description: 'Manage performance categories (Solo, Duo, etc.)', path: '/admin/categories', icon: '📂', category: 'management', count: stats.categories },
     { id: 'variations', title: 'Variations', description: 'Manage variations/personas within categories', path: '/admin/variations', icon: '🎨', category: 'management', count: stats.variations },
     { id: 'seo', title: 'SEO Settings', description: 'Manage SEO metadata and settings', path: '/admin/seo', icon: '🔍', category: 'settings' },
   ], [stats]);
@@ -258,8 +247,8 @@ export const DashboardPage: React.FC = () => {
 
           {/* Statistics Cards */}
           {loadingStats ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4 mb-5 sm:mb-6 lg:mb-8">
-              {[...Array(5)].map((_, i) => (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4 mb-5 sm:mb-6 lg:mb-8">
+              {[...Array(4)].map((_, i) => (
                 <div key={i} className="animate-fade-in-up dashboard-skeleton-item" style={{ '--animation-delay': `${i * 100}ms` } as React.CSSProperties}>
                   <div className="bg-gradient-to-br from-jazz-800/88 via-jazz-900/92 to-musical-900/88 rounded-xl sm:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden p-3 sm:p-4 lg:p-6 border border-gold-900/50 backdrop-blur-sm">
                     <div className="h-5 sm:h-6 lg:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 sm:mb-3 w-2/3 mx-auto animate-pulse-soft skeleton-shimmer"></div>
@@ -269,7 +258,7 @@ export const DashboardPage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4 mb-5 sm:mb-6 lg:mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4 mb-5 sm:mb-6 lg:mb-8">
               <Card hover className="text-center transition-all duration-300 hover:scale-105">
                 <CardBody compact>
                   <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>🎭</div>
@@ -296,13 +285,6 @@ export const DashboardPage: React.FC = () => {
                   <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>🎨</div>
                   <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.variations}</div>
                   <div className="text-xs sm:text-sm text-gray-300 mt-1">Variations</div>
-                </CardBody>
-              </Card>
-              <Card hover className="text-center transition-all duration-300 hover:scale-105">
-                <CardBody compact>
-                  <div className="text-xl sm:text-2xl lg:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 hover:scale-105" aria-hidden>📋</div>
-                  <div className="text-base sm:text-lg lg:text-xl font-bold text-gold-400">{stats.sections}</div>
-                  <div className="text-xs sm:text-sm text-gray-300 mt-1">Sections</div>
                 </CardBody>
               </Card>
             </div>
