@@ -67,26 +67,27 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
             <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-300 leading-tight performance-card-title">
               {performance.eventName}
             </h3>
-          <div className="space-y-3 sm:space-y-4 lg:space-y-5 text-base sm:text-lg flex-grow">
-            <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
-              <span className="text-xl sm:text-2xl lg:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>📍</span>
-              <div className="flex-1">
-                <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Venue</p>
-                <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{performance.venueName}</p>
+            <div className="space-y-3 sm:space-y-4 lg:space-y-5 text-base sm:text-lg flex-grow">
+              <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
+                <span className="text-xl sm:text-2xl lg:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>📍</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Venue</p>
+                  <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{performance.venueName}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
-              <span className="text-xl sm:text-2xl lg:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>🌍</span>
-              <div className="flex-1">
-                <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Location</p>
-                <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{performance.city}, {performance.state}</p>
+              <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
+                <span className="text-xl sm:text-2xl lg:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>🌍</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Location</p>
+                  <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{performance.city}, {performance.state}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
-              <span className="text-xl sm:text-2xl lg:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>📅</span>
-              <div className="flex-1">
-                <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Date & Time</p>
-                <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{formatAustralianDateTime(performance.date, performance.time)}</p>
+              <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
+                <span className="text-xl sm:text-2xl lg:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>📅</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Date & Time</p>
+                  <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{formatAustralianDateTime(performance.date, performance.time)}</p>
+                </div>
               </div>
             </div>
           </div>
