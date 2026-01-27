@@ -7,7 +7,7 @@ export class PerformanceService {
   }
 
   async getUpcoming(): Promise<IPerformance[]> {
-    return apiClient.get<IPerformance[]>('/api/performances/upcoming');
+    return apiClient.get<IPerformance[]>('/api/performances/upcoming', false);
   }
 
   async getById(id: string): Promise<IPerformance> {

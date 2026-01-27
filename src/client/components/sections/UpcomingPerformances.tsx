@@ -1,12 +1,15 @@
 import React, { useEffect, useState, memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { IPerformance } from '../../../shared/interfaces';
 import { performanceService } from '../../services/performanceService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { PerformanceCard } from '../ui/PerformanceCard';
 import { Card, CardBody, CardFooter } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
+import { Button } from '../ui/Button';
 
 export const UpcomingPerformances: React.FC = memo(() => {
+  const navigate = useNavigate();
   const [performances, setPerformances] = useState<IPerformance[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,22 +74,56 @@ export const UpcomingPerformances: React.FC = memo(() => {
           ))}
         </div>
       ) : performances.length === 0 ? (
-        <EmptyState
-          icon="🎭"
-          title="No upcoming performances"
-          description="Check back soon for updates on upcoming events!"
-        />
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
-          {performances.map((performance, index) => (
-            <div
-              key={performance._id}
-              className="animate-fade-in-up upcoming-performances-item"
-              style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
+        <div className="flex flex-col items-center">
+          <EmptyState
+            icon="🎭"
+            title="No upcoming performances"
+            description="Check back soon for updates on upcoming events!"
+          />
+          <div className="mt-8 sm:mt-10">
+            <Button 
+              variant="outline" 
+              size="md" 
+              onClick={() => navigate('/performances')}
+              className="transition-all duration-300 hover:scale-105"
             >
-              <PerformanceCard performance={performance} />
-            </div>
-          ))}
+              <span className="flex items-center gap-2">
+                View all performances
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-8 sm:space-y-10 lg:space-y-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+            {performances.map((performance, index) => (
+              <div
+                key={performance._id}
+                className="animate-fade-in-up upcoming-performances-item"
+                style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
+              >
+                <PerformanceCard performance={performance} />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center pt-4 sm:pt-6">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => navigate('/performances')}
+              className="transition-all duration-300 hover:scale-105 group"
+            >
+              <span className="flex items-center gap-2.5">
+                View all performances
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            </Button>
+          </div>
         </div>
       )}
     </SectionWrapper>

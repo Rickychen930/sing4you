@@ -172,11 +172,11 @@ export const Hero: FC = memo(() => {
               aria-hidden="true"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80" />
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0" />
           </div>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80">
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0" />
           </div>
         )}
       </div>

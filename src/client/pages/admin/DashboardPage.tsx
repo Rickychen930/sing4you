@@ -158,10 +158,10 @@ export const DashboardPage: React.FC = () => {
 
   const dashboardItems: DashboardItem[] = useMemo(() => [
     { id: 'hero', title: 'Hero Settings', description: 'Manage hero section content and CTA buttons', path: '/admin/hero', icon: '🏠', category: 'content' },
+    { id: 'about', title: 'About Page', description: 'Manage about page content, hero, story, and gallery', path: '/admin/about', icon: '📖', category: 'content' },
     { id: 'performances', title: 'Performances', description: 'Manage upcoming performances with featured images, descriptions, and photo galleries', path: '/admin/performances', icon: '🎭', category: 'content', count: stats.performances },
     { id: 'testimonials', title: 'Testimonials', description: 'Manage client testimonials', path: '/admin/testimonials', icon: '💬', category: 'content', count: stats.testimonials },
-    { id: 'categories', title: 'Categories', description: 'Manage performance categories (Solo, Duo, etc.)', path: '/admin/categories', icon: '📂', category: 'management', count: stats.categories },
-    { id: 'variations', title: 'Variations', description: 'Manage variations/personas within categories', path: '/admin/variations', icon: '🎨', category: 'management', count: stats.variations },
+    { id: 'categories', title: 'Categories & Variations', description: 'Manage categories and their variations in one place', path: '/admin/categories', icon: '📂', category: 'management', count: stats.categories + stats.variations },
     { id: 'seo', title: 'SEO Settings', description: 'Manage SEO metadata and settings', path: '/admin/seo', icon: '🔍', category: 'settings' },
   ], [stats]);
 

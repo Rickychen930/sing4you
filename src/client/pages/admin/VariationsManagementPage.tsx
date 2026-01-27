@@ -148,6 +148,10 @@ export const VariationsManagementPage: React.FC = () => {
       toast.success('Variation deleted successfully!');
       setError('');
       setDeleteConfirm({ isOpen: false, id: null });
+      
+      // Trigger event to notify public pages of update
+      localStorage.setItem('variationsUpdated', Date.now().toString());
+      window.dispatchEvent(new Event('variationsUpdated'));
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to delete variation';
       setError(errorMsg);
@@ -234,6 +238,10 @@ export const VariationsManagementPage: React.FC = () => {
       apiClient.clearCache();
       await loadData(true); // Force refresh
       handleCreate(); // Reset form
+      
+      // Trigger event to notify public pages of update
+      localStorage.setItem('variationsUpdated', Date.now().toString());
+      window.dispatchEvent(new Event('variationsUpdated'));
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to save variation';
       setError(errorMsg);

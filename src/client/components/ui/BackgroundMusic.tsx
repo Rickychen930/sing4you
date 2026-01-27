@@ -23,6 +23,8 @@ interface BackgroundMusicProps {
   showControls?: boolean;
   /** Control position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' */
   controlsPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  /** Hide widget on mobile (<=768px) to reduce distraction; audio still loads but no UI */
+  disableOnMobile?: boolean;
 }
 
 // Global audio instance to persist across route changes
@@ -36,6 +38,8 @@ type StateSetters = {
 };
 const globalStateSetters: Set<StateSetters> = new Set();
 
+const MOBILE_BREAKPOINT = 768;
+
 export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
   src,
   volume = 0.3,
@@ -43,9 +47,13 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
   loop = true,
   showControls = true,
   controlsPosition = 'bottom-right',
+  disableOnMobile = false,
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const hasUnmutedRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
+  );
   const [isPlaying, setIsPlaying] = useState(() => {
     // Initialize from global instance if available
     return globalAudioInstance ? !globalAudioInstance.paused : false;
@@ -72,6 +80,15 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
 
   // OPTIMIZED: Memoize defaultSrc to prevent unnecessary re-renders
   const defaultSrcMemo = useMemo(() => src || '/background_music.mp3', [src]);
+
+  useEffect(() => {
+    if (!disableOnMobile) return;
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [disableOnMobile]);
 
   useEffect(() => {
     // Early return for admin paths
@@ -226,6 +243,9 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     'bottom-right': 'bottom-4 right-4',
   };
 
+  // Hide on mobile when disableOnMobile (reduces distraction)
+  if (disableOnMobile && isMobile) return null;
+
   // Hide controls if not available, showControls is false, or admin path
   if (!showControls || !isAvailable || (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin'))) {
     return null;
@@ -361,7 +381,8 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     prevProps.autoPlay === nextProps.autoPlay &&
     prevProps.loop === nextProps.loop &&
     prevProps.showControls === nextProps.showControls &&
-    prevProps.controlsPosition === nextProps.controlsPosition
+    prevProps.controlsPosition === nextProps.controlsPosition &&
+    prevProps.disableOnMobile === nextProps.disableOnMobile
   );
 });
 

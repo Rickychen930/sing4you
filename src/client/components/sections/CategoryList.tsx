@@ -4,6 +4,8 @@ import { categoryService } from '../../services/categoryService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
+import { MediaGallery } from '../ui/MediaGallery';
+import { LazyImage } from '../ui/LazyImage';
 import { useNavigate } from 'react-router-dom';
 
 interface CategoryListProps {
@@ -69,14 +71,33 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
   if (loading) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+          {[...Array(6)].map((_, i) => (
             <div key={i} className="animate-fade-in-up category-list-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
-              <Card className="h-full">
-                <CardBody className="text-center">
-                  <div className="h-6 sm:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-3/4 mx-auto animate-pulse-soft skeleton-shimmer"></div>
-                  <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
-                  <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 mx-auto animate-pulse-soft skeleton-shimmer"></div>
+              <Card className="h-full flex flex-col">
+                <CardBody className="relative flex-grow flex flex-col p-0 overflow-hidden">
+                  {/* Featured Image Skeleton */}
+                  <div className="relative w-full h-48 sm:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 animate-pulse-soft skeleton-shimmer"></div>
+                  
+                  <div className="p-4 sm:p-5 lg:p-6 relative flex-grow flex flex-col">
+                    <div className="relative z-10 flex-grow flex flex-col">
+                      {/* Title Skeleton */}
+                      <div className="h-6 sm:h-8 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 sm:mb-5 lg:mb-6 w-3/4 animate-pulse-soft skeleton-shimmer"></div>
+                      
+                      {/* Description Skeleton */}
+                      <div className="space-y-2 mb-5 sm:mb-6 lg:mb-7">
+                        <div className="h-4 sm:h-5 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-full animate-pulse-soft skeleton-shimmer"></div>
+                        <div className="h-4 sm:h-5 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-5/6 animate-pulse-soft skeleton-shimmer"></div>
+                        <div className="h-4 sm:h-5 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-4/6 animate-pulse-soft skeleton-shimmer"></div>
+                      </div>
+                      
+                      {/* Media Gallery Skeleton */}
+                      <div className="mb-4 sm:mb-5 lg:mb-6 grid grid-cols-2 gap-2">
+                        <div className="aspect-video bg-gradient-to-br from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg animate-pulse-soft skeleton-shimmer"></div>
+                        <div className="aspect-video bg-gradient-to-br from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg animate-pulse-soft skeleton-shimmer"></div>
+                      </div>
+                    </div>
+                  </div>
                 </CardBody>
               </Card>
             </div>
@@ -117,15 +138,15 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
 
   return (
     <SectionWrapper title={title} subtitle={subtitle}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
         {categories.map((category, index) => (
-            <div
+          <div
             key={category._id}
             className="animate-fade-in-up category-list-item"
             style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
           >
             <Card 
-              className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[120px] sm:min-h-[140px] group" 
+              className="h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900" 
               hover 
               onClick={() => category._id && handleCategoryClick(category._id)}
               onKeyDown={(e) => {
@@ -138,24 +159,62 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
               tabIndex={0}
               aria-label={`View ${category.name} category`}
             >
-              <CardBody className="text-center relative flex flex-col h-full">
-                {/* Enhanced musical note decoration */}
-                <div className="absolute top-2 right-2 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-1" aria-hidden>♪</div>
-                <div className="absolute bottom-2 left-2 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-2" aria-hidden>♫</div>
-                <div className="relative z-10 flex flex-col h-full">
-                  <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300">
-                    {category.name}
-                  </h3>
-                  {category.description && (
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 category-card-text">
-                      {category.description}
-                    </p>
-                  )}
-                  {/* Enhanced arrow indicator */}
-                  <div className="mt-auto pt-3 sm:pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-gold-400 group-hover:text-gold-300 transition-colors duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
+              <CardBody className="relative flex-grow flex flex-col p-0 overflow-hidden">
+                {/* Featured Image - Hero image for the service card */}
+                {category.featuredImage && (
+                  <div className="relative w-full h-48 sm:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
+                    <LazyImage
+                      src={category.featuredImage}
+                      alt={category.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                )}
+                
+                <div className="p-4 sm:p-5 lg:p-6 relative flex-grow flex flex-col">
+                  {/* Musical notes decoration - consistent with other cards */}
+                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-1" aria-hidden>♫</div>
+                  <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-2" aria-hidden>♪</div>
+                  
+                  <div className="relative z-10 flex-grow flex flex-col">
+                    {/* Title with enhanced visual hierarchy */}
+                    <div className="mb-4 sm:mb-5 lg:mb-6">
+                      <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300 category-list-title">
+                        {category.name}
+                      </h3>
+                    </div>
+                    
+                    {/* Description with better spacing and consistent line clamp */}
+                    {category.description && (
+                      <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 category-card-text">
+                        {category.description}
+                      </p>
+                    )}
+                    
+                    {/* Media Gallery with enhanced styling and consistent border */}
+                    {category.media && category.media.length > 0 && (
+                      <div className="mb-4 sm:mb-5 lg:mb-6 rounded-xl overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 border border-gold-900/30 group-hover:border-gold-700/50 relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 via-transparent to-musical-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl z-0" aria-hidden />
+                        <div className="relative z-10">
+                          <MediaGallery 
+                            media={category.media.slice(0, 4)} 
+                            className="grid-cols-2"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Enhanced arrow indicator */}
+                    <div className="mt-auto pt-3 sm:pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex items-center justify-center gap-2 text-gold-400 group-hover:text-gold-300 transition-colors duration-300">
+                        <span className="text-sm sm:text-base font-medium">View Details</span>
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardBody>

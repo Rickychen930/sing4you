@@ -6,6 +6,7 @@ import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
 import { LazyImage } from '../ui/LazyImage';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../../services/api';
 
 interface VariationListProps {
   categoryId: string;
@@ -34,9 +35,13 @@ export const VariationList: React.FC<VariationListProps> = memo(({
     let isMounted = true;
     const abortController = new AbortController();
 
-    const loadVariations = async () => {
+    const loadVariations = async (forceRefresh: boolean = false) => {
       try {
         setError(null);
+        // Clear cache if force refresh
+        if (forceRefresh) {
+          apiClient.clearCacheEntry(`/api/categories/${categoryId}/variations`);
+        }
         const data = await variationService.getByCategoryId(categoryId);
         // Only update state if component is still mounted
         if (isMounted && !abortController.signal.aborted) {
@@ -60,9 +65,28 @@ export const VariationList: React.FC<VariationListProps> = memo(({
 
     loadVariations();
 
+    // Listen for variations updates from admin dashboard
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'variationsUpdated') {
+        loadVariations(true);
+        localStorage.removeItem('variationsUpdated');
+      }
+    };
+
+    const handleCustomEvent = () => {
+      if (isMounted && !abortController.signal.aborted) {
+        loadVariations(true);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('variationsUpdated', handleCustomEvent);
+
     return () => {
       isMounted = false;
       abortController.abort();
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('variationsUpdated', handleCustomEvent);
     };
   }, [categoryId]);
 

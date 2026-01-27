@@ -9,6 +9,7 @@ import { categoryService } from '../../services/categoryService';
 import { useToastStore } from '../../stores/toastStore';
 import { SEO } from '../../components/ui/SEO';
 import type { ICategory } from '../../../shared/interfaces';
+import { apiClient } from '../../services/api';
 
 export const VariationsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -28,6 +29,9 @@ export const VariationsPage: React.FC = () => {
       }
 
       try {
+        // Clear cache to ensure fresh data from admin dashboard
+        apiClient.clearCacheEntry(`/api/categories/${categoryId}`);
+        apiClient.clearCacheEntry(`/api/categories/${categoryId}/variations`);
         const data = await categoryService.getById(categoryId);
         setCategory(data);
       } catch (error) {
@@ -43,6 +47,26 @@ export const VariationsPage: React.FC = () => {
     };
 
     loadCategory();
+
+    // Listen for variations updates from admin dashboard
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'variationsUpdated') {
+        loadCategory();
+        localStorage.removeItem('variationsUpdated');
+      }
+    };
+
+    const handleCustomEvent = () => {
+      loadCategory();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('variationsUpdated', handleCustomEvent);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('variationsUpdated', handleCustomEvent);
+    };
   }, [categoryId, navigate, toast]);
 
   if (loading) {
@@ -118,6 +142,35 @@ export const VariationsPage: React.FC = () => {
           <BackButton to="/categories" />
         </div>
       </div>
+      
+      {/* Hero Section */}
+      <SectionWrapper id="variations-hero" className="pt-8 sm:pt-10 lg:pt-12 pb-8 sm:pb-10 lg:pb-12">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
+          <div className="relative inline-block mb-5 sm:mb-6 lg:mb-8">
+            {/* Glow effect behind title */}
+            <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gold-500/15 rounded-full blur-2xl opacity-70" aria-hidden />
+            <div className="absolute -inset-8 sm:-inset-12 bg-musical-500/10 rounded-full blur-2xl opacity-50" aria-hidden />
+            <h1 className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+              {category.name} Variations
+            </h1>
+          </div>
+          {category.description && (
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 leading-relaxed max-w-3xl mx-auto">
+              {category.description}
+            </p>
+          )}
+          {category.featuredImage && (
+            <div className="mt-8 sm:mt-10 lg:mt-12 rounded-lg overflow-hidden shadow-2xl">
+              <img
+                src={category.featuredImage}
+                alt={category.name}
+                className="w-full h-auto max-h-[400px] sm:max-h-[500px] object-cover"
+              />
+            </div>
+          )}
+        </div>
+      </SectionWrapper>
+
       <VariationList
         categoryId={categoryId!}
         title={`${category.name} Variations`}

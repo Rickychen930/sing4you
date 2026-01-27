@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ScrollToTop } from '../ui/ScrollToTop';
+import { FloatingWhatsApp } from '../ui/FloatingWhatsApp';
 import { CursorEffect } from '../ui/CursorEffect';
 import { BackgroundMusic } from '../ui/BackgroundMusic';
 
@@ -31,6 +32,7 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
       </main>
       {!isAdmin && <Footer />}
       {!isAdmin && <ScrollToTop />}
+      {!isAdmin && <FloatingWhatsApp />}
       {!isAdmin && <CursorEffect intensity="medium" disableOnMobile={true} />}
       {!isAdmin && (
         <BackgroundMusic
@@ -39,6 +41,7 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
           loop={true}
           showControls={true}
           controlsPosition="bottom-right"
+          disableOnMobile={true}
         />
       )}
     </div>

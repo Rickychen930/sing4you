@@ -142,3 +142,15 @@ export interface IMedia {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IAboutPageSettings {
+  heroTitle: string;
+  heroSubtitle: string;
+  heroBackgroundImage?: string;
+  heroBackgroundVideo?: string;
+  storyTitle: string;
+  storyContent: string;
+  galleryImages: string[];
+  ctaTitle: string;
+  ctaDescription: string;
+}

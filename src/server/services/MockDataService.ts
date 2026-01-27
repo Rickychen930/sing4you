@@ -4,6 +4,7 @@ import type {
   IPerformance,
   ITestimonial,
   ISEOSettings,
+  IAboutPageSettings,
 } from '../../shared/interfaces';
 import {
   mockHeroSettings,
@@ -21,6 +22,15 @@ export class MockDataService {
   private static performancesBase: Array<Omit<IPerformance, 'date'> & { daysOffset: number }> = [...mockPerformancesBase];
   private static testimonials: ITestimonial[] = [...mockTestimonials];
   private static seoSettings: ISEOSettings = { ...mockSEOSettings };
+  private static aboutPageSettings: IAboutPageSettings = {
+    heroTitle: 'About Christina Sings4U',
+    heroSubtitle: 'Professional vocalist delivering unforgettable musical experiences',
+    storyTitle: 'My Story',
+    storyContent: 'Welcome to Christina Sings4U! I am a passionate and dedicated professional singer with years of experience in delivering exceptional musical performances. My journey in music has allowed me to perform at countless weddings, corporate events, and special occasions, bringing joy and creating lasting memories for my clients.\n\nWhether you\'re looking for an intimate solo performance, a dynamic duo or trio, or a full band experience, I am committed to providing you with a musical experience that perfectly matches your vision and exceeds your expectations.\n\nMy repertoire spans across multiple genres, and I specialize in tailoring performances to suit the unique atmosphere and style of your event. From elegant wedding ceremonies to energetic corporate functions, I bring professionalism, talent, and a personal touch to every performance.',
+    galleryImages: [],
+    ctaTitle: 'Let\'s Create Something Beautiful Together',
+    ctaDescription: 'Ready to make your event unforgettable? Get in touch to discuss your musical needs and let\'s bring your vision to life.',
+  };
 
   // Helper to get date X days from now
   private static getDateFromNow(days: number): Date {
@@ -227,5 +237,15 @@ export class MockDataService {
   static updateSEOSettings(data: Partial<ISEOSettings>): ISEOSettings {
     this.seoSettings = { ...this.seoSettings, ...data };
     return { ...this.seoSettings };
+  }
+
+  // About Page Settings
+  static getAboutPageSettings(): IAboutPageSettings {
+    return { ...this.aboutPageSettings };
+  }
+
+  static updateAboutPageSettings(data: Partial<IAboutPageSettings>): IAboutPageSettings {
+    this.aboutPageSettings = { ...this.aboutPageSettings, ...data };
+    return { ...this.aboutPageSettings };
   }
 }

@@ -1,16 +1,34 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, useState, memo } from 'react';
+
+const MOBILE_BREAKPOINT = 768;
 
 interface MusicalBackgroundProps {
   intensity?: 'low' | 'medium' | 'high';
+  /** Disable on viewport <=768px to avoid distraction and battery drain on mobile. Default true. */
+  disableOnMobile?: boolean;
 }
 
-export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ intensity = 'medium' }) => {
+export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ intensity = 'medium', disableOnMobile = true }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const isVisibleRef = useRef(true);
   const lastFrameTimeRef = useRef(0);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
+  );
 
   useEffect(() => {
+    if (!disableOnMobile) return;
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [disableOnMobile]);
+
+  useEffect(() => {
+    if (disableOnMobile && isMobile) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -165,7 +183,9 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
       window.removeEventListener('resize', resizeCanvas);
     };
 
-  }, [intensity]);
+  }, [intensity, disableOnMobile, isMobile]);
+
+  if (disableOnMobile && isMobile) return null;
 
   return (
     <canvas
@@ -181,7 +201,10 @@ export const MusicalBackground: React.FC<MusicalBackgroundProps> = memo(({ inten
     />
   );
 }, (prevProps, nextProps) => {
-  return prevProps.intensity === nextProps.intensity;
+  return (
+    prevProps.intensity === nextProps.intensity &&
+    prevProps.disableOnMobile === nextProps.disableOnMobile
+  );
 });
 
 MusicalBackground.displayName = 'MusicalBackground';

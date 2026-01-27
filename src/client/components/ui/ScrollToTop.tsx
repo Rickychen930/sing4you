@@ -3,7 +3,7 @@ import { cn } from '../../utils/helpers';
 
 export const ScrollToTop: React.FC = memo(() => {
   const [isVisible, setIsVisible] = useState(false);
-  const [bottomOffset, setBottomOffset] = useState('5rem');
+  const [bottomOffset, setBottomOffset] = useState('1rem');
   const ticking = useRef(false);
 
   // OPTIMIZED: Better throttle with reduced frequency
@@ -18,31 +18,16 @@ export const ScrollToTop: React.FC = memo(() => {
     }
   }, []);
 
-  // OPTIMIZED: Memoize updateBottomOffset to prevent re-renders
+  // Bottom offset from viewport (music optional at bottom-right)
   const updateBottomOffset = useCallback(() => {
-    if (window.innerWidth >= 1024) {
-      setBottomOffset('6rem');
-    } else if (window.innerWidth >= 640) {
-      setBottomOffset('5.5rem');
-    } else {
-      setBottomOffset('4.5rem');
-    }
+    setBottomOffset('1rem');
   }, []);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', updateBottomOffset, { passive: true });
-    
-    // Set bottom offset based on screen size to avoid overlap with BackgroundMusic
-    // Use setTimeout to avoid setState in effect
-    const timeoutId = setTimeout(() => {
-      updateBottomOffset();
-    }, 0);
-    
+    updateBottomOffset();
     return () => {
-      clearTimeout(timeoutId);
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', updateBottomOffset);
     };
   }, [handleScroll, updateBottomOffset]);
 
@@ -80,7 +65,7 @@ export const ScrollToTop: React.FC = memo(() => {
         position: 'fixed',
         bottom: bottomOffset,
         right: '1rem',
-        zIndex: 9999
+        zIndex: 9999,
       }}
       aria-label="Scroll to top"
       tabIndex={isVisible ? 0 : -1}

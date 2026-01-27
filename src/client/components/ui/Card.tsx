@@ -59,7 +59,7 @@ export const Card: React.FC<CardProps> = memo(({
         </div>
       )}
       
-      <div className="relative z-30 h-full">
+      <div className="relative z-30 h-full flex flex-col">
         {children}
       </div>
     </div>
@@ -147,7 +147,7 @@ export const CardFooter: React.FC<CardFooterProps> = memo(({ children, className
     <div className={cn(
       large 
         ? 'px-5 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-6 lg:py-8 xl:py-10'
-        : 'px-6 sm:px-7 lg:px-9 xl:px-11 py-5 sm:py-6 lg:py-7',
+        : 'px-4 sm:px-5 lg:px-6 xl:px-7 py-5 sm:py-6 lg:py-7',
       noTopPadding && 'pt-0',
       'bg-gradient-to-r from-gold-900/25 via-musical-900/25 to-gold-900/35',
       'border-t border-gold-900/40',

@@ -885,24 +885,36 @@ jobs:
             # CRITICAL: Fix root path - must be PROJECT ROOT (parent of backend)
             # IMPORTANT: Only update root INSIDE location /uploads block, not the global root!
             EXPECTED_UPLOADS_ROOT="$PROJECT_ROOT"
+            # CRITICAL: Ensure location /uploads uses prefix match ^~ to prevent global root override
+            # First, ensure location uses prefix match
+            sudo sed -i 's|^    location /uploads {|    location ^~ /uploads {|g' "$NGINX_CONFIG_FILE" || true
             # Use sed with range to only update root inside /uploads location block
             # This ensures we don't accidentally change the global frontend root
+            # Match both "location /uploads" and "location ^~ /uploads" patterns
+            sudo sed -i '/location \^~ \/uploads/,/^    }/ {
+              s|root /var/www/christina-sings4you/frontend/build/dist/client;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+              s|root /var/www/christina-sings4you/frontend.*;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+              s|root /var/www/christina-sings4you;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+              s|root /var/www/christina-sings4you/backend;|root '"$EXPECTED_UPLOADS_ROOT"';|g
+            }' "$NGINX_CONFIG_FILE" || true
+            # Also match old pattern without ^~ (for backward compatibility)
             sudo sed -i '/location \/uploads/,/^    }/ {
               s|root /var/www/christina-sings4you/frontend/build/dist/client;|root '"$EXPECTED_UPLOADS_ROOT"';|g
               s|root /var/www/christina-sings4you/frontend.*;|root '"$EXPECTED_UPLOADS_ROOT"';|g
               s|root /var/www/christina-sings4you;|root '"$EXPECTED_UPLOADS_ROOT"';|g
               s|root /var/www/christina-sings4you/backend;|root '"$EXPECTED_UPLOADS_ROOT"';|g
             }' "$NGINX_CONFIG_FILE" || true
-            # Also update alias (for backward compatibility) - only in /uploads location
-            sudo sed -i '/location \/uploads/,/^    }/ {
-              s|alias /var/www/christina-sings4you/backend/uploads|alias '"$UPLOADS_DIR"'|g
-              s|alias /var/www/christina-sings4you/uploads|alias '"$UPLOADS_DIR"'|g
-              s|alias [^;]*uploads[^;]*;|alias '"$UPLOADS_DIR"';|g
+            # Remove alias if exists (we use root, not alias)
+            # Match both patterns (with and without ^~)
+            sudo sed -i '/location \^~ \/uploads/,/^    }/ {
+              /^\s*alias /d
             }' "$NGINX_CONFIG_FILE" || true
-            # Verify the update - check both root and alias
-            UPDATED_ROOT=$(grep -A 5 "location /uploads" "$NGINX_CONFIG_FILE" | grep "root" | sed 's/.*root\s\+\([^;]*\);.*/\1/' || echo "not found")
-            UPDATED_ALIAS=$(grep -A 5 "location /uploads" "$NGINX_CONFIG_FILE" | grep "alias" | sed 's/.*alias\s\+\([^;]*\);.*/\1/' || echo "not found")
-            EXPECTED_ROOT="$(dirname $UPLOADS_DIR)"
+            sudo sed -i '/location \/uploads/,/^    }/ {
+              /^\s*alias /d
+            }' "$NGINX_CONFIG_FILE" || true
+            # Verify the update - check root (we use root, not alias)
+            UPDATED_ROOT=$(grep -A 5 "location.*\/uploads" "$NGINX_CONFIG_FILE" | grep "root" | sed 's/.*root\s\+\([^;]*\);.*/\1/' || echo "not found")
+            EXPECTED_ROOT="$PROJECT_ROOT"
             if [ "$UPDATED_ROOT" != "not found" ]; then
               echo "✅ Nginx uploads root updated to: $UPDATED_ROOT"
               echo "   Expected root: $EXPECTED_ROOT"
@@ -911,10 +923,15 @@ jobs:
               else
                 echo "   ⚠️  Root path mismatch (expected: $EXPECTED_ROOT, got: $UPDATED_ROOT)"
               fi
-            elif [ "$UPDATED_ALIAS" != "not found" ]; then
-              echo "✅ Nginx uploads alias updated to: $UPDATED_ALIAS"
             else
-              echo "⚠️  Could not verify nginx uploads configuration"
+              echo "❌ ERROR: Could not find root directive in location /uploads!"
+              echo "   Please check nginx config manually"
+            fi
+            # Verify prefix match is used
+            if grep -q "location ^~ /uploads" "$NGINX_CONFIG_FILE"; then
+              echo "   ✅ Prefix match ^~ is used"
+            else
+              echo "   ⚠️  WARNING: Prefix match ^~ is NOT used!"
             fi
             echo "   📁 Uploads directory: $UPLOADS_DIR"
             # Verify directory exists
@@ -975,21 +992,23 @@ jobs:
               exit 1
             fi
             
-            # CRITICAL: Reload nginx after updating uploads config and all nginx setup
-            # This ensures uploads directory path changes are applied immediately
-            echo "Reloading nginx to apply uploads configuration changes and all nginx updates..."
-            if sudo systemctl reload nginx 2>/dev/null; then
-              echo "✅ Nginx reloaded successfully (graceful reload)"
+            # CRITICAL: FULL RESTART nginx after updating uploads config
+            # Reload is not enough - Nginx workers may still use old config
+            # Full restart ensures all workers use the new config with prefix match ^~
+            echo "FULL RESTART nginx to apply uploads configuration changes (prefix match ^~)..."
+            echo "   This ensures location ^~ /uploads is processed correctly"
+            sudo systemctl stop nginx 2>/dev/null || true
+            sudo pkill -9 nginx 2>/dev/null || true
+            sleep 2
+            if sudo systemctl start nginx 2>/dev/null; then
+              echo "✅ Nginx FULL RESTART successful"
               echo "   📁 Uploads directory configured: $UPLOADS_DIR"
-              echo "   ✅ Nginx config updated and active"
-            elif sudo systemctl restart nginx 2>/dev/null; then
-              echo "✅ Nginx restarted successfully (fallback to restart)"
-              echo "   📁 Uploads directory configured: $UPLOADS_DIR"
-              echo "   ✅ Nginx config updated and active"
+              echo "   ✅ Location ^~ /uploads active with correct root"
             else
-              echo "⚠️  WARNING: Failed to reload/restart nginx"
-              echo "   Please manually reload nginx: sudo systemctl reload nginx"
+              echo "❌ ERROR: Failed to restart nginx"
+              echo "   Please manually restart: sudo systemctl stop nginx && sudo pkill -9 nginx && sudo systemctl start nginx"
               echo "   📁 Uploads directory configured: $UPLOADS_DIR"
+              exit 1
             fi
             
             # Cleanup temp file

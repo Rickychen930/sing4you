@@ -24,11 +24,11 @@ const NotFoundPage = lazy(() => import('./client/pages/public/NotFoundPage').the
 const LoginPage = lazy(() => import('./client/pages/admin/LoginPage').then(m => ({ default: m.LoginPage })));
 const DashboardPage = lazy(() => import('./client/pages/admin/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const HeroManagementPage = lazy(() => import('./client/pages/admin/HeroManagementPage').then(m => ({ default: m.HeroManagementPage })));
+const AboutManagementPage = lazy(() => import('./client/pages/admin/AboutManagementPage').then(m => ({ default: m.AboutManagementPage })));
 const PerformancesManagementPage = lazy(() => import('./client/pages/admin/PerformancesManagementPage').then(m => ({ default: m.PerformancesManagementPage })));
 const TestimonialsManagementPage = lazy(() => import('./client/pages/admin/TestimonialsManagementPage').then(m => ({ default: m.TestimonialsManagementPage })));
 const SEOManagementPage = lazy(() => import('./client/pages/admin/SEOManagementPage').then(m => ({ default: m.SEOManagementPage })));
-const CategoriesManagementPage = lazy(() => import('./client/pages/admin/CategoriesManagementPage').then(m => ({ default: m.CategoriesManagementPage })));
-const VariationsManagementPage = lazy(() => import('./client/pages/admin/VariationsManagementPage').then(m => ({ default: m.VariationsManagementPage })));
+const CategoriesAndVariationsManagementPage = lazy(() => import('./client/pages/admin/CategoriesAndVariationsManagementPage').then(m => ({ default: m.CategoriesAndVariationsManagementPage })));
 
 const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -166,6 +166,14 @@ function App() {
                 }
               />
               <Route
+                path="/admin/about"
+                element={
+                  <PrivateRoute>
+                    <AboutManagementPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
                 path="/admin/performances"
                 element={
                   <PrivateRoute>
@@ -193,7 +201,7 @@ function App() {
                 path="/admin/categories"
                 element={
                   <PrivateRoute>
-                    <CategoriesManagementPage />
+                    <CategoriesAndVariationsManagementPage />
                   </PrivateRoute>
                 }
               />
@@ -201,7 +209,7 @@ function App() {
                 path="/admin/variations"
                 element={
                   <PrivateRoute>
-                    <VariationsManagementPage />
+                    <Navigate to="/admin/categories" replace />
                   </PrivateRoute>
                 }
               />

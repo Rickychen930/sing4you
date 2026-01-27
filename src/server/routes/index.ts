@@ -12,6 +12,7 @@ import { MediaUploadController, uploadMiddleware } from '../controllers/MediaUpl
 import { CategoryController } from '../controllers/CategoryController';
 import { VariationController } from '../controllers/VariationController';
 import { MediaController } from '../controllers/MediaController';
+import { AboutPageController } from '../controllers/AboutPageController';
 import { authMiddleware } from '../middlewares/auth';
 import { rateLimiter, authRateLimiter } from '../middlewares/rateLimiter';
 
@@ -103,7 +104,7 @@ router.get('/api/admin/uploads/check/:filename', authMiddleware, async (req, res
     const { existsSync, statSync } = await import('fs');
     const { resolve } = await import('path');
     const uploadDir = getUploadDirectory();
-    const filename = req.params.filename;
+    const filename = (Array.isArray(req.params.filename) ? req.params.filename[0] : req.params.filename) ?? '';
     const filePath = resolve(uploadDir, filename);
     
     const fileExists = existsSync(filePath);
@@ -148,9 +149,13 @@ const testimonialController = new TestimonialController();
 const seoController = new SEOController();
 const contactController = new ContactController();
 const sitemapController = new SitemapController();
+const aboutPageController = new AboutPageController();
 
 // Hero
 router.get('/api/hero', heroController.getSettings);
+
+// About Page
+router.get('/api/about', aboutPageController.getSettings);
 
 // Sections
 router.get('/api/sections', sectionController.getAll);
@@ -207,6 +212,9 @@ router.post('/api/admin/auth/logout', authController.logout);
 
 // Admin Hero
 router.put('/api/admin/hero', authMiddleware, heroController.updateSettings);
+
+// Admin About Page
+router.put('/api/admin/about', authMiddleware, aboutPageController.updateSettings);
 
 // Admin Sections
 router.post('/api/admin/sections', authMiddleware, sectionController.create);
