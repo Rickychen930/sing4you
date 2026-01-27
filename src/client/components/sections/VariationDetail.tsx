@@ -6,6 +6,7 @@ import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
 import { MediaGallery } from '../ui/MediaGallery';
+import { PerformanceMediaCarousel } from '../ui/PerformanceMediaCarousel';
 import { LazyImage } from '../ui/LazyImage';
 import { DescriptionSection } from './DescriptionSection';
 
@@ -145,7 +146,7 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
 
               {mediaUrls.length > 0 && (
                 <div className="mb-6 sm:mb-7 lg:mb-8 xl:mb-10">
-                  <MediaGallery media={mediaUrls} />
+                  <PerformanceMediaCarousel media={mediaUrls} />
                 </div>
               )}
 

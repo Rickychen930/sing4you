@@ -84,7 +84,7 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
   return (
     <div 
       ref={containerRef}
-      className={cn('relative overflow-hidden bg-gradient-to-br from-jazz-800/50 sm:from-jazz-800/40 to-jazz-900/50 sm:to-jazz-900/40', className)}
+      className={cn('relative overflow-hidden bg-black/80', className)}
     >
       {!isLoaded && !hasError && (
         <div
@@ -123,7 +123,7 @@ export const LazyImage: React.FC<LazyImageProps> = memo(({
           onLoad={handleLoad}
           onError={handleError}
           className={cn(
-            'w-full h-full object-cover transition-opacity duration-300',
+            'w-full h-full object-contain transition-opacity duration-300 bg-black',
             /* OPTIMIZED: Faster fade-in for better performance */
             fadeIn && !isLoaded && 'opacity-0',
             fadeIn && isLoaded && 'opacity-100 image-fade-in',

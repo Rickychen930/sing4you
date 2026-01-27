@@ -17,7 +17,7 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
   const mainContent = children ?? <Outlet />;
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-[var(--color-black)]">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-[#070017] via-[#100328] to-[#050013]">
       <a href="#main-content" className="skip-to-main">
         Skip to main content
       </a>

@@ -125,8 +125,8 @@
     scroll-snap-type: none;
     overscroll-behavior: contain;
     /* Prevent white flash */
-    background-color: var(--color-black);
-    background: linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%);
+    background-color: #050013;
+    background: linear-gradient(135deg, #050013 0%, #120024 25%, #1a0b2e 55%, #120024 80%, #050013 100%);
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -134,7 +134,7 @@
 
   body {
     /* Using CSS variables for consistency */
-    background: linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%);
+    background: linear-gradient(135deg, #050013 0%, #120024 25%, #1a0b2e 55%, #120024 80%, #050013 100%);
     /* Optimize rendering performance */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -2010,7 +2010,7 @@ select:focus-visible {
 .hero-section-bg {
   min-height: 100vh;
   height: 100vh;
-  background: linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-navy) 25%, var(--color-dark-blue) 50%, var(--color-dark-slate) 75%, var(--color-black) 100%);
+  background: linear-gradient(135deg, #050013 0%, #120024 25%, #1a0b2e 55%, #120024 80%, #050013 100%);
 }
 
 /* Animation delay utilities - using design tokens */

@@ -167,7 +167,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
               {preview.startsWith('data:video') || preview.includes('video') ? (
                 <video
                   src={preview}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-black"
                   controls
                   aria-label="Video preview"
                 />
@@ -175,7 +175,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                 <img
                   src={preview}
                   alt={`${label} preview`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  className="w-full h-full object-contain bg-black transition-transform duration-300 group-hover:scale-[1.02]"
                   onError={(e) => {
                     // Prevent error from bubbling and showing in console
                     e.preventDefault();

@@ -136,12 +136,12 @@ export const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
             {value.map((url, index) => (
               <div
                 key={index}
-                className="relative aspect-square rounded-lg sm:rounded-xl overflow-hidden border-2 border-gold-900/50 hover:border-gold-700/80 bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 group"
+                className="relative aspect-video rounded-lg sm:rounded-xl overflow-hidden border-2 border-gold-900/50 hover:border-gold-700/80 bg-black/80 group"
               >
                 <LazyImage
                   src={url}
                   alt={`${label} ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-black"
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
                   {index > 0 && (

@@ -10,6 +10,7 @@ import { useToastStore } from '../../stores/toastStore';
 import { SEO } from '../../components/ui/SEO';
 import type { ICategory } from '../../../shared/interfaces';
 import { apiClient } from '../../services/api';
+import { MediaGallery } from '../../components/ui/MediaGallery';
 
 export const VariationsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -131,9 +132,9 @@ export const VariationsPage: React.FC = () => {
   return (
     <>
       <SEO
-        title={`${category.name} Variations | Professional Singer Sydney`}
+        title={`${category.name}  | Professional Singer Sydney`}
         description={category.description || `Explore ${category.name} performance variations. Professional singer available for weddings, corporate events & private occasions in Sydney, NSW.`}
-        keywords={`${category.name} variations, ${category.name} performances, professional singer ${category.name}, live music ${category.name} Sydney, ${category.name} entertainment, Christina Sings4U ${category.name}`}
+        keywords={`${category.name}, ${category.name} performances, professional singer ${category.name}, live music ${category.name} Sydney, ${category.name} entertainment, Christina Sings4U ${category.name}`}
         url={`${siteUrl}/categories/${categoryId}`}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
@@ -144,14 +145,14 @@ export const VariationsPage: React.FC = () => {
       </div>
       
       {/* Hero Section */}
-      <SectionWrapper id="variations-hero" className="pt-8 sm:pt-10 lg:pt-12 pb-8 sm:pb-10 lg:pb-12">
+      <SectionWrapper id="variations-hero" className="pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-6 lg:pb-8">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
           <div className="relative inline-block mb-5 sm:mb-6 lg:mb-8">
             {/* Glow effect behind title */}
             <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gold-500/15 rounded-full blur-2xl opacity-70" aria-hidden />
             <div className="absolute -inset-8 sm:-inset-12 bg-musical-500/10 rounded-full blur-2xl opacity-50" aria-hidden />
             <h1 className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
-              {category.name} Variations
+              {category.name}
             </h1>
           </div>
           {category.description && (
@@ -160,7 +161,7 @@ export const VariationsPage: React.FC = () => {
             </p>
           )}
           {category.featuredImage && (
-            <div className="mt-8 sm:mt-10 lg:mt-12 rounded-lg overflow-hidden shadow-2xl">
+            <div className="mt-8 sm:mt-10 lg:mt-12 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-gold-900/40">
               <img
                 src={category.featuredImage}
                 alt={category.name}
@@ -171,9 +172,23 @@ export const VariationsPage: React.FC = () => {
         </div>
       </SectionWrapper>
 
+      {/* Mini gallery for this category */}
+      {category.media && category.media.length > 0 && (
+        <SectionWrapper
+          id="variations-gallery"
+          className="pt-4 sm:pt-6 lg:pt-8 pb-6 sm:pb-8 lg:pb-10"
+          title={`Highlights from ${category.name}`}
+          subtitle="A glimpse of performances in this category"
+        >
+          <div className="rounded-2xl overflow-hidden border border-gold-900/40 bg-jazz-900/40 backdrop-blur-sm shadow-[0_18px_60px_rgba(0,0,0,0.7)]">
+            <MediaGallery media={category.media} itemsPerPage={6} />
+          </div>
+        </SectionWrapper>
+      )}
+
       <VariationList
         categoryId={categoryId!}
-        title={`${category.name} Variations`}
+        title={`${category.name}`}
         subtitle={category.description || `Discover our ${category.name} performance options`}
       />
     </>

@@ -117,7 +117,20 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
             className="animate-fade-in-up services-section-item"
             style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
           >
-            <Card className="h-full flex flex-col group" hover>
+            <Card
+              className="h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900"
+              hover
+              onClick={() => category._id && navigate(`/categories/${category._id}`)}
+              onKeyDown={(e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && category._id) {
+                  e.preventDefault();
+                  navigate(`/categories/${category._id}`);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`View ${category.name} category details`}
+            >
               <CardBody className="relative flex-grow flex flex-col p-0 overflow-hidden">
                 {/* Featured Image - Hero image for the service card */}
                 {category.featuredImage && (

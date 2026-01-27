@@ -6,12 +6,15 @@ import { cn } from '../../utils/helpers';
 export const FloatingWhatsApp: React.FC = memo(() => {
   const [mounted, setMounted] = useState(false);
   const [backToTopVisible, setBackToTopVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const ticking = useRef(false);
 
   const handleScroll = useCallback(() => {
     if (!ticking.current) {
       window.requestAnimationFrame(() => {
-        setBackToTopVisible(window.scrollY > 400);
+        const scrolled = window.scrollY || window.pageYOffset || 0;
+        setBackToTopVisible(scrolled > 400);
+        setIsVisible(scrolled > 200);
         ticking.current = false;
       });
       ticking.current = true;
@@ -57,7 +60,7 @@ export const FloatingWhatsApp: React.FC = memo(() => {
         'min-w-[56px] min-h-[56px]',
         'backdrop-blur-sm relative overflow-hidden group',
         'animate-pulse-soft',
-        mounted
+        mounted && isVisible
           ? 'opacity-100 translate-y-0 scale-100'
           : 'opacity-0 translate-y-10 scale-90 pointer-events-none'
       )}
