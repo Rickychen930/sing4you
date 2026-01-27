@@ -11,6 +11,8 @@ import { generateMailtoLink } from '../../../shared/utils/email';
 export const Hero: FC = memo(() => {
   const [heroSettings, setHeroSettings] = useState<IHeroSettings | null>(null);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+  const [videoError, setVideoError] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -22,6 +24,9 @@ export const Hero: FC = memo(() => {
         // Only update state if component is still mounted
         if (isMounted && !abortController.signal.aborted) {
           setHeroSettings(settings);
+          // Reset error states when settings change
+          setImageError(false);
+          setVideoError(false);
         }
       } catch (error) {
         // Don't update state if component unmounted or aborted
@@ -119,7 +124,7 @@ export const Hero: FC = memo(() => {
       
       {/* Enhanced Parallax Background Layers - Optimized */}
       <div className="absolute inset-0">
-        {heroSettings.backgroundVideo ? (
+        {heroSettings.backgroundVideo && !videoError ? (
           <video
             autoPlay
             loop
@@ -129,12 +134,28 @@ export const Hero: FC = memo(() => {
             className="absolute inset-0 w-full h-full object-cover"
             aria-label="Background video"
             aria-hidden="true"
+            onError={() => {
+              setVideoError(true);
+            }}
           >
             <source src={heroSettings.backgroundVideo} type="video/mp4" />
           </video>
-        ) : (
+        ) : heroSettings.backgroundImage && !imageError ? (
           <div className="absolute inset-0" style={backgroundStyle}>
+            <img
+              src={heroSettings.backgroundImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+              onError={() => {
+                setImageError(true);
+              }}
+              aria-hidden="true"
+            />
             <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80" />
+            <div className="absolute inset-0 bg-black/30" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80">
             <div className="absolute inset-0 bg-black/30" />
           </div>
         )}

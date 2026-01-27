@@ -262,22 +262,31 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
         {/* Current URL Display - Show if value exists but preview failed to load */}
         {value && !preview && (
           <div className="text-xs sm:text-sm text-gray-200 font-sans break-all p-2 bg-jazz-900/50 rounded border border-gold-900/30">
-            <span className="text-gray-300">Current URL: </span>
-            <a 
-              href={value} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] break-all"
-            >
-              {value}
-            </a>
-            <button
-              type="button"
-              onClick={() => setPreview(value)}
-              className="ml-2 text-xs text-gold-400 hover:text-gold-300 underline"
-            >
-              Load Preview
-            </button>
+            <div className="flex items-start gap-2">
+              <div className="flex-1 min-w-0">
+                <span className="text-gray-300 block mb-1">Current URL: </span>
+                <a 
+                  href={value} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] break-all"
+                >
+                  {value}
+                </a>
+                <p className="text-red-400 text-xs mt-1">⚠️ Image not found. Please upload a new image or check if the file exists on the server.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  // Try to load preview with cache busting
+                  const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+                  setPreview(urlWithCacheBust);
+                }}
+                className="ml-2 text-xs text-gold-400 hover:text-gold-300 underline whitespace-nowrap"
+              >
+                Load Preview
+              </button>
+            </div>
           </div>
         )}
 
