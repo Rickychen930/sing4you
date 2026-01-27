@@ -32,11 +32,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
   // Sync preview with value prop when it changes externally
   useEffect(() => {
     if (value && value.trim() !== '') {
+      // Reset error state when value changes
+      errorShownRef.current = false;
       // Add cache busting to force browser reload
       const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
       setPreview(urlWithCacheBust);
     } else {
       setPreview(null);
+      errorShownRef.current = false;
     }
   }, [value]);
 
@@ -161,9 +164,15 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                     e.preventDefault();
                     e.stopPropagation();
                     
+                    // Log error for debugging in development
+                    if (process.env.NODE_ENV === 'development') {
+                      console.warn('Image failed to load:', preview);
+                    }
+                    
                     // If image fails to load, try without cache bust
                     const urlWithoutCacheBust = preview.split('?')[0].split('&')[0];
                     if (urlWithoutCacheBust !== preview) {
+                      // Try loading without cache bust parameter
                       setPreview(urlWithoutCacheBust);
                     } else {
                       // If still fails, show placeholder
@@ -171,7 +180,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                       // Only show error once per image
                       if (!errorShownRef.current) {
                         errorShownRef.current = true;
-                        toast.error('Image not found. Please upload a new image.');
+                        toast.error('Image not found. Please check if the file exists on the server or upload a new image.');
                         // Reset after a delay to allow showing error again if user tries different image
                         setTimeout(() => {
                           errorShownRef.current = false;
@@ -261,8 +270,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
 
         {/* Current URL Display - Show if value exists but preview failed to load */}
         {value && !preview && (
-          <div className="text-xs sm:text-sm text-gray-200 font-sans break-all p-2 bg-jazz-900/50 rounded border border-gold-900/30">
-            <div className="flex items-start gap-2">
+          <div className="text-xs sm:text-sm text-gray-200 font-sans break-all p-2 bg-jazz-900/50 rounded border border-red-900/50">
+            <div className="flex flex-col gap-2">
               <div className="flex-1 min-w-0">
                 <span className="text-gray-300 block mb-1">Current URL: </span>
                 <a 
@@ -270,22 +279,52 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] break-all"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Try to open in new tab to verify if file exists
+                    window.open(value, '_blank');
+                  }}
                 >
                   {value}
                 </a>
-                <p className="text-red-400 text-xs mt-1">⚠️ Image not found. Please upload a new image or check if the file exists on the server.</p>
+                <p className="text-red-400 text-xs mt-2 font-medium">
+                  ⚠️ Image not found. Possible causes:
+                </p>
+                <ul className="text-red-300/80 text-xs mt-1 ml-4 list-disc">
+                  <li>File was not uploaded successfully</li>
+                  <li>File was deleted from server</li>
+                  <li>Server is not running or uploads directory is not accessible</li>
+                </ul>
+                <p className="text-gold-400 text-xs mt-2">
+                  💡 Solution: Please upload a new image or check the server uploads directory.
+                </p>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  // Try to load preview with cache busting
-                  const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
-                  setPreview(urlWithCacheBust);
-                }}
-                className="ml-2 text-xs text-gold-400 hover:text-gold-300 underline whitespace-nowrap"
-              >
-                Load Preview
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Reset error state and try to load preview with cache busting
+                    errorShownRef.current = false;
+                    const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+                    setPreview(urlWithCacheBust);
+                  }}
+                  className="px-3 py-1.5 text-xs text-gold-400 hover:text-gold-300 bg-gold-900/30 hover:bg-gold-900/50 rounded border border-gold-700/50 hover:border-gold-600/70 transition-all"
+                >
+                  Retry Load Preview
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Clear the value to allow re-upload
+                    onChange('');
+                    setPreview(null);
+                    errorShownRef.current = false;
+                  }}
+                  className="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 bg-red-900/30 hover:bg-red-900/50 rounded border border-red-700/50 hover:border-red-600/70 transition-all"
+                >
+                  Clear & Re-upload
+                </button>
+              </div>
             </div>
           </div>
         )}
