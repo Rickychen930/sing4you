@@ -20,11 +20,16 @@ export const FloatingWhatsApp: React.FC = memo(() => {
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 400);
+    // Ensure scroll listener is properly attached
     window.addEventListener('scroll', handleScroll, { passive: true });
+    // Also listen to scroll events on document for better compatibility
+    document.addEventListener('scroll', handleScroll, { passive: true });
+    // Initial check
     handleScroll();
     return () => {
       clearTimeout(t);
       window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll]);
 

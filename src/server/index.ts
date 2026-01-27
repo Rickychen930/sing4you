@@ -282,10 +282,10 @@ const startServer = async (): Promise<void> => {
         ]);
         console.log('✅ Connected to MongoDB');
         
-        // Auto-seed database on startup (only if AUTO_SEED env is set to 'true')
-        // Also auto-seed in development if AUTO_SEED is not explicitly set to 'false'
-        const shouldAutoSeed = process.env.AUTO_SEED === 'true' || 
-                              (process.env.NODE_ENV === 'development' && process.env.AUTO_SEED !== 'false');
+        // Auto-seed database on startup ONLY if AUTO_SEED env is explicitly set to 'true'
+        // CRITICAL: Never auto-seed in production to prevent data loss
+        // Only seed in development if AUTO_SEED is explicitly set to 'true'
+        const shouldAutoSeed = process.env.AUTO_SEED === 'true';
         
         if (shouldAutoSeed) {
           console.log('🌱 Auto-seeding database...');
