@@ -5,7 +5,7 @@ import { mediaService } from '../../services/mediaService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
-import { MediaGallery } from '../ui/MediaGallery';
+// import { MediaGallery } from '../ui/MediaGallery';
 import { PerformanceMediaCarousel } from '../ui/PerformanceMediaCarousel';
 import { LazyImage } from '../ui/LazyImage';
 import { DescriptionSection } from './DescriptionSection';
