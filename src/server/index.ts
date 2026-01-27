@@ -329,7 +329,7 @@ const startServer = async (): Promise<void> => {
       }
       
       // Verify database connection status after connection attempt
-      const database = Database.getInstance();
+      // Use the same database instance declared above
       const isConnected = database.isConnectedToDb();
       if (isConnected) {
         console.log('✅ Database connection verified and ready');
