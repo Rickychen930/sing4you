@@ -18,9 +18,9 @@ export const Hero: FC = memo(() => {
     let isMounted = true;
     const abortController = new AbortController();
 
-    const loadHeroSettings = async () => {
+    const loadHeroSettings = async (forceRefresh: boolean = false) => {
       try {
-        const settings = await heroService.getSettings();
+        const settings = await heroService.getSettings(!forceRefresh);
         // Only update state if component is still mounted
         if (isMounted && !abortController.signal.aborted) {
           setHeroSettings(settings);
@@ -44,9 +44,29 @@ export const Hero: FC = memo(() => {
 
     loadHeroSettings();
 
+    // Listen for hero settings updates from other components (e.g., admin page)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'heroSettingsUpdated') {
+        loadHeroSettings(true);
+        localStorage.removeItem('heroSettingsUpdated');
+      }
+    };
+
+    // Listen for custom event from same window (for admin updates)
+    const handleCustomEvent = () => {
+      if (isMounted && !abortController.signal.aborted) {
+        loadHeroSettings(true);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('heroSettingsUpdated', handleCustomEvent);
+
     return () => {
       isMounted = false;
       abortController.abort();
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('heroSettingsUpdated', handleCustomEvent);
     };
   }, []);
 

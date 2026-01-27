@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { ImageUpload } from '../../components/ui/ImageUpload';
 import { MultipleImageUpload } from '../../components/ui/MultipleImageUpload';
 import { categoryService } from '../../services/categoryService';
 import { apiClient } from '../../services/api';
@@ -27,6 +28,7 @@ export const CategoriesManagementPage: React.FC = () => {
     slug: '',
     description: '',
     type: undefined,
+    featuredImage: '',
     media: [],
     priceRange: '',
     order: 0,
@@ -84,6 +86,7 @@ export const CategoriesManagementPage: React.FC = () => {
       slug: '',
       description: '',
       type: undefined,
+      featuredImage: '',
       media: [],
       priceRange: '',
       order: 0,
@@ -98,6 +101,7 @@ export const CategoriesManagementPage: React.FC = () => {
       slug: category.slug || '',
       description: category.description || '',
       type: category.type,
+      featuredImage: category.featuredImage || '',
       media: category.media || [],
       priceRange: category.priceRange || '',
       order: category.order || 0,
@@ -328,8 +332,15 @@ export const CategoriesManagementPage: React.FC = () => {
                         <option value="other">Other</option>
                       </select>
                     </div>
+                    <ImageUpload
+                      label="Featured Image (Hero image for service card)"
+                      value={formData.featuredImage || ''}
+                      onChange={(url) => setFormData((prev) => ({ ...prev, featuredImage: url }))}
+                      maxSizeMB={10}
+                      showPreview={true}
+                    />
                     <MultipleImageUpload
-                      label="Media (Images)"
+                      label="Media Gallery (Additional Images)"
                       value={formData.media || []}
                       onChange={(urls) => setFormData((prev) => ({ ...prev, media: urls }))}
                       maxFiles={10}

@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
+import { Textarea } from '../../components/ui/Textarea';
+import { ImageUpload } from '../../components/ui/ImageUpload';
+import { MultipleImageUpload } from '../../components/ui/MultipleImageUpload';
 import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
@@ -27,6 +30,9 @@ export const PerformancesManagementPage: React.FC = () => {
     date: new Date(),
     time: '',
     ticketLink: '',
+    description: '',
+    featuredImage: '',
+    media: [],
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -82,6 +88,9 @@ export const PerformancesManagementPage: React.FC = () => {
       date: new Date(),
       time: '',
       ticketLink: '',
+      description: '',
+      featuredImage: '',
+      media: [],
     });
   };
 
@@ -96,6 +105,9 @@ export const PerformancesManagementPage: React.FC = () => {
       date: new Date(performance.date),
       time: performance.time,
       ticketLink: performance.ticketLink || '',
+      description: performance.description || '',
+      featuredImage: performance.featuredImage || '',
+      media: performance.media || [],
     });
   };
 
@@ -270,6 +282,29 @@ export const PerformancesManagementPage: React.FC = () => {
                       onChange={(e) => setFormData((prev) => ({ ...prev, ticketLink: e.target.value }))}
                       placeholder="https://..."
                     />
+                    <ImageUpload
+                      label="Featured Image (Hero image for performance)"
+                      value={formData.featuredImage || ''}
+                      onChange={(url) => setFormData((prev) => ({ ...prev, featuredImage: url }))}
+                      maxSizeMB={10}
+                      showPreview={true}
+                    />
+                    <Textarea
+                      label="Description (optional)"
+                      rows={6}
+                      value={formData.description || ''}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                      placeholder="Detailed description of the performance, what to expect, special features, etc."
+                      maxLength={2000}
+                      helperText={`${formData.description?.length || 0}/2000 characters`}
+                    />
+                    <MultipleImageUpload
+                      label="Performance Gallery (Additional photos/videos)"
+                      value={formData.media || []}
+                      onChange={(urls) => setFormData((prev) => ({ ...prev, media: urls }))}
+                      maxFiles={20}
+                      maxSizeMB={10}
+                    />
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Button type="submit" isLoading={saving} variant="primary" className="flex-1 w-full sm:w-auto">
                         {editingId ? 'Update' : 'Create'}
@@ -289,32 +324,56 @@ export const PerformancesManagementPage: React.FC = () => {
               <div className="space-y-3 sm:space-y-4">
                 {performances.map((performance) => (
                   <Card key={performance._id} hover>
-                    <CardBody compact>
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
-                            {performance.eventName}
-                          </h3>
-                          <p className="text-xs sm:text-sm text-gray-300 mb-1">
-                            <span className="font-semibold">Venue:</span> {performance.venueName}
-                          </p>
-                          <p className="text-xs sm:text-sm text-gray-300 mb-1">
-                            <span className="font-semibold">Location:</span> {performance.city}, {performance.state}
-                          </p>
-                          <p className="text-xs sm:text-sm text-gray-300">
-                            <span className="font-semibold">Date:</span> {new Date(performance.date).toLocaleDateString()} at {performance.time}
-                          </p>
-                          {performance.ticketLink && (
-                            <a
-                              href={performance.ticketLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs sm:text-sm text-gold-600 hover:text-gold-700 mt-1.5 sm:mt-2 inline-block"
-                            >
-                              View Tickets →
-                            </a>
-                          )}
+                    <CardBody compact className="p-0 overflow-hidden">
+                      {performance.featuredImage && (
+                        <div className="relative w-full h-32 sm:h-40 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
+                          <img
+                            src={performance.featuredImage}
+                            alt={performance.eventName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
                         </div>
+                      )}
+                      <div className={`p-3 sm:p-4 ${performance.featuredImage ? '' : ''}`}>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
+                              {performance.eventName}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-gray-300 mb-1">
+                              <span className="font-semibold">Venue:</span> {performance.venueName}
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-300 mb-1">
+                              <span className="font-semibold">Location:</span> {performance.city}, {performance.state}
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-300 mb-1">
+                              <span className="font-semibold">Date:</span> {new Date(performance.date).toLocaleDateString()} at {performance.time}
+                            </p>
+                            {performance.description && (
+                              <p className="text-xs sm:text-sm text-gray-400 line-clamp-2 mt-1">
+                                {performance.description}
+                              </p>
+                            )}
+                            {performance.media && performance.media.length > 0 && (
+                              <p className="text-xs sm:text-sm text-gray-400 mt-1">
+                                {performance.media.length} photo(s) in gallery
+                              </p>
+                            )}
+                            {performance.ticketLink && (
+                              <a
+                                href={performance.ticketLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs sm:text-sm text-gold-600 hover:text-gold-700 mt-1.5 sm:mt-2 inline-block"
+                              >
+                                View Tickets →
+                              </a>
+                            )}
+                          </div>
                         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:ml-4">
                           <Button
                             variant="outline"
@@ -333,6 +392,7 @@ export const PerformancesManagementPage: React.FC = () => {
                             Delete
                           </Button>
                         </div>
+                      </div>
                       </div>
                     </CardBody>
                   </Card>

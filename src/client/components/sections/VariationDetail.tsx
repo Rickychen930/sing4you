@@ -117,26 +117,45 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({
     <SectionWrapper title={title || variation.name} subtitle={subtitle}>
       <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
         <Card hover>
-          <CardBody large>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300 variation-detail-title">
-              {variation.name}
-            </h2>
-            
-            {variation.shortDescription && (
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-sans mb-6 sm:mb-7 lg:mb-8 xl:mb-10 leading-relaxed group-hover:text-gray-100 transition-colors duration-300 variation-detail-description">
-                {variation.shortDescription}
-              </p>
-            )}
-
-            {mediaUrls.length > 0 && (
-              <div className="mb-6 sm:mb-7 lg:mb-8 xl:mb-10">
-                <MediaGallery media={mediaUrls} />
+          <CardBody large className="p-0 overflow-hidden">
+            {/* Featured Image - Hero image for the variation */}
+            {variation.featuredImage && (
+              <div className="relative w-full h-64 sm:h-80 lg:h-96 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
+                <img
+                  src={variation.featuredImage}
+                  alt={variation.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    // Hide image on error, show fallback
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             )}
+            
+            <div className="p-4 sm:p-5 lg:p-6 xl:p-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300 variation-detail-title">
+                {variation.name}
+              </h2>
+              
+              {variation.shortDescription && (
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-sans mb-6 sm:mb-7 lg:mb-8 xl:mb-10 leading-relaxed group-hover:text-gray-100 transition-colors duration-300 variation-detail-description">
+                  {variation.shortDescription}
+                </p>
+              )}
 
-            {variation.longDescription && (
-              <DescriptionSection description={variation.longDescription} />
-            )}
+              {mediaUrls.length > 0 && (
+                <div className="mb-6 sm:mb-7 lg:mb-8 xl:mb-10">
+                  <MediaGallery media={mediaUrls} />
+                </div>
+              )}
+
+              {variation.longDescription && (
+                <DescriptionSection description={variation.longDescription} />
+              )}
+            </div>
           </CardBody>
         </Card>
       </div>

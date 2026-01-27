@@ -26,6 +26,9 @@ const variationSchema = new Schema<IVariation>(
       lowercase: true,
       sparse: true,
     },
+    featuredImage: {
+      type: String,
+    },
     order: {
       type: Number,
       default: 0,

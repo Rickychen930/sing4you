@@ -32,6 +32,16 @@ const performanceSchema = new Schema<IPerformance>(
     ticketLink: {
       type: String,
     },
+    description: {
+      type: String,
+    },
+    featuredImage: {
+      type: String,
+    },
+    media: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,

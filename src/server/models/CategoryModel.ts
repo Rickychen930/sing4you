@@ -20,6 +20,9 @@ const categorySchema = new Schema<ICategory>(
       type: String,
       enum: ['solo', 'duo', 'trio', 'band', 'wedding', 'corporate', 'other', 'pocketrocker'],
     },
+    featuredImage: {
+      type: String,
+    },
     media: {
       type: [String],
       default: [],

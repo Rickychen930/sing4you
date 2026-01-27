@@ -134,8 +134,17 @@ export const HeroManagementPage: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure server processed
       await loadSettings(true);
       
-      // Force browser to reload images/videos by triggering re-render
-      // The ImageUpload component will handle cache busting via useEffect
+      // Notify other components (like Hero section) to refresh
+      if (typeof window !== 'undefined') {
+        // Trigger custom event for same-window listeners
+        window.dispatchEvent(new CustomEvent('heroSettingsUpdated'));
+        // Also use localStorage for cross-tab communication
+        localStorage.setItem('heroSettingsUpdated', Date.now().toString());
+        // Remove after a short delay
+        setTimeout(() => {
+          localStorage.removeItem('heroSettingsUpdated');
+        }, 1000);
+      }
       
       toast.success('Hero settings saved successfully!');
       setError('');

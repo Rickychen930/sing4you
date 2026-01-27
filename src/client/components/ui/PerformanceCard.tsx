@@ -1,9 +1,11 @@
 import React, { memo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { IPerformance } from '../../../shared/interfaces';
 import { formatAustralianDateTime } from '../../../shared/utils/date';
 import { Card, CardBody, CardFooter } from './Card';
 import { Button } from './Button';
 import { cn } from '../../utils/helpers';
+import { LazyImage } from './LazyImage';
 
 interface PerformanceCardProps {
   performance: IPerformance;
@@ -11,22 +13,60 @@ interface PerformanceCardProps {
 }
 
 export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performance, className }) => {
-  const handleGetLocation = useCallback(() => {
+  const navigate = useNavigate();
+
+  const handleGetLocation = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
     const location = `${performance.city}, ${performance.state}`;
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
     window.open(mapsUrl, '_blank', 'noopener,noreferrer');
   }, [performance.city, performance.state]);
 
+  const handleCardClick = useCallback(() => {
+    if (performance._id) {
+      navigate(`/performances/${performance._id}`);
+    }
+  }, [navigate, performance._id]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleCardClick();
+    }
+  }, [handleCardClick]);
+
   return (
-    <Card className={cn('h-full flex flex-col', className)} hover>
-      <CardBody className="relative flex-grow flex flex-col">
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 performance-card-musical-1" aria-hidden>♫</div>
-        <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 performance-card-musical-2" aria-hidden>♪</div>
+    <Card 
+      className={cn('h-full flex flex-col cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900', className)} 
+      hover
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${performance.eventName} performance`}
+    >
+      <CardBody className="relative flex-grow flex flex-col p-0 overflow-hidden">
+        {/* Featured Image */}
+        {performance.featuredImage && (
+          <div className="relative w-full h-48 sm:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
+            <LazyImage
+              src={performance.featuredImage}
+              alt={performance.eventName}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
+        )}
         
-        <div className="relative z-10 flex-grow flex flex-col">
-          <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-300 leading-tight performance-card-title">
-            {performance.eventName}
-          </h3>
+        <div className={`relative flex-grow flex flex-col ${performance.featuredImage ? 'p-4 sm:p-5 lg:p-6' : 'p-4 sm:p-5 lg:p-6'}`}>
+          <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 performance-card-musical-1" aria-hidden>♫</div>
+          <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 performance-card-musical-2" aria-hidden>♪</div>
+          
+          <div className="relative z-10 flex-grow flex flex-col">
+            <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-300 leading-tight performance-card-title">
+              {performance.eventName}
+            </h3>
           <div className="space-y-3 sm:space-y-4 lg:space-y-5 text-base sm:text-lg flex-grow">
             <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
               <span className="text-xl sm:text-2xl lg:text-3xl flex-shrink-0 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>📍</span>
@@ -52,11 +92,28 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
           </div>
         </div>
       </CardBody>
-      <CardFooter noTopPadding>
+      <CardFooter noTopPadding className="flex flex-col sm:flex-row gap-2">
         <Button
           variant="primary"
           size="md"
-          className="w-full transition-all duration-300 hover:shadow-[0_8px_24px_rgba(255,194,51,0.35)] group/btn"
+          className="flex-1 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(255,194,51,0.35)] group/btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCardClick();
+          }}
+          aria-label={`View details for ${performance.eventName}`}
+        >
+          <span className="flex items-center justify-center gap-2">
+            View Details
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </span>
+        </Button>
+        <Button
+          variant="outline"
+          size="md"
+          className="flex-1 transition-all duration-300 group/btn"
           onClick={handleGetLocation}
           aria-label={`Get location for ${performance.venueName} in ${performance.city}, ${performance.state}`}
         >
@@ -81,6 +138,7 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
     prevProps.performance.state === nextProps.performance.state &&
     prevProps.performance.date === nextProps.performance.date &&
     prevProps.performance.time === nextProps.performance.time &&
+    prevProps.performance.featuredImage === nextProps.performance.featuredImage &&
     prevProps.className === nextProps.className
   );
 });

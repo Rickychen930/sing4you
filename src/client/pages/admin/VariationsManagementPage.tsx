@@ -16,6 +16,7 @@ import { useToastStore } from '../../stores/toastStore';
 import type { IVariation, ICategory, IMedia } from '../../../shared/interfaces';
 import { slugify } from '../../utils/helpers';
 import { LazyImage } from '../../components/ui/LazyImage';
+import { ImageUpload } from '../../components/ui/ImageUpload';
 
 export const VariationsManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export const VariationsManagementPage: React.FC = () => {
     shortDescription: string;
     longDescription: string;
     slug: string;
+    featuredImage: string;
     order: number;
   }>({
     categoryId: '',
@@ -38,6 +40,7 @@ export const VariationsManagementPage: React.FC = () => {
     shortDescription: '',
     longDescription: '',
     slug: '',
+    featuredImage: '',
     order: 0,
   });
   const [saving, setSaving] = useState(false);
@@ -102,6 +105,7 @@ export const VariationsManagementPage: React.FC = () => {
       shortDescription: '',
       longDescription: '',
       slug: '',
+      featuredImage: '',
       order: 0,
     });
   };
@@ -124,6 +128,7 @@ export const VariationsManagementPage: React.FC = () => {
       shortDescription: variation.shortDescription || '',
       longDescription: variation.longDescription || '',
       slug: variation.slug || '',
+      featuredImage: variation.featuredImage || '',
       order: variation.order || 0,
     });
   };
@@ -346,6 +351,13 @@ export const VariationsManagementPage: React.FC = () => {
                       label="Slug"
                       value={formData.slug || ''}
                       onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                    />
+                    <ImageUpload
+                      label="Featured Image (Hero image for variation)"
+                      value={formData.featuredImage || ''}
+                      onChange={(url) => setFormData((prev) => ({ ...prev, featuredImage: url }))}
+                      maxSizeMB={10}
+                      showPreview={true}
                     />
                     <Textarea
                       label="Short Description"

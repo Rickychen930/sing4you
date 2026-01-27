@@ -13,6 +13,7 @@ import { initScrollRevealWithFallback } from './client/utils/scrollRevealInit';
 const HomePage = lazy(() => import('./client/pages/public/HomePage'));
 const AboutPage = lazy(() => import('./client/pages/public/AboutPage').then(m => ({ default: m.AboutPage })));
 const PerformancesPage = lazy(() => import('./client/pages/public/PerformancesPage').then(m => ({ default: m.PerformancesPage })));
+const PerformanceDetailPage = lazy(() => import('./client/pages/public/PerformanceDetailPage').then(m => ({ default: m.PerformanceDetailPage })));
 const ContactPage = lazy(() => import('./client/pages/public/ContactPage').then(m => ({ default: m.ContactPage })));
 const CategoriesPage = lazy(() => import('./client/pages/public/CategoriesPage').then(m => ({ default: m.CategoriesPage })));
 const VariationsPage = lazy(() => import('./client/pages/public/VariationsPage').then(m => ({ default: m.VariationsPage })));
@@ -139,6 +140,7 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="performances" element={<PerformancesPage />} />
+                <Route path="performances/:performanceId" element={<PerformanceDetailPage />} />
                 <Route path="categories" element={<CategoriesPage />} />
                 <Route path="categories/:categoryId" element={<VariationsPage />} />
                 <Route path="variations/:variationId" element={<VariationDetailPage />} />

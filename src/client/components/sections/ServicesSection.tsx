@@ -102,38 +102,57 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
             style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
           >
             <Card className="h-full flex flex-col group" hover>
-              <CardBody className="relative flex-grow flex flex-col">
-                {/* Musical notes decoration - consistent with other cards */}
-                <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 services-card-musical-1" aria-hidden>♫</div>
-                <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 services-card-musical-2" aria-hidden>♪</div>
-                
-                <div className="relative z-10 flex-grow flex flex-col">
-                  {/* Title with enhanced visual hierarchy */}
-                  <div className="mb-4 sm:mb-5 lg:mb-6">
-                    <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300 services-section-title">
-                      {category.name}
-                    </h3>
+              <CardBody className="relative flex-grow flex flex-col p-0 overflow-hidden">
+                {/* Featured Image - Hero image for the service card */}
+                {category.featuredImage && (
+                  <div className="relative w-full h-48 sm:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
+                    <img
+                      src={category.featuredImage}
+                      alt={category.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={(e) => {
+                        // Hide image on error, show fallback
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/90 via-jazz-900/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
+                )}
+                
+                <div className="p-4 sm:p-5 lg:p-6 relative flex-grow flex flex-col">
+                  {/* Musical notes decoration - consistent with other cards */}
+                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 services-card-musical-1" aria-hidden>♫</div>
+                  <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 services-card-musical-2" aria-hidden>♪</div>
                   
-                  {/* Description with better spacing and consistent line clamp */}
-                  {category.description && (
-                    <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 services-section-text">
-                      {category.description}
-                    </p>
-                  )}
-                  
-                  {/* Media Gallery with enhanced styling and consistent border */}
-                  {category.media && category.media.length > 0 && (
-                    <div className="mb-4 sm:mb-5 lg:mb-6 rounded-xl overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 border border-gold-900/30 group-hover:border-gold-700/50 relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 via-transparent to-musical-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl z-0" aria-hidden />
-                      <div className="relative z-10">
-                        <MediaGallery 
-                          media={category.media.slice(0, 4)} 
-                          className="grid-cols-2"
-                        />
-                      </div>
+                  <div className="relative z-10 flex-grow flex flex-col">
+                    {/* Title with enhanced visual hierarchy */}
+                    <div className="mb-4 sm:mb-5 lg:mb-6">
+                      <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300 services-section-title">
+                        {category.name}
+                      </h3>
                     </div>
-                  )}
+                    
+                    {/* Description with better spacing and consistent line clamp */}
+                    {category.description && (
+                      <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 services-section-text">
+                        {category.description}
+                      </p>
+                    )}
+                    
+                    {/* Media Gallery with enhanced styling and consistent border */}
+                    {category.media && category.media.length > 0 && (
+                      <div className="mb-4 sm:mb-5 lg:mb-6 rounded-xl overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 border border-gold-900/30 group-hover:border-gold-700/50 relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 via-transparent to-musical-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl z-0" aria-hidden />
+                        <div className="relative z-10">
+                          <MediaGallery 
+                            media={category.media.slice(0, 4)} 
+                            className="grid-cols-2"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardBody>
               

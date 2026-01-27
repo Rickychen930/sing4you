@@ -130,6 +130,9 @@ export class MockDataService {
       state: data.state || '',
       time: data.time || '19:00',
       ticketLink: data.ticketLink,
+      description: data.description,
+      featuredImage: data.featuredImage,
+      media: data.media || [],
       createdAt: new Date(),
       updatedAt: new Date(),
     };

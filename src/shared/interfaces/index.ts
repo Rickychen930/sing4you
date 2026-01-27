@@ -37,6 +37,9 @@ export interface IPerformance {
   date: Date;
   time: string;
   ticketLink?: string;
+  description?: string; // Detailed description of the performance
+  featuredImage?: string; // Main/hero image for the performance
+  media?: string[]; // Gallery of images/videos from the performance
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -107,6 +110,7 @@ export interface ICategory {
   slug?: string; // URL-friendly identifier
   description?: string;
   type?: 'solo' | 'duo' | 'trio' | 'band' | 'wedding' | 'corporate' | 'other' | 'pocketrocker'; // Performance type
+  featuredImage?: string; // Featured/hero image for the category card
   media?: string[]; // Array of image/video URLs
   audioSamples?: string[]; // Array of audio sample URLs
   priceRange?: string; // Price range display (e.g., "$500 - $1,500")
@@ -122,6 +126,7 @@ export interface IVariation {
   shortDescription: string;
   longDescription: string;
   slug?: string;
+  featuredImage?: string; // Featured/hero image for the variation
   order?: number;
   createdAt?: Date;
   updatedAt?: Date;
