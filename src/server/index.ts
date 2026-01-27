@@ -176,10 +176,17 @@ const getUploadDir = (): string => {
     console.log(`✅ Created upload directory: ${uploadDir}`);
   }
   
+  // Log upload directory path in development for debugging
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`📁 Static serve directory: ${uploadDir}`);
+    console.log(`📁 Static serve directory exists: ${existsSync(uploadDir)}`);
+  }
+  
   return uploadDir;
 };
 
-app.use('/uploads', express.static(getUploadDir(), {
+const staticUploadDir = getUploadDir();
+app.use('/uploads', express.static(staticUploadDir, {
   maxAge: '1y', // Cache for 1 year
   etag: true,
   // Add cache busting support via query params

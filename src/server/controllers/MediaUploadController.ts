@@ -43,6 +43,12 @@ const getUploadDir = (): string => {
 
 const uploadDir = getUploadDir();
 
+// Log upload directory path in development for debugging
+if (process.env.NODE_ENV === 'development') {
+  console.log(`📁 Upload directory: ${uploadDir}`);
+  console.log(`📁 Upload directory exists: ${existsSync(uploadDir)}`);
+}
+
 // Configure multer for disk storage (local file system)
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -155,8 +161,19 @@ export class MediaUploadController {
       } else {
         // Use local storage
         const filename = req.file.filename;
+        const filePath = req.file.path;
         // Generate URL: /uploads/filename
         const url = `/uploads/${filename}`;
+
+        // Log upload details in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📤 File uploaded successfully:`);
+          console.log(`   - Filename: ${filename}`);
+          console.log(`   - File path: ${filePath}`);
+          console.log(`   - URL: ${url}`);
+          console.log(`   - Size: ${req.file.size} bytes`);
+          console.log(`   - File exists: ${existsSync(filePath)}`);
+        }
 
         res.json({
           success: true,

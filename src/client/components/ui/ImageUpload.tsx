@@ -34,9 +34,26 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
     if (value && value.trim() !== '') {
       // Reset error state when value changes
       errorShownRef.current = false;
-      // Add cache busting to force browser reload
-      const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
-      setPreview(urlWithCacheBust);
+      // For local uploads, verify file exists before setting preview
+      if (value.startsWith('/uploads/')) {
+        // Try to load image to verify it exists
+        const img = new Image();
+        img.onload = () => {
+          // File exists, set preview
+          const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+          setPreview(urlWithCacheBust);
+        };
+        img.onerror = () => {
+          // File doesn't exist, don't set preview (will show error message)
+          setPreview(null);
+        };
+        // Add cache busting to force fresh check
+        img.src = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+      } else {
+        // Cloudinary or external URL, set preview directly
+        const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+        setPreview(urlWithCacheBust);
+      }
     } else {
       setPreview(null);
       errorShownRef.current = false;
@@ -270,34 +287,36 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
 
         {/* Current URL Display - Show if value exists but preview failed to load */}
         {value && !preview && (
-          <div className="text-xs sm:text-sm text-gray-200 font-sans break-all p-2 bg-jazz-900/50 rounded border border-red-900/50">
-            <div className="flex flex-col gap-2">
-              <div className="flex-1 min-w-0">
-                <span className="text-gray-300 block mb-1">Current URL: </span>
-                <a 
-                  href={value} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] break-all"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Try to open in new tab to verify if file exists
-                    window.open(value, '_blank');
-                  }}
-                >
-                  {value}
-                </a>
-                <p className="text-red-400 text-xs mt-2 font-medium">
-                  ⚠️ Image not found. Possible causes:
-                </p>
-                <ul className="text-red-300/80 text-xs mt-1 ml-4 list-disc">
-                  <li>File was not uploaded successfully</li>
-                  <li>File was deleted from server</li>
-                  <li>Server is not running or uploads directory is not accessible</li>
-                </ul>
-                <p className="text-gold-400 text-xs mt-2">
-                  💡 Solution: Please upload a new image or check the server uploads directory.
-                </p>
+          <div className="text-xs sm:text-sm text-gray-200 font-sans break-all p-3 sm:p-4 bg-gradient-to-br from-red-900/30 via-red-800/20 to-red-900/30 rounded-lg sm:rounded-xl border-2 border-red-900/50 shadow-[0_4px_12px_rgba(239,68,68,0.2)]">
+            <div className="flex flex-col gap-2.5 sm:gap-3">
+              <div className="flex items-start gap-2">
+                <span className="text-lg sm:text-xl">⚠️</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-red-300 mb-1.5 sm:mb-2">Image not found</p>
+                  <p className="text-gray-300 mb-2 sm:mb-3">Possible causes:</p>
+                  <ul className="list-disc list-inside space-y-1 text-gray-400 text-xs sm:text-sm mb-2 sm:mb-3 ml-2">
+                    <li>File was not uploaded successfully</li>
+                    <li>File was deleted from server</li>
+                    <li>Server is not running or uploads directory is not accessible</li>
+                  </ul>
+                  <p className="text-gray-300 mb-2 sm:mb-3">💡 Solution: Please upload a new image or check if the server is running.</p>
+                  <div className="flex-1 min-w-0 mb-2 sm:mb-3">
+                    <span className="text-gray-300 block mb-1">Current URL: </span>
+                    <a 
+                      href={value} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] break-all"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        // Try to open in new tab to verify if file exists
+                        window.open(value, '_blank');
+                      }}
+                    >
+                      {value}
+                    </a>
+                  </div>
+                </div>
               </div>
               <div className="flex gap-2">
                 <button
