@@ -49,25 +49,34 @@ export const HeroManagementPage: React.FC = () => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
       const parentKey = parent as keyof IHeroSettings;
-      const parentValue = settings[parentKey];
       
-      if (parentValue && typeof parentValue === 'object' && !Array.isArray(parentValue)) {
-        setSettings({
-          ...settings,
-          [parentKey]: {
-            ...parentValue,
-            [child]: value,
-          } as typeof parentValue,
-        });
-      }
+      setSettings((prev) => {
+        if (!prev) return prev;
+        const parentValue = prev[parentKey];
+        
+        if (parentValue && typeof parentValue === 'object' && !Array.isArray(parentValue)) {
+          return {
+            ...prev,
+            [parentKey]: {
+              ...parentValue,
+              [child]: value,
+            } as typeof parentValue,
+          };
+        }
+        return prev;
+      });
     } else {
       const key = field as keyof IHeroSettings;
-      if (key in settings && typeof settings[key] === 'string') {
-        setSettings({
-          ...settings,
-          [key]: value,
-        });
-      }
+      setSettings((prev) => {
+        if (!prev) return prev;
+        if (key in prev && typeof prev[key] === 'string') {
+          return {
+            ...prev,
+            [key]: value,
+          };
+        }
+        return prev;
+      });
     }
   };
 

@@ -184,26 +184,26 @@ export const PerformancesManagementPage: React.FC = () => {
                       label="Event Name"
                       required
                       value={formData.eventName || ''}
-                      onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, eventName: e.target.value }))}
                     />
                     <Input
                       label="Venue Name"
                       required
                       value={formData.venueName || ''}
-                      onChange={(e) => setFormData({ ...formData, venueName: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, venueName: e.target.value }))}
                     />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <Input
                         label="City"
                         required
                         value={formData.city || ''}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))}
                       />
                       <Input
                         label="State"
                         required
                         value={formData.state || ''}
-                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, state: e.target.value }))}
                       />
                     </div>
                     <Input
@@ -211,20 +211,20 @@ export const PerformancesManagementPage: React.FC = () => {
                       type="date"
                       required
                       value={formData.date ? new Date(formData.date).toISOString().split('T')[0] : ''}
-                      onChange={(e) => setFormData({ ...formData, date: new Date(e.target.value) })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, date: new Date(e.target.value) }))}
                     />
                     <Input
                       label="Time"
                       type="time"
                       required
                       value={formData.time || ''}
-                      onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, time: e.target.value }))}
                     />
                     <Input
                       label="Ticket Link (optional)"
                       type="url"
                       value={formData.ticketLink || ''}
-                      onChange={(e) => setFormData({ ...formData, ticketLink: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, ticketLink: e.target.value }))}
                       placeholder="https://..."
                     />
                     <div className="flex flex-col sm:flex-row gap-2">

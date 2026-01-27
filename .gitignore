@@ -149,6 +149,10 @@ deployment/**/credentials/
 *.local
 *.local.*
 
+# Uploaded files
+uploads/
+**/uploads/
+
 # Configuration files that might contain secrets
 config.local.*
 config.*.local

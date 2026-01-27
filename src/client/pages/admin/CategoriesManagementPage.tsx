@@ -200,9 +200,9 @@ export const CategoriesManagementPage: React.FC = () => {
                       required
                       value={formData.name || ''}
                       onChange={(e) => {
-                        setFormData({ ...formData, name: e.target.value });
+                        setFormData((prev) => ({ ...prev, name: e.target.value }));
                         if (formErrors.name) {
-                          setFormErrors({ ...formErrors, name: undefined });
+                          setFormErrors((prev) => ({ ...prev, name: undefined }));
                         }
                       }}
                       placeholder="e.g., Solo, Duo, PocketRocker"
@@ -213,9 +213,9 @@ export const CategoriesManagementPage: React.FC = () => {
                       rows={3}
                       value={formData.description || ''}
                       onChange={(e) => {
-                        setFormData({ ...formData, description: e.target.value });
+                        setFormData((prev) => ({ ...prev, description: e.target.value }));
                         if (formErrors.description) {
-                          setFormErrors({ ...formErrors, description: undefined });
+                          setFormErrors((prev) => ({ ...prev, description: undefined }));
                         }
                       }}
                       error={formErrors.description}
@@ -226,7 +226,7 @@ export const CategoriesManagementPage: React.FC = () => {
                       label="Order"
                       type="number"
                       value={formData.order?.toString() || '0'}
-                      onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, order: parseInt(e.target.value) || 0 }))}
                       helperText="Display order (lower numbers appear first)"
                     />
                     <div className="flex flex-col sm:flex-row gap-2">

@@ -10,9 +10,11 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { variationService } from '../../services/variationService';
 import { categoryService } from '../../services/categoryService';
+import { mediaService } from '../../services/mediaService';
 import { useToastStore } from '../../stores/toastStore';
-import type { IVariation, ICategory } from '../../../shared/interfaces';
+import type { IVariation, ICategory, IMedia } from '../../../shared/interfaces';
 import { slugify } from '../../utils/helpers';
+import { LazyImage } from '../../components/ui/LazyImage';
 
 export const VariationsManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -38,6 +40,9 @@ export const VariationsManagementPage: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [managingMediaFor, setManagingMediaFor] = useState<string | null>(null);
+  const [variationMedia, setVariationMedia] = useState<IMedia[]>([]);
+  const [loadingMedia, setLoadingMedia] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
     isOpen: false,
     id: null,
@@ -75,7 +80,7 @@ export const VariationsManagementPage: React.FC = () => {
   const handleCreate = () => {
     setEditingId(null);
     setFormData({
-      categoryId: categories[0]?._id || '',
+      categoryId: categories.length > 0 ? (categories[0]._id || '') : '',
       name: '',
       shortDescription: '',
       longDescription: '',
@@ -131,6 +136,63 @@ export const VariationsManagementPage: React.FC = () => {
     setDeleteConfirm({ isOpen: false, id: null });
   };
 
+  const handleManageMedia = async (variationId: string) => {
+    setManagingMediaFor(variationId);
+    setLoadingMedia(true);
+    try {
+      const media = await mediaService.getByVariationId(variationId);
+      setVariationMedia(media);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to load media';
+      toast.error(errorMsg);
+    } finally {
+      setLoadingMedia(false);
+    }
+  };
+
+  const handleCloseMediaManager = () => {
+    setManagingMediaFor(null);
+    setVariationMedia([]);
+  };
+
+  const handleAddMedia = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!managingMediaFor) return;
+    
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await mediaService.uploadFile(file);
+      await mediaService.create({
+        variationId: managingMediaFor,
+        type: file.type.startsWith('video/') ? 'video' : 'image',
+        url: response.data.url,
+        order: variationMedia.length,
+      });
+      await handleManageMedia(managingMediaFor); // Reload media
+      toast.success('Media added successfully');
+      // Reset file input
+      e.target.value = '';
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to add media';
+      toast.error(errorMsg);
+      e.target.value = '';
+    }
+  };
+
+  const handleDeleteMedia = async (mediaId: string) => {
+    try {
+      await mediaService.delete(mediaId);
+      if (managingMediaFor) {
+        await handleManageMedia(managingMediaFor); // Reload media
+      }
+      toast.success('Media deleted successfully');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete media';
+      toast.error(errorMsg);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -156,11 +218,11 @@ export const VariationsManagementPage: React.FC = () => {
   };
 
   const handleNameChange = (value: string) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       name: value,
       slug: slugify(value),
-    });
+    }));
   };
 
   if (loading) {
@@ -218,7 +280,7 @@ export const VariationsManagementPage: React.FC = () => {
                       <select
                         className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gold-900/50 rounded-lg bg-jazz-900/60 text-sm sm:text-base text-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-colors min-h-[44px] sm:min-h-[48px]"
                         value={formData.categoryId || ''}
-                        onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, categoryId: e.target.value }))}
                         required
                       >
                         <option value="">Select a category</option>
@@ -239,27 +301,27 @@ export const VariationsManagementPage: React.FC = () => {
                     <Input
                       label="Slug"
                       value={formData.slug || ''}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
                     />
                     <Textarea
                       label="Short Description"
                       required
                       rows={3}
                       value={formData.shortDescription || ''}
-                      onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, shortDescription: e.target.value }))}
                     />
                     <Textarea
                       label="Long Description"
                       required
                       rows={6}
                       value={formData.longDescription || ''}
-                      onChange={(e) => setFormData({ ...formData, longDescription: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, longDescription: e.target.value }))}
                     />
                     <Input
                       label="Order"
                       type="number"
                       value={formData.order?.toString() || '0'}
-                      onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, order: parseInt(e.target.value) || 0 }))}
                     />
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Button type="submit" isLoading={saving} variant="primary" className="flex-1 w-full sm:w-auto">
@@ -322,6 +384,14 @@ export const VariationsManagementPage: React.FC = () => {
                             <Button
                               variant="outline"
                               size="sm"
+                              onClick={() => variation._id && handleManageMedia(variation._id)}
+                              className="w-full sm:w-auto"
+                            >
+                              Manage Media
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
                               onClick={() => handleEdit(variation)}
                               className="w-full sm:w-auto"
                             >
@@ -356,6 +426,75 @@ export const VariationsManagementPage: React.FC = () => {
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
       />
+
+      {/* Media Management Modal */}
+      {managingMediaFor && (
+        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div className="bg-jazz-900/95 rounded-xl sm:rounded-2xl p-4 sm:p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-gold-900/50">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+                Manage Media
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCloseMediaManager}
+                className="w-auto"
+              >
+                Close
+              </Button>
+            </div>
+
+            {loadingMedia ? (
+              <div className="flex justify-center py-10">
+                <LoadingSpinner size="lg" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm sm:text-base font-medium text-gray-200 mb-2">
+                    Add New Media
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleAddMedia}
+                    className="w-full px-4 py-2 border border-gold-900/50 rounded-lg bg-jazz-900/60 text-gray-200 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Max 10MB. Images: PNG, JPG, JPEG, GIF, WebP. Videos: MP4, WebM</p>
+                </div>
+                {variationMedia.length > 0 ? (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-3">Current Media ({variationMedia.length})</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                      {variationMedia.map((media) => (
+                        <div key={media._id} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-900/50 group">
+                          {media.type === 'video' ? (
+                            <video src={media.url} className="w-full h-full object-cover" controls />
+                          ) : (
+                            <LazyImage src={media.url} alt={`Media ${media._id}`} className="w-full h-full object-cover" />
+                          )}
+                          <button
+                            onClick={() => media._id && handleDeleteMedia(media._id)}
+                            className="absolute top-2 right-2 p-2 bg-red-600/90 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            aria-label="Delete media"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-center py-8">No media yet. Upload images or videos above.</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

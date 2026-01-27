@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { MultipleImageUpload } from '../../components/ui/MultipleImageUpload';
 import { sectionService } from '../../services/sectionService';
 import { useToastStore } from '../../stores/toastStore';
 import type { ISection } from '../../../shared/interfaces';
@@ -29,6 +30,7 @@ export const SectionsManagementPage: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof ISection, string>>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
     isOpen: false,
     id: null,
@@ -109,10 +111,46 @@ export const SectionsManagementPage: React.FC = () => {
     setDeleteConfirm({ isOpen: false, id: null });
   };
 
+  const validateForm = (): boolean => {
+    const errors: Partial<Record<keyof ISection, string>> = {};
+
+    if (!formData.title?.trim()) {
+      errors.title = 'Title is required';
+    } else if (formData.title.trim().length < 2) {
+      errors.title = 'Title must be at least 2 characters long';
+    }
+
+    if (!formData.slug?.trim()) {
+      errors.slug = 'Slug is required';
+    } else if (!/^[a-z0-9-]+$/.test(formData.slug.trim())) {
+      errors.slug = 'Slug must contain only lowercase letters, numbers, and hyphens';
+    }
+
+    if (!formData.description?.trim()) {
+      errors.description = 'Description is required';
+    } else if (formData.description.trim().length < 10) {
+      errors.description = 'Description must be at least 10 characters long';
+    }
+
+    if (!formData.type) {
+      errors.type = 'Type is required';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
     setError('');
+    setFormErrors({});
+
+    if (!validateForm()) {
+      toast.error('Please correct the errors in the form');
+      return;
+    }
+
+    setSaving(true);
 
     try {
       if (editingId) {
@@ -134,11 +172,14 @@ export const SectionsManagementPage: React.FC = () => {
   };
 
   const handleTitleChange = (value: string) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       title: value,
       slug: slugify(value),
-    });
+    }));
+    if (formErrors.title) {
+      setFormErrors((prev) => ({ ...prev, title: undefined }));
+    }
   };
 
   if (loading) {
@@ -194,12 +235,19 @@ export const SectionsManagementPage: React.FC = () => {
                       required
                       value={formData.title || ''}
                       onChange={(e) => handleTitleChange(e.target.value)}
+                      error={formErrors.title}
                     />
                     <Input
                       label="Slug"
                       required
                       value={formData.slug || ''}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                      onChange={(e) => {
+                        setFormData((prev) => ({ ...prev, slug: e.target.value }));
+                        if (formErrors.slug) {
+                          setFormErrors((prev) => ({ ...prev, slug: undefined }));
+                        }
+                      }}
+                      error={formErrors.slug}
                     />
                     <div>
                       <label className="block text-sm sm:text-base font-medium text-gray-200 mb-1.5 sm:mb-2">
@@ -211,7 +259,10 @@ export const SectionsManagementPage: React.FC = () => {
                         onChange={(e) => {
                           const value = e.target.value;
                           if (['solo', 'duo', 'trio', 'band', 'wedding', 'corporate', 'other'].includes(value)) {
-                            setFormData({ ...formData, type: value as ISection['type'] });
+                            setFormData((prev) => ({ ...prev, type: value as ISection['type'] }));
+                            if (formErrors.type) {
+                              setFormErrors((prev) => ({ ...prev, type: undefined }));
+                            }
                           }
                         }}
                         required
@@ -230,13 +281,26 @@ export const SectionsManagementPage: React.FC = () => {
                       required
                       rows={4}
                       value={formData.description || ''}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) => {
+                        setFormData((prev) => ({ ...prev, description: e.target.value }));
+                        if (formErrors.description) {
+                          setFormErrors((prev) => ({ ...prev, description: undefined }));
+                        }
+                      }}
+                      error={formErrors.description}
                     />
                     <Input
                       label="Price Range (optional)"
                       value={formData.priceRange || ''}
-                      onChange={(e) => setFormData({ ...formData, priceRange: e.target.value })}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, priceRange: e.target.value }))}
                       placeholder="e.g., $500 - $1000"
+                    />
+                    <MultipleImageUpload
+                      label="Media (Images)"
+                      value={formData.media || []}
+                      onChange={(urls) => setFormData((prev) => ({ ...prev, media: urls }))}
+                      maxFiles={10}
+                      maxSizeMB={10}
                     />
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Button type="submit" isLoading={saving} variant="primary" className="flex-1 w-full sm:w-auto">

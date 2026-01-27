@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 import { Database } from './config/database.js';
 import { CloudinaryConfig } from './config/cloudinary.js';
 import routes from './routes/index.js';
@@ -140,6 +141,43 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+
+// Serve uploaded files statically (must be before routes)
+// Determine upload directory path (same logic as MediaUploadController)
+// Priority: UPLOAD_DIR > BACKEND_ROOT/uploads > default paths
+const getUploadDir = (): string => {
+  let uploadDir: string;
+  
+  // If UPLOAD_DIR is explicitly set, use it (highest priority)
+  if (process.env.UPLOAD_DIR) {
+    uploadDir = resolve(process.env.UPLOAD_DIR);
+  } 
+  // In production/VPS, use BACKEND_ROOT/uploads if set
+  else if (process.env.NODE_ENV === 'production') {
+    if (process.env.BACKEND_ROOT) {
+      uploadDir = resolve(process.env.BACKEND_ROOT, 'uploads');
+    } else {
+      // Default VPS path
+      uploadDir = resolve('/var/www/christina-sings4you/uploads');
+    }
+  } 
+  // In development, use project root/uploads
+  else {
+    uploadDir = resolve(__dirname, '../../uploads');
+  }
+  
+  if (!existsSync(uploadDir)) {
+    mkdirSync(uploadDir, { recursive: true });
+    console.log(`✅ Created upload directory: ${uploadDir}`);
+  }
+  
+  return uploadDir;
+};
+
+app.use('/uploads', express.static(getUploadDir(), {
+  maxAge: '1y', // Cache for 1 year
+  etag: true,
+}));
 
 // Routes
 app.use(routes);

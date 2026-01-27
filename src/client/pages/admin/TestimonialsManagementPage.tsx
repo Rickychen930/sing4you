@@ -208,9 +208,9 @@ export const TestimonialsManagementPage: React.FC = () => {
                       required
                       value={formData.clientName || ''}
                       onChange={(e) => {
-                        setFormData({ ...formData, clientName: e.target.value });
+                        setFormData((prev) => ({ ...prev, clientName: e.target.value }));
                         if (formErrors.clientName) {
-                          setFormErrors({ ...formErrors, clientName: undefined });
+                          setFormErrors((prev) => ({ ...prev, clientName: undefined }));
                         }
                       }}
                       error={formErrors.clientName}
@@ -220,9 +220,9 @@ export const TestimonialsManagementPage: React.FC = () => {
                       required
                       value={formData.eventType || ''}
                       onChange={(e) => {
-                        setFormData({ ...formData, eventType: e.target.value });
+                        setFormData((prev) => ({ ...prev, eventType: e.target.value }));
                         if (formErrors.eventType) {
-                          setFormErrors({ ...formErrors, eventType: undefined });
+                          setFormErrors((prev) => ({ ...prev, eventType: undefined }));
                         }
                       }}
                       placeholder="e.g., Wedding, Corporate"
@@ -234,9 +234,9 @@ export const TestimonialsManagementPage: React.FC = () => {
                       rows={4}
                       value={formData.message || ''}
                       onChange={(e) => {
-                        setFormData({ ...formData, message: e.target.value });
+                        setFormData((prev) => ({ ...prev, message: e.target.value }));
                         if (formErrors.message) {
-                          setFormErrors({ ...formErrors, message: undefined });
+                          setFormErrors((prev) => ({ ...prev, message: undefined }));
                         }
                       }}
                       error={formErrors.message}
@@ -245,9 +245,9 @@ export const TestimonialsManagementPage: React.FC = () => {
                       label="Rating"
                       value={formData.rating?.toString() || ''}
                       onChange={(e) => {
-                        setFormData({ ...formData, rating: e.target.value ? parseInt(e.target.value) : undefined });
+                        setFormData((prev) => ({ ...prev, rating: e.target.value ? parseInt(e.target.value) : undefined }));
                         if (formErrors.rating) {
-                          setFormErrors({ ...formErrors, rating: undefined });
+                          setFormErrors((prev) => ({ ...prev, rating: undefined }));
                         }
                       }}
                       options={[

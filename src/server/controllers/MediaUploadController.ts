@@ -1,10 +1,64 @@
 import type { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
+import { fileURLToPath } from 'url';
+import { dirname, resolve, join } from 'path';
+import { existsSync, mkdirSync, unlinkSync } from 'fs';
 import { CloudinaryConfig } from '../config/cloudinary';
-import { getRequiredStringParam } from '../utils/requestHelpers';
 
-// Configure multer for memory storage (Cloudinary requires buffer)
-const storage = multer.memoryStorage();
+// Get current directory in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Determine upload directory path
+// Priority: UPLOAD_DIR > BACKEND_ROOT/uploads > default paths
+const getUploadDir = (): string => {
+  let uploadDir: string;
+  
+  // If UPLOAD_DIR is explicitly set, use it (highest priority)
+  if (process.env.UPLOAD_DIR) {
+    uploadDir = resolve(process.env.UPLOAD_DIR);
+  } 
+  // In production/VPS, use BACKEND_ROOT/uploads if set
+  else if (process.env.NODE_ENV === 'production') {
+    if (process.env.BACKEND_ROOT) {
+      uploadDir = resolve(process.env.BACKEND_ROOT, 'uploads');
+    } else {
+      // Default VPS path
+      uploadDir = resolve('/var/www/christina-sings4you/uploads');
+    }
+  } 
+  // In development, use project root/uploads
+  else {
+    uploadDir = resolve(__dirname, '../../uploads');
+  }
+  
+  // Create directory if it doesn't exist
+  if (!existsSync(uploadDir)) {
+    mkdirSync(uploadDir, { recursive: true });
+    console.log(`✅ Created upload directory: ${uploadDir}`);
+  }
+  
+  return uploadDir;
+};
+
+const uploadDir = getUploadDir();
+
+// Configure multer for disk storage (local file system)
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (_req, file, cb) => {
+    // Generate unique filename: timestamp-random-originalname
+    const timestamp = Date.now();
+    const random = Math.round(Math.random() * 1E9);
+    const ext = file.originalname.split('.').pop();
+    const name = file.originalname.split('.').slice(0, -1).join('.');
+    const sanitizedName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const filename = `${timestamp}-${random}-${sanitizedName}.${ext}`;
+    cb(null, filename);
+  },
+});
 const upload = multer({
   storage,
   limits: {
@@ -52,80 +106,133 @@ export class MediaUploadController {
         return;
       }
 
-      // Check if Cloudinary is configured
-      if (!process.env.CLOUDINARY_CLOUD_NAME) {
-        res.status(500).json({
-          success: false,
-          error: 'Cloudinary is not configured. Please configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your .env file.',
+      // Check if we should use Cloudinary or local storage
+      const useCloudinary = process.env.CLOUDINARY_CLOUD_NAME && 
+                           process.env.CLOUDINARY_API_KEY && 
+                           process.env.CLOUDINARY_API_SECRET;
+
+      if (useCloudinary) {
+        // Use Cloudinary if configured
+        CloudinaryConfig.initialize();
+        const cloudinaryInstance = CloudinaryConfig.getInstance();
+
+        // Read file from disk and convert to base64 for Cloudinary
+        const fs = await import('fs/promises');
+        const fileBuffer = await fs.readFile(req.file.path);
+        const base64File = `data:${req.file.mimetype};base64,${fileBuffer.toString('base64')}`;
+
+        // Upload to Cloudinary
+        const uploadResult = await cloudinaryInstance.uploader.upload(base64File, {
+          folder: 'christinasings4u',
+          resource_type: 'auto',
+          transformation: [
+            {
+              quality: 'auto:good',
+              fetch_format: 'auto',
+            },
+          ],
         });
-        return;
-      }
 
-      // Initialize Cloudinary
-      CloudinaryConfig.initialize();
-      const cloudinaryInstance = CloudinaryConfig.getInstance();
+        // Delete local file after successful Cloudinary upload
+        try {
+          unlinkSync(req.file.path);
+        } catch {
+          // Ignore deletion errors
+        }
 
-      // Convert buffer to base64 for Cloudinary
-      const base64File = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-
-      // Upload to Cloudinary
-      const uploadResult = await cloudinaryInstance.uploader.upload(base64File, {
-        folder: 'christinasings4u', // Organize uploads in a folder
-        resource_type: 'auto', // Automatically detect image or video
-        transformation: [
-          {
-            quality: 'auto:good', // Optimize quality
-            fetch_format: 'auto', // Auto format (webp for images)
+        res.json({
+          success: true,
+          data: {
+            url: uploadResult.secure_url,
+            publicId: uploadResult.public_id,
+            width: uploadResult.width,
+            height: uploadResult.height,
+            format: uploadResult.format,
+            resourceType: uploadResult.resource_type,
+            bytes: uploadResult.bytes,
           },
-        ],
-      });
+        });
+      } else {
+        // Use local storage
+        const filename = req.file.filename;
+        // Generate URL: /uploads/filename
+        const url = `/uploads/${filename}`;
 
-      res.json({
-        success: true,
-        data: {
-          url: uploadResult.secure_url,
-          publicId: uploadResult.public_id,
-          width: uploadResult.width,
-          height: uploadResult.height,
-          format: uploadResult.format,
-          resourceType: uploadResult.resource_type,
-          bytes: uploadResult.bytes,
-        },
-      });
+        res.json({
+          success: true,
+          data: {
+            url,
+            filename,
+            size: req.file.size,
+            mimetype: req.file.mimetype,
+          },
+        });
+      }
     } catch (error) {
+      // Clean up file on error
+      if (req.file?.path && existsSync(req.file.path)) {
+        try {
+          unlinkSync(req.file.path);
+        } catch {
+          // Ignore deletion errors
+        }
+      }
       next(error);
     }
   };
 
   public delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const publicId = getRequiredStringParam(req, 'publicId');
+      const publicId = req.query.publicId as string | undefined;
+      const filename = req.query.filename as string | undefined;
 
-      // Check if Cloudinary is configured
-      if (!process.env.CLOUDINARY_CLOUD_NAME) {
-        res.status(500).json({
-          success: false,
-          error: 'Cloudinary is not configured.',
-        });
-        return;
-      }
+      // Check if we should use Cloudinary or local storage
+      const useCloudinary = process.env.CLOUDINARY_CLOUD_NAME && publicId;
 
-      // Initialize Cloudinary
-      CloudinaryConfig.initialize();
-      const cloudinaryInstance = CloudinaryConfig.getInstance();
+      if (useCloudinary && publicId) {
+        // Delete from Cloudinary
+        CloudinaryConfig.initialize();
+        const cloudinaryInstance = CloudinaryConfig.getInstance();
+        const result = await cloudinaryInstance.uploader.destroy(publicId);
 
-      // Delete from Cloudinary
-      const result = await cloudinaryInstance.uploader.destroy(publicId);
-
-      if (result.result === 'ok') {
-        res.json({
-          success: true,
-          message: 'Media deleted successfully.',
-        });
+        if (result.result === 'ok') {
+          res.json({
+            success: true,
+            message: 'Media deleted successfully.',
+          });
+        } else {
+          res.status(404).json({
+            success: false,
+            error: 'Media not found or already deleted.',
+          });
+        }
+      } else if (filename) {
+        // Delete from local storage
+        const filePath = join(uploadDir, filename);
+        
+        if (existsSync(filePath)) {
+          try {
+            unlinkSync(filePath);
+            res.json({
+              success: true,
+              message: 'Media deleted successfully.',
+            });
+          } catch {
+            res.status(500).json({
+              success: false,
+              error: 'Failed to delete file.',
+            });
+          }
+        } else {
+          res.status(404).json({
+            success: false,
+            error: 'File not found.',
+          });
+        }
       } else {
-        res.status(404).json({
+        res.status(400).json({
           success: false,
-          error: 'Media not found or already deleted.',
+          error: 'Either publicId (for Cloudinary) or filename (for local) is required.',
         });
       }
     } catch (error) {
@@ -133,3 +240,6 @@ export class MediaUploadController {
     }
   };
 }
+
+// Export upload directory path for static file serving
+export const getUploadDirectory = (): string => uploadDir;
