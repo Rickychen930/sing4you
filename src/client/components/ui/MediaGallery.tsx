@@ -105,6 +105,13 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
               controls
               preload="metadata"
               aria-label={`Performance video ${index + 1} - Christina Sings4U`}
+              onError={(e) => {
+                // Prevent error from bubbling and showing in console
+                e.preventDefault();
+                e.stopPropagation();
+                // Hide broken video
+                (e.target as HTMLVideoElement).style.display = 'none';
+              }}
             />
           ) : (
             <>
@@ -117,6 +124,13 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
                   loading="eager"
                   decoding="async"
                   fetchPriority={index === 0 ? "high" : "low"}
+                  onError={(e) => {
+                    // Prevent error from bubbling and showing in console
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Hide broken image
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
                 />
               ) : (
                 <LazyImage
@@ -170,6 +184,13 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
                 autoPlay 
                 className="max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-xl sm:rounded-2xl shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(168,85,247,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
                 aria-label="Video content"
+                onError={(e) => {
+                  // Prevent error from bubbling and showing in console
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Close modal if video fails to load
+                  setSelectedMedia(null);
+                }}
               />
             ) : (
               <img 
@@ -178,6 +199,13 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({ media, classNam
                 className="max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-xl sm:rounded-2xl object-contain shadow-[0_20px_50px_rgba(255,194,51,0.3),0_12px_30px_rgba(126,34,206,0.2)] border-2 border-gold-500/60 hover:border-gold-400/80 transition-all duration-200"
                 decoding="async"
                 aria-label="Full size image"
+                onError={(e) => {
+                  // Prevent error from bubbling and showing in console
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Close modal if image fails to load
+                  setSelectedMedia(null);
+                }}
               />
             )}
             <div className="absolute -inset-3 bg-gradient-to-r from-gold-500/15 via-musical-500/15 to-gold-500/15 rounded-2xl opacity-0 group-hover/media:opacity-70 transition-opacity duration-300 blur-lg pointer-events-none" aria-hidden />

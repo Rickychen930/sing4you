@@ -26,6 +26,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const errorShownRef = useRef(false);
   const toast = useToastStore((state) => state);
 
   // Sync preview with value prop when it changes externally
@@ -155,10 +156,28 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                   src={preview}
                   alt={`${label} preview`}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  onError={() => {
+                  onError={(e) => {
+                    // Prevent error from bubbling and showing in console
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
                     // If image fails to load, try without cache bust
                     const urlWithoutCacheBust = preview.split('?')[0].split('&')[0];
-                    setPreview(urlWithoutCacheBust);
+                    if (urlWithoutCacheBust !== preview) {
+                      setPreview(urlWithoutCacheBust);
+                    } else {
+                      // If still fails, show placeholder
+                      setPreview(null);
+                      // Only show error once per image
+                      if (!errorShownRef.current) {
+                        errorShownRef.current = true;
+                        toast.error('Image not found. Please upload a new image.');
+                        // Reset after a delay to allow showing error again if user tries different image
+                        setTimeout(() => {
+                          errorShownRef.current = false;
+                        }, 5000);
+                      }
+                    }
                   }}
                   key={preview} // Force re-render when preview changes
                 />
