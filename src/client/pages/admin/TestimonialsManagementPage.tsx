@@ -52,7 +52,7 @@ export const TestimonialsManagementPage: React.FC = () => {
         apiClient.clearCache();
       }
       
-      const data = await testimonialService.getAll();
+      const data = await testimonialService.getAll(!forceRefresh);
       setTestimonials(data);
       setError('');
     } catch (error) {

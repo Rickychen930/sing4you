@@ -2,8 +2,8 @@ import { apiClient } from './api';
 import type { ITestimonial } from '../../shared/interfaces';
 
 export class TestimonialService {
-  async getAll(): Promise<ITestimonial[]> {
-    return apiClient.get<ITestimonial[]>('/api/testimonials');
+  async getAll(useCache: boolean = true): Promise<ITestimonial[]> {
+    return apiClient.get<ITestimonial[]>('/api/testimonials', useCache);
   }
 
   async getById(id: string): Promise<ITestimonial> {

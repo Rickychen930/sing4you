@@ -2,8 +2,8 @@ import { apiClient } from './api';
 import type { IPerformance } from '../../shared/interfaces';
 
 export class PerformanceService {
-  async getAll(): Promise<IPerformance[]> {
-    return apiClient.get<IPerformance[]>('/api/performances');
+  async getAll(useCache: boolean = true): Promise<IPerformance[]> {
+    return apiClient.get<IPerformance[]>('/api/performances', useCache);
   }
 
   async getUpcoming(): Promise<IPerformance[]> {

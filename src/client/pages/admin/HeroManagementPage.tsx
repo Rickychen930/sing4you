@@ -8,6 +8,7 @@ import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ImageUpload } from '../../components/ui/ImageUpload';
 import { heroService } from '../../services/heroService';
+import { apiClient } from '../../services/api';
 import type { IHeroSettings } from '../../../shared/interfaces';
 import { useToastStore } from '../../stores/toastStore';
 
@@ -16,6 +17,7 @@ export const HeroManagementPage: React.FC = () => {
   const toast = useToastStore((state) => state);
   const [settings, setSettings] = useState<IHeroSettings | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -29,10 +31,16 @@ export const HeroManagementPage: React.FC = () => {
     }
   }, []); // Empty deps - only load once
 
-  const loadSettings = async () => {
+  const loadSettings = async (forceRefresh: boolean = false) => {
     try {
-      const data = await heroService.getSettings();
+      // Clear cache if force refresh
+      if (forceRefresh) {
+        apiClient.clearCache();
+      }
+      
+      const data = await heroService.getSettings(!forceRefresh);
       setSettings(data);
+      setError('');
     } catch (error) {
       setError('Failed to load hero settings');
       if (process.env.NODE_ENV === 'development') {
@@ -40,6 +48,35 @@ export const HeroManagementPage: React.FC = () => {
       }
     } finally {
       setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setLoading(true);
+    
+    // Aggressively clear all caches
+    apiClient.clearCache();
+    
+    // Clear browser cache if possible
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      try {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      } catch {
+        // Ignore cache clearing errors
+      }
+    }
+    
+    await loadSettings(true);
+    toast.success('Hero settings refreshed successfully!');
+  };
+
+  const handleHardRefresh = () => {
+    // Force browser hard refresh
+    if (typeof window !== 'undefined') {
+      window.location.reload();
     }
   };
 
@@ -89,6 +126,17 @@ export const HeroManagementPage: React.FC = () => {
 
     try {
       await heroService.updateSettings(settings);
+      
+      // Clear all caches aggressively
+      apiClient.clearCache();
+      
+      // Force reload with cache busting
+      await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure server processed
+      await loadSettings(true);
+      
+      // Force browser to reload images/videos by triggering re-render
+      // The ImageUpload component will handle cache busting via useEffect
+      
       toast.success('Hero settings saved successfully!');
       setError('');
     } catch (error) {
@@ -135,9 +183,49 @@ export const HeroManagementPage: React.FC = () => {
             <h1 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
               Hero Settings
             </h1>
-            <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')} className="w-full sm:w-auto">
-              Back to Dashboard
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh} 
+                disabled={refreshing || loading}
+                className="w-full sm:w-auto"
+                title="Refresh data from server"
+              >
+                <span className="flex items-center gap-2">
+                  {refreshing ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      <span>Refreshing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Refresh</span>
+                    </>
+                  )}
+                </span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleHardRefresh}
+                className="w-full sm:w-auto"
+                title="Hard refresh page (clears all browser cache)"
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                  <span>Hard Refresh</span>
+                </span>
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => navigate('/admin/dashboard')} className="w-full sm:w-auto">
+                Back to Dashboard
+              </Button>
+            </div>
           </div>
 
           {error && (

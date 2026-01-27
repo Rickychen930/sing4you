@@ -2,8 +2,8 @@ import { apiClient } from './api';
 import type { IVariation } from '../../shared/interfaces';
 
 export class VariationService {
-  async getAll(): Promise<IVariation[]> {
-    return apiClient.get<IVariation[]>('/api/variations');
+  async getAll(useCache: boolean = true): Promise<IVariation[]> {
+    return apiClient.get<IVariation[]>('/api/variations', useCache);
   }
 
   async getById(id: string): Promise<IVariation> {

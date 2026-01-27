@@ -2,8 +2,8 @@ import { apiClient } from './api';
 import type { ICategory } from '../../shared/interfaces';
 
 export class CategoryService {
-  async getAll(): Promise<ICategory[]> {
-    return apiClient.get<ICategory[]>('/api/categories');
+  async getAll(useCache: boolean = true): Promise<ICategory[]> {
+    return apiClient.get<ICategory[]>('/api/categories', useCache);
   }
 
   async getById(id: string): Promise<ICategory> {

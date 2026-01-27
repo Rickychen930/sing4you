@@ -93,6 +93,13 @@ class ApiClient {
 
   async get<T>(url: string, useCache: boolean = true): Promise<T> {
     try {
+      // Add cache busting parameter if not using cache
+      let requestUrl = url;
+      if (!useCache) {
+        const separator = url.includes('?') ? '&' : '?';
+        requestUrl = `${url}${separator}_t=${Date.now()}`;
+      }
+
       // Check cache for GET requests
       if (useCache) {
         const cacheKey = url;
@@ -108,8 +115,14 @@ class ApiClient {
         }
       }
 
-      // Create request promise
-      const requestPromise = this.client.get<IApiResponse<T>>(url)
+      // Create request promise with cache busting headers
+      const requestPromise = this.client.get<IApiResponse<T>>(requestUrl, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      })
         .then((response) => {
           // Check for success flag
           if (!response.data.success) {
@@ -270,6 +283,20 @@ class ApiClient {
   // Clear cache (useful after mutations)
   clearCache(): void {
     this.requestCache.clear();
+    this.pendingRequests.clear();
+    
+    // Also try to clear browser cache for API responses
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      caches.keys().then((names) => {
+        names.forEach((name) => {
+          if (name.includes('api') || name.includes('http')) {
+            caches.delete(name);
+          }
+        });
+      }).catch(() => {
+        // Ignore cache clearing errors
+      });
+    }
   }
 
   // Clear specific cache entry

@@ -51,7 +51,7 @@ export const PerformancesManagementPage: React.FC = () => {
         apiClient.clearCache();
       }
       
-      const data = await performanceService.getAll();
+      const data = await performanceService.getAll(!forceRefresh);
       setPerformances(data);
       setError('');
     } catch (error) {

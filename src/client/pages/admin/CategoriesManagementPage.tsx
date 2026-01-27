@@ -56,7 +56,7 @@ export const CategoriesManagementPage: React.FC = () => {
         apiClient.clearCache();
       }
       
-      const data = await categoryService.getAll();
+      const data = await categoryService.getAll(!forceRefresh);
       setCategories(data);
       setError('');
     } catch (error) {

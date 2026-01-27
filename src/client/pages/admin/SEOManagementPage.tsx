@@ -23,10 +23,16 @@ export const SEOManagementPage: React.FC = () => {
     loadSettings();
   }, []);
 
-  const loadSettings = async () => {
+  const loadSettings = async (forceRefresh: boolean = false) => {
     try {
-      const data = await apiClient.get<ISEOSettings>('/api/seo');
+      // Clear cache if force refresh
+      if (forceRefresh) {
+        apiClient.clearCache();
+      }
+      
+      const data = await apiClient.get<ISEOSettings>('/api/seo', !forceRefresh);
       setSettings(data);
+      setError('');
     } catch (error) {
       setError('Failed to load SEO settings');
       if (process.env.NODE_ENV === 'development') {
@@ -46,6 +52,9 @@ export const SEOManagementPage: React.FC = () => {
 
     try {
       await apiClient.put<ISEOSettings>('/api/admin/seo', settings);
+      // Clear cache and reload data to show latest changes
+      apiClient.clearCache();
+      await loadSettings(true); // Force refresh
       toast.success('SEO settings saved successfully!');
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to save SEO settings';

@@ -67,9 +67,10 @@ export const VariationsManagementPage: React.FC = () => {
         apiClient.clearCache();
       }
       
+      const useCache = !forceRefresh;
       const [variationsData, categoriesData] = await Promise.all([
-        variationService.getAll(),
-        categoryService.getAll(),
+        variationService.getAll(useCache),
+        categoryService.getAll(useCache),
       ]);
       setVariations(variationsData);
       setCategories(categoriesData);

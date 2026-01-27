@@ -1,4 +1,4 @@
-import React, { useState, useRef, memo, useCallback } from 'react';
+import React, { useState, useRef, memo, useCallback, useEffect } from 'react';
 import { mediaService } from '../../services/mediaService';
 import { useToastStore } from '../../stores/toastStore';
 import { cn } from '../../utils/helpers';
@@ -27,6 +27,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toast = useToastStore((state) => state);
+
+  // Sync preview with value prop when it changes externally
+  useEffect(() => {
+    if (value && value.trim() !== '') {
+      // Add cache busting to force browser reload
+      const urlWithCacheBust = `${value}${value.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+      setPreview(urlWithCacheBust);
+    } else {
+      setPreview(null);
+    }
+  }, [value]);
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -80,11 +91,22 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
     setIsUploading(true);
     try {
       const response = await mediaService.uploadFile(file);
-      onChange(response.data.url);
+      const uploadedUrl = response.data.url;
+      
+      // Add cache busting to URL to force browser reload
+      const urlWithCacheBust = `${uploadedUrl}${uploadedUrl.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+      
+      // Update preview immediately with uploaded URL (with cache bust)
+      setPreview(urlWithCacheBust);
+      
+      // Call onChange with original URL (without cache bust, server will handle it)
+      onChange(uploadedUrl);
+      
       toast.success('Image uploaded successfully');
     } catch (error) {
       const err = error as Error;
       toast.error(err.message || 'Failed to upload image');
+      // Revert preview to previous value on error
       setPreview(value || null);
     } finally {
       setIsUploading(false);
@@ -133,6 +155,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
                   src={preview}
                   alt={`${label} preview`}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  onError={() => {
+                    // If image fails to load, try without cache bust
+                    const urlWithoutCacheBust = preview.split('?')[0].split('&')[0];
+                    setPreview(urlWithoutCacheBust);
+                  }}
+                  key={preview} // Force re-render when preview changes
                 />
               )}
               <button
@@ -212,10 +240,25 @@ export const ImageUpload: React.FC<ImageUploadProps> = memo(({
           )}
         </div>
 
-        {/* Current URL Display */}
+        {/* Current URL Display - Show if value exists but preview failed to load */}
         {value && !preview && (
-          <div className="text-xs sm:text-sm text-gray-200 font-sans break-all">
-            Current: <a href={value} target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)]">{value}</a>
+          <div className="text-xs sm:text-sm text-gray-200 font-sans break-all p-2 bg-jazz-900/50 rounded border border-gold-900/30">
+            <span className="text-gray-300">Current URL: </span>
+            <a 
+              href={value} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-gold-400 hover:text-gold-300 underline transition-all duration-300 hover:drop-shadow-[0_0_6px_rgba(255,194,51,0.4)] break-all"
+            >
+              {value}
+            </a>
+            <button
+              type="button"
+              onClick={() => setPreview(value)}
+              className="ml-2 text-xs text-gold-400 hover:text-gold-300 underline"
+            >
+              Load Preview
+            </button>
           </div>
         )}
 

@@ -128,8 +128,13 @@ app.use((req, res, next) => {
 
   // Cache control for API responses
   if (req.path.startsWith('/api/') && req.method === 'GET') {
-    // Cache GET API responses for 5 minutes (public endpoints)
-    if (!req.path.startsWith('/api/admin/')) {
+    // No cache for admin endpoints to prevent stale data
+    if (req.path.startsWith('/api/admin/')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, private');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    } else {
+      // Cache GET API responses for 5 minutes (public endpoints only)
       res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
     }
   }
@@ -177,7 +182,27 @@ const getUploadDir = (): string => {
 app.use('/uploads', express.static(getUploadDir(), {
   maxAge: '1y', // Cache for 1 year
   etag: true,
+  // Add cache busting support via query params
+  setHeaders: (res, path) => {
+    // If URL has _t parameter, don't cache
+    if (path.includes('_t=')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  },
 }));
+
+// API routes with no-cache headers for admin endpoints
+app.use('/api', (req, res, next) => {
+  // Set no-cache for admin endpoints to prevent stale data
+  if (req.path.startsWith('/api/admin/')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, private');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
 
 // Routes
 app.use(routes);
