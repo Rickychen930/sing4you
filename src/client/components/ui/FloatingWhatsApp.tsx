@@ -55,7 +55,12 @@ export const FloatingWhatsApp: React.FC = memo(() => {
           ? 'opacity-100 translate-y-0 scale-100'
           : 'opacity-0 translate-y-10 scale-90 pointer-events-none'
       )}
-      style={{ bottom, right: '1rem' }}
+      style={{ 
+        position: 'fixed',
+        bottom, 
+        right: '1rem',
+        zIndex: 9998
+      }}
       aria-label="Contact us on WhatsApp"
     >
       <div className="absolute -inset-1 bg-[#25D366] rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-300 blur-md pointer-events-none" aria-hidden />

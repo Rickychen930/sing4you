@@ -169,10 +169,13 @@ export class MediaUploadController {
           },
         });
       } else {
-        // Use local storage
+        // Use local storage (backend file system)
         const filename = req.file.filename;
         const filePath = req.file.path;
         // Generate URL: /uploads/filename
+        // This URL will be served by express.static('/uploads') middleware in server/index.ts
+        // In development: Vite proxy forwards /uploads to backend
+        // In production: Backend serves /uploads directly from staticUploadDir
         const url = `/uploads/${filename}`;
 
         // CRITICAL: Verify file actually exists after upload

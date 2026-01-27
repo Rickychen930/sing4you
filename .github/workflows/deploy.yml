@@ -228,6 +228,56 @@ jobs:
       - name: Build React app
         run: npm run build
 
+      # ✅ Create .env file for backend deployment (CRITICAL: Must include all env vars)
+      - name: Create .env file for backend
+        run: |
+          echo "Creating .env file for backend deployment..."
+          cat > .env.production << EOF
+          # Server Configuration
+          PORT=4000
+          NODE_ENV=production
+          CLIENT_URL=${{ secrets.CLIENT_URL }}
+          SITE_URL=${{ secrets.SITE_URL }}
+          
+          # Database Configuration
+          MONGODB_URI=${{ secrets.MONGODB_URI }}
+          
+          # JWT Configuration
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN || '1h' }}
+          JWT_REFRESH_EXPIRES_IN=${{ secrets.JWT_REFRESH_EXPIRES_IN || '7d' }}
+          
+          # Cloudinary Configuration (Optional)
+          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+          
+          # Frontend Configuration
+          VITE_API_URL=${{ secrets.VITE_API_URL }}
+          VITE_SITE_URL=${{ secrets.VITE_SITE_URL }}
+          
+          # Email Configuration
+          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+          SMTP_SERVICE=${{ secrets.SMTP_SERVICE }}
+          SMTP_HOST=${{ secrets.SMTP_HOST }}
+          SMTP_PORT=${{ secrets.SMTP_PORT }}
+          SMTP_SECURE=${{ secrets.SMTP_SECURE }}
+          SMTP_USER=${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          
+          # Site Configuration
+          SITE_NAME=${{ secrets.SITE_NAME || 'Christina Sings4U' }}
+          EOF
+          echo "✅ .env.production file created"
+          # Verify critical variables are set
+          if grep -q "MONGODB_URI=" .env.production && ! grep -q "MONGODB_URI=<" .env.production; then
+            echo "✅ MONGODB_URI is set"
+          else
+            echo "❌ ERROR: MONGODB_URI is not properly configured!"
+            exit 1
+          fi
+
       # ✅ Build Backend
       - name: Build backend server
         run: npm run build:server
@@ -377,6 +427,21 @@ jobs:
           command_timeout: 2m
           use_insecure_cipher: false
           source: "package.json,package-lock.json"
+          target: "${{ secrets.BACKEND_TARGET_DIR }}"
+          overwrite: true
+
+      # ✅ Upload .env.production file to server (CRITICAL for database connection)
+      - name: Upload .env.production file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 2m
+          use_insecure_cipher: false
+          source: ".env.production"
           target: "${{ secrets.BACKEND_TARGET_DIR }}"
           overwrite: true
 
@@ -559,20 +624,71 @@ jobs:
             echo "Files in shared uploads directory:"
             ls -la "$SHARED_UPLOADS_DIR" | head -10 || echo "Directory is empty"
 
-            # Ensure .env file exists (create from secrets if needed, or keep existing)
-            if [ ! -f "$ENV_FILE" ] && [ -f "$ENV_PROD_FILE" ]; then
-              echo "Copying .env.production to server/.env..."
-              mkdir -p "$BACKEND_TARGET/server"
-              cp "$ENV_PROD_FILE" "$ENV_FILE"
-            fi
-            
-            # Copy .env to root directory (app loads from root in production)
-            if [ -f "$ENV_FILE" ]; then
+            # CRITICAL: Ensure .env file exists with all environment variables
+            # Priority: Use uploaded .env.production (created from GitHub Secrets)
+            if [ -f "$ENV_PROD_FILE" ]; then
+              echo "✅ Found .env.production file, copying to root .env..."
+              cp "$ENV_PROD_FILE" "$BACKEND_TARGET/.env"
+              echo "✅ .env file created from .env.production"
+            elif [ -f "$ENV_FILE" ]; then
               echo "Copying server/.env to root .env for production..."
               cp "$ENV_FILE" "$BACKEND_TARGET/.env"
-            elif [ -f "$ENV_PROD_FILE" ]; then
-              echo "Copying .env.production to root .env for production..."
-              cp "$ENV_PROD_FILE" "$BACKEND_TARGET/.env"
+            else
+              echo "❌ ERROR: No .env file found!"
+              echo "   Expected: $ENV_PROD_FILE or $ENV_FILE"
+              echo "   Available files in $BACKEND_TARGET:"
+              ls -la "$BACKEND_TARGET" | grep -E "\.env|env" || echo "   No .env files found"
+              exit 1
+            fi
+            
+            # Verify .env file has critical variables
+            if [ -f "$BACKEND_TARGET/.env" ]; then
+              echo "Verifying .env file contents..."
+              echo "📄 .env file location: $BACKEND_TARGET/.env"
+              echo "📄 File size: $(wc -c < "$BACKEND_TARGET/.env") bytes"
+              
+              # Check for critical variables
+              if grep -q "^MONGODB_URI=" "$BACKEND_TARGET/.env" && ! grep -q "^MONGODB_URI=<" "$BACKEND_TARGET/.env" && ! grep -q "^MONGODB_URI=$" "$BACKEND_TARGET/.env"; then
+                echo "✅ MONGODB_URI is set in .env"
+                # Show first few chars (without exposing full connection string)
+                MONGODB_PREVIEW=$(grep "^MONGODB_URI=" "$BACKEND_TARGET/.env" | cut -c1-30)
+                echo "   Preview: ${MONGODB_PREVIEW}..."
+              else
+                echo "❌ ERROR: MONGODB_URI is missing or not properly configured in .env!"
+                echo "   First few lines of .env:"
+                head -10 "$BACKEND_TARGET/.env" || echo "   Could not read .env file"
+                exit 1
+              fi
+              
+              if grep -q "^NODE_ENV=production" "$BACKEND_TARGET/.env"; then
+                echo "✅ NODE_ENV is set to production"
+              else
+                echo "⚠️  WARNING: NODE_ENV may not be set to production"
+                # Try to fix it
+                if ! grep -q "^NODE_ENV=" "$BACKEND_TARGET/.env"; then
+                  echo "   Adding NODE_ENV=production to .env"
+                  echo "NODE_ENV=production" >> "$BACKEND_TARGET/.env"
+                fi
+              fi
+              
+              # Verify other critical variables
+              if grep -q "^JWT_SECRET=" "$BACKEND_TARGET/.env" && ! grep -q "^JWT_SECRET=$" "$BACKEND_TARGET/.env"; then
+                echo "✅ JWT_SECRET is set"
+              else
+                echo "⚠️  WARNING: JWT_SECRET may not be set"
+              fi
+              
+              # Show summary of .env file (without sensitive data)
+              echo ""
+              echo "📋 .env file summary (non-sensitive variables):"
+              grep -E "^(PORT|NODE_ENV|CLIENT_URL|SITE_URL|VITE_)=" "$BACKEND_TARGET/.env" || echo "   Some variables not found"
+              echo ""
+            else
+              echo "❌ ERROR: .env file was not created!"
+              echo "   Expected location: $BACKEND_TARGET/.env"
+              echo "   Available files in $BACKEND_TARGET:"
+              ls -la "$BACKEND_TARGET" | head -20 || echo "   Could not list directory"
+              exit 1
             fi
             
             # Ensure PORT=4000 in .env (critical for nginx proxy)

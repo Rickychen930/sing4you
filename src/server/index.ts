@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, statSync } from 'fs';
 import { Database } from './config/database.js';
 import { CloudinaryConfig } from './config/cloudinary.js';
 import routes from './routes/index.js';
@@ -24,6 +24,21 @@ const productionEnvPath = process.env.BACKEND_ROOT
 const envPath = process.env.NODE_ENV === 'production' 
   ? productionEnvPath
   : resolve(__dirname, '../../.env');
+
+// Log .env file path for debugging
+if (process.env.NODE_ENV === 'production') {
+  console.log(`📄 Loading .env file from: ${envPath}`);
+  console.log(`📄 BACKEND_ROOT: ${process.env.BACKEND_ROOT || 'not set'}`);
+  if (existsSync(envPath)) {
+    const stats = statSync(envPath);
+    console.log(`✅ .env file exists at: ${envPath}`);
+    console.log(`📄 .env file size: ${stats.size} bytes`);
+  } else {
+    console.error(`❌ ERROR: .env file NOT found at: ${envPath}`);
+    console.error(`   This will cause the application to use mock data!`);
+    console.error(`   Please ensure .env file is deployed to the server.`);
+  }
+}
 
 dotenv.config({ path: envPath });
 
@@ -292,11 +307,37 @@ const startServer = async (): Promise<void> => {
             // Don't exit - server should continue even if seed fails
           }
         }
-      } catch {
-        console.error('❌ Failed to connect to MongoDB');
-        console.warn('📦 Using mock data for development');
-        console.warn('   All API endpoints will work with in-memory mock data');
-        console.warn('   Data will reset on server restart');
+      } catch (error) {
+        const err = error as Error;
+        console.error('❌ Failed to connect to MongoDB:', err.message);
+        
+        // In production, this is a critical error - don't silently use mock data
+        if (process.env.NODE_ENV === 'production') {
+          console.error('🚨 CRITICAL: Database connection failed in production!');
+          console.error('   The application will use mock data, which is NOT suitable for production.');
+          console.error('   Please check:');
+          console.error('   1. MONGODB_URI is correctly set in .env file');
+          console.error('   2. MongoDB Atlas cluster is running and accessible');
+          console.error('   3. Network access is configured correctly in MongoDB Atlas');
+          console.error('   4. Database credentials are correct');
+          console.error('   Server will continue but API will return mock data.');
+        } else {
+          console.warn('📦 Using mock data for development');
+          console.warn('   All API endpoints will work with in-memory mock data');
+          console.warn('   Data will reset on server restart');
+        }
+      }
+      
+      // Verify database connection status after connection attempt
+      const database = Database.getInstance();
+      const isConnected = database.isConnectedToDb();
+      if (isConnected) {
+        console.log('✅ Database connection verified and ready');
+      } else {
+        console.warn('⚠️  Database connection check failed - services will use mock data');
+        if (process.env.NODE_ENV === 'production') {
+          console.error('🚨 PRODUCTION WARNING: Database not connected - using mock data!');
+        }
       }
     }
 
