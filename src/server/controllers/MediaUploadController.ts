@@ -40,10 +40,12 @@ const getUploadDir = (): string => {
 
 const uploadDir = getUploadDir();
 
-// Log upload directory path in development for debugging
-if (process.env.NODE_ENV === 'development') {
-  console.log(`📁 Upload directory: ${uploadDir}`);
-  console.log(`📁 Upload directory exists: ${existsSync(uploadDir)}`);
+// Log upload directory path (both dev and production for debugging)
+console.log(`📁 Upload directory: ${uploadDir}`);
+console.log(`📁 Upload directory exists: ${existsSync(uploadDir)}`);
+if (process.env.NODE_ENV === 'production') {
+  console.log(`📁 Production mode - BACKEND_ROOT: ${process.env.BACKEND_ROOT || 'not set'}`);
+  console.log(`📁 Production mode - UPLOAD_DIR: ${process.env.UPLOAD_DIR || 'not set'}`);
 }
 
 // Configure multer for disk storage (local file system)
@@ -162,15 +164,15 @@ export class MediaUploadController {
         // Generate URL: /uploads/filename
         const url = `/uploads/${filename}`;
 
-        // Log upload details in development
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`📤 File uploaded successfully:`);
-          console.log(`   - Filename: ${filename}`);
-          console.log(`   - File path: ${filePath}`);
-          console.log(`   - URL: ${url}`);
-          console.log(`   - Size: ${req.file.size} bytes`);
-          console.log(`   - File exists: ${existsSync(filePath)}`);
-        }
+        // Log upload details (both dev and production for debugging)
+        console.log(`📤 File uploaded successfully:`);
+        console.log(`   - Filename: ${filename}`);
+        console.log(`   - File path: ${filePath}`);
+        console.log(`   - URL: ${url}`);
+        console.log(`   - Size: ${req.file.size} bytes`);
+        console.log(`   - File exists: ${existsSync(filePath)}`);
+        console.log(`   - Upload directory: ${uploadDir}`);
+        console.log(`   - Upload directory exists: ${existsSync(uploadDir)}`);
 
         res.json({
           success: true,

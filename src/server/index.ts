@@ -178,12 +178,16 @@ const getUploadDir = (): string => {
     console.log(`✅ Created upload directory: ${uploadDir}`);
   }
   
-  // Log upload directory path in development for debugging
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`📁 Static serve directory: ${uploadDir}`);
-    console.log(`📁 Static serve directory exists: ${existsSync(uploadDir)}`);
-    console.log(`📁 Current working directory: ${process.cwd()}`);
-    console.log(`📁 __dirname: ${__dirname}`);
+  // Log upload directory path (both dev and production for debugging)
+  console.log(`📁 Static serve directory: ${uploadDir}`);
+  console.log(`📁 Static serve directory exists: ${existsSync(uploadDir)}`);
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`📁 Production mode - BACKEND_ROOT: ${process.env.BACKEND_ROOT || 'not set'}`);
+    console.log(`📁 Production mode - UPLOAD_DIR: ${process.env.UPLOAD_DIR || 'not set'}`);
+    console.log(`📁 Production mode - NODE_ENV: ${process.env.NODE_ENV}`);
+  } else {
+    console.log(`📁 Development mode - Current working directory: ${process.cwd()}`);
+    console.log(`📁 Development mode - __dirname: ${__dirname}`);
   }
   
   return uploadDir;
