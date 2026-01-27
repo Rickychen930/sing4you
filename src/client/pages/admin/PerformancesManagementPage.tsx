@@ -17,6 +17,7 @@ export const PerformancesManagementPage: React.FC = () => {
   const toast = useToastStore((state) => state);
   const [performances, setPerformances] = useState<IPerformance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IPerformance>>({
     eventName: '',
@@ -52,6 +53,7 @@ export const PerformancesManagementPage: React.FC = () => {
       
       const data = await performanceService.getAll();
       setPerformances(data);
+      setError('');
     } catch (error) {
       setError('Failed to load performances');
       if (process.env.NODE_ENV === 'development') {
@@ -59,7 +61,15 @@ export const PerformancesManagementPage: React.FC = () => {
       }
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setLoading(true);
+    await loadPerformances(true);
+    toast.success('Data refreshed successfully!');
   };
 
   const handleCreate = () => {
@@ -165,6 +175,29 @@ export const PerformancesManagementPage: React.FC = () => {
               Performances Management
             </h1>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh} 
+                disabled={refreshing || loading}
+                className="w-full sm:w-auto"
+              >
+                <span className="flex items-center gap-2">
+                  {refreshing ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      <span>Refreshing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Refresh</span>
+                    </>
+                  )}
+                </span>
+              </Button>
               <Button variant="primary" size="sm" onClick={handleCreate} className="w-full sm:w-auto">
                 + New Performance
               </Button>
