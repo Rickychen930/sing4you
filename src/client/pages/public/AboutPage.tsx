@@ -6,7 +6,7 @@ import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { Card, CardBody } from '../../components/ui/Card';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { Button } from '../../components/ui/Button';
-import { MediaGallery } from '../../components/ui/MediaGallery';
+import { AutoGridGallery } from '../../components/ui/AutoGridGallery';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { aboutPageService } from '../../services/aboutPageService';
 import type { IAboutPageSettings } from '../../../shared/interfaces';
@@ -220,7 +220,7 @@ export const AboutPage: React.FC = () => {
         </div>
       </SectionWrapper>
 
-      {/* Gallery Section */}
+      {/* Gallery Section – album dengan pagination bullet (tanpa auto-play) */}
       {settings.galleryImages && settings.galleryImages.length > 0 && (
         <SectionWrapper id="about-gallery">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -230,7 +230,13 @@ export const AboutPage: React.FC = () => {
                 Gallery
               </h2>
             </div>
-            <MediaGallery media={settings.galleryImages} />
+            <AutoGridGallery
+              media={settings.galleryImages}
+              rows={2}
+              columns={3}
+              autoPlay={false}
+              showBullets
+            />
           </div>
         </SectionWrapper>
       )}

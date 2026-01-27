@@ -4,7 +4,6 @@ import { categoryService } from '../../services/categoryService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
-import { MediaGallery } from '../ui/MediaGallery';
 import { LazyImage } from '../ui/LazyImage';
 import { useNavigate } from 'react-router-dom';
 
@@ -192,20 +191,6 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
                         {category.description}
                       </p>
                     )}
-                    
-                    {/* Media Gallery with enhanced styling and consistent border */}
-                    {category.media && category.media.length > 0 && (
-                      <div className="mb-4 sm:mb-5 lg:mb-6 rounded-xl overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 border border-gold-900/30 group-hover:border-gold-700/50 relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 via-transparent to-musical-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl z-0" aria-hidden />
-                        <div className="relative z-10">
-                          <MediaGallery 
-                            media={category.media.slice(0, 4)} 
-                            className="grid-cols-2"
-                          />
-                        </div>
-                      </div>
-                    )}
-                    
                     {/* Enhanced arrow indicator */}
                     <div className="mt-auto pt-3 sm:pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="flex items-center justify-center gap-2 text-gold-400 group-hover:text-gold-300 transition-colors duration-300">

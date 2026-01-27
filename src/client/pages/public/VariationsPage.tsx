@@ -10,7 +10,7 @@ import { useToastStore } from '../../stores/toastStore';
 import { SEO } from '../../components/ui/SEO';
 import type { ICategory } from '../../../shared/interfaces';
 import { apiClient } from '../../services/api';
-import { PerformanceMediaCarousel } from '../../components/ui/PerformanceMediaCarousel';
+import { AutoGridGallery } from '../../components/ui/AutoGridGallery';
 
 export const VariationsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -172,7 +172,7 @@ export const VariationsPage: React.FC = () => {
         </div>
       </SectionWrapper>
 
-      {/* Mini carousel gallery for this category */}
+      {/* Mini gallery untuk kategori – 1 baris, auto-play (seperti strip berjalan) */}
       {category.media && category.media.length > 0 && (
         <SectionWrapper
           id="variations-gallery"
@@ -181,10 +181,13 @@ export const VariationsPage: React.FC = () => {
           subtitle="A glimpse of performances in this category"
         >
           <div className="max-w-6xl mx-auto px-2 sm:px-4">
-            <PerformanceMediaCarousel
+            <AutoGridGallery
               media={category.media}
-              autoPlay
-              autoPlayIntervalMs={4000}
+              rows={1}              // 1 baris saja agar terasa seperti strip
+              columns={4}           // 4 item per halaman di desktop
+              autoPlay              // aktifkan auto-play antar halaman
+              autoPlayIntervalMs={5000}
+              showBullets={false}   // tanpa bullet di Variations page
             />
           </div>
         </SectionWrapper>
