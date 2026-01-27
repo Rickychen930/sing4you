@@ -125,11 +125,11 @@
     scroll-snap-type: none;
     overscroll-behavior: contain;
     /* Prevent white flash */
-    background-color: #0b0120;
-    background: radial-gradient(circle at 0% 0%, rgba(244, 114, 182, 0.22), transparent 55%),
-                radial-gradient(circle at 100% 0%, rgba(129, 140, 248, 0.2), transparent 55%),
-                radial-gradient(circle at 50% 100%, rgba(192, 132, 252, 0.25), transparent 60%),
-                linear-gradient(135deg, #070019 0%, #170047 35%, #2a0a7a 70%, #0b0120 100%);
+    background-color: #070b16;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(139, 92, 246, 0.16), transparent 55%),
+      radial-gradient(circle at 90% 0%, rgba(139, 92, 246, 0.12), transparent 55%),
+      linear-gradient(135deg, #050816 0%, #0b1024 35%, #151b33 70%, #050816 100%);
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -137,10 +137,10 @@
 
   body {
     /* Using CSS variables for consistency */
-    background: radial-gradient(circle at 0% 0%, rgba(244, 114, 182, 0.22), transparent 55%),
-                radial-gradient(circle at 100% 0%, rgba(129, 140, 248, 0.2), transparent 55%),
-                radial-gradient(circle at 50% 100%, rgba(192, 132, 252, 0.25), transparent 60%),
-                linear-gradient(135deg, #070019 0%, #170047 35%, #2a0a7a 70%, #0b0120 100%);
+    background:
+      radial-gradient(circle at 10% 0%, rgba(139, 92, 246, 0.16), transparent 55%),
+      radial-gradient(circle at 90% 0%, rgba(139, 92, 246, 0.12), transparent 55%),
+      linear-gradient(135deg, #050816 0%, #0b1024 35%, #151b33 70%, #050816 100%);
     /* Optimize rendering performance */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -174,14 +174,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    /* BRIGHTER musical glow with purple & pink accents */
+    /* Subtle elegant purple glow */
     background-image: 
-      radial-gradient(circle at 15% 30%, rgba(244, 114, 182, 0.3) 0%, transparent 55%),
-      radial-gradient(circle at 85% 60%, rgba(129, 140, 248, 0.28) 0%, transparent 55%),
-      radial-gradient(circle at 50% 85%, rgba(192, 132, 252, 0.3) 0%, transparent 60%);
+      radial-gradient(circle at 20% 25%, rgba(94, 92, 246, 0.22) 0%, transparent 55%),
+      radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.18) 0%, transparent 55%);
     pointer-events: none;
     z-index: 0;
-    animation: gentlePulse 22s ease-in-out infinite;
+    animation: gentlePulse 26s ease-in-out infinite;
     transform: translateZ(0); /* Force GPU acceleration */
     backface-visibility: hidden;
     contain: strict; /* More aggressive containment */

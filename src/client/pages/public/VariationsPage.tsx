@@ -180,11 +180,13 @@ export const VariationsPage: React.FC = () => {
           title={`Highlights from ${category.name}`}
           subtitle="A glimpse of performances in this category"
         >
-          <PerformanceMediaCarousel
-            media={category.media}
-            autoPlay
-            autoPlayIntervalMs={4000}
-          />
+          <div className="max-w-6xl mx-auto px-2 sm:px-4">
+            <PerformanceMediaCarousel
+              media={category.media}
+              autoPlay
+              autoPlayIntervalMs={4000}
+            />
+          </div>
         </SectionWrapper>
       )}
 
