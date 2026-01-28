@@ -52,7 +52,7 @@ export const SEO: React.FC<SEOProps> = memo(({
       {keywords && <meta name="keywords" content={keywords} />}
       {author && <meta name="author" content={author} />}
       
-      {/* Robots */}
+      {/* Robots - Optimized for maximum indexing */}
       {(noindex || nofollow) ? (
         <>
           <meta name="robots" content={`${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`} />
@@ -62,8 +62,10 @@ export const SEO: React.FC<SEOProps> = memo(({
       ) : (
         <>
           <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-          <meta name="googlebot" content="index, follow" />
+          <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
           <meta name="bingbot" content="index, follow" />
+          <meta name="slurp" content="index, follow" />
+          <meta name="duckduckbot" content="index, follow" />
         </>
       )}
       
@@ -104,20 +106,34 @@ export const SEO: React.FC<SEOProps> = memo(({
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
       
+      {/* Sitemap and Robots */}
+      <link rel="sitemap" type="application/xml" href={`${siteUrl}/sitemap.xml`} />
+      <link rel="alternate" type="application/rss+xml" href={`${siteUrl}/rss.xml`} />
+      
       {/* Additional SEO Meta Tags */}
       <meta name="theme-color" content="#ffc233" />
       <meta name="msapplication-TileColor" content="#ffc233" />
-      <meta name="msapplication-TileImage" content="/logo 192.png" />
+      <meta name="msapplication-TileImage" content={`${siteUrl}/logo 192.png`} />
+      <meta name="msapplication-config" content={`${siteUrl}/browserconfig.xml`} />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="apple-mobile-web-app-title" content="Christina Sings4U" />
-      <link rel="apple-touch-icon" sizes="192x192" href="/logo 192.png" />
-      <link rel="apple-touch-icon" sizes="512x512" href="/logo 512.png" />
+      
+      {/* Favicon and Icons - Multiple formats for Google and all browsers */}
+      <link rel="icon" type="image/x-icon" href={`${siteUrl}/favicon.ico`} />
+      <link rel="icon" type="image/png" sizes="16x16" href={`${siteUrl}/logo 192.png`} />
+      <link rel="icon" type="image/png" sizes="32x32" href={`${siteUrl}/logo 192.png`} />
+      <link rel="icon" type="image/png" sizes="192x192" href={`${siteUrl}/logo 192.png`} />
+      <link rel="icon" type="image/png" sizes="512x512" href={`${siteUrl}/logo 512.png`} />
+      <link rel="apple-touch-icon" sizes="180x180" href={`${siteUrl}/logo 192.png`} />
+      <link rel="apple-touch-icon" sizes="192x192" href={`${siteUrl}/logo 192.png`} />
+      <link rel="apple-touch-icon" sizes="512x512" href={`${siteUrl}/logo 512.png`} />
+      <link rel="shortcut icon" href={`${siteUrl}/favicon.ico`} />
       <meta name="format-detection" content="telephone=yes" />
       <meta name="mobile-web-app-capable" content="yes" />
       
       {/* Manifest */}
-      <link rel="manifest" href="/manifest.json" />
+      <link rel="manifest" href={`${siteUrl}/manifest.json`} />
       
       {/* Geographic Meta Tags */}
       <meta name="geo.region" content="AU-NSW" />
@@ -143,11 +159,37 @@ export const SEO: React.FC<SEOProps> = memo(({
       {/* Enhanced Keywords for Singer Sydney Search */}
       <meta name="subject" content="Professional Singer Sydney, Wedding Singer, Corporate Event Singer, Live Music Sydney" />
       <meta name="topic" content="Singer Sydney, Wedding Entertainment Sydney, Live Music Performance Sydney NSW" />
-      <meta name="summary" content="Professional singer in Sydney offering live vocals for weddings, corporate events and private occasions. Solo, duo, trio and full band available." />
+      <meta name="summary" content="🎤 #1 Professional Singer Sydney | 500+ Events | 4.9★ Rating | Wedding Singer Sydney | Corporate Event Singer | Live Music Sydney | Solo, Duo, Trio & Full Band | Fast Response <2hrs | Book Today!" />
       
       {/* Business Hours and Availability */}
       <meta name="availability" content="Available for bookings" />
       <meta name="service-area" content="Sydney, NSW, Australia" />
+      
+      {/* Enhanced SEO for Competitive Advantage */}
+      <meta name="application-name" content="Christina Sings4U" />
+      <meta name="generator" content="React" />
+      <meta name="referrer" content="origin-when-cross-origin" />
+      <meta name="color-scheme" content="dark" />
+      
+      {/* Rich Snippets Support */}
+      <meta name="rating" content="4.9" />
+      <meta name="reviewCount" content="500+" />
+      
+      {/* Local SEO Boost */}
+      <meta name="locality" content="Sydney" />
+      <meta name="region" content="NSW" />
+      <meta name="postal-code" content="2000" />
+      <meta name="country-name" content="Australia" />
+      
+      {/* Brand and Authority Signals */}
+      <meta name="brand" content="Christina Sings4U" />
+      <meta name="publisher" content="Christina Sings4U" />
+      <meta name="creator" content="Christina Sings4U" />
+      
+      {/* Performance and Trust Signals */}
+      <meta name="experience" content="10+ years" />
+      <meta name="events-completed" content="500+" />
+      <meta name="response-time" content="<2 hours" />
       
       {/* Verification Tags (add your verification codes) */}
       {/* <meta name="google-site-verification" content="your-verification-code" /> */}
