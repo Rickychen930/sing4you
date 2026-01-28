@@ -97,21 +97,23 @@ export class MockDataService {
 
   // Performances
   static getAllPerformances(): IPerformance[] {
-    // Always return fresh dates based on daysOffset
-    return this.performancesBase.map(p => {
-      const { daysOffset, ...performance } = p;
-      return {
-        ...performance,
-        date: this.getDateFromNow(daysOffset),
-      } as IPerformance;
-    });
+    // Only return upcoming performances (date >= now) - same as getUpcoming
+    const now = new Date();
+    return this.performancesBase
+      .map(p => {
+        const { daysOffset, ...performance } = p;
+        return {
+          ...performance,
+          date: this.getDateFromNow(daysOffset),
+        } as IPerformance;
+      })
+      .filter(p => new Date(p.date) >= now)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
 
   static getUpcomingPerformances(): IPerformance[] {
-    const now = new Date();
-    return this.getAllPerformances()
-      .filter(p => new Date(p.date) >= now)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    // Same as getAllPerformances - both return only upcoming performances
+    return this.getAllPerformances();
   }
 
   static getPerformanceById(id: string): IPerformance | null {

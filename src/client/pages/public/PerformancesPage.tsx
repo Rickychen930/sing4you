@@ -21,8 +21,7 @@ export const PerformancesPage: React.FC = memo(() => {
     const loadPerformances = async () => {
       try {
         setError(null);
-        // Use getUpcoming to sync with HomePage section
-        const data = await performanceService.getUpcoming();
+        const data = await performanceService.getAll();
         // Only update state if component is still mounted
         if (isMounted && !abortController.signal.aborted) {
           setPerformances(data);

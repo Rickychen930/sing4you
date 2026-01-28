@@ -94,31 +94,6 @@ export const Hero: FC = memo(() => {
     window.location.href = generateMailtoLink();
   }, []);
 
-  const handleScrollDown = useCallback(() => {
-    // Scroll to services section smoothly
-    requestAnimationFrame(() => {
-      const servicesSection = document.getElementById('services') || document.querySelector('[id*="service"]');
-      if (servicesSection) {
-        const headerOffset = 80;
-        const elementPosition = servicesSection.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      } else {
-        // Fallback: scroll to next section
-        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-      }
-    });
-  }, []);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleScrollDown();
-    }
-  }, [handleScrollDown]);
 
   if (loading || !heroSettings) {
     return (
@@ -256,20 +231,6 @@ export const Hero: FC = memo(() => {
         </div>
       </div>
       
-      <div className="absolute bottom-5 sm:bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 z-[100]">
-        <button
-          type="button"
-          onClick={handleScrollDown}
-          onKeyDown={handleKeyDown}
-          className="flex flex-col items-center gap-1 text-white/80 hover:text-gold-200 transition-colors cursor-pointer py-2 px-4 rounded-full min-h-[44px] justify-center touch-manipulation focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-transparent relative"
-          aria-label="Scroll to explore more content"
-        >
-          <span className="text-[10px] sm:text-xs font-medium tracking-wider uppercase relative z-10">Scroll</span>
-          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gold-400/80 animate-bounce relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </button>
-      </div>
     </section>
   );
 });
