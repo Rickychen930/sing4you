@@ -21,7 +21,8 @@ export const PerformancesPage: React.FC = memo(() => {
     const loadPerformances = async () => {
       try {
         setError(null);
-        const data = await performanceService.getAll();
+        // Use getUpcoming to sync with HomePage section
+        const data = await performanceService.getUpcoming();
         // Only update state if component is still mounted
         if (isMounted && !abortController.signal.aborted) {
           setPerformances(data);
@@ -102,8 +103,9 @@ export const PerformancesPage: React.FC = memo(() => {
         <Breadcrumb items={breadcrumbItems} />
       </div>
       <SectionWrapper
-        title="All Performances"
-        subtitle="Upcoming events and performances"
+        id="performances"
+        title="Upcoming Performances"
+        subtitle="Join us for these upcoming events in Sydney and beyond"
         className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative"
         divider
       >
