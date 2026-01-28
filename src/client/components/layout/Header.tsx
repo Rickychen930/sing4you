@@ -122,7 +122,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
 
             <button
               type="button"
-              className="md:hidden p-2.5 -mr-2 min-w-[48px] min-h-[48px] flex items-center justify-center text-gray-200 hover:text-gold-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg relative z-[100]"
+              className="flex md:hidden p-2.5 -mr-2 min-w-[48px] min-h-[48px] items-center justify-center text-gray-200 hover:text-gold-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg relative z-[100]"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
@@ -130,7 +130,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
-              style={{ zIndex: 100, position: 'relative', display: 'flex' }}
+              style={{ zIndex: 100, position: 'relative' }}
             >
               <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMenuOpen ? (
