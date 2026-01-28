@@ -99,6 +99,8 @@ export class MockDataService {
   static getAllPerformances(): IPerformance[] {
     // Only return upcoming performances (date >= now) - same as getUpcoming
     const now = new Date();
+    // Treat "upcoming" as today or later (ignore time-of-day)
+    now.setHours(0, 0, 0, 0);
     return this.performancesBase
       .map(p => {
         const { daysOffset, ...performance } = p;
@@ -129,13 +131,24 @@ export class MockDataService {
 
   static createPerformance(data: Partial<IPerformance>): IPerformance {
     // For created performances, use 30 days from now as default
-    const daysOffset = 30;
-    const date = data.date || this.getDateFromNow(daysOffset);
-    const daysFromNow = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const defaultDaysOffset = 30;
+    // Accept date as Date or ISO string from JSON body
+    const rawDate = data.date as unknown;
+    const parsedDate = rawDate ? new Date(rawDate as string | number | Date) : this.getDateFromNow(defaultDaysOffset);
+    const safeDate = Number.isNaN(parsedDate.getTime()) ? this.getDateFromNow(defaultDaysOffset) : parsedDate;
+
+    // Calculate offset in whole days (based on start-of-day) so "today" works
+    const nowStart = new Date();
+    nowStart.setHours(0, 0, 0, 0);
+    const dateStart = new Date(safeDate);
+    dateStart.setHours(0, 0, 0, 0);
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const daysFromNow = Math.ceil((dateStart.getTime() - nowStart.getTime()) / msPerDay);
     
     const newPerformanceBase = {
       _id: Date.now().toString(),
-      daysOffset: daysFromNow > 0 ? daysFromNow : 30,
+      // Keep 0 for "today", allow negative for past dates, fallback to default only if invalid
+      daysOffset: Number.isFinite(daysFromNow) ? daysFromNow : defaultDaysOffset,
       eventName: data.eventName || '',
       venueName: data.venueName || '',
       city: data.city || '',
@@ -166,8 +179,18 @@ export class MockDataService {
     // Update daysOffset if date is provided
     let daysOffset = this.performancesBase[index].daysOffset;
     if (data.date) {
-      const daysFromNow = Math.ceil((new Date(data.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-      daysOffset = daysFromNow > 0 ? daysFromNow : 30;
+      const parsedDate = new Date(data.date as unknown as string | number | Date);
+      if (!Number.isNaN(parsedDate.getTime())) {
+        const nowStart = new Date();
+        nowStart.setHours(0, 0, 0, 0);
+        const dateStart = new Date(parsedDate);
+        dateStart.setHours(0, 0, 0, 0);
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const daysFromNow = Math.ceil((dateStart.getTime() - nowStart.getTime()) / msPerDay);
+        if (Number.isFinite(daysFromNow)) {
+          daysOffset = daysFromNow;
+        }
+      }
     }
     
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

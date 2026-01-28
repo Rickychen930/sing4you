@@ -64,9 +64,10 @@ export class PerformanceModel {
   public static async findAll(): Promise<IPerformance[]> {
     try {
       const model = this.getModel();
-      // Only return upcoming performances (date >= now)
-      const now = new Date();
-      return await model.find({ date: { $gte: now } }).sort({ date: 1 }).lean();
+      // Only return upcoming performances (today or later; ignore time-of-day)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return await model.find({ date: { $gte: today } }).sort({ date: 1 }).lean();
     } catch {
       return [];
     }
@@ -75,8 +76,9 @@ export class PerformanceModel {
   public static async findUpcoming(): Promise<IPerformance[]> {
     try {
       const model = this.getModel();
-      const now = new Date();
-      return await model.find({ date: { $gte: now } }).sort({ date: 1 }).lean();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return await model.find({ date: { $gte: today } }).sort({ date: 1 }).lean();
     } catch {
       return [];
     }
