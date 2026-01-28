@@ -44,12 +44,20 @@
     
     <!-- Prevent white flash on initial load -->
     <style>
-      html, body {
+      html {
+        /* Only html should scroll - prevent double scrollbar */
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      body {
         margin: 0;
         padding: 0;
         background-color: #0a0e1a !important;
         background: linear-gradient(135deg, #0a0e1a 0%, #102a43 25%, #1a1a2e 50%, #16213e 75%, #0a0e1a 100%) !important;
         min-height: 100vh;
+        /* CRITICAL: Prevent body from creating scrollbar - html handles scrolling */
+        overflow-x: hidden;
+        overflow-y: visible;
         /* Performance optimizations */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -59,6 +67,9 @@
         background-color: #0a0e1a;
         background: linear-gradient(135deg, #0a0e1a 0%, #102a43 25%, #1a1a2e 50%, #16213e 75%, #0a0e1a 100%);
         min-height: 100vh;
+        /* Prevent double scrollbar - root should not scroll, only html should scroll */
+        overflow: visible;
+        position: relative;
       }
       /* Prevent layout shift */
       img, video {

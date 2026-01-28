@@ -160,3 +160,13 @@ export interface IAboutPageSettings {
   ctaTitle: string;
   ctaDescription: string;
 }
+
+export interface IFAQ {
+  _id?: string;
+  question: string;
+  answer: string;
+  order?: number; // Display order
+  isActive?: boolean; // Show/hide FAQ
+  createdAt?: Date;
+  updatedAt?: Date;
+}

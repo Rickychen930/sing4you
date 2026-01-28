@@ -22,6 +22,9 @@ const PerformancesPage = lazy(() =>
 );
 const PerformanceDetailPage = lazy(() => import('./client/pages/public/PerformanceDetailPage').then(m => ({ default: m.PerformanceDetailPage })));
 const ContactPage = lazy(() => import('./client/pages/public/ContactPage').then(m => ({ default: m.ContactPage })));
+const FAQPage = lazy(() => import('./client/pages/public/FAQPage').then(m => ({ default: m.FAQPage })));
+const PrivacyPolicyPage = lazy(() => import('./client/pages/public/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const TermsOfServicePage = lazy(() => import('./client/pages/public/TermsOfServicePage').then(m => ({ default: m.TermsOfServicePage })));
 const CategoriesPage = lazy(() => import('./client/pages/public/CategoriesPage').then(m => ({ default: m.CategoriesPage })));
 const VariationsPage = lazy(() => 
   import('./client/pages/public/VariationsPage')
@@ -42,6 +45,7 @@ const HeroManagementPage = lazy(() => import('./client/pages/admin/HeroManagemen
 const AboutManagementPage = lazy(() => import('./client/pages/admin/AboutManagementPage').then(m => ({ default: m.AboutManagementPage })));
 const PerformancesManagementPage = lazy(() => import('./client/pages/admin/PerformancesManagementPage').then(m => ({ default: m.PerformancesManagementPage })));
 const TestimonialsManagementPage = lazy(() => import('./client/pages/admin/TestimonialsManagementPage').then(m => ({ default: m.TestimonialsManagementPage })));
+const FAQManagementPage = lazy(() => import('./client/pages/admin/FAQManagementPage').then(m => ({ default: m.FAQManagementPage })));
 const SEOManagementPage = lazy(() => import('./client/pages/admin/SEOManagementPage').then(m => ({ default: m.SEOManagementPage })));
 const CategoriesAndVariationsManagementPage = lazy(() => import('./client/pages/admin/CategoriesAndVariationsManagementPage').then(m => ({ default: m.CategoriesAndVariationsManagementPage })));
 
@@ -159,6 +163,9 @@ function App() {
                 <Route path="categories" element={<CategoriesPage />} />
                 <Route path="categories/:categoryId" element={<VariationsPage />} />
                 <Route path="variations/:variationId" element={<VariationDetailPage />} />
+                <Route path="faq" element={<FAQPage />} />
+                <Route path="privacy" element={<PrivacyPolicyPage />} />
+                <Route path="terms" element={<TermsOfServicePage />} />
                 <Route path="contact" element={<ContactPage />} />
               </Route>
 
@@ -201,6 +208,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <TestimonialsManagementPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/faq"
+                element={
+                  <PrivateRoute>
+                    <FAQManagementPage />
                   </PrivateRoute>
                 }
               />

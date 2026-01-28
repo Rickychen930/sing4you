@@ -54,12 +54,18 @@ export const SEO: React.FC<SEOProps> = memo(({
       
       {/* Robots */}
       {(noindex || nofollow) ? (
-        <meta name="robots" content={`${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`} />
+        <>
+          <meta name="robots" content={`${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`} />
+          <meta name="googlebot" content={`${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`} />
+          <meta name="bingbot" content={`${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`} />
+        </>
       ) : (
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <>
+          <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+          <meta name="googlebot" content="index, follow" />
+          <meta name="bingbot" content="index, follow" />
+        </>
       )}
-      <meta name="googlebot" content="index, follow" />
-      <meta name="bingbot" content="index, follow" />
       
       {/* Open Graph / Facebook - Optimized for Google Search Results */}
       <meta property="og:type" content={type} />

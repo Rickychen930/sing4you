@@ -24,26 +24,22 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  if (!media || media.length === 0) return null;
-
-  const safeIndex = Math.max(0, Math.min(activeIndex, media.length - 1));
-  const activeMedia = media[safeIndex];
-
+  // All hooks must be called before any early returns
   const goTo = useCallback((index: number) => {
-    if (index < 0 || index >= media.length) return;
+    if (index < 0 || index >= (media?.length || 0)) return;
     setActiveIndex(index);
-  }, [media.length]);
+  }, [media?.length]);
 
   const goPrev = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + media.length) % media.length);
-  }, [media.length]);
+    setActiveIndex((prev) => (prev - 1 + (media?.length || 0)) % (media?.length || 1));
+  }, [media?.length]);
 
   const goNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % media.length);
-  }, [media.length]);
+    setActiveIndex((prev) => (prev + 1) % (media?.length || 1));
+  }, [media?.length]);
 
   useEffect(() => {
-    if (!autoPlay || media.length <= 1) return;
+    if (!autoPlay || !media || media.length <= 1) return;
     if (pauseOnHover && isHovered) return;
 
     const id = window.setInterval(() => {
@@ -53,7 +49,14 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
     return () => {
       window.clearInterval(id);
     };
-  }, [autoPlay, autoPlayIntervalMs, media.length, goNext, pauseOnHover, isHovered]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlay, autoPlayIntervalMs, media?.length, goNext, pauseOnHover, isHovered]); // media intentionally excluded to avoid re-creating interval on array reference change
+
+  // Early return after all hooks
+  if (!media || media.length === 0) return null;
+
+  const safeIndex = Math.max(0, Math.min(activeIndex, media.length - 1));
+  const activeMedia = media[safeIndex];
 
   return (
     <div
@@ -62,14 +65,14 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
       onMouseLeave={() => pauseOnHover && setIsHovered(false)}
     >
       {/* Main media */}
-      <div className="relative w-full aspect-video bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 rounded-xl sm:rounded-2xl overflow-hidden group">
-        {/* Glow */}
-        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/20 via-musical-500/20 to-gold-500/20 rounded-2xl opacity-0 group-hover:opacity-80 transition-opacity duration-300 blur-xl pointer-events-none" aria-hidden />
+      <div className="relative w-full aspect-video bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 rounded-xl sm:rounded-2xl overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,194,51,0.3)] transition-all duration-500">
+        {/* Enhanced glow on hover */}
+        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/25 via-musical-500/25 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none" aria-hidden />
         {isVideo(activeMedia) ? (
           <video
             key={activeMedia}
             src={activeMedia}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
             controls
             preload="metadata"
           />
@@ -78,10 +81,12 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
             key={activeMedia}
             src={activeMedia}
             alt={`Performance media ${safeIndex + 1}`}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
             fadeIn
           />
         )}
+        {/* Subtle overlay for better visual depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden />
 
         {/* Controls */}
         {media.length > 1 && (
@@ -127,10 +132,10 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
               type="button"
               onClick={() => goTo(index)}
               className={cn(
-                'relative flex-shrink-0 w-20 h-14 sm:w-28 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200',
+                'relative flex-shrink-0 w-20 h-14 sm:w-28 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 group/thumb',
                 index === safeIndex
-                  ? 'border-gold-400 shadow-[0_0_12px_rgba(255,194,51,0.6)]'
-                  : 'border-gold-900/40 hover:border-gold-500/70'
+                  ? 'border-gold-400 shadow-[0_0_16px_rgba(255,194,51,0.7)] scale-105'
+                  : 'border-gold-900/40 hover:border-gold-500/70 hover:scale-105 hover:shadow-[0_0_12px_rgba(255,194,51,0.4)]'
               )}
               aria-label={`Go to media ${index + 1}`}
             >

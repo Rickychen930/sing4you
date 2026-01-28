@@ -104,7 +104,7 @@ export const VariationList: React.FC<VariationListProps> = memo(({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="animate-fade-in-up variation-list-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
-              <Card className="h-full min-h-[140px] sm:min-h-[160px]">
+              <Card className="h-full min-h-[200px] sm:min-h-[220px]">
                 <CardBody>
                   <div className="h-6 sm:h-7 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
                   <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
@@ -170,26 +170,26 @@ export const VariationList: React.FC<VariationListProps> = memo(({
               aria-label={`View ${variation.name} variation details`}
             >
               <Card 
-                className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[140px] sm:min-h-[160px] group overflow-hidden" 
+                className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[200px] sm:min-h-[220px] group overflow-hidden" 
                 hover
               >
                 <CardBody className="relative flex flex-col h-full p-0">
                   {/* Featured Image */}
                   {variation.featuredImage && (
-                    <div className="relative w-full h-40 sm:h-48 lg:h-56 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
+                    <div className="relative w-full h-48 sm:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
                       <LazyImage
                         src={variation.featuredImage}
                         alt={variation.name}
-                        className="w-full h-full object-contain bg-black transition-transform duration-500 group-hover:scale-[1.02]"
+                        className="w-full h-full object-cover bg-black transition-all duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      {/* Enhanced gradient overlay with hover effect */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent group-hover:from-jazz-900/70 group-hover:via-jazz-900/25 transition-all duration-500" />
+                      {/* Subtle glow on hover */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/10 via-transparent to-transparent pointer-events-none" />
                     </div>
                   )}
                   
                   <div className={`relative flex flex-col h-full ${variation.featuredImage ? 'p-4 sm:p-5 lg:p-6' : 'p-4 sm:p-5 lg:p-6'}`}>
-                    <div className="absolute top-2 right-2 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 variation-card-musical-1" aria-hidden>♪</div>
-                    <div className="absolute bottom-2 left-2 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 variation-card-musical-2" aria-hidden>♫</div>
                     <div className="relative z-10 flex flex-col h-full">
                       <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300">
                         {variation.name}

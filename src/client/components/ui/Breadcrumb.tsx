@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { memo, useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/helpers';
 
 interface BreadcrumbItem {
@@ -14,31 +14,47 @@ interface BreadcrumbProps {
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = memo(({ items, className }) => {
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
-  
-  if (items.length === 0) return null;
+  const location = useLocation();
 
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.label,
-      ...(item.path && { item: `${siteUrl}${item.path}` }),
-    })),
-  };
+  const breadcrumbSchema = useMemo(() => {
+    if (items.length === 0) return null;
+    const currentPath = location.pathname;
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items.map((item, index) => {
+        const itemUrl = item.path
+          ? `${siteUrl}${item.path}`
+          : index === items.length - 1
+            ? `${siteUrl}${currentPath}`
+            : undefined;
+        return {
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.label,
+          ...(itemUrl && { item: itemUrl }),
+        };
+      }),
+    };
+  }, [items, siteUrl, location.pathname]);
+
+  if (items.length === 0) return null;
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <nav 
-        className={cn('flex items-center space-x-2 text-sm sm:text-base lg:text-lg mb-5 sm:mb-7 lg:mb-9', className)}
+      {breadcrumbSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
+      )}
+      <nav
+        className={cn('flex items-center space-x-2 text-sm sm:text-base lg:text-lg mb-5 sm:mb-7 lg:mb-9 relative', className)}
         aria-label="Breadcrumb"
       >
-      <ol className="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-3">
+        {/* Subtle decorative accent */}
+        <div className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 w-1 h-6 sm:h-8 bg-gradient-to-b from-gold-500/40 via-gold-400/30 to-transparent rounded-full opacity-60" aria-hidden="true" />
+        <ol className="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-3 relative z-10">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           

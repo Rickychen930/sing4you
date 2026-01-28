@@ -7,6 +7,7 @@ import { Card, CardBody, CardFooter } from '../../components/ui/Card';
 import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
+import { DecorativeEffects } from '../../components/ui/DecorativeEffects';
 
 export const PerformancesPage: React.FC = memo(() => {
   const [performances, setPerformances] = useState<IPerformance[]>([]);
@@ -103,8 +104,10 @@ export const PerformancesPage: React.FC = memo(() => {
       <SectionWrapper
         title="All Performances"
         subtitle="Upcoming events and performances"
-        className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25"
+        className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative"
+        divider
       >
+        <DecorativeEffects fireworks stageLights musicalNotes className="opacity-20" />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {[...Array(6)].map((_, i) => (

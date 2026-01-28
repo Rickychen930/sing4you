@@ -123,7 +123,10 @@ const GalleryItem: React.FC<GalleryItemProps> = memo(({ url, index, isVideo, onS
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-jazz-800/80 to-jazz-900/80 animate-pulse" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden />
+          {/* Enhanced gradient overlay with hover effect */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden />
+          {/* Subtle gold glow on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/15 via-transparent to-transparent pointer-events-none" aria-hidden />
           <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 text-white text-lg sm:text-xl lg:text-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 pointer-events-none drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.5)] bg-gold-500/80 group-hover:bg-gold-500 rounded-full p-2 sm:p-2.5 backdrop-blur-sm border-2 border-white/30 group-hover:border-gold-300/60 transition-all duration-300" aria-hidden>
             <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
@@ -152,9 +155,12 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   
-  // Reset visible count when media changes
+  // Reset visible count when media changes (use setTimeout to avoid synchronous setState)
   useEffect(() => {
-    setVisibleCount(itemsPerPage);
+    const timer = setTimeout(() => {
+      setVisibleCount(itemsPerPage);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [media.length, itemsPerPage]);
 
   // Determine if pagination should be used
@@ -239,12 +245,9 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({
     };
   }, []);
 
-  if (media.length === 0) {
-    return null;
-  }
-
-  // Memoize media items to prevent unnecessary re-renders
+  // Memoize media items to prevent unnecessary re-renders (before early return)
   const mediaItems = useMemo(() => {
+    if (media.length === 0) return [];
     return visibleMedia.map((url, index) => (
       <GalleryItem
         key={url} // Use URL as key for better React reconciliation
@@ -254,12 +257,17 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({
         onSelect={handleSelect}
       />
     ));
-  }, [visibleMedia, isVideo, handleSelect]);
+  }, [visibleMedia, isVideo, handleSelect, media.length]);
 
-  // Load more handler
+  // Load more handler (before early return)
   const handleLoadMore = useCallback(() => {
     setVisibleCount((prev) => Math.min(prev + itemsPerPage, media.length));
   }, [itemsPerPage, media.length]);
+
+  // Early return after all hooks
+  if (media.length === 0) {
+    return null;
+  }
 
   return (
     <>

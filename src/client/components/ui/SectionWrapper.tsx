@@ -11,6 +11,10 @@ interface SectionWrapperProps {
   alternate?: boolean;
   /** Optional click handler for the title/header area (e.g. navigate on click). */
   onTitleClick?: () => void;
+  /** Optional aria-label for the section (e.g. "Call to action"). */
+  ariaLabel?: string;
+  /** Optional gradient divider line below section. */
+  divider?: boolean;
 }
 
 export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
@@ -21,6 +25,8 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
   subtitle,
   alternate = false,
   onTitleClick,
+  ariaLabel,
+  divider = false,
 }) => {
   const sectionClassName = useMemo(() => cn(
     'py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden',
@@ -29,55 +35,52 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
   ), [alternate, className]);
   
   return (
-    <section 
-      id={id} 
+    <section
+      id={id}
       className={sectionClassName}
+      aria-label={ariaLabel}
     >
-      <div className="absolute inset-0 opacity-20 pointer-events-none z-0 section-wrapper-bg" aria-hidden>
-        <div className="absolute top-0 left-0 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full blur-2xl section-wrapper-glow-gold" />
-        <div className="absolute bottom-0 right-0 w-72 h-72 sm:w-96 sm:h-96 rounded-full blur-2xl section-wrapper-glow-purple" />
+      {/* Subtle background glow effects - performance optimized */}
+      <div className="absolute inset-0 opacity-[0.08] pointer-events-none z-0" aria-hidden>
+        <div className="absolute top-0 left-0 w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-3xl bg-gold-500/20 section-glow-gold" />
+        <div className="absolute bottom-0 right-0 w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-3xl bg-musical-500/15 section-glow-purple" />
       </div>
-      
-      {id && (
-        <div className="absolute inset-0 pointer-events-none opacity-[0.08] sm:opacity-[0.06]" aria-hidden>
-          <span className="absolute top-8 left-8 sm:left-12 text-xl sm:text-2xl text-gold-400/30 font-musical animate-float">♪</span>
-          <span className="absolute bottom-16 right-8 sm:right-12 text-lg sm:text-xl text-musical-400/30 font-musical animate-float section-wrapper-musical-delay">♫</span>
-        </div>
-      )}
+      {/* Subtle texture pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.02] pointer-events-none z-0 section-texture"
+        aria-hidden="true"
+      />
       <div className="max-w-7xl mx-auto relative z-10">
         {(title || subtitle) && (
           <header className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-14">
             {title && (
               <div className="relative inline-block mb-2 sm:mb-3">
-                <div className="absolute -inset-4 sm:-inset-6 bg-gold-500/10 rounded-full blur-2xl opacity-60" aria-hidden />
                 {onTitleClick ? (
                   <button
                     type="button"
                     onClick={onTitleClick}
-                    className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 hover:scale-[1.02] transition-transform duration-300"
+                    className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 hover:opacity-90 transition-opacity duration-300"
                     aria-label={title}
                   >
                     {title}
-                    <span className="absolute -top-1 -right-2 sm:-right-4 text-base sm:text-lg lg:text-xl opacity-40 font-musical animate-float" aria-hidden>♪</span>
                   </button>
                 ) : (
                   <h2 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                     {title}
-                    <span className="absolute -top-1 -right-2 sm:-right-4 text-base sm:text-lg lg:text-xl opacity-40 font-musical animate-float" aria-hidden>♪</span>
                   </h2>
                 )}
               </div>
             )}
             {subtitle && (
-              <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 max-w-2xl mx-auto px-4 sm:px-6 font-sans leading-relaxed pb-4">
+              <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 max-w-2xl mx-auto px-4 sm:px-6 font-sans leading-relaxed">
                 {subtitle}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 sm:w-28 md:w-36 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full" aria-hidden />
               </p>
             )}
           </header>
         )}
         {children}
       </div>
+      {divider && <div className="theme-section-divider mt-10 sm:mt-12 lg:mt-14" aria-hidden="true" />}
     </section>
   );
 }, (prevProps, nextProps) => {
@@ -87,7 +90,9 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
     prevProps.id === nextProps.id &&
     prevProps.title === nextProps.title &&
     prevProps.subtitle === nextProps.subtitle &&
-    prevProps.alternate === nextProps.alternate
+    prevProps.alternate === nextProps.alternate &&
+    prevProps.ariaLabel === nextProps.ariaLabel &&
+    prevProps.divider === nextProps.divider
   );
 });
 

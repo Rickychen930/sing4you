@@ -1,9 +1,11 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState, memo, useMemo } from 'react';
 import type { ITestimonial } from '../../../shared/interfaces';
 import { testimonialService } from '../../services/testimonialService';
 import { SectionWrapper } from '../ui/SectionWrapper';
 import { TestimonialCard } from '../ui/TestimonialCard';
 import { Card, CardBody } from '../ui/Card';
+import { EmptyState } from '../ui/EmptyState';
+import { DecorativeEffects } from '../ui/DecorativeEffects';
 
 export const Testimonials: React.FC = memo(() => {
   const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);
@@ -42,6 +44,17 @@ export const Testimonials: React.FC = memo(() => {
     };
   }, []);
 
+  const aggregateRating = useMemo(() => {
+    const ratings = testimonials.filter(t => t.rating).map(t => t.rating!);
+    if (ratings.length === 0) return null;
+    const avg = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+    return {
+      average: avg.toFixed(1),
+      count: ratings.length,
+      total: testimonials.length,
+    };
+  }, [testimonials]);
+
   if (loading) {
     return (
       <SectionWrapper
@@ -74,25 +87,77 @@ export const Testimonials: React.FC = memo(() => {
 
   return (
     <SectionWrapper
+      id="testimonials"
       title="What Our Clients Say"
       subtitle="Read testimonials from our satisfied clients"
       className="bg-gradient-to-br from-musical-900/30 via-jazz-900/20 to-gold-900/20 relative overflow-hidden"
+      divider
     >
+      <DecorativeEffects musicalNotes sparkles className="opacity-20" />
+      {/* Decorative line above testimonials */}
+      <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       {testimonials.length === 0 ? (
-        <div className="text-center py-10 sm:py-12 lg:py-16">
-          <p className="text-gray-200 font-sans text-base sm:text-lg lg:text-xl">No testimonials available yet. Check back soon!</p>
+        <div className="relative z-10">
+          <EmptyState
+            icon="💬"
+            title="No testimonials yet"
+            description="Check back soon for reviews from our clients."
+          />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={testimonial._id}
-              className="animate-fade-in-up testimonials-item"
-              style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
-            >
-              <TestimonialCard testimonial={testimonial} />
+        <div className="relative z-10">
+          {aggregateRating && (
+            <div className="mb-8 sm:mb-10 lg:mb-12">
+              <Card className="max-w-2xl mx-auto">
+                <CardBody className="text-center">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+                    <div>
+                      <div className="text-4xl sm:text-5xl md:text-6xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-2">
+                        {aggregateRating.average}
+                      </div>
+                      <div
+                        className="flex justify-center gap-0.5 mb-2"
+                        role="img"
+                        aria-label={`${aggregateRating.average} out of 5 stars`}
+                      >
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className="w-5 h-5 sm:w-6 sm:h-6 text-gold-400"
+                            fill={i < Math.round(parseFloat(aggregateRating.average)) ? 'currentColor' : 'none'}
+                            stroke="currentColor"
+                            viewBox="0 0 20 20"
+                            aria-hidden="true"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-left sm:text-center">
+                      <p className="text-gray-200 font-sans text-base sm:text-lg">
+                        Based on <span className="text-gold-300 font-semibold">{aggregateRating.count}</span> verified reviews
+                      </p>
+                      <p className="text-gray-400 font-sans text-sm sm:text-base mt-1">
+                        from {aggregateRating.total} happy clients
+                      </p>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
             </div>
-          ))}
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={testimonial._id}
+                className="animate-fade-in-up testimonials-item"
+                style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
+              >
+                <TestimonialCard testimonial={testimonial} />
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </SectionWrapper>

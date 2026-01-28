@@ -1,8 +1,12 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { Hero } from '../../components/sections/Hero';
 import { ServicesSection } from '../../components/sections/ServicesSection';
+import { TrustSection } from '../../components/sections/TrustSection';
+import { BookingProcess } from '../../components/sections/BookingProcess';
 import { UpcomingPerformances } from '../../components/sections/UpcomingPerformances';
 import { Testimonials } from '../../components/sections/Testimonials';
+import { FAQSection } from '../../components/sections/FAQSection';
+import { CTASection } from '../../components/ui/CTASection';
 import { SEO, JSONLDSchema } from '../../components/ui/SEO';
 import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 import { testimonialService } from '../../services/testimonialService';
@@ -215,11 +219,75 @@ export const HomePage: React.FC = () => {
       description: 'Professional singer offering elegant live vocals for weddings, corporate events, and private occasions in Sydney, NSW.',
       publisher: { '@id': `${siteUrl}#organization` },
       inLanguage: 'en-AU',
+      mainEntity: { '@id': `${siteUrl}#organization` },
       potentialAction: {
         '@type': 'SearchAction',
         target: { '@type': 'EntryPoint', urlTemplate: `${siteUrl}/search?q={search_term_string}` },
         'query-input': 'required name=search_term_string',
       },
+    }),
+    [siteUrl]
+  );
+
+  const siteNavigationSchema = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'SiteNavigationElement',
+      '@id': `${siteUrl}#mainnavigation`,
+      name: 'Main Navigation',
+      url: siteUrl,
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            url: `${siteUrl}/`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'About',
+            url: `${siteUrl}/about`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: 'Services',
+            url: `${siteUrl}/categories`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 4,
+            name: 'Performances',
+            url: `${siteUrl}/performances`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 5,
+            name: 'Contact',
+            url: `${siteUrl}/contact`,
+          },
+        ],
+      },
+    }),
+    [siteUrl]
+  );
+
+  const breadcrumbSchema = useMemo(
+    () => ({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      '@id': `${siteUrl}#breadcrumb`,
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: `${siteUrl}/`,
+        },
+      ],
     }),
     [siteUrl]
   );
@@ -246,13 +314,26 @@ export const HomePage: React.FC = () => {
       <JSONLDSchema schema={serviceSchema} />
       {reviewSchema && <JSONLDSchema schema={reviewSchema} />}
       <JSONLDSchema schema={websiteSchema} />
+      <JSONLDSchema schema={siteNavigationSchema} />
+      <JSONLDSchema schema={breadcrumbSchema} />
       <Hero />
+      <TrustSection />
       <ServicesSection
         title="Our Services"
         subtitle="Explore our range of performance styles from solo to full band"
       />
+      <BookingProcess />
       <UpcomingPerformances />
       <Testimonials />
+      <FAQSection
+        title="Frequently Asked Questions"
+        subtitle="Quick answers to common questions about booking and our services"
+      />
+      <CTASection
+        title="Ready to Make Your Event Unforgettable?"
+        description="Join 500+ happy clients. Book Christina for weddings, corporate events & private occasions — Sydney’s trusted vocalist."
+        showContactButtons
+      />
     </>
   );
 };

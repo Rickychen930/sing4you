@@ -11,6 +11,7 @@ import { SEO } from '../../components/ui/SEO';
 import type { ICategory } from '../../../shared/interfaces';
 import { apiClient } from '../../services/api';
 import { AutoGridGallery } from '../../components/ui/AutoGridGallery';
+import { DecorativeEffects } from '../../components/ui/DecorativeEffects';
 
 export const VariationsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -87,7 +88,7 @@ export const VariationsPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="animate-fade-in-up variations-page-skeleton-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
-                <Card className="h-full min-h-[140px] sm:min-h-[160px]">
+                <Card className="h-full min-h-[200px] sm:min-h-[220px]">
                   <CardBody>
                     <div className="h-6 sm:h-7 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
                     <div className="h-3 sm:h-4 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-2 w-full animate-pulse-soft skeleton-shimmer"></div>
@@ -145,31 +146,27 @@ export const VariationsPage: React.FC = () => {
       </div>
       
       {/* Hero Section */}
-      <SectionWrapper id="variations-hero" className="pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-6 lg:pb-8">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
-          <div className="relative inline-block mb-5 sm:mb-6 lg:mb-8">
-            {/* Glow effect behind title */}
-            <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gold-500/15 rounded-full blur-2xl opacity-70" aria-hidden />
-            <div className="absolute -inset-8 sm:-inset-12 bg-musical-500/10 rounded-full blur-2xl opacity-50" aria-hidden />
-            <h1 className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
-              {category.name}
-            </h1>
+      <SectionWrapper 
+        id="variations-hero"
+        className="relative pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-6 lg:pb-8"
+        title={category.name}
+        subtitle={category.description}
+        divider
+      >
+        <DecorativeEffects musicalNotes sparkles className="opacity-30" />
+        {category.featuredImage && (
+          <div className="max-w-4xl mx-auto mt-8 sm:mt-10 lg:mt-12 px-4 sm:px-6">
+            <Card>
+              <CardBody className="p-0 overflow-hidden">
+                <img
+                  src={category.featuredImage}
+                  alt={category.name}
+                  className="w-full h-auto max-h-[420px] sm:max-h-[520px] object-contain"
+                />
+              </CardBody>
+            </Card>
           </div>
-          {category.description && (
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 leading-relaxed max-w-3xl mx-auto">
-              {category.description}
-            </p>
-          )}
-          {category.featuredImage && (
-            <div className="mt-8 sm:mt-10 lg:mt-12 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-gold-900/40 bg-black">
-              <img
-                src={category.featuredImage}
-                alt={category.name}
-                className="w-full h-auto max-h-[420px] sm:max-h-[520px] object-contain"
-              />
-            </div>
-          )}
-        </div>
+        )}
       </SectionWrapper>
 
       {/* Mini gallery untuk kategori – 1 baris, auto-play (seperti strip berjalan) */}
@@ -179,7 +176,9 @@ export const VariationsPage: React.FC = () => {
           className="pt-2 sm:pt-4 lg:pt-6 pb-6 sm:pb-8 lg:pb-10"
           title={`Highlights from ${category.name}`}
           subtitle="A glimpse of performances in this category"
+          divider
         >
+          <DecorativeEffects stageLights className="opacity-20" />
           <div className="max-w-6xl mx-auto px-2 sm:px-4">
             <AutoGridGallery
               media={category.media}

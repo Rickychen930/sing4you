@@ -13,6 +13,7 @@ import { CategoryController } from '../controllers/CategoryController';
 import { VariationController } from '../controllers/VariationController';
 import { MediaController } from '../controllers/MediaController';
 import { AboutPageController } from '../controllers/AboutPageController';
+import { FAQController } from '../controllers/FAQController';
 import { authMiddleware } from '../middlewares/auth';
 import { rateLimiter, authRateLimiter } from '../middlewares/rateLimiter';
 
@@ -150,6 +151,7 @@ const seoController = new SEOController();
 const contactController = new ContactController();
 const sitemapController = new SitemapController();
 const aboutPageController = new AboutPageController();
+const faqController = new FAQController();
 
 // Hero
 router.get('/api/hero', heroController.getSettings);
@@ -171,6 +173,10 @@ router.get('/api/performances/:id', performanceController.getById);
 // Testimonials
 router.get('/api/testimonials', testimonialController.getAll);
 router.get('/api/testimonials/:id', testimonialController.getById);
+
+// FAQ
+router.get('/api/faq', faqController.getAll);
+router.get('/api/faq/:id', faqController.getById);
 
 
 // Categories
@@ -230,6 +236,11 @@ router.delete('/api/admin/performances/:id', authMiddleware, performanceControll
 router.post('/api/admin/testimonials', authMiddleware, testimonialController.create);
 router.put('/api/admin/testimonials/:id', authMiddleware, testimonialController.update);
 router.delete('/api/admin/testimonials/:id', authMiddleware, testimonialController.delete);
+
+// Admin FAQ
+router.post('/api/admin/faq', authMiddleware, faqController.create);
+router.put('/api/admin/faq/:id', authMiddleware, faqController.update);
+router.delete('/api/admin/faq/:id', authMiddleware, faqController.delete);
 
 
 // Admin SEO

@@ -161,6 +161,7 @@ export const DashboardPage: React.FC = () => {
     { id: 'about', title: 'About Page', description: 'Manage about page content, hero, story, and gallery', path: '/admin/about', icon: '📖', category: 'content' },
     { id: 'performances', title: 'Performances', description: 'Manage upcoming performances with featured images, descriptions, and photo galleries', path: '/admin/performances', icon: '🎭', category: 'content', count: stats.performances },
     { id: 'testimonials', title: 'Testimonials', description: 'Manage client testimonials', path: '/admin/testimonials', icon: '💬', category: 'content', count: stats.testimonials },
+    { id: 'faq', title: 'FAQ Management', description: 'Manage frequently asked questions', path: '/admin/faq', icon: '❓', category: 'content' },
     { id: 'categories', title: 'Categories & Variations', description: 'Manage categories and their variations in one place', path: '/admin/categories', icon: '📂', category: 'management', count: stats.categories + stats.variations },
     { id: 'seo', title: 'SEO Settings', description: 'Manage SEO metadata and settings', path: '/admin/seo', icon: '🔍', category: 'settings' },
   ], [stats]);

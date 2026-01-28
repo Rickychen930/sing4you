@@ -4,7 +4,8 @@ import type { IHeroSettings } from '../../../shared/interfaces';
 import { heroService } from '../../services/heroService';
 import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
-// import { FireworkEffect } from '../ui/FireworkEffect'; // Disabled for performance
+import { TrustBadges } from './TrustBadges';
+import { DecorativeEffects } from '../ui/DecorativeEffects';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { generateMailtoLink } from '../../../shared/utils/email';
 
@@ -136,7 +137,7 @@ export const Hero: FC = memo(() => {
   return (
     <section 
       id="hero" 
-      className="relative w-full flex items-center justify-center overflow-hidden particle-bg -mt-16 lg:-mt-20 pt-16 lg:pt-20 hero-section-bg"
+      className="relative w-full flex items-center justify-center overflow-visible -mt-16 lg:-mt-20 pt-16 lg:pt-20 hero-section-bg min-h-[85vh] sm:min-h-[90vh]"
     >
       {/* Disabled FireworkEffect for better performance */}
       {/* <FireworkEffect
@@ -176,7 +177,10 @@ export const Hero: FC = memo(() => {
               }}
               aria-hidden="true"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 via-musical-900/60 to-jazz-900/80" />
+            {/* Enhanced multi-layer gradient overlay for better text readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/85 via-jazz-800/75 via-musical-900/65 to-jazz-900/85" />
+            {/* Subtle radial gradient for depth */}
+            <div className="absolute inset-0 bg-radial-gradient from-gold-500/5 via-transparent to-transparent" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,194,51,0.08) 0%, transparent 70%)' }} />
             <div className="absolute inset-0" />
           </div>
         ) : (
@@ -186,35 +190,51 @@ export const Hero: FC = memo(() => {
         )}
       </div>
 
-      <div className="absolute inset-0 pointer-events-none z-[5] overflow-hidden" aria-hidden>
-        <span className="absolute top-1/4 left-8 sm:left-12 text-4xl sm:text-5xl lg:text-6xl text-gold-400/20 font-musical animate-float select-none hero-musical-note-1">♪</span>
-        <span className="absolute top-1/3 right-12 sm:right-16 text-3xl sm:text-4xl lg:text-5xl text-musical-400/20 font-musical animate-float select-none hero-musical-note-2">♫</span>
-        <span className="absolute bottom-1/3 left-1/4 text-4xl sm:text-5xl lg:text-6xl text-gold-400/15 font-musical animate-float select-none hero-musical-note-3">♬</span>
+      {/* Subtle decorative elements - performance optimized */}
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none z-[1]" aria-hidden>
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-40 sm:h-40 rounded-full blur-2xl bg-gold-500/15 hero-glow-1" />
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-48 sm:h-48 rounded-full blur-2xl bg-musical-500/12 hero-glow-2" />
       </div>
 
+      {/* Performance-optimized decorative effects */}
+      <DecorativeEffects
+        fireworks
+        musicalNotes
+        mics
+        stageLights
+        sparkles
+        className="z-[1]"
+      />
+      
       <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">
+        {/* Decorative line above title */}
+        <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/50 to-transparent rounded-full mx-auto mb-6 sm:mb-8" aria-hidden="true" />
         <div className="relative inline-block mb-4 sm:mb-5 md:mb-6">
-          <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gold-500/15 rounded-full blur-2xl opacity-70" aria-hidden />
-          <div className="absolute -inset-8 sm:-inset-12 bg-musical-500/10 rounded-full blur-2xl opacity-50 hero-glow-delay" aria-hidden />
+          {/* Subtle decorative accent behind title */}
+          <div className="absolute -inset-4 sm:-inset-6 bg-gold-500/5 rounded-full blur-xl opacity-50" aria-hidden />
           <h1 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold leading-tight px-2 sm:px-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
             {heroSettings.title}
           </h1>
         </div>
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto relative pb-6 hero-subtitle">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-4 sm:mb-6 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto">
           {heroSettings.subtitle}
-          <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/70 to-transparent rounded-full" aria-hidden />
         </p>
+        <TrustBadges variant="hero" />
+        <p className="text-sm sm:text-base text-gold-300/90 font-medium mt-4 sm:mt-5 mb-2 sm:mb-3 font-sans">
+          Trusted for 500+ events across Sydney — weddings, corporate & private occasions
+        </p>
+        <div className="w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto my-6 sm:my-8" aria-hidden />
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-md sm:max-w-lg mx-auto">
           <Button
             variant="primary"
             size="lg"
             onClick={handleWhatsApp}
-            className="w-full sm:w-auto hover-lift-advanced"
+            className="w-full sm:w-auto group hover-lift-advanced shadow-[0_6px_20px_rgba(255,194,51,0.4)] hover:shadow-[0_8px_28px_rgba(255,194,51,0.5)]"
             aria-label="Contact via WhatsApp"
           >
             <span className="flex items-center justify-center gap-2">
               {heroSettings.ctaWhatsApp.text}
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </span>

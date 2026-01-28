@@ -59,30 +59,16 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 sm:px-6 py-10 sm:py-12 lg:py-16 relative overflow-hidden">
-          {/* Enhanced decorative background elements */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.12] sm:opacity-10">
-            <div className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-gold-500/25 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_60px_rgba(255,194,51,0.3)]"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 lg:w-[28rem] lg:h-[28rem] bg-musical-500/25 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_60px_rgba(168,85,247,0.3)] error-boundary-pulse-1"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 sm:w-56 sm:h-56 bg-gold-500/12 rounded-full blur-2xl animate-musical-pulse shadow-[0_0_40px_rgba(255,194,51,0.15)] error-boundary-pulse-2" aria-hidden />
-          </div>
-          <div className="absolute inset-0 pointer-events-none opacity-[0.08] sm:opacity-[0.06]" aria-hidden>
-            <span className="absolute top-10 left-10 text-4xl sm:text-5xl lg:text-6xl text-gold-400/30 font-musical animate-float">♪</span>
-            <span className="absolute bottom-10 right-10 text-3xl sm:text-4xl lg:text-5xl text-musical-400/30 font-musical animate-float error-boundary-musical-note">♫</span>
-          </div>
-          
-          <Card className="max-w-lg w-full relative z-10 hover">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 px-4 sm:px-6 py-10 sm:py-12 lg:py-16">
+          <Card className="max-w-lg w-full">
             <CardHeader className="text-center">
-              <div className="relative inline-block mb-4 sm:mb-5 lg:mb-6">
-                <div className="absolute -inset-4 bg-gold-500/20 rounded-full blur-2xl opacity-60 animate-pulse" aria-hidden />
-                <div className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl relative opacity-80 sm:opacity-70 animate-float error-boundary-icon" aria-hidden>⚠️</div>
-              </div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-4 error-boundary-title">
+              <div className="text-5xl sm:text-6xl mb-4 sm:mb-5 lg:mb-6" aria-hidden>⚠️</div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-4">
                 Oops! Something went wrong
               </h1>
             </CardHeader>
             <CardBody large>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 text-center font-light leading-relaxed error-boundary-message">
+              <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-5 sm:mb-6 text-center leading-relaxed">
                 We apologize for the inconvenience. Please try refreshing the page or returning to the homepage.
               </p>
               {process.env.NODE_ENV === 'development' && this.state.error && (

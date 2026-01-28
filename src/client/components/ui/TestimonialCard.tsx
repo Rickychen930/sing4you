@@ -45,8 +45,6 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = memo(({ testimoni
       aria-label={`Testimonial from ${testimonial.clientName}`}
     >
       <CardBody className="relative flex-grow flex flex-col">
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-xl sm:text-2xl lg:text-3xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 testimonial-card-musical-1" aria-hidden>♫</div>
-        <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-lg sm:text-xl lg:text-2xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 testimonial-card-musical-2" aria-hidden>♪</div>
         <div className="relative z-10 flex-grow flex flex-col">
           <div className="mb-3 sm:mb-4">
             {renderStars}

@@ -3,9 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { BackButton } from '../../components/ui/BackButton';
+import { SocialShareButtons } from '../../components/ui/SocialShareButtons';
+import { DecorativeEffects } from '../../components/ui/DecorativeEffects';
 import { CTASection } from '../../components/ui/CTASection';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { Card, CardBody } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { DescriptionSection } from '../../components/sections/DescriptionSection';
@@ -68,9 +71,20 @@ export const PerformanceDetailPage: React.FC = () => {
             <LoadingSpinner size="lg" />
           </div>
         </div>
-        <SectionWrapper>
-          <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
-            <Card>
+      <SectionWrapper>
+        <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
+          {/* Social Share Buttons */}
+          {performance && (
+            <div className="flex justify-end">
+              <SocialShareButtons
+                url={typeof window !== 'undefined' ? window.location.href : siteUrl}
+                title={`${performance.eventName} - Christina Sings4U`}
+                description={`Check out this performance at ${performance.venueName}, ${performance.city}`}
+                variant="horizontal"
+              />
+            </div>
+          )}
+          <Card>
               <CardBody large>
                 <div className="h-8 sm:h-10 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 sm:mb-5 lg:mb-6 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
                 <div className="h-4 sm:h-5 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-full animate-pulse-soft skeleton-shimmer"></div>
@@ -147,20 +161,33 @@ export const PerformanceDetailPage: React.FC = () => {
           <BackButton to="/performances" />
         </div>
       </div>
-      <SectionWrapper>
-        <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
-          <Card hover>
+      <SectionWrapper className="relative" divider>
+        <DecorativeEffects fireworks stageLights musicalNotes className="opacity-25" />
+        <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12 relative z-10">
+          {/* Decorative line above content */}
+          <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+          {/* Social Share Buttons */}
+          <div className="flex justify-end">
+            <SocialShareButtons
+              url={window.location.href}
+              title={`${performance.eventName} - Christina Sings4U`}
+              description={`Check out this performance at ${performance.venueName}, ${performance.city}`}
+              variant="horizontal"
+            />
+          </div>
+          <Card>
             <CardBody large className="p-0 overflow-hidden">
-              {/* Featured Image - Hero image for the performance */}
               {performance.featuredImage && (
                 <div className="relative w-full h-64 sm:h-80 lg:h-96 overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80">
                   <LazyImage
                     src={performance.featuredImage}
                     alt={performance.eventName}
-                    className="w-full h-full object-contain bg-black transition-transform duration-500 group-hover:scale-[1.02]"
+                    className="w-full h-full object-contain bg-black"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Enhanced gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/75 via-jazz-900/35 to-transparent" />
+                  {/* Subtle radial glow for depth */}
+                  <div className="absolute inset-0 opacity-30 bg-gradient-radial from-gold-500/10 via-transparent to-transparent" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(255,194,51,0.12) 0%, transparent 70%)' }} />
                 </div>
               )}
               
@@ -216,34 +243,39 @@ export const PerformanceDetailPage: React.FC = () => {
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-gold-900/40">
                   {performance.ticketLink && (
                     <a
                       href={performance.ticketLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 px-6 py-3 bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 text-white font-semibold rounded-lg sm:rounded-xl text-center transition-all duration-300 hover:shadow-[0_8px_24px_rgba(255,194,51,0.35)] hover:scale-105"
+                      className="flex-1"
                     >
-                      <span className="flex items-center justify-center gap-2">
-                        Get Tickets
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4v-3a2 2 0 00-2-2H5z" />
-                        </svg>
-                      </span>
+                      <Button variant="primary" size="lg" className="w-full">
+                        <span className="flex items-center justify-center gap-2">
+                          Get Tickets
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4v-3a2 2 0 00-2-2H5z" />
+                          </svg>
+                        </span>
+                      </Button>
                     </a>
                   )}
-                  <button
+                  <Button
+                    variant="outline"
+                    size="lg"
                     onClick={handleGetLocation}
-                    className="flex-1 px-6 py-3 border-2 border-gold-700/60 hover:border-gold-600/80 text-gold-300 hover:text-gold-200 font-semibold rounded-lg sm:rounded-xl text-center transition-all duration-300 hover:bg-gold-900/30"
+                    className="flex-1"
+                    aria-label={`Get location for ${performance.venueName}`}
                   >
                     <span className="flex items-center justify-center gap-2">
                       Get Location
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                     </span>
-                  </button>
+                  </Button>
                 </div>
               </div>
             </CardBody>

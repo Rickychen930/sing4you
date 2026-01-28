@@ -7,6 +7,7 @@ import { PerformanceCard } from '../ui/PerformanceCard';
 import { Card, CardBody, CardFooter } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
 import { Button } from '../ui/Button';
+import { DecorativeEffects } from '../ui/DecorativeEffects';
 
 export const UpcomingPerformances: React.FC = memo(() => {
   const navigate = useNavigate();
@@ -52,9 +53,13 @@ export const UpcomingPerformances: React.FC = memo(() => {
       title="Upcoming Performances"
       subtitle="Join us for these upcoming events in Sydney and beyond"
       className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative overflow-hidden"
+      divider
     >
+      <DecorativeEffects fireworks stageLights className="opacity-20" />
+      {/* Decorative line above performances */}
+      <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="animate-fade-in-up upcoming-performances-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
               <Card className="h-full flex flex-col">
@@ -74,18 +79,19 @@ export const UpcomingPerformances: React.FC = memo(() => {
           ))}
         </div>
       ) : performances.length === 0 ? (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center relative z-10">
           <EmptyState
             icon="🎭"
             title="No upcoming performances"
             description="Check back soon for updates on upcoming events!"
           />
           <div className="mt-8 sm:mt-10">
-            <Button 
-              variant="outline" 
-              size="md" 
+            <Button
+              variant="outline"
+              size="md"
               onClick={() => navigate('/performances')}
-              className="transition-all duration-300 hover:scale-105"
+              className="group"
+              aria-label="View all performances"
             >
               <span className="flex items-center gap-2">
                 View all performances
@@ -97,7 +103,7 @@ export const UpcomingPerformances: React.FC = memo(() => {
           </div>
         </div>
       ) : (
-        <div className="space-y-8 sm:space-y-10 lg:space-y-12">
+        <div className="space-y-8 sm:space-y-10 lg:space-y-12 relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {performances.map((performance, index) => (
               <div
@@ -110,11 +116,12 @@ export const UpcomingPerformances: React.FC = memo(() => {
             ))}
           </div>
           <div className="flex justify-center pt-4 sm:pt-6">
-            <Button 
-              variant="outline" 
-              size="lg" 
+            <Button
+              variant="outline"
+              size="lg"
               onClick={() => navigate('/performances')}
-              className="transition-all duration-300 hover:scale-105 group"
+              className="group"
+              aria-label="View all performances"
             >
               <span className="flex items-center gap-2.5">
                 View all performances

@@ -3,9 +3,9 @@ import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ScrollToTop } from '../ui/ScrollToTop';
-import { FloatingWhatsApp } from '../ui/FloatingWhatsApp';
 import { CursorEffect } from '../ui/CursorEffect';
 import { BackgroundMusic } from '../ui/BackgroundMusic';
+import { CookieConsent } from '../ui/CookieConsent';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -17,22 +17,21 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
   const mainContent = children ?? <Outlet />;
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-[#050816] via-[#0b1024] to-[#151b33]">
-      <a href="#main-content" className="skip-to-main">
+    <div className="min-h-screen flex flex-col relative bg-gradient-to-br from-[#050816] via-[#0b1024] to-[#151b33] overflow-visible">
+      <a href="#main-content" className="skip-to-main" aria-label="Skip to main content">
         Skip to main content
       </a>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0b1024]/70 to-black/80 pointer-events-none z-0" aria-hidden />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#4b3f72]/25 via-transparent to-[#1f2937]/40 pointer-events-none z-0" aria-hidden />
-      <span className="absolute top-20 left-6 lg:left-12 text-2xl sm:text-3xl text-gold-400/20 font-musical animate-float select-none pointer-events-none z-0 layout-musical-note-1" aria-hidden>♪</span>
-      <span className="absolute top-36 right-8 lg:right-16 text-xl sm:text-2xl text-musical-400/20 font-musical animate-float select-none pointer-events-none z-0 layout-musical-note-2" aria-hidden>♫</span>
-      
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0b1024]/50 to-black/70 pointer-events-none z-0" aria-hidden />
+      {!isAdmin && <div className="theme-dot-grid" aria-hidden />}
+      {!isAdmin && <div className="theme-vignette" aria-hidden />}
+
       <Header isAdmin={isAdmin} />
-      <main id="main-content" className="flex-grow pt-14 sm:pt-16 lg:pt-18 xl:pt-20 relative z-10" tabIndex={-1}>
+      <main id="main-content" className="flex-grow pt-14 sm:pt-16 lg:pt-18 xl:pt-20 relative z-10 overflow-visible" tabIndex={-1}>
         {mainContent}
       </main>
       {!isAdmin && <Footer />}
       {!isAdmin && <ScrollToTop />}
-      {!isAdmin && <FloatingWhatsApp />}
+      {!isAdmin && <CookieConsent />}
       {!isAdmin && <CursorEffect intensity="medium" disableOnMobile={true} />}
       {!isAdmin && (
         <BackgroundMusic
@@ -40,8 +39,10 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
           autoPlay={true}
           loop={true}
           showControls={true}
-          controlsPosition="bottom-left"
-          disableOnMobile={true}
+          controlsPosition="bottom-right"
+          disableOnMobile={false}
+          compact={true}
+          bottomOffset="1rem"
         />
       )}
     </div>

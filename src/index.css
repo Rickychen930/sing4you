@@ -115,15 +115,20 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px; /* 64px (h-16) + 16px buffer */
+    /* CRITICAL: Only html should have scrollbar - prevent double scrollbar */
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* Remove height: 100% to prevent double scrollbar - let content determine height */
+    /* height: 100%; REMOVED - causes double scrollbar */
     /* Improve scroll performance */
     -webkit-overflow-scrolling: touch;
+    /* Smooth scroll optimization */
+    scroll-snap-type: none;
+    overscroll-behavior: contain;
     /* Optimize rendering */
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Smooth scroll optimization */
-    scroll-snap-type: none;
-    overscroll-behavior: contain;
     /* Prevent white flash */
     background-color: #070b16;
     background:
@@ -147,24 +152,107 @@
     backface-visibility: hidden;
     /* Prevent white flash - ensure background is set immediately */
     background-color: var(--color-black) !important;
-    @apply text-gray-50;
+    @apply text-gray-200;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     /* Removed background-attachment: fixed for better scroll performance */
     position: relative;
-    color: var(--color-light-gray);
-    overflow-x: hidden;
+    /* CRITICAL: Prevent double scrollbar - html handles scrolling, body should not create its own scrollbar */
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+    overflow-y: visible; /* Let html handle vertical scrolling - body content should be visible */
+    margin: 0;
+    padding: 0;
     line-height: 1.8;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Improve scroll performance */
-    -webkit-overflow-scrolling: touch;
-    /* Prevent flash during initial render */
+    /* Prevent flash during initial render - use min-height, not height */
     min-height: 100vh;
+    /* Do NOT set height: 100vh or height: 100% - causes double scrollbar */
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     /* Optimize scroll performance - only set will-change when needed */
     contain: layout style paint;
+  }
+  
+  /* Prevent root element from creating scrollbar */
+  #root {
+    overflow: visible;
+    min-height: 100vh;
+    position: relative;
+  }
+  
+  /* Prevent layout wrapper from creating scrollbar */
+  #root > div {
+    overflow: visible;
+  }
+  
+  /* Prevent header from creating scrollbar */
+  header {
+    overflow: visible;
+  }
+  
+  /* Prevent hero section and its children from creating scrollbar */
+  section#hero {
+    overflow: visible;
+  }
+  
+  section#hero > * {
+    overflow: visible;
+  }
+  
+  /* Ensure nav element doesn't create scrollbar */
+  nav {
+    overflow: visible;
+  }
+  
+  /* Prevent main element from creating scrollbar */
+  main {
+    overflow: visible;
+  }
+  
+  /* Prevent Layout wrapper from creating scrollbar */
+  #root > div.min-h-screen {
+    overflow: visible;
+  }
+  
+  /* Prevent all sections from creating scrollbar - only html should scroll */
+  section {
+    overflow: visible;
+  }
+  
+  /* Prevent fixed decorative elements from creating scrollbar */
+  .theme-dot-grid,
+  .theme-vignette {
+    overflow: visible;
+  }
+  
+  /* Prevent Footer from creating scrollbar */
+  footer {
+    overflow: visible;
+  }
+  
+  /* CRITICAL: Only html should have scrollbar - prevent all other elements from creating scrollbars */
+  /* Exception: Mobile menu can scroll independently (already handled in Header component) */
+  /* Exception: Admin modals, dialogs, and code blocks can scroll if needed */
+  
+  /* Prevent all fixed and absolute positioned elements from creating scrollbar */
+  [style*="position: fixed"],
+  [style*="position: absolute"],
+  *[class*="fixed"],
+  *[class*="absolute"] {
+    /* Only allow overflow if explicitly needed (like mobile menu) */
+  }
+  
+  /* Prevent elements with max-height from creating scrollbar unless explicitly needed */
+  /* Exception: Mobile menu, dialogs, and code blocks can scroll */
+  *[class*="max-h"]:not(#mobile-menu):not([role="dialog"]):not(pre):not(.overflow-auto):not(.overflow-y-auto):not(.overflow-scroll) {
+    overflow: visible !important;
+  }
+  
+  /* Mobile menu can have scrollbar if needed, but prevent it from affecting main scroll */
+  #mobile-menu {
+    /* Mobile menu overlay can scroll independently */
+    overscroll-behavior: contain;
   }
   
   body::before {
@@ -174,16 +262,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    /* Subtle elegant purple glow */
-    background-image: 
-      radial-gradient(circle at 20% 25%, rgba(94, 92, 246, 0.22) 0%, transparent 55%),
-      radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.18) 0%, transparent 55%);
+    /* Subtle gold + musical glow — tema website */
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 25%, rgba(255, 194, 51, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 70% 40% at 85% 75%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
     animation: gentlePulse 26s ease-in-out infinite;
-    transform: translateZ(0); /* Force GPU acceleration */
+    transform: translateZ(0);
     backface-visibility: hidden;
-    contain: strict; /* More aggressive containment */
+    contain: strict;
+    /* Prevent pseudo-element from creating scrollbar */
+    overflow: hidden;
   }
   
   /* REMOVED musicalGlow animation - too expensive for performance */
@@ -195,33 +285,76 @@
     left: 0;
     right: 0;
     bottom: 0;
-    /* SIMPLIFIED background - removed complex patterns for better performance */
+    /* Subtle musical texture pattern - optimized for performance */
     background-image: 
       repeating-linear-gradient(
         45deg,
         transparent,
         transparent 4px,
-        rgba(255, 194, 51, 0.01) 4px,
-        rgba(255, 194, 51, 0.01) 8px
+        rgba(255, 194, 51, 0.015) 4px,
+        rgba(255, 194, 51, 0.015) 8px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 6px,
+        rgba(168, 85, 247, 0.01) 6px,
+        rgba(168, 85, 247, 0.01) 12px
       );
-    background-size: 40px 40px;
+    background-size: 40px 40px, 60px 60px;
     /* SLOWER animation for better performance */
-    animation: musicalPatternMove 60s linear infinite;
+    animation: musicalPatternMove 80s linear infinite;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.4;
+    opacity: 0.5;
     /* Optimize rendering */
     contain: strict;
     transform: translateZ(0);
     backface-visibility: hidden;
+    /* Prevent pseudo-element from creating scrollbar */
+    overflow: hidden;
   }
   
   @keyframes musicalPatternMove {
     0% {
-      background-position: 0% 0%;
+      background-position: 0% 0%, 0% 0%;
     }
     100% {
-      background-position: 40px 40px;
+      background-position: 40px 40px, 60px 60px;
+    }
+  }
+  
+  /* Subtle musical note pattern overlay - performance optimized */
+  @keyframes noteFloat {
+    0%, 100% {
+      transform: translateY(0) translateZ(0) rotate(0deg);
+      opacity: 0.03;
+    }
+    50% {
+      transform: translateY(-20px) translateZ(0) rotate(5deg);
+      opacity: 0.05;
+    }
+  }
+  
+  /* Elegant shimmer effect for cards */
+  @keyframes cardShimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+  
+  /* Subtle glow pulse for interactive elements */
+  @keyframes subtleGlow {
+    0%, 100% {
+      opacity: 0.4;
+      transform: scale(1) translateZ(0);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.02) translateZ(0);
     }
   }
   
@@ -813,6 +946,8 @@ section,
   contain: layout style paint;
   /* Use content-visibility for better scroll performance */
   content-visibility: auto;
+  /* Prevent sections from creating their own scrollbar - only html should scroll */
+  overflow: visible;
 }
 
 /* Optimize scroll performance - REMOVED unnecessary will-change */
@@ -849,6 +984,14 @@ section,
     transform: none !important;
   }
   
+  /* Dekorasi tema — kurangi visual noise saat reduced motion */
+  .theme-dot-grid {
+    opacity: 0.3 !important;
+  }
+  .theme-vignette {
+    opacity: 0.6 !important;
+  }
+
   /* Disable will-change for reduced motion */
   .card-hover-lift,
   .button-ripple,
@@ -904,6 +1047,10 @@ a:not(button):not([role="button"]):hover {
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1.5px;
+}
+
+nav a:hover {
+  text-decoration: none;
 }
 
 /* Button hover lift effect */
@@ -976,13 +1123,8 @@ img {
 }
 
 /* Smooth scroll behavior enhancement - Optimized */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 80px;
-  /* Performance optimizations */
-  scroll-snap-type: none;
-  overscroll-behavior: contain;
-}
+/* Note: html overflow is set in @layer base above to prevent duplication */
+/* Removed duplicate html styles - already defined in @layer base */
 
 /* Optimize scroll performance for all elements */
 * {
@@ -1042,29 +1184,79 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(255, 194, 51, 0.2), 0 4px 12px rgba(255, 194, 51, 0.15);
 }
 
-/* Optimized smooth scrollbar styling - GPU accelerated */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+/* CRITICAL: Prevent ALL elements from creating scrollbar except html */
+/* Hide scrollbar on body, root, main, sections, and other layout elements */
+/* This ensures only html has the custom styled scrollbar */
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+main::-webkit-scrollbar,
+section::-webkit-scrollbar,
+section#hero::-webkit-scrollbar,
+header::-webkit-scrollbar,
+nav::-webkit-scrollbar,
+footer::-webkit-scrollbar,
+div::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(10, 14, 26, 0.5);
+/* Hide scrollbar on ALL other elements - only html should have scrollbar */
+*:not(html)::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Only html should have scrollbar - CUSTOM STYLED SCROLLBAR */
+/* This custom scrollbar will appear on the entire page, not just hero */
+html::-webkit-scrollbar {
+  display: block !important;
+  width: 10px !important;
+  height: 0 !important; /* Hide horizontal scrollbar */
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent; /* Remove default gray background */
+}
+
+html::-webkit-scrollbar-track {
+  background: rgba(10, 14, 26, 0.5) !important;
   border-radius: 5px;
   /* OPTIMIZED: Removed will-change - not needed for static track */
 }
 
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--color-gold-500) 0%, var(--color-gold-600) 50%, var(--color-musical-700) 100%);
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-gold-500) 0%, var(--color-gold-600) 50%, var(--color-musical-700) 100%) !important;
   border-radius: 4px;
   transition: background 0.2s ease;
   /* Removed will-change - not needed */
   transform: translateZ(0); /* GPU acceleration */
+  min-height: 20px; /* Ensure thumb is visible */
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--color-gold-600) 0%, var(--color-gold-700) 50%, var(--color-musical-800) 100%);
+html::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--color-gold-600) 0%, var(--color-gold-700) 50%, var(--color-musical-800) 100%) !important;
   box-shadow: 0 0 8px rgba(255, 194, 51, 0.4);
+}
+
+/* Firefox scrollbar styling - custom colored scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gold-500) rgba(10, 14, 26, 0.5);
+}
+
+/* Ensure body and other elements don't show default scrollbar */
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* Loading pulse animation for better skeleton */
@@ -1097,6 +1289,345 @@ select:focus {
 
 .skip-to-main:focus {
   top: 0;
+  outline: 2px solid var(--color-gold-500);
+  outline-offset: 2px;
+}
+
+/* Card decorative texture pattern - performance optimized */
+.card-texture-pattern {
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 194, 51, 0.02) 2px,
+      rgba(255, 194, 51, 0.02) 4px
+    );
+  background-size: 20px 20px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  will-change: auto;
+}
+
+/* Section texture pattern - subtle and performant */
+.section-texture {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(255, 194, 51, 0.015) 1px, transparent 0);
+  background-size: 30px 30px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  will-change: auto;
+}
+
+/* Section glow animations - subtle and performant */
+.section-glow-gold {
+  animation: subtleGlow 8s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+.section-glow-purple {
+  animation: subtleGlow 10s ease-in-out infinite;
+  animation-delay: 2s;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+/* Hero glow animations - subtle and performant */
+.hero-glow-1 {
+  animation: subtleGlow 12s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+.hero-glow-2 {
+  animation: subtleGlow 14s ease-in-out infinite;
+  animation-delay: 3s;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+/* Footer texture pattern */
+.footer-texture {
+  background-image: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 194, 51, 0.01) 3px,
+      rgba(255, 194, 51, 0.01) 6px
+    );
+  background-size: 30px 30px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+/* Theme vignette — edges sedikit gelap, depth */
+.theme-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse 100% 80% at 50% 50%,
+    transparent 45%,
+    rgba(10, 14, 26, 0.12) 85%,
+    rgba(10, 14, 26, 0.2) 100%
+  );
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  /* Prevent fixed element from creating scrollbar */
+  overflow: hidden;
+}
+
+/* Theme dot-grid — pola titik halus, nuansa musik */
+.theme-dot-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(
+    circle at center,
+    rgba(255, 194, 51, 0.04) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  opacity: 0.6;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  /* Prevent fixed element from creating scrollbar */
+  overflow: hidden;
+}
+
+/* Section divider — garis gradient antar section */
+.theme-section-divider {
+  height: 1px;
+  max-width: 32rem;
+  margin-left: auto;
+  margin-right: auto;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 194, 51, 0.2) 20%,
+    rgba(168, 85, 247, 0.15) 50%,
+    rgba(255, 194, 51, 0.2) 80%,
+    transparent 100%
+  );
+  transform: translateZ(0);
+  contain: strict;
+}
+
+/* ============================================
+   PERFORMANCE-OPTIMIZED DECORATIVE EFFECTS
+   CSS-only, GPU-accelerated, subtle opacity
+   ============================================ */
+
+/* Subtle Firework Particles — CSS-only, perf-safe */
+@keyframes fireworkParticleFloat {
+  0% {
+    transform: translate(0, 0) translateZ(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+    transform: translate(0, 0) translateZ(0) scale(1);
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(var(--fw-tx, 40px), var(--fw-ty, -100px)) translateZ(0) scale(0);
+    opacity: 0;
+  }
+}
+
+.decorative-firework {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  opacity: 0;
+  animation: fireworkParticleFloat 5s ease-out infinite;
+  background: radial-gradient(circle, rgba(255, 194, 51, 0.9) 0%, rgba(168, 85, 247, 0.6) 50%, transparent 100%);
+}
+
+/* Floating Musical Notes — subtle, perf-safe */
+@keyframes musicalNoteFloat {
+  0%, 100% {
+    transform: translateY(0) translateZ(0) rotate(0deg);
+    opacity: 0.03;
+  }
+  50% {
+    transform: translateY(-35px) translateZ(0) rotate(10deg);
+    opacity: 0.05;
+  }
+}
+
+.decorative-musical-note {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.03;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  animation: musicalNoteFloat 14s ease-in-out infinite;
+  color: rgba(255, 194, 51, 0.5);
+  filter: drop-shadow(0 0 6px rgba(255, 194, 51, 0.15));
+}
+
+.decorative-musical-note svg {
+  width: 100%;
+  height: 100%;
+  transform: translateZ(0);
+}
+
+/* Mic Icon Decoration — dengan glow subtle */
+@keyframes micGlow {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(1) translateZ(0);
+    filter: drop-shadow(0 0 10px rgba(255, 194, 51, 0.2));
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05) translateZ(0);
+    filter: drop-shadow(0 0 15px rgba(255, 194, 51, 0.3));
+  }
+}
+
+.decorative-mic {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.25;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  animation: micGlow 9s ease-in-out infinite;
+  color: rgba(255, 194, 51, 0.5);
+}
+
+.decorative-mic svg {
+  width: 100%;
+  height: 100%;
+  transform: translateZ(0);
+}
+
+/* Stage Light Effects — CSS gradients, perf-safe */
+@keyframes stageLightSweep {
+  0% {
+    opacity: 0.02;
+    transform: translateX(-25%) translateZ(0);
+  }
+  50% {
+    opacity: 0.04;
+    transform: translateX(25%) translateZ(0);
+  }
+  100% {
+    opacity: 0.02;
+    transform: translateX(-25%) translateZ(0);
+  }
+}
+
+.decorative-stage-light {
+  position: absolute;
+  pointer-events: none;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 100% 50% at center,
+    rgba(255, 194, 51, 0.12) 0%,
+    rgba(168, 85, 247, 0.08) 30%,
+    transparent 70%
+  );
+  filter: blur(50px);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  animation: stageLightSweep 18s ease-in-out infinite;
+  opacity: 0.02;
+}
+
+/* Sparkle Stars — subtle, perf-safe */
+@keyframes sparkleTwinkle {
+  0%, 100% {
+    opacity: 0.02;
+    transform: scale(1) translateZ(0) rotate(0deg);
+  }
+  50% {
+    opacity: 0.06;
+    transform: scale(1.3) translateZ(0) rotate(180deg);
+  }
+}
+
+.decorative-sparkle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  opacity: 0.02;
+  animation: sparkleTwinkle 7s ease-in-out infinite;
+}
+
+.decorative-sparkle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 194, 51, 1) 0%, transparent 70%);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  transform: translateZ(0);
+}
+
+/* Reduced motion — disable decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .decorative-firework,
+  .decorative-musical-note,
+  .decorative-mic,
+  .decorative-stage-light,
+  .decorative-sparkle {
+    animation: none !important;
+    opacity: 0.01 !important;
+  }
+}
+
+/* Trust badge icon subtle glow */
+.trust-badge-icon {
+  filter: drop-shadow(0 0 8px rgba(255, 194, 51, 0.2));
+  transition: filter 0.3s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.trust-badge-icon:hover {
+  filter: drop-shadow(0 0 12px rgba(255, 194, 51, 0.3));
+}
+
+/* Booking step icon glow */
+.booking-step-icon {
+  transition: transform 0.3s ease, filter 0.3s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.booking-step-icon:hover {
+  transform: scale(1.05) translateZ(0);
+  filter: drop-shadow(0 0 12px rgba(255, 194, 51, 0.3));
 }
 
 /* Harmonized Transition System - Enhanced */
@@ -1189,17 +1720,6 @@ button[aria-label]:not([class*="min-h"]):not([class*="min-w"]) {
     opacity: 0.8;
   }
 }
-
-/* Enhanced focus states - Improved contrast for accessibility (consolidated above) */
-
-/* Musical/Jazz themed scrollbar - Dark Mode - OPTIMIZED (consolidated with above) */
-/* Removed duplicate scrollbar styles - using optimized version above */
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--color-gold-600) 0%, var(--color-gold-700) 50%, var(--color-musical-800) 100%);
-  box-shadow: 0 0 15px rgba(255, 194, 51, 0.6);
-}
-
 
 /* Loading animation */
 @keyframes pulse {
@@ -2012,8 +2532,9 @@ select:focus-visible {
 /* Hero Section background - consistent with design system */
 .hero-section-bg {
   min-height: 100vh;
-  height: 100vh;
+  /* Removed fixed height: 100vh to prevent scrollbar issues - use min-height only */
   background: linear-gradient(135deg, #050013 0%, #120024 25%, #1a0b2e 55%, #120024 80%, #050013 100%);
+  overflow: visible; /* Prevent hero from creating its own scrollbar */
 }
 
 /* Animation delay utilities - using design tokens */
@@ -2590,4 +3111,171 @@ select:focus-visible {
     0 0 0 6px rgba(255, 194, 51, 0.3),
     0 0 20px rgba(255, 194, 51, 0.4),
     inset 0 0 0 1px rgba(255, 194, 51, 0.2);
+}
+
+/* ============================================
+   ADDITIONAL DECORATIVE ELEMENTS - PERFORMANCE OPTIMIZED
+   CSS-only, GPU-accelerated, subtle opacity
+   ============================================ */
+
+/* Decorative corner accents - subtle and performant */
+.decorative-corner-gold {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-top: 2px solid rgba(255, 194, 51, 0.3);
+  border-left: 2px solid rgba(255, 194, 51, 0.3);
+  top: -2px;
+  left: -2px;
+  border-radius: 8px 0 0 0;
+  pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+.decorative-corner-purple {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-bottom: 2px solid rgba(168, 85, 247, 0.3);
+  border-right: 2px solid rgba(168, 85, 247, 0.3);
+  bottom: -2px;
+  right: -2px;
+  border-radius: 0 0 8px 0;
+  pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+/* Subtle glow pulse for icons - performance optimized */
+@keyframes iconGlowPulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.05) translateZ(0);
+  }
+}
+
+.icon-glow-pulse {
+  animation: iconGlowPulse 3s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+/* Decorative gradient lines - subtle dividers */
+.decorative-line-gold {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 194, 51, 0.4) 20%,
+    rgba(255, 194, 51, 0.6) 50%,
+    rgba(255, 194, 51, 0.4) 80%,
+    transparent 100%
+  );
+  border-radius: 1px;
+  transform: translateZ(0);
+  contain: strict;
+}
+
+.decorative-line-purple {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.4) 20%,
+    rgba(168, 85, 247, 0.6) 50%,
+    rgba(168, 85, 247, 0.4) 80%,
+    transparent 100%
+  );
+  border-radius: 1px;
+  transform: translateZ(0);
+  contain: strict;
+}
+
+/* Decorative frame borders - elegant touch */
+.decorative-frame {
+  position: relative;
+}
+
+.decorative-frame::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(255, 194, 51, 0.2);
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 0;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+.decorative-frame::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  border-radius: 16px;
+  pointer-events: none;
+  z-index: -1;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+/* Subtle background pattern overlay - performance optimized */
+.decorative-pattern-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: 
+    radial-gradient(circle at 2px 2px, rgba(255, 194, 51, 0.15) 1px, transparent 0),
+    radial-gradient(circle at 18px 18px, rgba(168, 85, 247, 0.1) 1px, transparent 0);
+  background-size: 20px 20px, 36px 36px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+/* Floating accent dots - subtle decoration */
+.decorative-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 194, 51, 0.6) 0%, transparent 70%);
+  pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+  animation: dotFloat 8s ease-in-out infinite;
+}
+
+@keyframes dotFloat {
+  0%, 100% {
+    transform: translateY(0) translateZ(0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-20px) translateZ(0) scale(1.2);
+    opacity: 0.6;
+  }
+}
+
+/* Reduced motion - disable decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .icon-glow-pulse,
+  .decorative-dot {
+    animation: none !important;
+    opacity: 0.2 !important;
+  }
 }

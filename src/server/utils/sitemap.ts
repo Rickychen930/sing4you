@@ -16,6 +16,12 @@ export class SitemapGenerator {
 
     const urls: Array<{ loc: string; changefreq: string; priority: string; lastmod?: string }> = [
       { loc: `${baseUrl}/`, changefreq: 'daily', priority: '1.0' },
+      { loc: `${baseUrl}/#hero`, changefreq: 'daily', priority: '0.9' },
+      { loc: `${baseUrl}/#trust`, changefreq: 'weekly', priority: '0.8' },
+      { loc: `${baseUrl}/#services`, changefreq: 'weekly', priority: '0.9' },
+      { loc: `${baseUrl}/#booking-process`, changefreq: 'monthly', priority: '0.8' },
+      { loc: `${baseUrl}/#performances`, changefreq: 'weekly', priority: '0.8' },
+      { loc: `${baseUrl}/#testimonials`, changefreq: 'weekly', priority: '0.7' },
       { loc: `${baseUrl}/about`, changefreq: 'monthly', priority: '0.9' },
       { loc: `${baseUrl}/categories`, changefreq: 'weekly', priority: '0.9' },
       { loc: `${baseUrl}/performances`, changefreq: 'weekly', priority: '0.8' },

@@ -5,6 +5,7 @@ import { SectionWrapper } from '../ui/SectionWrapper';
 import { Card, CardBody } from '../ui/Card';
 import { EmptyState } from '../ui/EmptyState';
 import { LazyImage } from '../ui/LazyImage';
+import { DecorativeEffects } from '../ui/DecorativeEffects';
 import { useNavigate } from 'react-router-dom';
 
 interface CategoryListProps {
@@ -136,8 +137,9 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
   }
 
   return (
-    <SectionWrapper title={title} subtitle={subtitle}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+    <SectionWrapper title={title} subtitle={subtitle} className="relative">
+      <DecorativeEffects musicalNotes sparkles className="opacity-25" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
         {categories.map((category, index) => (
           <div
             key={category._id}
@@ -165,18 +167,16 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
                     <LazyImage
                       src={category.featuredImage}
                       alt={category.name}
-                      className="w-full h-full object-contain bg-black transition-transform duration-500 group-hover:scale-[1.02]"
+                      className="w-full h-full object-cover bg-black transition-all duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-musical-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {/* Enhanced gradient overlay with hover effect */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent group-hover:from-jazz-900/70 group-hover:via-jazz-900/25 transition-all duration-500" />
+                    {/* Subtle glow on hover */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/10 via-transparent to-transparent pointer-events-none" />
                   </div>
                 )}
                 
                 <div className="p-4 sm:p-5 lg:p-6 relative flex-grow flex flex-col">
-                  {/* Musical notes decoration - consistent with other cards */}
-                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 text-lg sm:text-xl lg:text-2xl text-gold-400/30 group-hover:text-gold-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-1" aria-hidden>♫</div>
-                  <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 text-base sm:text-lg lg:text-xl text-musical-400/30 group-hover:text-musical-400/50 transition-all duration-300 animate-float font-musical pointer-events-none z-20 category-card-musical-2" aria-hidden>♪</div>
-                  
                   <div className="relative z-10 flex-grow flex flex-col">
                     {/* Title with enhanced visual hierarchy */}
                     <div className="mb-4 sm:mb-5 lg:mb-6">

@@ -26,19 +26,26 @@ export const AutoGridGallery: React.FC<AutoGridGalleryProps> = ({
   autoPlayIntervalMs = 5000,
   showBullets = true,
 }) => {
-  if (!media || media.length === 0) return null;
-
+  // All hooks must be called before any early returns
   const cols = Math.max(columns, 1);
   const rowsCount = Math.max(rows, 1);
   const itemsPerPage = rowsCount * cols;
 
-  const pageCount = Math.max(1, Math.ceil(media.length / itemsPerPage));
+  const pageCount = useMemo(() => {
+    if (!media || media.length === 0) return 1;
+    return Math.max(1, Math.ceil(media.length / itemsPerPage));
+  }, [media, itemsPerPage]);
+
   const [currentPage, setCurrentPage] = useState(0);
 
   // Reset ke halaman pertama jika jumlah media berubah
   useEffect(() => {
-    setCurrentPage(0);
-  }, [media.length, itemsPerPage]);
+    // Use setTimeout to avoid synchronous setState in effect
+    const timer = setTimeout(() => {
+      setCurrentPage(0);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [media?.length, itemsPerPage]);
 
   // Auto-play antar halaman (grid berganti sendiri)
   useEffect(() => {
@@ -62,9 +69,13 @@ export const AutoGridGallery: React.FC<AutoGridGalleryProps> = ({
   );
 
   const pageMedia = useMemo(() => {
+    if (!media || media.length === 0) return [];
     const start = currentPage * itemsPerPage;
     return media.slice(start, start + itemsPerPage);
   }, [media, currentPage, itemsPerPage]);
+
+  // Early return after all hooks
+  if (!media || media.length === 0) return null;
 
   return (
     <div className={cn('space-y-4 sm:space-y-5', className)}>
@@ -73,15 +84,20 @@ export const AutoGridGallery: React.FC<AutoGridGalleryProps> = ({
         {pageMedia.map((url, index) => (
           <div
             key={`${url}-${index}`}
-            className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 border border-gold-900/40 hover:border-gold-700/70 shadow-[0_10px_28px_rgba(0,0,0,0.45)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.6)] transition-all duration-300 group"
+            className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 border border-gold-900/40 hover:border-gold-600/80 shadow-[0_10px_28px_rgba(0,0,0,0.45)] hover:shadow-[0_20px_50px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.3)] transition-all duration-300 group"
           >
             <LazyImage
               src={url}
               alt={`Gallery image ${index + 1}`}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
               fadeIn
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            {/* Enhanced gradient overlay with hover effect */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            {/* Subtle gold glow on hover */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/15 via-transparent to-transparent pointer-events-none" />
+            {/* Corner accent on hover */}
+            <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-gold-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-bl-full" />
           </div>
         ))}
       </div>

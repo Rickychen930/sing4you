@@ -22,44 +22,30 @@ export const Card: React.FC<CardProps> = memo(({
       role={role}
       aria-label={ariaLabel}
       className={cn(
-        'glass-effect-strong rounded-2xl overflow-hidden relative card-entrance',
-        'before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-transparent before:to-gold-900/20 before:pointer-events-none before:rounded-2xl before:transition-all before:duration-400',
-        'after:absolute after:inset-0 after:opacity-0 after:transition-all after:duration-400 after:rounded-2xl',
-        // Enhanced shadow system with depth
-        'shadow-[0_10px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.2)_inset,0_4px_12px_rgba(255,194,51,0.15)]',
-        hover && 'card-3d-tilt transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_50px_rgba(255,194,51,0.3),0_10px_30px_rgba(168,85,247,0.2),0_8px_20px_rgba(0,0,0,0.6)] hover:border-gold-500/70 hover:before:to-gold-800/60 hover:after:opacity-100 hover:after:bg-gradient-to-br hover:after:from-gold-900/30 hover:after:via-musical-900/30 hover:after:to-transparent hover:ring-2 hover:ring-gold-500/50 hover:ring-offset-2 hover:ring-offset-jazz-900 group',
-        /* OPTIMIZED: Reduced hover effects, duration, and shadow complexity for better performance */
-        !hover && 'transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,0,0,0.6),inset_0_2px_0_rgba(255,255,255,0.1),0_0_20px_rgba(255,194,51,0.15)]',
-        /* OPTIMIZED: Reduced duration and shadow complexity */
+        'glass-effect-strong rounded-2xl overflow-hidden relative border border-gold-900/40',
+        'shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.15)_inset]',
+        'transition-all duration-300',
+        hover && 'group hover:border-gold-700/50 hover:shadow-[0_16px_40px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,194,51,0.25)_inset,0_0_24px_rgba(255,194,51,0.12)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer',
+        !hover && 'hover:shadow-[0_12px_36px_rgba(0,0,0,0.52),0_0_0_1px_rgba(255,194,51,0.2)_inset]',
         className
       )}
       {...props}
     >
-      {/* OPTIMIZED: Simplified hover effects for better performance */}
-      {hover && (
-        <>
-          <div className="absolute top-2 right-2 text-xl sm:text-2xl text-gold-500/80 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-70 animate-float card-hover-musical-1" aria-hidden>
-            ♪
-          </div>
-          <div className="absolute bottom-2 left-2 text-lg sm:text-xl text-musical-500/70 transition-opacity duration-300 font-musical pointer-events-none z-20 opacity-0 group-hover:opacity-60 animate-float card-hover-musical-2" aria-hidden>
-            ♫
-          </div>
-        </>
-      )}
-      
-      {/* OPTIMIZED: Simplified glow effect - single layer only */}
-      {hover && (
-        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/40 via-musical-500/40 to-gold-500/40 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-lg pointer-events-none -z-10" aria-hidden />
-      )}
-      
-      {/* OPTIMIZED: Simplified shimmer effect */}
-      {hover && (
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" aria-hidden />
-        </div>
-      )}
-      
-      <div className="relative z-30 h-full flex flex-col">
+      {/* Subtle decorative texture overlay - performance optimized */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 card-texture-pattern"
+        aria-hidden="true"
+      />
+      {/* Subtle corner accent - elegant touch */}
+      <div 
+        className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-gold-500/5 via-transparent to-transparent rounded-bl-full pointer-events-none z-0"
+        aria-hidden="true"
+      />
+      <div 
+        className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-musical-500/5 via-transparent to-transparent rounded-tr-full pointer-events-none z-0"
+        aria-hidden="true"
+      />
+      <div className="relative z-10 h-full flex flex-col">
         {children}
       </div>
     </div>
@@ -138,15 +124,19 @@ interface CardFooterProps {
   className?: string;
   /** Use larger padding for content-heavy cards */
   large?: boolean;
+  /** Use compact padding for tighter layouts */
+  compact?: boolean;
   /** Remove top padding for seamless connection with CardBody */
   noTopPadding?: boolean;
 }
 
-export const CardFooter: React.FC<CardFooterProps> = memo(({ children, className, large = false, noTopPadding = false }) => {
+export const CardFooter: React.FC<CardFooterProps> = memo(({ children, className, large = false, compact = false, noTopPadding = false }) => {
   return (
     <div className={cn(
       large 
         ? 'px-5 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-6 lg:py-8 xl:py-10'
+        : compact
+        ? 'px-3 sm:px-4 lg:px-5 py-3 sm:py-4 lg:py-5'
         : 'px-4 sm:px-5 lg:px-6 xl:px-7 py-5 sm:py-6 lg:py-7',
       noTopPadding && 'pt-0',
       'bg-gradient-to-r from-gold-900/25 via-musical-900/25 to-gold-900/35',

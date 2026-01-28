@@ -1,31 +1,28 @@
-import React, { memo, useState, useEffect, useCallback, useRef } from 'react';
+import React, { memo, useState, useEffect, useCallback } from 'react';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { cn } from '../../utils/helpers';
 
-/** Fixed WhatsApp button bottom-right. Same position as Back to top when it's hidden; above Back to top when it's visible. */
+/** Fixed WhatsApp button bottom-right. Always visible, positioned above ScrollToTop when it's visible. */
 export const FloatingWhatsApp: React.FC = memo(() => {
   const [mounted, setMounted] = useState(false);
   const [backToTopVisible, setBackToTopVisible] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const ticking = useRef(false);
 
   const handleScroll = useCallback(() => {
-    if (!ticking.current) {
-      window.requestAnimationFrame(() => {
-        const scrolled = window.scrollY || window.pageYOffset || 0;
-        setBackToTopVisible(scrolled > 400);
-        setIsVisible(scrolled > 200);
-        ticking.current = false;
-      });
-      ticking.current = true;
-    }
+    window.requestAnimationFrame(() => {
+      // Check if ScrollToTop is visible (scrolled past half)
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const documentHeight = document.documentElement.scrollHeight;
+      const windowHeight = window.innerHeight;
+      const scrollableHeight = documentHeight - windowHeight;
+      const halfScroll = scrollableHeight / 2;
+      setBackToTopVisible(scrollY > halfScroll);
+    });
   }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 400);
-    // Ensure scroll listener is properly attached
+    // Listen to scroll to adjust position when ScrollToTop appears
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Also listen to scroll events on document for better compatibility
     document.addEventListener('scroll', handleScroll, { passive: true });
     // Initial check
     handleScroll();
@@ -37,8 +34,8 @@ export const FloatingWhatsApp: React.FC = memo(() => {
   }, [handleScroll]);
 
   const baseBottom = '1rem';
-  // Slightly larger height to ensure we always sit comfortably above ScrollToTop
-  const scrollToTopHeight = '4rem';
+  // ScrollToTop button height (w-14 h-14 sm:w-16 sm:h-16 = 3.5rem/4rem) + gap
+  const scrollToTopHeight = '4rem'; // sm:w-16 = 4rem
   const gap = '0.75rem';
   const bottomWhenScrolled = `calc(${baseBottom} + ${scrollToTopHeight} + ${gap})`;
   const bottom = backToTopVisible ? bottomWhenScrolled : baseBottom;
@@ -49,7 +46,7 @@ export const FloatingWhatsApp: React.FC = memo(() => {
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'fixed z-[9998]',
+        'fixed',
         'bg-[#25D366] text-white',
         'rounded-full shadow-[0_8px_24px_rgba(37,211,102,0.5),0_0_0_1px_rgba(37,211,102,0.3),0_0_20px_rgba(37,211,102,0.2)]',
         'hover:bg-[#20BD5A] hover:shadow-[0_12px_32px_rgba(37,211,102,0.7),0_0_0_2px_rgba(37,211,102,0.4),0_0_30px_rgba(37,211,102,0.3)]',
@@ -57,10 +54,10 @@ export const FloatingWhatsApp: React.FC = memo(() => {
         'focus:outline-none focus:ring-2 focus:ring-[#25D366]/60 focus:ring-offset-2 focus:ring-offset-jazz-900',
         'w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center',
         'border-2 border-white/20 hover:border-white/40',
-        'min-w-[56px] min-h-[56px]',
+        'min-w-[56px] min-h-[56px] sm:min-w-[64px] sm:min-h-[64px]',
         'backdrop-blur-sm relative overflow-hidden group',
         'animate-pulse-soft',
-        mounted && isVisible
+        mounted
           ? 'opacity-100 translate-y-0 scale-100'
           : 'opacity-0 translate-y-10 scale-90 pointer-events-none'
       )}

@@ -8,6 +8,7 @@ import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { Button } from '../../components/ui/Button';
 import { AutoGridGallery } from '../../components/ui/AutoGridGallery';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { DecorativeEffects } from '../../components/ui/DecorativeEffects';
 import { aboutPageService } from '../../services/aboutPageService';
 import type { IAboutPageSettings } from '../../../shared/interfaces';
 
@@ -138,6 +139,7 @@ export const AboutPage: React.FC = () => {
         id="about-hero" 
         className="relative w-full flex items-center justify-center overflow-hidden -mt-16 lg:-mt-20 pt-16 lg:pt-20 min-h-[60vh] sm:min-h-[70vh]"
       >
+        <DecorativeEffects musicalNotes sparkles className="opacity-40" />
         <div className="absolute inset-0">
           {settings.heroBackgroundVideo && !videoError ? (
             <video
@@ -173,31 +175,21 @@ export const AboutPage: React.FC = () => {
           )}
         </div>
 
-        <div className="absolute inset-0 pointer-events-none z-[5] overflow-hidden" aria-hidden>
-          <span className="absolute top-1/4 left-8 sm:left-12 text-4xl sm:text-5xl lg:text-6xl text-gold-400/20 font-musical animate-float select-none">♪</span>
-          <span className="absolute top-1/3 right-12 sm:right-16 text-3xl sm:text-4xl lg:text-5xl text-musical-400/20 font-musical animate-float select-none">♫</span>
-          <span className="absolute bottom-1/3 left-1/4 text-4xl sm:text-5xl lg:text-6xl text-gold-400/15 font-musical animate-float select-none">♬</span>
-        </div>
-
         <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">
-          <div className="relative inline-block mb-4 sm:mb-5 md:mb-6">
-            <div className="absolute -inset-6 sm:-inset-8 lg:-inset-10 bg-gold-500/15 rounded-full blur-2xl opacity-70" aria-hidden />
-            <div className="absolute -inset-8 sm:-inset-12 bg-musical-500/10 rounded-full blur-2xl opacity-50" aria-hidden />
-            <h1 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold leading-tight px-2 sm:px-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
-              {settings.heroTitle}
-            </h1>
-          </div>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto relative pb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold leading-tight px-2 sm:px-4 mb-4 sm:mb-5 md:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+            {settings.heroTitle}
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto">
             {settings.heroSubtitle}
-            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/70 to-transparent rounded-full" aria-hidden />
           </p>
+          <div className="w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto" aria-hidden />
         </div>
       </section>
 
       {/* Story Section */}
       <SectionWrapper id="about-story">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <Card hover>
+          <Card>
             <CardBody large>
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 xl:mb-8 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                 {settings.storyTitle}
@@ -220,46 +212,118 @@ export const AboutPage: React.FC = () => {
         </div>
       </SectionWrapper>
 
-      {/* Gallery Section – album dengan pagination bullet (tanpa auto-play) */}
+      {/* Credentials & Experience Section */}
+      <SectionWrapper id="about-credentials" alternate divider>
+        {/* Subtle sparkles in background */}
+        <DecorativeEffects sparkles className="opacity-25" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <Card className="h-full flex flex-col hover group">
+              <CardBody className="text-center flex flex-col flex-grow">
+                {/* Decorative glow behind icon */}
+                <div className="relative inline-block mb-4">
+                  <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" aria-hidden="true" />
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">Professional</h3>
+                <p className="text-sm sm:text-base text-gray-300 font-sans">Certified vocalist with formal training and industry recognition</p>
+              </CardBody>
+            </Card>
+            <Card className="h-full flex flex-col hover group">
+              <CardBody className="text-center flex flex-col flex-grow">
+                <div className="relative inline-block mb-4">
+                  <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '0.5s' }} aria-hidden="true" />
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">10+ Years</h3>
+                <p className="text-sm sm:text-base text-gray-300 font-sans">Extensive experience performing at prestigious venues and events</p>
+              </CardBody>
+            </Card>
+            <Card className="h-full flex flex-col hover group">
+              <CardBody className="text-center flex flex-col flex-grow">
+                <div className="relative inline-block mb-4">
+                  <div className="absolute inset-0 rounded-full bg-musical-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '1s' }} aria-hidden="true" />
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">500+ Events</h3>
+                <p className="text-sm sm:text-base text-gray-300 font-sans">Successfully performed at weddings, corporate events, and private occasions</p>
+              </CardBody>
+            </Card>
+            <Card className="h-full flex flex-col hover group">
+              <CardBody className="text-center flex flex-col flex-grow">
+                <div className="relative inline-block mb-4">
+                  <div className="absolute inset-0 rounded-full bg-musical-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '1.5s' }} aria-hidden="true" />
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">4.9/5 Rating</h3>
+                <p className="text-sm sm:text-base text-gray-300 font-sans">Consistently rated excellent by clients for professionalism and talent</p>
+              </CardBody>
+            </Card>
+          </div>
+        </div>
+      </SectionWrapper>
+
+      {/* Gallery Section */}
       {settings.galleryImages && settings.galleryImages.length > 0 && (
-        <SectionWrapper id="about-gallery">
+        <SectionWrapper id="about-gallery" title="Gallery" subtitle="Moments from performances and events" divider>
+          {/* Subtle stage lights effect */}
+          <DecorativeEffects stageLights className="opacity-20" />
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="relative inline-block mb-8 sm:mb-10 lg:mb-12 w-full text-center">
-              <div className="absolute -inset-3 sm:-inset-4 bg-gold-500/10 rounded-full blur-2xl opacity-40 left-1/2 -translate-x-1/2" aria-hidden />
-              <h2 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold mb-6 sm:mb-8 text-center bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
-                Gallery
-              </h2>
+            {/* Decorative frame around gallery */}
+            <div className="relative">
+              {/* Corner decorative elements */}
+              <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-gold-500/30 rounded-tl-lg pointer-events-none z-10" aria-hidden="true" />
+              <div className="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-gold-500/30 rounded-tr-lg pointer-events-none z-10" aria-hidden="true" />
+              <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-musical-500/30 rounded-bl-lg pointer-events-none z-10" aria-hidden="true" />
+              <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-musical-500/30 rounded-br-lg pointer-events-none z-10" aria-hidden="true" />
+              <AutoGridGallery
+                media={settings.galleryImages}
+                rows={2}
+                columns={3}
+                autoPlay={false}
+                showBullets
+              />
             </div>
-            <AutoGridGallery
-              media={settings.galleryImages}
-              rows={2}
-              columns={3}
-              autoPlay={false}
-              showBullets
-            />
           </div>
         </SectionWrapper>
       )}
 
       {/* CTA Section */}
-      <SectionWrapper id="about-cta">
+      <SectionWrapper id="about-cta" title={settings.ctaTitle} subtitle={settings.ctaDescription}>
+        {/* Decorative effects for CTA */}
+        <DecorativeEffects musicalNotes sparkles className="opacity-20" />
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
-          <div className="relative inline-block mb-5 sm:mb-6 lg:mb-8">
-            <h2 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 xl:mb-8 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight px-4">
-              {settings.ctaTitle}
-            </h2>
+          {/* Decorative circle behind button */}
+          <div className="relative inline-block">
+            <div className="absolute inset-0 rounded-full bg-gold-500/10 blur-3xl animate-pulse-soft" aria-hidden="true" />
+            <div className="absolute inset-0 rounded-full bg-musical-500/10 blur-3xl animate-pulse-soft" style={{ animationDelay: '1s' }} aria-hidden="true" />
+            <Link to="/contact" className="relative inline-block">
+              <Button variant="primary" size="lg" className="group relative z-10" aria-label="Navigate to contact page">
+                <span>Contact Me</span>
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Button>
+            </Link>
           </div>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-8 sm:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
-            {settings.ctaDescription}
-          </p>
-          <Link to="/contact" className="inline-block">
-            <Button variant="primary" size="lg" className="group" aria-label="Navigate to contact page">
-              <span>Contact Me</span>
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Button>
-          </Link>
+          {/* Decorative lines above and below button */}
+          <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mt-8 sm:mt-10" aria-hidden="true" />
         </div>
       </SectionWrapper>
     </>

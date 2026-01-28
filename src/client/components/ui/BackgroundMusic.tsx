@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, memo, useMemo } from 'react';
+import { cn } from '../../utils/helpers';
 
 /**
  * BackgroundMusic Component
@@ -25,6 +26,10 @@ interface BackgroundMusicProps {
   controlsPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   /** Hide widget on mobile (<=768px) to reduce distraction; audio still loads but no UI */
   disableOnMobile?: boolean;
+  /** Use compact mode (icon only, expands on click) */
+  compact?: boolean;
+  /** Custom bottom offset for positioning (e.g., to align with ScrollToTop) */
+  bottomOffset?: string;
 }
 
 // Global audio instance to persist across route changes
@@ -48,7 +53,10 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
   showControls = true,
   controlsPosition = 'bottom-right',
   disableOnMobile = false,
+  compact = true,
+  bottomOffset,
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const hasUnmutedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(() =>
@@ -240,7 +248,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     'top-left': 'top-4 left-4',
     'top-right': 'top-4 right-4',
     'bottom-left': 'bottom-4 left-4',
-    'bottom-right': 'bottom-4 right-4',
+    'bottom-right': bottomOffset ? undefined : 'bottom-4 right-4', // Use custom bottomOffset if provided
   };
 
   // Hide on mobile when disableOnMobile (reduces distraction)
@@ -251,23 +259,126 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     return null;
   }
 
+  const toggleExpand = useCallback(() => {
+    setIsExpanded(prev => !prev);
+  }, []);
+
+  // Compact mode: show only icon button, expand on click
+  if (compact && !isExpanded) {
+    return (
+      <button
+        onClick={toggleExpand}
+        className={cn(
+          'fixed',
+          !bottomOffset && positionClasses[controlsPosition],
+          'w-12 h-12 sm:w-14 sm:h-14 rounded-full',
+          'bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600',
+          'hover:from-gold-500 hover:via-gold-400 hover:to-gold-500',
+          'text-white flex items-center justify-center',
+          'transition-all duration-300 hover:scale-110 active:scale-95',
+          'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-jazz-900',
+          'shadow-[0_8px_24px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.2),0_0_20px_rgba(255,194,51,0.2)]',
+          'hover:shadow-[0_12px_32px_rgba(255,194,51,0.7),0_0_0_2px_rgba(255,194,51,0.4),0_0_30px_rgba(255,194,51,0.3)]',
+          'backdrop-blur-sm border-2 border-gold-400/40 hover:border-gold-400/70',
+          'group min-w-[48px] min-h-[48px] sm:min-w-[56px] sm:min-h-[56px]',
+          'relative overflow-hidden z-[9997]'
+        )}
+        style={{
+          // Ensure fixed positioning doesn't affect document flow
+          position: 'fixed',
+          contain: 'layout style paint',
+          // Prevent layout shift
+          margin: 0,
+          padding: 0,
+          // Align horizontally with ScrollToTop (same right position)
+          right: '1rem',
+          // Use custom bottomOffset if provided, otherwise use positionClasses
+          ...(bottomOffset ? { bottom: bottomOffset } : {}),
+          zIndex: 9997
+        }}
+        aria-label="Background Music Controls"
+        title="Background Music"
+      >
+        <div className="absolute -inset-1 bg-gold-400/40 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-300 blur-md pointer-events-none" aria-hidden />
+        <svg
+          className="w-6 h-6 sm:w-7 sm:h-7 relative z-10 transition-transform duration-300 group-hover:scale-110"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fillRule="evenodd"
+            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.383 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.383l4.617-3.793a1 1 0 011.383.07zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+            clipRule="evenodd"
+          />
+        </svg>
+        {isPlaying && (
+          <div className="absolute top-0 right-0 w-2 h-2 bg-gold-300 rounded-full animate-pulse" aria-hidden />
+        )}
+      </button>
+    );
+  }
+
   return (
     <div
-      className={`fixed ${positionClasses[controlsPosition]} z-50 bg-gold-900/97 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-3.5 lg:p-4 shadow-[0_12px_32px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.2)_inset] border-2 border-gold-700/60 hover:border-gold-600/80 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.3)_inset] group background-music-controls`}
+      className={cn(
+        'fixed',
+        !bottomOffset && positionClasses[controlsPosition],
+        'bg-gold-900/97 backdrop-blur-sm rounded-xl sm:rounded-2xl',
+        'p-2.5 sm:p-3 lg:p-3.5',
+        'shadow-[0_8px_24px_rgba(255,194,51,0.4),0_0_0_1px_rgba(255,194,51,0.2)_inset,0_0_20px_rgba(255,194,51,0.2)]',
+        'border-2 border-gold-700/60 hover:border-gold-600/80',
+        'transition-all duration-300 hover:shadow-[0_12px_32px_rgba(255,194,51,0.5),0_0_0_2px_rgba(255,194,51,0.3)_inset,0_0_30px_rgba(255,194,51,0.3)]',
+        'group background-music-controls',
+        'max-w-[calc(100vw-2rem)] sm:max-w-none', // Prevent overflow on mobile
+        compact && 'animate-fade-in-up'
+      )}
+      style={{ 
+        zIndex: 9997,
+        // Ensure fixed positioning doesn't affect document flow
+        position: 'fixed',
+        // Prevent layout shift and height changes
+        contain: 'layout style paint',
+        // Ensure no margin/padding that could affect layout
+        margin: 0,
+        // Prevent affecting document height
+        height: 'auto',
+        width: 'auto',
+        // Align horizontally with ScrollToTop (same right position)
+        right: '1rem',
+        // Use custom bottomOffset if provided, otherwise use positionClasses
+        ...(bottomOffset ? { bottom: bottomOffset } : {})
+      }}
     >
       <div className="absolute -inset-1 bg-gradient-to-r from-gold-500/25 via-musical-500/15 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-md pointer-events-none" aria-hidden />
-      <div className="flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 relative z-10">
+      
+      {/* Close button for compact mode */}
+      {compact && (
+        <button
+          onClick={toggleExpand}
+          className="absolute -top-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gold-800/90 hover:bg-gold-700 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gold-400 z-20 border border-gold-600/50"
+          aria-label="Close music controls"
+          title="Close"
+        >
+          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+      
+      <div className="flex items-center gap-2 sm:gap-2.5 lg:gap-3 relative z-10">
         {/* Play/Pause Button */}
         <button
           onClick={togglePlay}
-          className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] shadow-[0_4px_12px_rgba(255,194,51,0.35)] hover:shadow-[0_6px_16px_rgba(255,194,51,0.45)] group/play"
+          className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-400 hover:to-gold-500 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] lg:min-w-[56px] lg:min-h-[56px] shadow-[0_8px_24px_rgba(255,194,51,0.5),0_0_0_1px_rgba(255,194,51,0.2),0_0_20px_rgba(255,194,51,0.2)] hover:shadow-[0_12px_32px_rgba(255,194,51,0.7),0_0_0_2px_rgba(255,194,51,0.4),0_0_30px_rgba(255,194,51,0.3)] group/play border-2 border-gold-400/40 hover:border-gold-400/70"
           aria-label={isPlaying ? 'Pause' : 'Play'}
           title={isPlaying ? 'Pause music' : 'Play music'}
         >
-          <div className="absolute -inset-1 bg-gold-400/40 rounded-full opacity-0 group-hover/play:opacity-100 transition-opacity duration-300 blur-sm pointer-events-none" aria-hidden />
+          <div className="absolute -inset-1 bg-gold-400/40 rounded-full opacity-0 group-hover/play:opacity-30 transition-opacity duration-300 blur-md pointer-events-none" aria-hidden />
+          <div className="absolute -inset-2 bg-gold-500/20 rounded-full opacity-0 group-hover/play:opacity-20 transition-opacity duration-300 blur-lg pointer-events-none" aria-hidden />
           {isPlaying ? (
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover/play:scale-105"
+              className="w-6 h-6 sm:w-7 sm:h-7 relative z-10 transition-transform duration-300 group-hover/play:scale-110 drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -280,7 +391,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
             </svg>
           ) : (
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5 relative z-10 transition-transform duration-300 group-hover/play:scale-105"
+              className="w-6 h-6 sm:w-7 sm:h-7 ml-0.5 relative z-10 transition-transform duration-300 group-hover/play:scale-110 drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -299,13 +410,13 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
           {/* Mute Button */}
           <button
             onClick={toggleMute}
-            className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 text-gold-200 hover:text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 rounded min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] flex items-center justify-center touch-manipulation"
+            className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 text-gold-200 hover:text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-gold-900 rounded-lg min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] flex items-center justify-center touch-manipulation hover:bg-gold-900/30"
             aria-label={isMuted ? 'Unmute' : 'Mute'}
             title={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted || currentVolume === 0 ? (
               <svg
-                className="w-4 h-4 sm:w-5 sm:h-5"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -318,7 +429,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
               </svg>
             ) : (
               <svg
-                className="w-4 h-4 sm:w-5 sm:h-5"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -340,7 +451,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
             step="0.01"
             value={isMuted ? 0 : currentVolume}
             onChange={handleVolumeChange}
-            className="flex-1 h-1.5 sm:h-2 bg-gold-800/60 rounded-lg appearance-none cursor-pointer accent-gold-400 min-w-0 hover:accent-gold-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400/60 focus:ring-offset-2 focus:ring-offset-gold-900 background-music-volume-slider"
+            className="flex-1 h-1.5 sm:h-2 bg-gold-800/60 rounded-lg appearance-none cursor-pointer accent-gold-400 min-w-[60px] sm:min-w-[80px] hover:accent-gold-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-400/60 focus:ring-offset-2 focus:ring-offset-gold-900 background-music-volume-slider"
             style={{
               '--volume-percent': `${(isMuted ? 0 : currentVolume) * 100}%`,
             } as React.CSSProperties}
@@ -349,25 +460,27 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
         </div>
       </div>
 
-      {/* Tap to unmute hint - when autoplay muted */}
+      {/* Tap to unmute hint - when autoplay muted (only show when expanded) */}
       {isPlaying && isMuted && (
-        <div className="mt-2 sm:mt-2.5 text-xs sm:text-sm text-gold-300/95 text-center animate-pulse font-medium leading-relaxed relative z-10">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="text-base sm:text-lg animate-float">🎵</span>
-            <span>Tap anywhere to unmute</span>
+        <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/95 text-center animate-pulse font-medium leading-relaxed relative z-10">
+          <span className="inline-flex items-center gap-1">
+            <span className="text-sm animate-float">🎵</span>
+            <span className="hidden sm:inline">Tap anywhere to unmute</span>
+            <span className="sm:hidden">Tap to unmute</span>
           </span>
         </div>
       )}
 
       {error && error !== 'File not found' && (
-        <div className="mt-2 sm:mt-2.5 text-xs sm:text-sm text-red-300 bg-red-900/40 p-2 sm:p-2.5 rounded-lg text-center border border-red-700/50 relative z-10">
+        <div className="mt-1.5 sm:mt-2 text-xs text-red-300 bg-red-900/40 p-1.5 sm:p-2 rounded-lg text-center border border-red-700/50 relative z-10">
           {error}
         </div>
       )}
 
-      <div className="mt-2 sm:mt-2.5 text-xs sm:text-sm text-gold-300/80 text-center font-medium leading-relaxed relative z-10">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="text-base sm:text-lg animate-float font-musical background-music-note">♪</span>
+      {/* Label - hide on very small screens */}
+      <div className="mt-1.5 sm:mt-2 text-xs text-gold-300/80 text-center font-medium leading-relaxed relative z-10 hidden sm:block">
+        <span className="inline-flex items-center gap-1">
+          <span className="text-sm animate-float font-musical background-music-note">♪</span>
           <span>Background Music</span>
         </span>
       </div>
@@ -382,7 +495,8 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     prevProps.loop === nextProps.loop &&
     prevProps.showControls === nextProps.showControls &&
     prevProps.controlsPosition === nextProps.controlsPosition &&
-    prevProps.disableOnMobile === nextProps.disableOnMobile
+    prevProps.disableOnMobile === nextProps.disableOnMobile &&
+    prevProps.compact === nextProps.compact
   );
 });
 
