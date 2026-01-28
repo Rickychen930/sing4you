@@ -51,11 +51,10 @@ export const Footer: React.FC = memo(() => {
             <ul className="space-y-2.5">
               {[
                 { to: '/#hero', label: 'Hero' },
-                { to: '/#trust', label: 'Why Choose Us' },
                 { to: '/#services', label: 'Services' },
-                { to: '/#booking-process', label: 'How It Works' },
                 { to: '/#performances', label: 'Performances' },
                 { to: '/#testimonials', label: 'Testimonials' },
+                { to: '/#cta', label: 'Contact Us' },
               ].map(({ to, label }) => (
                 <li key={to}>
                   <Link

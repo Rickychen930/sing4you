@@ -126,7 +126,11 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
       audioEl.muted = true;
       audioEl.loop = loop;
       audioEl.preload = 'auto';
+      // Set src after error handler is attached
       audioEl.src = defaultSrcMemo;
+      
+      // Force load the audio file
+      audioEl.load();
 
       const notifyAllComponents = (updater: (s: StateSetters) => void) => {
         globalStateSetters.forEach(updater);
@@ -141,11 +145,35 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
       const handleEnded = () => {
         notifyAllComponents(s => s.setIsPlaying(false));
       };
-      const handleError = () => {
+      const handleError = (e: Event) => {
+        const audioError = e.target as HTMLAudioElement;
+        let errorMessage = 'Failed to load audio';
+        if (audioError.error) {
+          switch (audioError.error.code) {
+            case MediaError.MEDIA_ERR_ABORTED:
+              errorMessage = 'Audio loading aborted';
+              break;
+            case MediaError.MEDIA_ERR_NETWORK:
+              errorMessage = 'Network error loading audio';
+              break;
+            case MediaError.MEDIA_ERR_DECODE:
+              errorMessage = 'Audio decode error';
+              break;
+            case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+              errorMessage = 'Audio format not supported';
+              break;
+            default:
+              errorMessage = 'Failed to load audio file';
+          }
+        }
         notifyAllComponents(s => {
           s.setIsAvailable(false);
           s.setIsPlaying(false);
+          s.setError(errorMessage);
         });
+        if (process.env.NODE_ENV === 'development') {
+          console.error('BackgroundMusic error:', errorMessage, audioError.error);
+        }
       };
       const onAudioVolumeChange = () => {
         notifyAllComponents(s => {
@@ -172,7 +200,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
       audioEl.addEventListener('play', handlePlay);
       audioEl.addEventListener('pause', handlePause);
       audioEl.addEventListener('ended', handleEnded);
-      audioEl.addEventListener('error', handleError);
+      audioEl.addEventListener('error', handleError as EventListener);
       audioEl.addEventListener('volumechange', onAudioVolumeChange);
       audioEl.addEventListener('loadeddata', handleLoadedData);
       audioEl.addEventListener('canplay', handleCanPlay);
@@ -471,7 +499,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
         </div>
       )}
 
-      {error && error !== 'File not found' && (
+      {error && (
         <div className="mt-1.5 sm:mt-2 text-xs text-red-300 bg-red-900/40 p-1.5 sm:p-2 rounded-lg text-center border border-red-700/50 relative z-10">
           {error}
         </div>

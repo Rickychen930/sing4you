@@ -139,7 +139,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
 
         {isMenuOpen && (
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden top-14 sm:top-16 lg:top-18 xl:top-20 animate-fade-in"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] md:hidden top-14 sm:top-16 lg:top-18 xl:top-20 animate-fade-in"
             onClick={closeMobileMenu}
             aria-hidden
           />
@@ -147,8 +147,8 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
         <div
           id="mobile-menu"
           className={cn(
-            'md:hidden fixed top-14 sm:top-16 lg:top-18 xl:top-20 left-0 right-0 bottom-0 z-50 overflow-y-auto overscroll-contain transition-transform duration-300 ease-out',
-            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            'md:hidden fixed top-14 sm:top-16 lg:top-18 xl:top-20 left-0 right-0 bottom-0 z-[70] overflow-y-auto overscroll-contain transition-transform duration-300 ease-out',
+            isMenuOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
           )}
           role="menu"
           aria-label="Mobile navigation"

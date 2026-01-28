@@ -107,11 +107,17 @@ export const SEO: React.FC<SEOProps> = memo(({
       {/* Additional SEO Meta Tags */}
       <meta name="theme-color" content="#ffc233" />
       <meta name="msapplication-TileColor" content="#ffc233" />
+      <meta name="msapplication-TileImage" content="/logo 192.png" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="apple-mobile-web-app-title" content="Christina Sings4U" />
+      <link rel="apple-touch-icon" sizes="192x192" href="/logo 192.png" />
+      <link rel="apple-touch-icon" sizes="512x512" href="/logo 512.png" />
       <meta name="format-detection" content="telephone=yes" />
       <meta name="mobile-web-app-capable" content="yes" />
+      
+      {/* Manifest */}
+      <link rel="manifest" href="/manifest.json" />
       
       {/* Geographic Meta Tags */}
       <meta name="geo.region" content="AU-NSW" />
@@ -133,6 +139,15 @@ export const SEO: React.FC<SEOProps> = memo(({
       <meta name="target" content="all" />
       <meta name="audience" content="all" />
       <meta name="copyright" content="Christina Sings4U" />
+      
+      {/* Enhanced Keywords for Singer Sydney Search */}
+      <meta name="subject" content="Professional Singer Sydney, Wedding Singer, Corporate Event Singer, Live Music Sydney" />
+      <meta name="topic" content="Singer Sydney, Wedding Entertainment Sydney, Live Music Performance Sydney NSW" />
+      <meta name="summary" content="Professional singer in Sydney offering live vocals for weddings, corporate events and private occasions. Solo, duo, trio and full band available." />
+      
+      {/* Business Hours and Availability */}
+      <meta name="availability" content="Available for bookings" />
+      <meta name="service-area" content="Sydney, NSW, Australia" />
       
       {/* Verification Tags (add your verification codes) */}
       {/* <meta name="google-site-verification" content="your-verification-code" /> */}
