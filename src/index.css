@@ -427,7 +427,7 @@
 
   p {
     @apply text-gray-200;
-    text-align: justify
+    text-align: justify;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height: 1.8;
     margin-bottom: 1.25em;
