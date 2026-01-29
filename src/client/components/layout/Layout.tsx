@@ -6,6 +6,7 @@ import { ScrollToTop } from '../ui/ScrollToTop';
 import { CursorEffect } from '../ui/CursorEffect';
 import { BackgroundMusic } from '../ui/BackgroundMusic';
 import { CookieConsent } from '../ui/CookieConsent';
+import { DecorativeEffects } from '../ui/DecorativeEffects';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -24,6 +25,15 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0b1024]/50 to-black/70 pointer-events-none z-0" aria-hidden />
       {!isAdmin && <div className="theme-dot-grid" aria-hidden />}
       {!isAdmin && <div className="theme-vignette" aria-hidden />}
+      {!isAdmin && (
+        <DecorativeEffects
+          fireworks
+          musicalNotes
+          stageLights
+          sparkles
+          className="opacity-70 mix-blend-screen"
+        />
+      )}
 
       <Header isAdmin={isAdmin} />
       <main id="main-content" className="flex-grow pt-14 sm:pt-16 lg:pt-18 xl:pt-20 relative z-10 overflow-visible" tabIndex={-1}>
