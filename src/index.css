@@ -427,6 +427,7 @@
 
   p {
     @apply text-gray-200;
+    text-align: justify
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height: 1.8;
     margin-bottom: 1.25em;
@@ -1459,7 +1460,7 @@ body::-webkit-scrollbar {
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
-  opacity: 0.4;
+  opacity: 0.4  ;
   animation: fireworkParticleFloat 5s ease-out infinite;
   background: radial-gradient(circle, rgba(255, 194, 51, 0.95) 0%, rgba(168, 85, 247, 0.7) 50%, transparent 100%);
 }
