@@ -98,7 +98,7 @@ const GalleryItem: React.FC<GalleryItemProps> = memo(({ url, index, isVideo, onS
         shouldLoad ? (
           <video
             src={url}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain bg-black"
             controls
             preload="metadata"
             aria-label={`Performance video ${index + 1} - Christina Sings4U`}
@@ -117,7 +117,7 @@ const GalleryItem: React.FC<GalleryItemProps> = memo(({ url, index, isVideo, onS
             <LazyImage
               src={url}
               alt={`Performance gallery image ${index + 1} - Christina Sings4U`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full group-hover:scale-105 transition-transform duration-300"
               fadeIn
             />
           ) : (
@@ -271,7 +271,12 @@ export const MediaGallery: React.FC<MediaGalleryProps> = memo(({
 
   return (
     <>
-      <div className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 xl:gap-8', className)}>
+      <div
+        className={cn(
+          'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 xl:gap-8 scroll-reveal-io animate-fade-in-up',
+          className
+        )}
+      >
         {mediaItems}
       </div>
 

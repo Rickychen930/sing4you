@@ -37,7 +37,7 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
 
   return (
     <Card 
-      className={cn('h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900', className)} 
+      className={cn('h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 card-entrance scroll-reveal-io animate-fade-in-up', className)} 
       hover
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
@@ -52,7 +52,7 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
             <LazyImage
               src={performance.featuredImage}
               alt={performance.eventName}
-              className="w-full h-full object-cover bg-black transition-all duration-700 group-hover:scale-110"
+              className="w-full h-full object-contain bg-black transition-all duration-700 group-hover:scale-105"
             />
             {/* Enhanced gradient overlay with hover effect */}
             <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent group-hover:from-jazz-900/70 group-hover:via-jazz-900/30 transition-all duration-500" />

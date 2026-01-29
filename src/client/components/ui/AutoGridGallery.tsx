@@ -89,7 +89,7 @@ export const AutoGridGallery: React.FC<AutoGridGalleryProps> = ({
             <LazyImage
               src={url}
               alt={`Gallery image ${index + 1}`}
-              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+              className="w-full h-full object-contain bg-black transition-all duration-700 group-hover:scale-105"
               fadeIn
             />
             {/* Enhanced gradient overlay with hover effect */}

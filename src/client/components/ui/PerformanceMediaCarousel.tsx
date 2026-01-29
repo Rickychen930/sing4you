@@ -60,7 +60,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
 
   return (
     <div
-      className={cn('space-y-4 sm:space-y-5 lg:space-y-6', className)}
+      className={cn('space-y-4 sm:space-y-5 lg:space-y-6 scroll-reveal-io animate-fade-in-up', className)}
       onMouseEnter={() => pauseOnHover && setIsHovered(true)}
       onMouseLeave={() => pauseOnHover && setIsHovered(false)}
     >
@@ -72,7 +72,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
           <video
             key={activeMedia}
             src={activeMedia}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+            className="w-full h-full object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
             controls
             preload="metadata"
           />
@@ -81,7 +81,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
             key={activeMedia}
             src={activeMedia}
             alt={`Performance media ${safeIndex + 1}`}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+            className="w-full h-full object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
             fadeIn
           />
         )}
@@ -123,6 +123,14 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
         )}
       </div>
 
+      {/* Subtle shimmer accent under carousel */}
+      <div
+        className="relative w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto opacity-80 overflow-hidden"
+        aria-hidden
+      >
+        <div className="absolute inset-0 animate-shimmer-musical opacity-70" />
+      </div>
+
       {/* Thumbnails */}
       {media.length > 1 && (
         <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-1 sm:pb-2 -mx-1 sm:-mx-2 px-1 sm:px-2">
@@ -142,7 +150,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
               {isVideo(url) ? (
                 <video
                   src={url}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-black"
                   muted
                   playsInline
                   preload="metadata"
@@ -151,7 +159,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
                 <LazyImage
                   src={url}
                   alt={`Performance media thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-black"
                   fadeIn={false}
                 />
               )}

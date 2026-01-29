@@ -980,11 +980,11 @@ export const CategoriesAndVariationsManagementPage: React.FC = () => {
                     <h3 className="text-lg font-semibold text-gray-200 mb-3">Current Media ({variationMedia.length})</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                       {variationMedia.map((media) => (
-                        <div key={media._id} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-900/50 group">
+                        <div key={media._id} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gold-900/50 group bg-black">
                           {media.type === 'video' ? (
-                            <video src={media.url} className="w-full h-full object-cover" controls />
+                            <video src={media.url} className="w-full h-full object-contain bg-black" controls />
                           ) : (
-                            <LazyImage src={media.url} alt={`Media ${media._id}`} className="w-full h-full object-cover" />
+                            <LazyImage src={media.url} alt={`Media ${media._id}`} className="w-full h-full object-contain bg-black" />
                           )}
                           <button
                             onClick={() => media._id && handleDeleteMedia(media._id)}

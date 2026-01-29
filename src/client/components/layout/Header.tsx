@@ -59,10 +59,16 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           <div className="flex justify-between items-center h-14 sm:h-16 lg:h-18 xl:h-20 relative">
             <Link
               to="/"
-              className="text-base sm:text-lg md:text-xl lg:text-2xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent hover:opacity-90 transition-opacity duration-300"
+              className="inline-flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg md:text-xl lg:text-2xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent hover:opacity-90 transition-opacity duration-300 relative"
               aria-label="Home — Christina Sings4U"
             >
-              Christina Sings4U
+              <span>Christina Sings4U</span>
+              <span
+                className="hidden sm:inline-flex text-gold-300/80 text-lg md:text-xl lg:text-2xl animate-musical-pulse header-musical-note"
+                aria-hidden="true"
+              >
+                ♫
+              </span>
             </Link>
 
             <div className="hidden md:flex items-center gap-0.5 lg:gap-1">

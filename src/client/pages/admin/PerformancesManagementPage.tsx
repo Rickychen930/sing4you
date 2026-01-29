@@ -330,7 +330,7 @@ export const PerformancesManagementPage: React.FC = () => {
                           <img
                             src={performance.featuredImage}
                             alt={performance.eventName}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain bg-black"
                             onError={(e) => {
                               (e.target as HTMLImageElement).style.display = 'none';
                             }}

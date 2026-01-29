@@ -139,7 +139,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
                     <LazyImage
                       src={category.featuredImage}
                       alt={category.name}
-                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                      className="w-full h-full object-contain bg-black transition-all duration-700 group-hover:scale-105"
                     />
                     {/* Enhanced gradient overlay with hover effect */}
                     <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/85 via-jazz-900/40 to-transparent group-hover:from-jazz-900/75 group-hover:via-jazz-900/30 transition-all duration-500" />

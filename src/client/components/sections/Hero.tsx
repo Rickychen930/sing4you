@@ -171,6 +171,19 @@ export const Hero: FC = memo(() => {
         <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-48 sm:h-48 rounded-full blur-2xl bg-musical-500/12 hero-glow-2" />
       </div>
 
+      {/* Concert stage foreground: floor & strong spotlights */}
+      <div className="absolute inset-x-0 bottom-0 h-40 sm:h-48 md:h-56 bg-gradient-to-t from-black/95 via-black/80 to-transparent pointer-events-none z-[2]" aria-hidden />
+      {/* Left stage spotlight */}
+      <div
+        className="absolute -bottom-10 sm:-bottom-12 left-[-10%] sm:left-[-6%] w-40 sm:w-56 md:w-64 h-64 sm:h-80 md:h-[22rem] bg-gradient-to-t from-gold-500/55 via-gold-400/20 to-transparent opacity-80 sm:opacity-90 blur-3xl sm:blur-4xl rotate-[-10deg] pointer-events-none z-[2]"
+        aria-hidden
+      />
+      {/* Right stage spotlight */}
+      <div
+        className="absolute -bottom-10 sm:-bottom-12 right-[-10%] sm:right-[-6%] w-40 sm:w-56 md:w-64 h-64 sm:h-80 md:h-[22rem] bg-gradient-to-t from-musical-500/55 via-musical-400/20 to-transparent opacity-80 sm:opacity-90 blur-3xl sm:blur-4xl rotate-[10deg] pointer-events-none z-[2]"
+        aria-hidden
+      />
+
       {/* Performance-optimized decorative effects */}
       <DecorativeEffects
         fireworks
@@ -183,28 +196,38 @@ export const Hero: FC = memo(() => {
       
       <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">
         {/* Decorative line above title */}
-        <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/50 to-transparent rounded-full mx-auto mb-6 sm:mb-8" aria-hidden="true" />
-        <div className="relative inline-block mb-4 sm:mb-5 md:mb-6">
+        <div
+          className="relative w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto mb-6 sm:mb-8 overflow-hidden"
+          aria-hidden="true"
+        >
+          <div className="absolute inset-0 animate-shimmer-musical opacity-60" />
+        </div>
+        <div className="relative inline-block mb-4 sm:mb-5 md:mb-6 animate-fade-in-up hero-glow-delay">
           {/* Subtle decorative accent behind title */}
           <div className="absolute -inset-4 sm:-inset-6 bg-gold-500/5 rounded-full blur-xl opacity-50" aria-hidden />
           <h1 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold leading-tight px-2 sm:px-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
             {heroSettings.title}
           </h1>
         </div>
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-4 sm:mb-6 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-4 sm:mb-6 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto hero-subtitle animate-fade-in-up design-delay-fast">
           {heroSettings.subtitle}
         </p>
-        <TrustBadges variant="hero" />
-        <p className="text-sm sm:text-base text-gold-300/90 font-medium mt-4 sm:mt-5 mb-2 sm:mb-3 font-sans">
+        <TrustBadges variant="hero" className="animate-fade-in-up design-delay-normal" />
+        <p className="text-sm sm:text-base text-gold-300/90 font-medium mt-4 sm:mt-5 mb-2 sm:mb-3 font-sans animate-fade-in-up design-delay-medium">
           Trusted for 500+ events across Sydney — weddings, corporate & private occasions
         </p>
-        <div className="w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto my-6 sm:my-8" aria-hidden />
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-md sm:max-w-lg mx-auto">
+        <div
+          className="relative w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto my-6 sm:my-8 overflow-hidden"
+          aria-hidden
+        >
+          <div className="absolute inset-0 animate-shimmer-musical opacity-60" />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-md sm:max-w-lg mx-auto animate-fade-in-up design-delay-slow">
           <Button
             variant="primary"
             size="lg"
             onClick={handleWhatsApp}
-            className="w-full sm:w-auto group hover-lift-advanced shadow-[0_6px_20px_rgba(255,194,51,0.4)] hover:shadow-[0_8px_28px_rgba(255,194,51,0.5)]"
+            className="w-full sm:w-auto group hover-lift-advanced shadow-[0_6px_20px_rgba(255,194,51,0.4)] hover:shadow-[0_8px_28px_rgba(255,194,51,0.5)] animate-musical-shine"
             aria-label="Contact via WhatsApp"
           >
             <span className="flex items-center justify-center gap-2">
