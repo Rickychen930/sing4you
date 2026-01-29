@@ -1459,7 +1459,7 @@ body::-webkit-scrollbar {
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
-  opacity: 0;
+  opacity: 0.4;
   animation: fireworkParticleFloat 5s ease-out infinite;
   background: radial-gradient(circle, rgba(255, 194, 51, 0.95) 0%, rgba(168, 85, 247, 0.7) 50%, transparent 100%);
 }
@@ -1479,7 +1479,7 @@ body::-webkit-scrollbar {
 .decorative-musical-note {
   position: absolute;
   pointer-events: none;
-  opacity: 0.28;
+  opacity: 0.45;
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
@@ -1558,7 +1558,7 @@ body::-webkit-scrollbar {
   backface-visibility: hidden;
   contain: strict;
   animation: stageLightSweep 18s ease-in-out infinite;
-  opacity: 0.15;
+  opacity: 0.35;
 }
 
 /* Sparkle Stars — visible, perf-safe */
@@ -1581,7 +1581,7 @@ body::-webkit-scrollbar {
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
-  opacity: 0.25;
+  opacity: 0.45;
   animation: sparkleTwinkle 7s ease-in-out infinite;
 }
 
