@@ -64,10 +64,7 @@ export class PerformanceModel {
   public static async findAll(): Promise<IPerformance[]> {
     try {
       const model = this.getModel();
-      // Only return upcoming performances (today or later; ignore time-of-day)
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return await model.find({ date: { $gte: today } }).sort({ date: 1 }).lean();
+      return await model.find().sort({ date: 1 }).lean();
     } catch {
       return [];
     }
