@@ -31,7 +31,7 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
           musicalNotes
           stageLights
           sparkles
-          className="opacity-70 mix-blend-screen"
+          className="fixed inset-0 z-0 opacity-100"
         />
       )}
 

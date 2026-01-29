@@ -1431,18 +1431,18 @@ body::-webkit-scrollbar {
    CSS-only, GPU-accelerated, subtle opacity
    ============================================ */
 
-/* Subtle Firework Particles — CSS-only, perf-safe */
+/* Subtle Firework Particles — visible, perf-safe */
 @keyframes fireworkParticleFloat {
   0% {
     transform: translate(0, 0) translateZ(0) scale(0);
     opacity: 0;
   }
   10% {
-    opacity: 0.5;
+    opacity: 0.9;
     transform: translate(0, 0) translateZ(0) scale(1);
   }
   50% {
-    opacity: 0.3;
+    opacity: 0.6;
   }
   100% {
     transform: translate(var(--fw-tx, 40px), var(--fw-ty, -100px)) translateZ(0) scale(0);
@@ -1452,8 +1452,8 @@ body::-webkit-scrollbar {
 
 .decorative-firework {
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   pointer-events: none;
   transform: translateZ(0);
@@ -1461,31 +1461,31 @@ body::-webkit-scrollbar {
   contain: strict;
   opacity: 0;
   animation: fireworkParticleFloat 5s ease-out infinite;
-  background: radial-gradient(circle, rgba(255, 194, 51, 0.9) 0%, rgba(168, 85, 247, 0.6) 50%, transparent 100%);
+  background: radial-gradient(circle, rgba(255, 194, 51, 0.95) 0%, rgba(168, 85, 247, 0.7) 50%, transparent 100%);
 }
 
-/* Floating Musical Notes — subtle, perf-safe */
+/* Floating Musical Notes — visible, perf-safe */
 @keyframes musicalNoteFloat {
   0%, 100% {
     transform: translateY(0) translateZ(0) rotate(0deg);
-    opacity: 0.03;
+    opacity: 0.25;
   }
   50% {
     transform: translateY(-35px) translateZ(0) rotate(10deg);
-    opacity: 0.05;
+    opacity: 0.45;
   }
 }
 
 .decorative-musical-note {
   position: absolute;
   pointer-events: none;
-  opacity: 0.03;
+  opacity: 0.28;
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
   animation: musicalNoteFloat 14s ease-in-out infinite;
-  color: rgba(255, 194, 51, 0.5);
-  filter: drop-shadow(0 0 6px rgba(255, 194, 51, 0.15));
+  color: rgba(255, 194, 51, 0.85);
+  filter: drop-shadow(0 0 10px rgba(255, 194, 51, 0.4));
 }
 
 .decorative-musical-note svg {
@@ -1525,18 +1525,18 @@ body::-webkit-scrollbar {
   transform: translateZ(0);
 }
 
-/* Stage Light Effects — CSS gradients, perf-safe */
+/* Stage Light Effects — visible, perf-safe */
 @keyframes stageLightSweep {
   0% {
-    opacity: 0.02;
+    opacity: 0.12;
     transform: translateX(-25%) translateZ(0);
   }
   50% {
-    opacity: 0.04;
+    opacity: 0.22;
     transform: translateX(25%) translateZ(0);
   }
   100% {
-    opacity: 0.02;
+    opacity: 0.12;
     transform: translateX(-25%) translateZ(0);
   }
 }
@@ -1544,44 +1544,44 @@ body::-webkit-scrollbar {
 .decorative-stage-light {
   position: absolute;
   pointer-events: none;
-  width: 250px;
-  height: 250px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   background: radial-gradient(
     ellipse 100% 50% at center,
-    rgba(255, 194, 51, 0.12) 0%,
-    rgba(168, 85, 247, 0.08) 30%,
+    rgba(255, 194, 51, 0.25) 0%,
+    rgba(168, 85, 247, 0.18) 30%,
     transparent 70%
   );
-  filter: blur(50px);
+  filter: blur(45px);
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
   animation: stageLightSweep 18s ease-in-out infinite;
-  opacity: 0.02;
+  opacity: 0.15;
 }
 
-/* Sparkle Stars — subtle, perf-safe */
+/* Sparkle Stars — visible, perf-safe */
 @keyframes sparkleTwinkle {
   0%, 100% {
-    opacity: 0.02;
+    opacity: 0.2;
     transform: scale(1) translateZ(0) rotate(0deg);
   }
   50% {
-    opacity: 0.06;
+    opacity: 0.5;
     transform: scale(1.3) translateZ(0) rotate(180deg);
   }
 }
 
 .decorative-sparkle {
   position: absolute;
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   pointer-events: none;
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
-  opacity: 0.02;
+  opacity: 0.25;
   animation: sparkleTwinkle 7s ease-in-out infinite;
 }
 

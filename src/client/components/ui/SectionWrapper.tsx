@@ -29,7 +29,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
   divider = false,
 }) => {
   const sectionClassName = useMemo(() => cn(
-    'py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden',
+    'py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-8 relative overflow-visible',
     alternate && !className?.includes('bg-') && 'bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-musical-900/25',
     className
   ), [alternate, className]);

@@ -137,7 +137,7 @@ export const AboutPage: React.FC = () => {
       {/* Hero Section */}
       <section 
         id="about-hero" 
-        className="relative w-full flex items-center justify-center overflow-hidden -mt-16 lg:-mt-20 pt-16 lg:pt-20 min-h-[60vh] sm:min-h-[70vh]"
+        className="relative w-full flex items-center justify-center overflow-visible -mt-16 lg:-mt-20 pt-16 lg:pt-20 min-h-[60vh] sm:min-h-[70vh]"
       >
         <DecorativeEffects musicalNotes sparkles className="opacity-40" />
         <div className="absolute inset-0">
