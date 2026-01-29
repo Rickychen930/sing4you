@@ -28,7 +28,10 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
     if (!isMenuOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('header')) setIsMenuOpen(false);
+      // Don't close when clicking inside header OR inside mobile menu panel (nav links)
+      const insideHeader = target.closest('header');
+      const insideMobileMenu = target.closest('#mobile-menu');
+      if (!insideHeader && !insideMobileMenu) setIsMenuOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside, { capture: true, passive: true });
     return () => document.removeEventListener('mousedown', handleClickOutside, { capture: true });
