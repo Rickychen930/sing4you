@@ -112,9 +112,9 @@ export const Hero: FC = memo(() => {
   return (
     <section 
       id="hero" 
-      className="relative w-full flex items-center justify-center overflow-visible -mt-16 lg:-mt-20 pt-16 lg:pt-20 hero-section-bg min-h-[85vh] sm:min-h-[90vh]"
+      className="relative w-full flex items-center justify-center overflow-visible -mt-16 lg:-mt-20 pt-16 lg:pt-20 hero-section-bg min-h-[85vh] sm:min-h-[90vh] theme-section-music-glow"
     >
-      {/* Disabled FireworkEffect for better performance */}
+      {/* CSS-only fireworks via DecorativeEffects (perf-safe) */}
       {/* <FireworkEffect
         trigger={fireworkTrigger}
         intensity="medium"
@@ -184,14 +184,14 @@ export const Hero: FC = memo(() => {
         aria-hidden
       />
 
-      {/* Performance-optimized decorative effects */}
+      {/* Performance-optimized decorative effects — music, firework, sparkles (CSS-only) */}
       <DecorativeEffects
         fireworks
         musicalNotes
         mics
         stageLights
         sparkles
-        className="z-[1]"
+        className="z-[1] opacity-30"
       />
       
       <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">

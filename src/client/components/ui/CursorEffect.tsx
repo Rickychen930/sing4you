@@ -32,15 +32,30 @@ export const CursorEffect: React.FC<CursorEffectProps> = ({
   useEffect(() => {
     if (disableOnMobile && isMobile()) return;
 
-    // Use data URI directly instead of blob URL to prevent memory leaks
-    const svgDataUri = `data:image/svg+xml;base64,${btoa(`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1Z" fill="#FFC233" stroke="#E8A822" stroke-width="0.5"/>
-      <path d="M19 10V12C19 15.87 15.87 19 12 19C8.13 19 5 15.87 5 12V10H3V12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12V10H19Z" fill="#FFC233" stroke="#E8A822" stroke-width="0.5"/>
-      <path d="M11 22H13V24H11V22Z" fill="#FFC233" stroke="#E8A822" stroke-width="0.5"/>
-    </svg>`)}`;
+    // Vintage jazz mic cursor — classic ball mic, gold capsule + purple neck/base
+    const svg = `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="jazz-cap" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FFD54F"/>
+          <stop offset="50%" stop-color="#FFC233"/>
+          <stop offset="100%" stop-color="#cc8b1a"/>
+        </linearGradient>
+        <linearGradient id="jazz-neck" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#6b21a8"/>
+          <stop offset="50%" stop-color="#a855f7"/>
+          <stop offset="100%" stop-color="#6b21a8"/>
+        </linearGradient>
+      </defs>
+      <circle cx="14" cy="8" r="5.5" fill="url(#jazz-cap)" stroke="#b8860b" stroke-width="0.7"/>
+      <ellipse cx="14" cy="6.6" rx="1.8" ry="1.1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="12.3" y="13.2" width="3.4" height="7.5" rx="0.6" fill="url(#jazz-neck)" stroke="#7e22ce" stroke-width="0.4"/>
+      <path d="M10.6 20.8h6.8l0.5 1.8h-7.8z" fill="#1a0a2e" stroke="#9333ea" stroke-width="0.4"/>
+      <rect x="12.9" y="20.6" width="2.2" height="1.2" rx="0.3" fill="#2d1b4e"/>
+    </svg>`;
+    const svgDataUri = `data:image/svg+xml;base64,${btoa(svg)}`;
 
-    // Apply custom cursor to body and all elements
-    const cursorStyle = `url("${svgDataUri}") 16 16, auto`;
+    // Apply custom cursor — hotspot at tip of mic (center of ball)
+    const cursorStyle = `url("${svgDataUri}") 14 8, auto`;
     document.body.style.cursor = cursorStyle;
     document.documentElement.style.cursor = cursorStyle;
 

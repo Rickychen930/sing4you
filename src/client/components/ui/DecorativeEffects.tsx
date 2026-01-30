@@ -1,8 +1,10 @@
 import React, { memo } from 'react';
 
 interface DecorativeEffectsProps {
-  /** Show firework particles */
+  /** Show firework particles (CSS-only, perf-safe) */
   fireworks?: boolean;
+  /** Use fewer firework particles for secondary sections (better perf when multiple sections use fireworks) */
+  fireworksLight?: boolean;
   /** Show musical notes */
   musicalNotes?: boolean;
   /** Show mic icons */
@@ -18,27 +20,29 @@ interface DecorativeEffectsProps {
 /** Lightweight decorative effects — CSS-only, performance-optimized */
 export const DecorativeEffects: React.FC<DecorativeEffectsProps> = memo(({
   fireworks = false,
+  fireworksLight = false,
   musicalNotes = false,
   mics = false,
   stageLights = false,
   sparkles = false,
   className = '',
 }) => {
+  const fireworkCount = fireworksLight ? 3 : 6;
   return (
     <div className={`absolute inset-0 pointer-events-none z-0 ${className}`} aria-hidden="true">
-      {/* Firework Particles */}
+      {/* Firework Particles — CSS-only, GPU-accelerated */}
       {fireworks && (
         <>
-          {[...Array(6)].map((_, i) => (
+          {[...Array(fireworkCount)].map((_, i) => (
             <div
               key={`fw-${i}`}
               className="decorative-firework"
               style={{
-                left: `${15 + i * 12}%`,
-                top: `${60 + (i % 3) * 10}%`,
-                '--fw-tx': `${30 + i * 10}px`,
-                '--fw-ty': `${-80 - i * 15}px`,
-                animationDelay: `${i * 0.8}s`,
+                left: `${18 + (i * (82 / Math.max(fireworkCount - 1, 1)))}%`,
+                top: `${55 + (i % 3) * 15}%`,
+                '--fw-tx': `${25 + i * 8}px`,
+                '--fw-ty': `${-70 - i * 12}px`,
+                animationDelay: `${i * 1.2}s`,
               } as React.CSSProperties}
             />
           ))}
