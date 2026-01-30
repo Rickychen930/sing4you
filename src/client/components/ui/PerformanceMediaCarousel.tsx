@@ -96,7 +96,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
             <button
               type="button"
               onClick={goPrev}
-              className="absolute inset-y-0 left-2 sm:left-3 z-20 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60"
+              className="absolute inset-y-0 left-2 sm:left-3 z-20 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 transition-all duration-300"
               aria-label="Previous media"
             >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
             <button
               type="button"
               onClick={goNext}
-              className="absolute inset-y-0 right-2 sm:right-3 z-20 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60"
+              className="absolute inset-y-0 right-2 sm:right-3 z-20 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 transition-all duration-300"
               aria-label="Next media"
             >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,7 +118,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
 
         {/* Counter */}
         {media.length > 1 && (
-          <div className="absolute bottom-3 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-3 z-20 px-3 py-1.5 rounded-full bg-black/60 text-xs sm:text-sm text-gray-100 flex items-center gap-1 backdrop-blur-sm">
+          <div className="absolute bottom-3 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-3 z-20 px-3 py-1.5 rounded-full bg-black/60 text-xs sm:text-sm text-gray-200 font-sans flex items-center gap-1 backdrop-blur-sm">
             <span className="font-semibold text-gold-300">{safeIndex + 1}</span>
             <span className="text-gray-300">/ {media.length}</span>
           </div>
@@ -136,12 +136,13 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
               type="button"
               onClick={() => goTo(index)}
               className={cn(
-                'relative flex-shrink-0 w-20 h-14 sm:w-28 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 group/thumb bg-jazz-800/80',
+                'relative flex-shrink-0 w-20 h-14 sm:w-28 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 group/thumb bg-jazz-800/80 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900',
                 index === safeIndex
                   ? 'border-gold-400 shadow-[0_0_16px_rgba(255,194,51,0.7)] scale-105'
                   : 'border-gold-900/40 hover:border-gold-500/70 hover:scale-105 hover:shadow-[0_0_12px_rgba(255,194,51,0.4)]'
               )}
               aria-label={`Go to media ${index + 1}`}
+              aria-current={index === safeIndex ? 'true' : undefined}
             >
               {isVideo(url) ? (
                 <video

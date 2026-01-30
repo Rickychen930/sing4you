@@ -48,6 +48,9 @@ const TestimonialsManagementPage = lazy(() => import('./client/pages/admin/Testi
 const FAQManagementPage = lazy(() => import('./client/pages/admin/FAQManagementPage').then(m => ({ default: m.FAQManagementPage })));
 const SEOManagementPage = lazy(() => import('./client/pages/admin/SEOManagementPage').then(m => ({ default: m.SEOManagementPage })));
 const CategoriesAndVariationsManagementPage = lazy(() => import('./client/pages/admin/CategoriesAndVariationsManagementPage').then(m => ({ default: m.CategoriesAndVariationsManagementPage })));
+const ClientsManagementPage = lazy(() => import('./client/pages/admin/ClientsManagementPage').then(m => ({ default: m.ClientsManagementPage })));
+const ClientDetailPage = lazy(() => import('./client/pages/admin/ClientDetailPage').then(m => ({ default: m.ClientDetailPage })));
+const InvoicesManagementPage = lazy(() => import('./client/pages/admin/InvoicesManagementPage').then(m => ({ default: m.InvoicesManagementPage })));
 
 const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -232,6 +235,30 @@ function App() {
                 element={
                   <PrivateRoute>
                     <CategoriesAndVariationsManagementPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/clients"
+                element={
+                  <PrivateRoute>
+                    <ClientsManagementPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/clients/:id"
+                element={
+                  <PrivateRoute>
+                    <ClientDetailPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/invoices"
+                element={
+                  <PrivateRoute>
+                    <InvoicesManagementPage />
                   </PrivateRoute>
                 }
               />

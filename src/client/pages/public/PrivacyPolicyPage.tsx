@@ -2,12 +2,14 @@ import React from 'react';
 import { SEO } from '../../components/ui/SEO';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { Card, CardBody } from '../../components/ui/Card';
+import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { DecorativeEffects } from '../../components/ui/DecorativeEffects';
 import { CONTACT_EMAIL } from '../../../shared/constants';
 
 export const PrivacyPolicyPage: React.FC = () => {
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
   const lastUpdated = 'January 2026';
+  const breadcrumbItems = [{ label: 'Home', path: '/' }, { label: 'Privacy Policy' }];
 
   return (
     <>
@@ -18,15 +20,19 @@ export const PrivacyPolicyPage: React.FC = () => {
         url={`${siteUrl}/privacy`}
         contactEmail={CONTACT_EMAIL}
       />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
       <SectionWrapper
         id="privacy-policy"
         title="Privacy Policy"
         subtitle={`Last Updated: ${lastUpdated}`}
         className="relative theme-section-music-glow"
+        divider
       >
-        <DecorativeEffects sparkles className="opacity-20" />
+        <DecorativeEffects sparkles className="opacity-20 z-0" />
         <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
-        <Card className="relative z-10">
+        <Card className="relative z-10 shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
           <CardBody large>
             <div className="prose prose-invert max-w-none space-y-6 sm:space-y-8">
               <section>

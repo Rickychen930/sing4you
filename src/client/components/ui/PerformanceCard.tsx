@@ -37,7 +37,7 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
 
   return (
     <Card 
-      className={cn('h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 card-entrance scroll-reveal-io animate-fade-in-up', className)} 
+      className={cn('h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 card-entrance scroll-reveal-io animate-fade-in-up shadow-[0_4px_24px_rgba(0,0,0,0.25)]', className)} 
       hover
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
@@ -75,8 +75,8 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
                   </svg>
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Venue</p>
-                  <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{performance.venueName}</p>
+                  <p className="font-sans font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Venue</p>
+                  <p className="text-gray-200 font-sans leading-relaxed text-base sm:text-lg group-hover/item:text-gray-200/95 transition-colors duration-300 performance-card-text">{performance.venueName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
@@ -86,8 +86,8 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
                   </svg>
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Location</p>
-                  <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{performance.city}, {performance.state}</p>
+                  <p className="font-sans font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Location</p>
+                  <p className="text-gray-200 font-sans leading-relaxed text-base sm:text-lg group-hover/item:text-gray-200/95 transition-colors duration-300 performance-card-text">{performance.city}, {performance.state}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
@@ -97,8 +97,8 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
                   </svg>
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Date & Time</p>
-                  <p className="text-gray-200/95 sm:text-gray-200 leading-relaxed text-base sm:text-lg group-hover/item:text-gray-100 transition-colors duration-300 performance-card-text">{formatAustralianDateTime(performance.date, performance.time)}</p>
+                  <p className="font-sans font-semibold text-gold-300 mb-1 sm:mb-1.5 lg:mb-2 text-xs sm:text-sm lg:text-base group-hover/item:text-gold-200 transition-colors duration-300">Date & Time</p>
+                  <p className="text-gray-200 font-sans leading-relaxed text-base sm:text-lg group-hover/item:text-gray-200/95 transition-colors duration-300 performance-card-text">{formatAustralianDateTime(performance.date, performance.time)}</p>
                 </div>
               </div>
             </div>

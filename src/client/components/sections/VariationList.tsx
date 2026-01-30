@@ -101,7 +101,8 @@ export const VariationList: React.FC<VariationListProps> = memo(({
   if (loading) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="animate-fade-in-up variation-list-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
               <Card className="h-full min-h-[200px] sm:min-h-[220px]">
@@ -122,6 +123,7 @@ export const VariationList: React.FC<VariationListProps> = memo(({
   if (error) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         <EmptyState
           icon="⚠️"
           title="Unable to load variations"
@@ -139,6 +141,7 @@ export const VariationList: React.FC<VariationListProps> = memo(({
   if (variations.length === 0) {
     return (
       <SectionWrapper title={title} subtitle={subtitle}>
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         <EmptyState
           icon="🎤"
           title="No variations available"
@@ -149,9 +152,9 @@ export const VariationList: React.FC<VariationListProps> = memo(({
   }
 
   return (
-    <SectionWrapper title={title} subtitle={subtitle} className="theme-section-music-glow">
+    <SectionWrapper title={title} subtitle={subtitle} className="theme-section-music-glow relative" divider>
       <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
         {variations.map((variation, index) => (
           <div
             key={variation._id}
@@ -167,11 +170,11 @@ export const VariationList: React.FC<VariationListProps> = memo(({
                   handleVariationClick(variation._id);
                 }
               }}
-              className="w-full text-left focus:outline-none"
+              className="w-full text-left focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-2xl"
               aria-label={`View ${variation.name} variation details`}
             >
               <Card 
-                className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[200px] sm:min-h-[220px] group overflow-hidden" 
+                className="h-full cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 min-h-[200px] sm:min-h-[220px] group overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.25)]" 
                 hover
               >
                 <CardBody className="relative flex flex-col h-full p-0">
@@ -196,7 +199,7 @@ export const VariationList: React.FC<VariationListProps> = memo(({
                       <p className="text-base sm:text-lg text-gray-200 line-clamp-4 leading-relaxed font-sans flex-grow min-h-0 group-hover:text-gray-100 transition-colors duration-300 variation-card-text">
                         {variation.shortDescription}
                       </p>
-                      <div className="mt-auto pt-4 sm:pt-5 border-t border-gold-900/30 group-hover:border-gold-700/40 transition-colors duration-300 flex items-center justify-center gap-2 text-gold-400 group-hover:text-gold-300 text-sm sm:text-base font-medium">
+                      <div className="mt-auto pt-4 sm:pt-5 border-t border-gold-900/30 group-hover:border-gold-700/40 transition-colors duration-300 flex items-center justify-center gap-2 text-gold-400 group-hover:text-gold-300 text-sm sm:text-base font-sans font-medium">
                         <span>View details</span>
                         <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />

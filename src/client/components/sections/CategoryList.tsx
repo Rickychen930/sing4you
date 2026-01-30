@@ -137,8 +137,8 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
   }
 
   return (
-    <SectionWrapper title={title} subtitle={subtitle} className="relative theme-section-music-glow">
-      <DecorativeEffects musicalNotes sparkles className="opacity-25" />
+    <SectionWrapper title={title} subtitle={subtitle} className="relative theme-section-music-glow" divider>
+      <DecorativeEffects musicalNotes sparkles className="opacity-25 z-0" />
       <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
         {categories.map((category, index) => (
@@ -148,7 +148,7 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
             style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
           >
             <Card 
-              className="h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900" 
+              className="h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 shadow-[0_4px_24px_rgba(0,0,0,0.25)]" 
               hover 
               onClick={() => category._id && handleCategoryClick(category._id)}
               onKeyDown={(e) => {

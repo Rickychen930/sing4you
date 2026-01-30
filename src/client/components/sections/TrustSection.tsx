@@ -8,7 +8,7 @@ export const TrustSection: React.FC = memo(() => {
   const guarantees = [
     {
       icon: (
-        <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
       ),
@@ -17,7 +17,7 @@ export const TrustSection: React.FC = memo(() => {
     },
     {
       icon: (
-        <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
@@ -26,7 +26,7 @@ export const TrustSection: React.FC = memo(() => {
     },
     {
       icon: (
-        <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
@@ -35,7 +35,7 @@ export const TrustSection: React.FC = memo(() => {
     },
     {
       icon: (
-        <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
       ),
@@ -53,14 +53,14 @@ export const TrustSection: React.FC = memo(() => {
       divider
       className="relative theme-section-music-glow"
     >
-      <DecorativeEffects sparkles className="opacity-20" />
+      <DecorativeEffects sparkles className="opacity-20 z-0" />
       <div className="mb-10 sm:mb-12 lg:mb-14 relative z-10">
         <TrustBadges variant="section" />
       </div>
       <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
         {guarantees.map((guarantee, index) => (
-          <Card key={index} className="h-full flex flex-col group" hover>
+          <Card key={index} className="h-full flex flex-col group shadow-[0_4px_24px_rgba(0,0,0,0.25)]" hover>
             <CardBody className="text-center flex flex-col flex-grow">
               <div className="relative inline-block mb-4">
                 <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: `${index * 0.3}s` }} aria-hidden="true" />

@@ -17,7 +17,7 @@ export const Footer: React.FC = memo(() => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10 mb-10 lg:mb-12">
           <div>
-            <h3 className="text-xl sm:text-2xl font-elegant font-bold mb-3 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
+            <h3 className="text-xl sm:text-2xl font-elegant font-bold mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
               Christina Sings4U
             </h3>
             <p className="text-gray-300 text-sm sm:text-base font-sans leading-relaxed max-w-xs">
@@ -26,15 +26,15 @@ export const Footer: React.FC = memo(() => {
           </div>
 
           <nav aria-labelledby="footer-quick-links">
-            <h4 id="footer-quick-links" className="text-base sm:text-lg font-elegant font-bold mb-4 text-gold-200/95">
+            <h4 id="footer-quick-links" className="text-base sm:text-lg font-elegant font-semibold mb-4 text-gold-200/95">
               Quick Links
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {NAV_ITEMS.map(({ to, label }) => (
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-gray-300 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1.5 group rounded-md hover:bg-gold-900/20 px-1 -mx-1"
+                    className="text-gray-300 hover:text-gold-200 text-sm sm:text-base font-sans font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1.5 group rounded-md hover:bg-gold-900/20 px-1 -mx-1"
                   >
                     <span className="text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
                     {label}
@@ -45,21 +45,23 @@ export const Footer: React.FC = memo(() => {
           </nav>
 
           <nav aria-labelledby="footer-sections" className="hidden lg:block">
-            <h4 id="footer-sections" className="text-base sm:text-lg font-elegant font-bold mb-4 text-gold-200">
+            <h4 id="footer-sections" className="text-base sm:text-lg font-elegant font-semibold mb-4 text-gold-200">
               Home Sections
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {[
-                { to: '/#hero', label: 'Hero' },
-                { to: '/#services', label: 'Services' },
-                { to: '/#performances', label: 'Performances' },
-                { to: '/#testimonials', label: 'Testimonials' },
-                { to: '/#cta', label: 'Contact Us' },
-              ].map(({ to, label }) => (
+                { to: '/#hero', label: 'Hero', title: 'Scroll to top of home page' },
+                { to: '/#services', label: 'Services', title: 'Scroll to Services section on home page' },
+                { to: '/#performances', label: 'Performances', title: 'Scroll to Performances section on home page' },
+                { to: '/#testimonials', label: 'Testimonials', title: 'Scroll to Testimonials section on home page' },
+                { to: '/#cta', label: 'Contact Us', title: 'Scroll to Contact CTA on home page' },
+              ].map(({ to, label, title }) => (
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
+                    title={title}
+                    className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-sans font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
+                    aria-label={title}
                   >
                     <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
                     {label}
@@ -70,16 +72,16 @@ export const Footer: React.FC = memo(() => {
           </nav>
 
           <div aria-labelledby="footer-contact">
-            <h4 id="footer-contact" className="text-base sm:text-lg font-elegant font-bold mb-4 text-gold-200">
+            <h4 id="footer-contact" className="text-base sm:text-lg font-elegant font-semibold mb-4 text-gold-200">
               Contact
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               <li>
                 <a
                   href={generateWhatsAppLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
+                  className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-sans font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
                   aria-label="Contact via WhatsApp"
                 >
                   <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
@@ -89,7 +91,7 @@ export const Footer: React.FC = memo(() => {
               <li>
                 <a
                   href={generateMailtoLink()}
-                  className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
+                  className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-sans font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
                   aria-label="Contact via Email"
                 >
                   <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
@@ -99,7 +101,7 @@ export const Footer: React.FC = memo(() => {
               <li>
                 <a
                   href="tel:+61410606328"
-                  className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
+                  className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-sans font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
                   aria-label="Call 0410 606 328"
                 >
                   <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
@@ -110,10 +112,10 @@ export const Footer: React.FC = memo(() => {
           </div>
 
           <div aria-labelledby="footer-social">
-            <h4 id="footer-social" className="text-base sm:text-lg font-elegant font-bold mb-4 text-gold-200">
+            <h4 id="footer-social" className="text-base sm:text-lg font-elegant font-semibold mb-4 text-gold-200">
               Follow
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {[
                 { href: SOCIAL_MEDIA.FACEBOOK, label: 'Facebook' },
                 { href: SOCIAL_MEDIA.TWITTER, label: 'Twitter' },
@@ -125,7 +127,7 @@ export const Footer: React.FC = memo(() => {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
+                    className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-sans font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
                     aria-label={`Follow on ${label}`}
                   >
                     <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
@@ -150,7 +152,7 @@ export const Footer: React.FC = memo(() => {
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
               <Link
                 to="/privacy"
-                className="text-gray-400 hover:text-gold-300 text-xs sm:text-sm font-medium transition-colors duration-300"
+                className="text-gray-400 hover:text-gold-300 text-xs sm:text-sm font-sans font-medium transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1"
                 aria-label="Privacy Policy"
               >
                 Privacy Policy
@@ -158,7 +160,7 @@ export const Footer: React.FC = memo(() => {
               <span className="text-gold-900/60" aria-hidden="true">•</span>
               <Link
                 to="/terms"
-                className="text-gray-400 hover:text-gold-300 text-xs sm:text-sm font-medium transition-colors duration-300"
+                className="text-gray-400 hover:text-gold-300 text-xs sm:text-sm font-sans font-medium transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1"
                 aria-label="Terms of Service"
               >
                 Terms of Service

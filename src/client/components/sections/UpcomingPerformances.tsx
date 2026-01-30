@@ -55,7 +55,7 @@ export const UpcomingPerformances: React.FC = memo(() => {
       className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative overflow-hidden theme-section-music-glow"
       divider
     >
-      <DecorativeEffects fireworks stageLights className="opacity-20" />
+      <DecorativeEffects fireworks stageLights className="opacity-20 z-0" />
       <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
@@ -79,6 +79,7 @@ export const UpcomingPerformances: React.FC = memo(() => {
         </div>
       ) : performances.length === 0 ? (
         <div className="flex flex-col items-center relative z-10">
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
           <EmptyState
             icon="🎭"
             title="No upcoming performances"
@@ -89,7 +90,7 @@ export const UpcomingPerformances: React.FC = memo(() => {
               variant="outline"
               size="md"
               onClick={() => navigate('/performances')}
-              className="group"
+              className="group font-sans"
               aria-label="View all performances"
             >
               <span className="flex items-center gap-2">
@@ -119,7 +120,7 @@ export const UpcomingPerformances: React.FC = memo(() => {
               variant="outline"
               size="lg"
               onClick={() => navigate('/performances')}
-              className="group"
+              className="group font-sans"
               aria-label="View all performances"
             >
               <span className="flex items-center gap-2.5">

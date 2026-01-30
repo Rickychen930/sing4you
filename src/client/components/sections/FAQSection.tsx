@@ -5,6 +5,7 @@ import { cn } from '../../utils/helpers';
 import { faqService } from '../../services/faqService';
 import type { IFAQ } from '../../../shared/interfaces';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { EmptyState } from '../ui/EmptyState';
 
 interface FAQSectionProps {
   title?: string;
@@ -136,9 +137,10 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
         title={title}
         subtitle={subtitle}
         alternate
-        className={className}
+        className={cn('relative theme-section-music-glow', className)}
       >
-        <div className="flex justify-center items-center py-12 sm:py-16">
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+        <div className="flex justify-center items-center py-12 sm:py-16 relative z-10">
           <LoadingSpinner size="lg" />
         </div>
       </SectionWrapper>
@@ -146,7 +148,26 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
   }
 
   if (faqs.length === 0) {
-    return null;
+    return (
+      <SectionWrapper
+        id="faq"
+        title={title}
+        subtitle={subtitle}
+        alternate
+        className={cn('relative theme-section-music-glow', className)}
+        divider
+      >
+        <DecorativeEffects musicalNotes sparkles className="opacity-25 z-0" />
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+        <EmptyState
+          icon="❓"
+          title="No FAQs Yet"
+          description="Frequently asked questions will appear here. Check back soon or contact us directly."
+          action={{ label: 'Contact Us', to: '/contact', variant: 'primary' }}
+          className="relative z-10"
+        />
+      </SectionWrapper>
+    );
   }
 
   return (
@@ -158,7 +179,7 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
       className={cn('relative theme-section-music-glow', className)}
       divider
     >
-      <DecorativeEffects musicalNotes sparkles className="opacity-25" />
+      <DecorativeEffects musicalNotes sparkles className="opacity-25 z-0" />
       <div className="max-w-4xl mx-auto space-y-3 sm:space-y-4 relative z-10">
         <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8" aria-hidden="true" />
         {faqs.map((faq, index) => {
@@ -169,6 +190,7 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
               className={cn(
                 'rounded-xl sm:rounded-2xl border overflow-hidden transition-[border-color,box-shadow] duration-300 ease-out',
                 'bg-gradient-to-br from-jazz-900/60 via-jazz-800/50 to-jazz-900/60',
+                'shadow-[0_4px_24px_rgba(0,0,0,0.25)]',
                 isOpen
                   ? 'border-gold-600/60 shadow-[0_8px_24px_rgba(255,194,51,0.3)]'
                   : 'border-gold-900/40 hover:border-gold-700/50 hover:shadow-[0_4px_16px_rgba(255,194,51,0.15)]'
@@ -180,7 +202,7 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
                 onKeyDown={(e) => handleKeyDown(e, index)}
                 className={cn(
                   'w-full px-5 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 text-left flex items-center justify-between gap-4 min-h-[3.5rem] sm:min-h-[4rem]',
-                  'focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-t-xl sm:rounded-t-2xl',
+                  'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-t-xl sm:rounded-t-2xl',
                   'transition-colors duration-200',
                   isOpen ? 'bg-gold-900/30 rounded-b-none' : 'bg-transparent hover:bg-gold-900/20 rounded-b-xl sm:rounded-b-2xl'
                 )}
@@ -198,7 +220,7 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
                   )}
                   aria-hidden="true"
                 >
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </span>

@@ -46,7 +46,7 @@ export const SocialShareButtons: React.FC<SocialShareButtonsProps> = memo(({
     variant === 'vertical' && 'w-full'
   );
 
-  const iconClass = 'w-5 h-5 sm:w-6 sm:h-6';
+  const iconClass = 'w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0';
 
   return (
     <div

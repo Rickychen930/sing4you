@@ -1,44 +1,14 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { generateWhatsAppLink } from '../../../shared/utils/whatsapp';
 import { cn } from '../../utils/helpers';
 
-/** Fixed WhatsApp button bottom-right. Always visible, positioned above ScrollToTop when it's visible. */
+/** Fixed WhatsApp button bottom-right. Always visible. */
 export const FloatingWhatsApp: React.FC = memo(() => {
   const [mounted, setMounted] = useState(false);
-  const [backToTopVisible, setBackToTopVisible] = useState(false);
-
-  const handleScroll = useCallback(() => {
-    window.requestAnimationFrame(() => {
-      // Check if ScrollToTop is visible (scrolled past half)
-      const scrollY = window.scrollY || window.pageYOffset || 0;
-      const documentHeight = document.documentElement.scrollHeight;
-      const windowHeight = window.innerHeight;
-      const scrollableHeight = documentHeight - windowHeight;
-      const halfScroll = scrollableHeight / 2;
-      setBackToTopVisible(scrollY > halfScroll);
-    });
-  }, []);
-
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 400);
-    // Listen to scroll to adjust position when ScrollToTop appears
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    document.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial check
-    handleScroll();
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('scroll', handleScroll);
-    };
-  }, [handleScroll]);
-
-  const baseBottom = '1rem';
-  // ScrollToTop button height (w-14 h-14 sm:w-16 sm:h-16 = 3.5rem/4rem) + gap
-  const scrollToTopHeight = '4rem'; // sm:w-16 = 4rem
-  const gap = '0.75rem';
-  const bottomWhenScrolled = `calc(${baseBottom} + ${scrollToTopHeight} + ${gap})`;
-  const bottom = backToTopVisible ? bottomWhenScrolled : baseBottom;
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <a
@@ -63,7 +33,7 @@ export const FloatingWhatsApp: React.FC = memo(() => {
       )}
       style={{ 
         position: 'fixed',
-        bottom, 
+        bottom: '1rem', 
         right: '1rem',
         zIndex: 9998
       }}

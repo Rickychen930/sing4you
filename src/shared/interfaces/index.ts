@@ -170,3 +170,82 @@ export interface IFAQ {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+// --- Client & Communications (tracking) ---
+
+export type ClientSource = 'contact_form' | 'manual';
+export type ClientStatus = 'lead' | 'contacted' | 'quoted' | 'confirmed' | 'cancelled' | 'completed';
+
+export interface IClient {
+  _id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  eventType?: string;
+  eventDate?: string;
+  location?: string;
+  message?: string;
+  source: ClientSource;
+  status: ClientStatus;
+  notes?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export type CommunicationType = 'email' | 'note';
+export type CommunicationStatus = 'pending_reply' | 'replied' | 'confirmed' | 'cancelled' | 'no_response';
+
+export interface IClientCommunication {
+  _id?: string;
+  clientId: string;
+  type: CommunicationType;
+  subject?: string;
+  body?: string;
+  sentAt: Date;
+  status: CommunicationStatus;
+  notes?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// --- Australian Tax Invoice ---
+
+export interface IInvoiceLineItem {
+  description: string;
+  quantity: number;
+  unitPrice: number; // AUD
+  gstIncluded?: boolean; // if true, unitPrice includes GST
+}
+
+export interface IInvoice {
+  _id?: string;
+  invoiceNumber: string;
+  /** Australian Tax Invoice - title */
+  title?: string; // default "Tax Invoice"
+  /** Issue date */
+  issueDate: Date;
+  dueDate?: Date;
+  /** Your business details (Australia) */
+  businessName: string;
+  abn: string;
+  businessAddress?: string;
+  /** Bill to (client) */
+  clientId?: string;
+  clientName: string;
+  clientAddress?: string;
+  clientEmail?: string;
+  /** Line items */
+  items: IInvoiceLineItem[];
+  /** GST rate e.g. 0.1 for 10% */
+  gstRate?: number;
+  /** Subtotal (ex GST), GST amount, Total (inc GST) - can be auto-calculated */
+  subtotal?: number;
+  gstAmount?: number;
+  total?: number;
+  /** Payment terms, notes */
+  paymentTerms?: string;
+  notes?: string;
+  status?: 'draft' | 'sent' | 'paid' | 'overdue';
+  createdAt?: Date;
+  updatedAt?: Date;
+}

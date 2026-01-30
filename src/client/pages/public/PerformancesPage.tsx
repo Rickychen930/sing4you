@@ -108,10 +108,10 @@ export const PerformancesPage: React.FC = memo(() => {
         className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative theme-section-music-glow"
         divider
       >
-        <DecorativeEffects fireworks stageLights musicalNotes className="opacity-20" />
+        <DecorativeEffects fireworks stageLights musicalNotes className="opacity-20 z-0" />
         <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="animate-fade-in-up performances-page-skeleton-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
                 <Card className="h-full flex flex-col">
@@ -131,29 +131,35 @@ export const PerformancesPage: React.FC = memo(() => {
             ))}
           </div>
         ) : error ? (
-          <EmptyState
-            icon="⚠️"
-            title="Unable to load performances"
-            description={error}
-            action={{
-              label: "Try Again",
-              onClick: () => window.location.reload(),
-              variant: "primary"
-            }}
-          />
+          <div className="relative z-10">
+            <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
+            <EmptyState
+              icon="⚠️"
+              title="Unable to load performances"
+              description={error}
+              action={{
+                label: "Try Again",
+                onClick: () => window.location.reload(),
+                variant: "primary"
+              }}
+            />
+          </div>
         ) : performances.length === 0 ? (
-          <EmptyState
-            icon="🎵"
-            title="No performances scheduled"
-            description="Check back soon for upcoming events and performances! You can also contact us to book a performance."
-            action={{
-              label: "Book Now",
-              to: "/contact",
-              variant: "primary"
-            }}
-          />
+          <div className="relative z-10">
+            <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
+            <EmptyState
+              icon="🎵"
+              title="No performances scheduled"
+              description="Check back soon for upcoming events and performances! You can also contact us to book a performance."
+              action={{
+                label: "Book Now",
+                to: "/contact",
+                variant: "primary"
+              }}
+            />
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
             {performances.map((performance, index) => (
               <div
                 key={performance._id}

@@ -2,6 +2,8 @@ import type { Request, Response, NextFunction } from 'express';
 import type { IContactForm } from '../../shared/interfaces';
 import { sanitizeObject } from '../utils/sanitize';
 import { EmailService } from '../services/EmailService';
+import { Database } from '../config/database';
+import { ClientModel } from '../models/ClientModel';
 
 export class ContactController {
   public submit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -26,6 +28,23 @@ export class ContactController {
           error: 'Please provide a valid email address.',
         });
         return;
+      }
+
+      // Save as client/lead when DB is connected (track client)
+      if (Database.getInstance().isConnectedToDb()) {
+        ClientModel.create({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || undefined,
+          eventType: formData.eventType || undefined,
+          eventDate: formData.eventDate || undefined,
+          location: formData.location || undefined,
+          message: formData.message,
+          source: 'contact_form',
+          status: 'lead',
+        }).catch((err) => {
+          console.error('Save contact as client (non-blocking):', err);
+        });
       }
 
       // Send email notification (non-blocking - won't fail the request if email fails)

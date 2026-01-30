@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { ScrollToTop } from '../ui/ScrollToTop';
 import { CursorEffect } from '../ui/CursorEffect';
 import { BackgroundMusic } from '../ui/BackgroundMusic';
 import { CookieConsent } from '../ui/CookieConsent';
@@ -18,11 +17,11 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
   const mainContent = children ?? <Outlet />;
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-gradient-to-br from-[#050816] via-[#0b1024] to-[#151b33] overflow-visible">
+    <div className="min-h-screen flex flex-col relative overflow-visible layout-bg">
       <a href="#main-content" className="skip-to-main" aria-label="Skip to main content">
         Skip to main content
       </a>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0b1024]/50 to-black/70 pointer-events-none z-0" aria-hidden />
+      <div className="absolute inset-0 layout-bg-overlay pointer-events-none z-0" aria-hidden />
       {!isAdmin && <div className="theme-dot-grid" aria-hidden />}
       {!isAdmin && <div className="theme-vignette" aria-hidden />}
       {!isAdmin && (
@@ -39,7 +38,6 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
         {mainContent}
       </main>
       {!isAdmin && <Footer />}
-      {!isAdmin && <ScrollToTop />}
       {!isAdmin && <CookieConsent />}
       {!isAdmin && <CursorEffect intensity="medium" disableOnMobile={true} />}
       {!isAdmin && (

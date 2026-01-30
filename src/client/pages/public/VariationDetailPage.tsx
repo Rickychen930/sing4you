@@ -86,8 +86,9 @@ export const VariationDetailPage: React.FC = () => {
           </div>
         </div>
         <SectionWrapper className="theme-section-music-glow">
-          <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
-            <Card>
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+          <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12 relative z-10">
+            <Card className="shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
               <CardBody large>
                 <div className="h-8 sm:h-10 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-4 sm:mb-5 lg:mb-6 w-2/3 animate-pulse-soft skeleton-shimmer"></div>
                 <div className="h-4 sm:h-5 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg mb-3 sm:mb-4 w-full animate-pulse-soft skeleton-shimmer"></div>
@@ -109,7 +110,7 @@ export const VariationDetailPage: React.FC = () => {
 
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
-    { label: 'Categories', path: '/categories' },
+    { label: 'Services', path: '/categories' },
     ...(category && category._id ? [{ label: category.name, path: `/categories/${category._id}` }] : []),
     ...(variation ? [{ label: variation.name }] : []),
   ];
@@ -125,7 +126,7 @@ export const VariationDetailPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-5 lg:mb-6">
           <Breadcrumb items={breadcrumbItems} />
-          <BackButton to={category ? `/categories/${category._id}` : '/categories'} />
+          <BackButton to={category ? `/categories/${category._id}` : '/categories'} label="Back to Services" />
         </div>
       </div>
       <VariationDetail variationId={variationId} />

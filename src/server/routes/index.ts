@@ -14,6 +14,9 @@ import { VariationController } from '../controllers/VariationController';
 import { MediaController } from '../controllers/MediaController';
 import { AboutPageController } from '../controllers/AboutPageController';
 import { FAQController } from '../controllers/FAQController';
+import { ClientController } from '../controllers/ClientController';
+import { ClientCommunicationController } from '../controllers/ClientCommunicationController';
+import { InvoiceController } from '../controllers/InvoiceController';
 import { authMiddleware } from '../middlewares/auth';
 import { rateLimiter, authRateLimiter } from '../middlewares/rateLimiter';
 
@@ -260,6 +263,32 @@ router.delete('/api/admin/variations/:id', authMiddleware, variationController.d
 router.post('/api/admin/media', authMiddleware, mediaController.create);
 router.put('/api/admin/media/:id', authMiddleware, mediaController.update);
 router.delete('/api/admin/media/:id', authMiddleware, mediaController.delete);
+
+// Admin Clients (protected)
+const clientController = new ClientController();
+router.get('/api/admin/clients', authMiddleware, clientController.getAll);
+router.get('/api/admin/clients/:id', authMiddleware, clientController.getById);
+router.post('/api/admin/clients', authMiddleware, clientController.create);
+router.put('/api/admin/clients/:id', authMiddleware, clientController.update);
+router.delete('/api/admin/clients/:id', authMiddleware, clientController.delete);
+
+// Admin Client Communications (email/status tracking) (protected)
+const clientCommunicationController = new ClientCommunicationController();
+router.get('/api/admin/clients/:clientId/communications', authMiddleware, clientCommunicationController.getByClientId);
+router.get('/api/admin/communications/:id', authMiddleware, clientCommunicationController.getById);
+router.post('/api/admin/communications', authMiddleware, clientCommunicationController.create);
+router.put('/api/admin/communications/:id', authMiddleware, clientCommunicationController.update);
+router.delete('/api/admin/communications/:id', authMiddleware, clientCommunicationController.delete);
+
+// Admin Invoices (Australian Tax Invoice) (protected)
+const invoiceController = new InvoiceController();
+router.get('/api/admin/invoices', authMiddleware, invoiceController.getAll);
+router.get('/api/admin/invoices/next-number', authMiddleware, invoiceController.getNextNumber);
+router.get('/api/admin/invoices/:id', authMiddleware, invoiceController.getById);
+router.get('/api/admin/clients/:clientId/invoices', authMiddleware, invoiceController.getByClientId);
+router.post('/api/admin/invoices', authMiddleware, invoiceController.create);
+router.put('/api/admin/invoices/:id', authMiddleware, invoiceController.update);
+router.delete('/api/admin/invoices/:id', authMiddleware, invoiceController.delete);
 
 // Admin Media Upload (protected)
 const mediaUploadController = new MediaUploadController();

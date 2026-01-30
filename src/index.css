@@ -44,6 +44,11 @@
   --color-jazz-800: #243b53;
   --color-jazz-800-rgb: 36, 59, 83;
   
+  /* Layout background (design tokens) */
+  --color-layout-start: #050816;
+  --color-layout-mid: #0b1024;
+  --color-layout-end: #151b33;
+
   /* Base Colors */
   --color-black: #0a0e1a;
   --color-black-rgb: 10, 14, 26;
@@ -1351,6 +1356,28 @@ body::-webkit-scrollbar {
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
+}
+
+/* Layout background — design tokens (no hardcoded hex) */
+.layout-bg {
+  background: linear-gradient(
+    135deg,
+    var(--color-layout-start) 0%,
+    var(--color-layout-mid) 35%,
+    var(--color-layout-end) 70%,
+    var(--color-layout-start) 100%
+  );
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.layout-bg-overlay {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(var(--color-jazz-900-rgb), 0.5) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  transform: translateZ(0);
 }
 
 /* Theme vignette — edges sedikit gelap, depth */

@@ -163,6 +163,8 @@ export const DashboardPage: React.FC = () => {
     { id: 'testimonials', title: 'Testimonials', description: 'Manage client testimonials', path: '/admin/testimonials', icon: '💬', category: 'content', count: stats.testimonials },
     { id: 'faq', title: 'FAQ Management', description: 'Manage frequently asked questions', path: '/admin/faq', icon: '❓', category: 'content' },
     { id: 'categories', title: 'Categories & Variations', description: 'Manage categories and their variations in one place', path: '/admin/categories', icon: '📂', category: 'management', count: stats.categories + stats.variations },
+    { id: 'clients', title: 'Track Clients', description: 'View leads and clients, log emails and status (Gitua-style tracking)', path: '/admin/clients', icon: '👥', category: 'management' },
+    { id: 'invoices', title: 'Invoices', description: 'Create and manage Australian Tax Invoices (ABN, GST)', path: '/admin/invoices', icon: '📄', category: 'management' },
     { id: 'seo', title: 'SEO Settings', description: 'Manage SEO metadata and settings', path: '/admin/seo', icon: '🔍', category: 'settings' },
   ], [stats]);
 

@@ -1,11 +1,13 @@
 import React from 'react';
 import { FAQSection } from '../../components/sections/FAQSection';
 import { SEO } from '../../components/ui/SEO';
+import { Breadcrumb } from '../../components/ui/Breadcrumb';
 import { CONTACT_EMAIL, WHATSAPP_NUMBER } from '../../../shared/constants';
 import { CTASection } from '../../components/ui/CTASection';
 
 export const FAQPage: React.FC = () => {
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
+  const breadcrumbItems = [{ label: 'Home', path: '/' }, { label: 'FAQ' }];
 
   return (
     <>
@@ -17,6 +19,9 @@ export const FAQPage: React.FC = () => {
         contactEmail={CONTACT_EMAIL}
         contactPhone={WHATSAPP_NUMBER}
       />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
       <FAQSection />
       <CTASection
         title="Still Have Questions?"

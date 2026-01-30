@@ -139,12 +139,12 @@ export const AboutPage: React.FC = () => {
         <Breadcrumb items={breadcrumbItems} />
       </div>
 
-      {/* Hero Section — music + sparkles + subtle fireworks (perf-safe) */}
+      {/* Hero Section — align dengan Home Hero: overlay tunggal, typography design system */}
       <section 
         id="about-hero" 
         className="relative w-full flex items-center justify-center overflow-visible -mt-16 lg:-mt-20 pt-16 lg:pt-20 min-h-[60vh] sm:min-h-[70vh] theme-section-music-glow"
       >
-        <DecorativeEffects fireworks musicalNotes sparkles className="opacity-35" />
+        <DecorativeEffects fireworks musicalNotes sparkles className="opacity-30 z-0" />
         <div className="absolute inset-0">
           {settings.heroBackgroundVideo && !videoError ? (
             <>
@@ -163,7 +163,7 @@ export const AboutPage: React.FC = () => {
               >
                 <source src={settings.heroBackgroundVideo} type="video/mp4" />
               </video>
-              <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/85 via-jazz-800/75 via-musical-900/65 to-jazz-900/85 pointer-events-none" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/85 pointer-events-none" aria-hidden="true" />
             </>
           ) : settings.heroBackgroundImage && !imageError ? (
             <div className="absolute inset-0" style={backgroundStyle}>
@@ -176,21 +176,21 @@ export const AboutPage: React.FC = () => {
                 }}
                 aria-hidden="true"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/85 via-jazz-800/75 via-musical-900/65 to-jazz-900/85" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/85" />
             </div>
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/85 via-jazz-800/75 via-musical-900/65 to-jazz-900/85" />
+            <div className="absolute inset-0 bg-gradient-to-b from-jazz-900/80 via-jazz-800/70 to-jazz-900/80" />
           )}
         </div>
 
         <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">
-          <h1 className="about-page-hero-title text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-elegant font-bold leading-tight px-2 sm:px-4 mb-4 sm:mb-5 md:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(0,0,0,0.4)]">
+          <h1 className="about-page-hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-elegant font-bold leading-tight px-2 sm:px-4 mb-3 sm:mb-4 md:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]">
             {settings.heroTitle}
           </h1>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto text-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-5 sm:mb-6 md:mb-8 text-gray-200 font-sans leading-relaxed max-w-3xl mx-auto" style={{ lineHeight: 1.6 }}>
             {settings.heroSubtitle}
           </p>
-          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 max-w-[10rem] sm:max-w-[12rem]" aria-hidden="true" />
+          <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8 max-w-[10rem] sm:max-w-[12rem]" aria-hidden="true" />
           {/* Scroll indicator — encourages engagement */}
           <a
             href="#about-story"
@@ -207,23 +207,23 @@ export const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Story Section — scroll reveal + pull-quote + music theme */}
+      {/* Story Section — design system: body text-gray-200, card shadow */}
       <SectionWrapper id="about-story" className="relative theme-music-bg-pattern">
-        <DecorativeEffects musicalNotes className="opacity-20 pointer-events-none" />
+        <DecorativeEffects musicalNotes className="opacity-20 pointer-events-none z-0" />
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         <div ref={storyRef as React.RefObject<HTMLDivElement>} className="about-story-reveal max-w-4xl mx-auto px-4 sm:px-6 scroll-reveal-io relative z-10">
-          <Card className="about-story-card card-hover-lift">
+          <Card className="about-story-card card-hover-lift shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
             <CardBody large>
               <h2 className="about-page-section-title text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 xl:mb-8 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                 {settings.storyTitle}
               </h2>
-              {/* First paragraph as pull-quote style for visual hierarchy */}
               <div className="space-y-5 sm:space-y-6 lg:space-y-7 text-gray-200 font-sans leading-relaxed">
                 {storyParagraphs.map((paragraph, index) => (
                   <p 
                     key={index}
                     className={
                       index === 0
-                        ? "text-base sm:text-lg md:text-xl lg:text-2xl border-l-4 border-gold-500/60 pl-5 sm:pl-6 py-1 italic text-gold-100/95 bg-gold-900/20 rounded-r-lg -ml-1"
+                        ? "text-base sm:text-lg md:text-xl lg:text-2xl border-l-4 border-gold-500/60 pl-5 sm:pl-6 py-1 italic text-gray-200 bg-gold-900/15 rounded-r-lg -ml-1 font-sans"
                         : "text-sm sm:text-base md:text-lg lg:text-xl"
                     }
                   >
@@ -236,14 +236,14 @@ export const AboutPage: React.FC = () => {
         </div>
       </SectionWrapper>
 
-      {/* Credentials & Experience Section — staggered reveal + hover engagement */}
+      {/* Credentials & Experience — design system: heading gradient, card shadow */}
       <SectionWrapper id="about-credentials" alternate divider>
-        <DecorativeEffects sparkles className="opacity-25" />
-        <div ref={credentialsRef as React.RefObject<HTMLDivElement>} className="about-credentials-grid max-w-6xl mx-auto px-4 sm:px-6 scroll-reveal-io">
+        <DecorativeEffects sparkles className="opacity-25 z-0" />
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+        <div ref={credentialsRef as React.RefObject<HTMLDivElement>} className="about-credentials-grid max-w-6xl mx-auto px-4 sm:px-6 scroll-reveal-io relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group">
+            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
               <CardBody className="text-center flex flex-col flex-grow">
-                {/* Decorative glow behind icon */}
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" aria-hidden="true" />
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
@@ -252,11 +252,11 @@ export const AboutPage: React.FC = () => {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">Professional</h3>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold mb-2 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Professional</h3>
                 <p className="text-sm sm:text-base text-gray-300 font-sans">Certified vocalist with formal training and industry recognition</p>
               </CardBody>
             </Card>
-            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group">
+            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '0.5s' }} aria-hidden="true" />
@@ -266,11 +266,11 @@ export const AboutPage: React.FC = () => {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">10+ Years</h3>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold mb-2 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">10+ Years</h3>
                 <p className="text-sm sm:text-base text-gray-300 font-sans">Extensive experience performing at prestigious venues and events</p>
               </CardBody>
             </Card>
-            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group">
+            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-musical-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '1s' }} aria-hidden="true" />
@@ -280,11 +280,11 @@ export const AboutPage: React.FC = () => {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">500+ Events</h3>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold mb-2 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">500+ Events</h3>
                 <p className="text-sm sm:text-base text-gray-300 font-sans">Successfully performed at weddings, corporate events, and private occasions</p>
               </CardBody>
             </Card>
-            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group">
+            <Card hover className="about-credential-card h-full flex flex-col card-hover-lift group shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-musical-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '1.5s' }} aria-hidden="true" />
@@ -294,7 +294,7 @@ export const AboutPage: React.FC = () => {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-2">4.9/5 Rating</h3>
+                <h3 className="text-lg sm:text-xl font-elegant font-bold mb-2 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">4.9/5 Rating</h3>
                 <p className="text-sm sm:text-base text-gray-300 font-sans">Consistently rated excellent by clients for professionalism and talent</p>
               </CardBody>
             </Card>
@@ -302,19 +302,17 @@ export const AboutPage: React.FC = () => {
         </div>
       </SectionWrapper>
 
-      {/* Gallery Section */}
+      {/* Gallery Section — design system: divider shimmer, corner tokens */}
       {settings.galleryImages && settings.galleryImages.length > 0 && (
         <SectionWrapper id="about-gallery" title="Gallery" subtitle="Moments from performances and events" divider>
-          {/* Subtle stage lights effect */}
-          <DecorativeEffects stageLights className="opacity-20" />
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            {/* Decorative frame around gallery */}
+          <DecorativeEffects stageLights className="opacity-20 z-0" />
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="relative">
-              {/* Corner decorative elements */}
-              <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-gold-500/30 rounded-tl-lg pointer-events-none z-10" aria-hidden="true" />
-              <div className="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-gold-500/30 rounded-tr-lg pointer-events-none z-10" aria-hidden="true" />
-              <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-musical-500/30 rounded-bl-lg pointer-events-none z-10" aria-hidden="true" />
-              <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-musical-500/30 rounded-br-lg pointer-events-none z-10" aria-hidden="true" />
+              <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-gold-500/40 rounded-tl-lg pointer-events-none z-10" aria-hidden="true" />
+              <div className="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-gold-500/40 rounded-tr-lg pointer-events-none z-10" aria-hidden="true" />
+              <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-musical-500/40 rounded-bl-lg pointer-events-none z-10" aria-hidden="true" />
+              <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-musical-500/40 rounded-br-lg pointer-events-none z-10" aria-hidden="true" />
               <AutoGridGallery
                 media={settings.galleryImages}
                 rows={2}
@@ -327,34 +325,33 @@ export const AboutPage: React.FC = () => {
         </SectionWrapper>
       )}
 
-      {/* CTA Section — dual action + subtle fireworks & music (perf-safe, fireworksLight = fewer particles) */}
-      <SectionWrapper id="about-cta" title={settings.ctaTitle} subtitle={settings.ctaDescription} className="relative theme-section-music-glow">
-        <DecorativeEffects fireworks fireworksLight musicalNotes sparkles className="opacity-20" />
-        <div ref={ctaRef as React.RefObject<HTMLDivElement>} className="about-cta-reveal max-w-4xl mx-auto text-center px-4 sm:px-6 scroll-reveal-io">
-          <div className="about-cta-content relative">
-            <div className="absolute inset-0 rounded-full bg-gold-500/10 blur-3xl animate-pulse-soft pointer-events-none" aria-hidden="true" />
-            <div className="absolute inset-0 rounded-full bg-musical-500/10 blur-3xl animate-pulse-soft pointer-events-none" style={{ animationDelay: '1s' }} aria-hidden="true" />
-            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <Link to="/contact" className="inline-block">
-                <Button variant="primary" size="lg" className="group relative z-10 w-full sm:w-auto" aria-label="Navigate to contact page">
-                  <span>Contact Me</span>
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      {/* CTA Section — variant emphasis, design system links */}
+      <SectionWrapper id="about-cta" title={settings.ctaTitle} subtitle={settings.ctaDescription} variant="emphasis" className="relative theme-section-music-glow">
+        <DecorativeEffects fireworks fireworksLight musicalNotes sparkles className="opacity-20 z-0" />
+        <div ref={ctaRef as React.RefObject<HTMLDivElement>} className="about-cta-reveal max-w-4xl mx-auto text-center px-4 sm:px-6 scroll-reveal-io relative z-10">
+          <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+          <div className="about-cta-content relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+            <Link to="/contact" className="inline-block">
+              <Button variant="primary" size="lg" className="group w-full sm:w-auto font-sans shadow-[0_6px_20px_rgba(255,194,51,0.35)] hover:shadow-[0_8px_28px_rgba(255,194,51,0.45)]" aria-label="Navigate to contact page">
+                <span className="flex items-center justify-center gap-2">
+                  Contact Me
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
-                </Button>
-              </Link>
-              <span className="text-gray-400 font-sans text-sm sm:text-base">or</span>
-              <Link
-                to="/performances"
-                className="inline-flex items-center gap-2 text-gold-300 hover:text-gold-200 font-semibold text-base sm:text-lg transition-colors duration-300 hover:underline underline-offset-4"
-                aria-label="View upcoming performances"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                </svg>
-                View performances
-              </Link>
-            </div>
+                </span>
+              </Button>
+            </Link>
+            <span className="text-gray-400 font-sans text-sm sm:text-base" aria-hidden="true">or</span>
+            <Link
+              to="/performances"
+              className="inline-flex items-center gap-2 text-gold-300 hover:text-gold-200 font-sans font-semibold text-base sm:text-lg transition-colors duration-300 hover:underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-2 py-1"
+              aria-label="View upcoming performances"
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
+              View performances
+            </Link>
           </div>
           <div className="theme-divider-shimmer mt-8 sm:mt-10" aria-hidden="true" />
         </div>

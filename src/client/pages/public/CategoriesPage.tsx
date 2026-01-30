@@ -8,7 +8,7 @@ export const CategoriesPage: React.FC = () => {
 
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
-    { label: 'Performance Categories' },
+    { label: 'Services' },
   ];
 
   const collectionPageSchema = {
@@ -63,8 +63,8 @@ export const CategoriesPage: React.FC = () => {
       <JSONLDSchema schema={collectionPageSchema} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10">
         <Breadcrumb items={breadcrumbItems} />
-        <p className="mt-4 sm:mt-5 text-base sm:text-lg text-gray-300 font-sans max-w-2xl leading-relaxed">
-          Select a category to see available packages, pricing, and book your perfect performance.
+        <p className="mt-4 sm:mt-5 text-base sm:text-lg text-gray-300 font-sans max-w-2xl leading-relaxed" style={{ lineHeight: 1.6 }}>
+          Our services are organised by performance style. Select a category to see packages, pricing, and book.
         </p>
       </div>
       <CategoryList

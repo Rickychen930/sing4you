@@ -18,7 +18,7 @@ export const DescriptionSection: React.FC<DescriptionSectionProps> = memo(({
           Description
         </h3>
         <div className="prose prose-invert max-w-none">
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 whitespace-pre-line leading-relaxed font-sans group-hover:text-gray-100 transition-colors duration-300 description-section-text">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-sans whitespace-pre-line leading-relaxed group-hover:text-gray-200/95 transition-colors duration-300 description-section-text">
             {description}
           </p>
         </div>

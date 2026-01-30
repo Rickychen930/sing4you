@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import type { IContactForm } from '../../../shared/interfaces';
 import { contactService } from '../../services/contactService';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
@@ -18,6 +19,8 @@ import { SOCIAL_MEDIA } from '../../../shared/constants';
 
 export const ContactPage: React.FC = () => {
   const toast = useToastStore((state) => state);
+  const [searchParams] = useSearchParams();
+  const hasPrefilledRef = useRef(false);
   const [formData, setFormData] = useState<IContactForm>({
     name: '',
     email: '',
@@ -31,6 +34,26 @@ export const ContactPage: React.FC = () => {
   const [touched, setTouched] = useState<Partial<Record<keyof IContactForm, boolean>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  // Prefill message from query params when user comes from a service/event (once per visit)
+  useEffect(() => {
+    if (hasPrefilledRef.current) return;
+    const interest = searchParams.get('interest')?.trim();
+    const eventName = searchParams.get('event')?.trim();
+    if (interest) {
+      hasPrefilledRef.current = true;
+      setFormData((prev) => ({
+        ...prev,
+        message: prev.message.trim() ? prev.message : `I'm interested in ${interest}. Please send me more details.`,
+      }));
+    } else if (eventName) {
+      hasPrefilledRef.current = true;
+      setFormData((prev) => ({
+        ...prev,
+        message: prev.message.trim() ? prev.message : `I have a question about "${eventName}". `,
+      }));
+    }
+  }, [searchParams]);
 
   const formProgress = useMemo(() => {
     const requiredFields: (keyof IContactForm)[] = ['name', 'email', 'message'];
@@ -264,7 +287,7 @@ export const ContactPage: React.FC = () => {
         <Breadcrumb items={breadcrumbItems} />
       </div>
       <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20 relative theme-section-music-glow" divider>
-        <DecorativeEffects mics sparkles className="opacity-30" />
+        <DecorativeEffects mics sparkles className="opacity-30 z-0" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-14 lg:mb-16">
@@ -275,10 +298,10 @@ export const ContactPage: React.FC = () => {
               className="block h-full focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-2xl"
               aria-label="Contact via WhatsApp"
             >
-              <Card hover className="h-full group cursor-pointer">
+              <Card hover className="h-full group cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
                 <CardBody className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                   <span className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gold-900/40 flex items-center justify-center text-gold-300 group-hover:text-gold-200 transition-colors">
-                    <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <svg className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                   </span>
                   <div className="text-center sm:text-left flex-1">
                     <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-1">WhatsApp</h3>
@@ -293,10 +316,10 @@ export const ContactPage: React.FC = () => {
               className="block h-full focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-2xl"
               aria-label="Contact via Email"
             >
-              <Card hover className="h-full group cursor-pointer">
+              <Card hover className="h-full group cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
                 <CardBody className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                   <span className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gold-900/40 flex items-center justify-center text-gold-300 group-hover:text-gold-200 transition-colors">
-                    <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    <svg className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                   </span>
                   <div className="text-center sm:text-left flex-1">
                     <h3 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-1">Email</h3>
@@ -324,7 +347,7 @@ export const ContactPage: React.FC = () => {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-jazz-900/50 border border-gold-900/40 text-gray-200 hover:text-gold-200 hover:border-gold-700/50 text-sm sm:text-base font-medium transition-all duration-300"
+                  className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-jazz-900/50 border border-gold-900/40 text-gray-200 hover:text-gold-200 hover:border-gold-700/50 text-sm sm:text-base font-sans font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900"
                   aria-label={`Follow on ${label}`}
                 >
                   {label}
@@ -335,12 +358,12 @@ export const ContactPage: React.FC = () => {
 
           <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-12 lg:mb-14">
-            <Card className="h-full flex flex-col group" hover>
+            <Card className="h-full flex flex-col group shadow-[0_4px_24px_rgba(0,0,0,0.25)]" hover>
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" aria-hidden="true" />
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
-                    <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -349,12 +372,12 @@ export const ContactPage: React.FC = () => {
                 <p className="text-sm sm:text-base text-gray-300 font-sans leading-relaxed">We respond within 2 hours during business hours</p>
               </CardBody>
             </Card>
-            <Card className="h-full flex flex-col group" hover>
+            <Card className="h-full flex flex-col group shadow-[0_4px_24px_rgba(0,0,0,0.25)]" hover>
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '0.5s' }} aria-hidden="true" />
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
-                    <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -363,12 +386,12 @@ export const ContactPage: React.FC = () => {
                 <p className="text-sm sm:text-base text-gray-300 font-sans leading-relaxed">We're available for bookings any day of the week</p>
               </CardBody>
             </Card>
-            <Card className="h-full flex flex-col group" hover>
+            <Card className="h-full flex flex-col group shadow-[0_4px_24px_rgba(0,0,0,0.25)]" hover>
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-musical-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '1s' }} aria-hidden="true" />
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gold-900/40 flex items-center justify-center text-gold-400 trust-badge-icon">
-                    <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
@@ -469,13 +492,29 @@ export const ContactPage: React.FC = () => {
               <div className="p-4 sm:p-5 lg:p-6 xl:p-7 bg-gradient-to-br from-green-900/70 to-green-800/60 text-green-100 rounded-lg sm:rounded-xl border-2 border-green-700/70 hover:border-green-600/80 shadow-lg animate-fade-in relative overflow-hidden">
                 <div className="flex items-start gap-2.5 sm:gap-3 lg:gap-4">
                   <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-green-700/60 flex items-center justify-center">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-base sm:text-lg lg:text-xl xl:text-2xl mb-2 sm:mb-2.5 lg:mb-3 leading-relaxed">Message sent successfully!</p>
-                    <p className="text-sm sm:text-base lg:text-lg text-green-100/95 leading-relaxed">Thank you for your inquiry! We will get back to you soon.</p>
+                    <p className="font-sans font-semibold text-base sm:text-lg lg:text-xl xl:text-2xl mb-2 sm:mb-2.5 lg:mb-3 leading-relaxed">Message sent successfully!</p>
+                    <p className="text-sm sm:text-base lg:text-lg text-green-100/95 font-sans leading-relaxed mb-4 sm:mb-5">Thank you for your inquiry! We will get back to you soon.</p>
+                    <p className="text-green-200/90 text-sm font-sans font-medium mb-2">What would you like to do next?</p>
+                    <div className="flex flex-wrap gap-3 sm:gap-4">
+                      <Link
+                        to="/categories"
+                        className="inline-flex items-center gap-1.5 text-green-100 hover:text-white font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-400/60 focus:ring-offset-2 focus:ring-offset-green-900/50 rounded px-2 py-1"
+                      >
+                        Browse Services
+                      </Link>
+                      <span className="text-green-700/80" aria-hidden="true">·</span>
+                      <Link
+                        to="/performances"
+                        className="inline-flex items-center gap-1.5 text-green-100 hover:text-white font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-400/60 focus:ring-offset-2 focus:ring-offset-green-900/50 rounded px-2 py-1"
+                      >
+                        View Performances
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -495,7 +534,7 @@ export const ContactPage: React.FC = () => {
                 </div>
               </div>
             )}
-            <Button type="submit" isLoading={isSubmitting} size="lg" className="w-full mt-5 sm:mt-6 lg:mt-8">
+            <Button type="submit" isLoading={isSubmitting} size="lg" className="w-full mt-5 sm:mt-6 lg:mt-8 font-sans">
               Send Message
             </Button>
           </form>

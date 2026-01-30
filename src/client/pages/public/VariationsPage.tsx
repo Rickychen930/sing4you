@@ -115,11 +115,11 @@ export const VariationsPage: React.FC = () => {
         />
         <SectionWrapper className="theme-section-music-glow">
           <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
-          <div className="text-center py-10 sm:py-12 lg:py-16">
-            <div className="text-5xl sm:text-6xl lg:text-7xl mb-3 sm:mb-4 opacity-50">🎵</div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-gray-100 mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Category not found</h2>
+          <div className="text-center py-10 sm:py-12 lg:py-16 relative z-10">
+            <div className="text-5xl sm:text-6xl lg:text-7xl mb-3 sm:mb-4 opacity-50" aria-hidden="true">🎵</div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Category not found</h2>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-sans mb-6 sm:mb-8 leading-relaxed">The category you're looking for doesn't exist or has been removed.</p>
-            <BackButton to="/categories" variant="primary" label="Back to Categories" />
+            <BackButton to="/categories" variant="primary" label="Back to Services" />
           </div>
         </SectionWrapper>
       </>
@@ -128,7 +128,7 @@ export const VariationsPage: React.FC = () => {
 
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
-    { label: 'Categories', path: '/categories' },
+    { label: 'Services', path: '/categories' },
     { label: category.name },
   ];
 
@@ -143,7 +143,7 @@ export const VariationsPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-5 lg:mb-6">
           <Breadcrumb items={breadcrumbItems} />
-          <BackButton to="/categories" />
+          <BackButton to="/categories" label="Back to Services" />
         </div>
       </div>
       
@@ -155,11 +155,11 @@ export const VariationsPage: React.FC = () => {
         subtitle={category.description ? `${category.description} Choose a package below.` : 'Choose a package below to view details and book.'}
         divider
       >
-        <DecorativeEffects musicalNotes sparkles className="opacity-30" />
+        <DecorativeEffects musicalNotes sparkles className="opacity-30 z-0" />
         <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8 relative z-10" aria-hidden="true" />
         {category.featuredImage && (
-          <div className="max-w-4xl mx-auto mt-8 sm:mt-10 lg:mt-12 px-4 sm:px-6">
-            <Card className="overflow-hidden">
+          <div className="max-w-4xl mx-auto mt-8 sm:mt-10 lg:mt-12 px-4 sm:px-6 relative z-10">
+            <Card className="overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
               <CardBody className="p-0 overflow-hidden">
                 <div className="relative aspect-[21/9] sm:aspect-[2/1] min-h-[200px] sm:min-h-[280px]">
                   <img
@@ -179,12 +179,12 @@ export const VariationsPage: React.FC = () => {
       {category.media && category.media.length > 0 && (
         <SectionWrapper
           id="variations-gallery"
-          className="pt-2 sm:pt-4 lg:pt-6 pb-6 sm:pb-8 lg:pb-10 theme-section-music-glow"
+          className="pt-2 sm:pt-4 lg:pt-6 pb-6 sm:pb-8 lg:pb-10 theme-section-music-glow relative"
           title={`Highlights from ${category.name}`}
           subtitle="A glimpse of performances in this category"
           divider
         >
-          <DecorativeEffects stageLights className="opacity-20" />
+          <DecorativeEffects stageLights className="opacity-20 z-0" />
           <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8 relative z-10" aria-hidden="true" />
           <div className="max-w-6xl mx-auto px-2 sm:px-4 relative z-10">
             <AutoGridGallery

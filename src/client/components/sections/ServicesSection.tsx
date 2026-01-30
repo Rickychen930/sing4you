@@ -118,7 +118,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
             style={{ '--animation-delay': `${index * 150}ms` } as React.CSSProperties}
           >
             <Card
-              className="h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900"
+              className="h-full flex flex-col group cursor-pointer focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 focus-within:ring-offset-jazz-900 shadow-[0_4px_24px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,194,51,0.25)_inset,0_0_24px_rgba(255,194,51,0.15)]"
               hover
               onClick={() => category._id && navigate(`/categories/${category._id}`)}
               onKeyDown={(e) => {

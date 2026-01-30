@@ -49,16 +49,16 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = memo(({ testimoni
           <div className="mb-3 sm:mb-4">
             {renderStars}
           </div>
-          <blockquote className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 italic leading-relaxed font-sans font-normal relative flex-grow group-hover:text-gray-100 transition-colors duration-300 testimonial-card-quote">
+          <blockquote className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 italic leading-relaxed font-sans font-normal relative flex-grow group-hover:text-gray-100 transition-colors duration-300 testimonial-card-quote pl-2 sm:pl-3">
             <span 
-              className="text-2xl sm:text-3xl lg:text-4xl text-gold-500/40 group-hover:text-gold-400/50 transition-colors duration-300 leading-none absolute -top-1 sm:-top-2 -left-1"
+              className="text-3xl sm:text-4xl lg:text-5xl text-gold-500/50 group-hover:text-gold-400/60 transition-colors duration-300 leading-none absolute -top-0.5 sm:-top-1 left-0 font-musical"
               aria-hidden="true"
             >
               "
             </span>
-            <span className="relative z-10 pl-3 sm:pl-4">{testimonial.message}</span>
+            <span className="relative z-10 pl-5 sm:pl-6">{testimonial.message}</span>
             <span 
-              className="text-2xl sm:text-3xl lg:text-4xl text-gold-500/40 group-hover:text-gold-400/50 transition-colors duration-300 leading-none"
+              className="text-3xl sm:text-4xl lg:text-5xl text-gold-500/50 group-hover:text-gold-400/60 transition-colors duration-300 leading-none inline-block font-musical"
               aria-hidden="true"
             >
               "

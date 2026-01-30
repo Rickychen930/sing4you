@@ -29,7 +29,7 @@ interface BackgroundMusicProps {
   disableOnMobile?: boolean;
   /** Use compact mode (icon only, expands on click) */
   compact?: boolean;
-  /** Custom bottom offset for positioning (e.g., to align with ScrollToTop) */
+  /** Custom bottom offset for positioning */
   bottomOffset?: string;
 }
 
@@ -324,7 +324,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
           // Prevent layout shift
           margin: 0,
           padding: 0,
-          // Align horizontally with ScrollToTop (same right position)
+          // Align horizontally (same right position)
           right: '1rem',
           // Use custom bottomOffset if provided, otherwise use positionClasses
           ...(bottomOffset ? { bottom: bottomOffset } : {}),
@@ -378,7 +378,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
         // Prevent affecting document height
         height: 'auto',
         width: 'auto',
-        // Align horizontally with ScrollToTop (same right position)
+        // Align horizontally (same right position)
         right: '1rem',
         // Use custom bottomOffset if provided, otherwise use positionClasses
         ...(bottomOffset ? { bottom: bottomOffset } : {})

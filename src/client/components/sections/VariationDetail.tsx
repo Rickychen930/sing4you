@@ -95,9 +95,10 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
   if (loading) {
     return (
       <SectionWrapper className="theme-section-music-glow">
-        <div className="max-w-4xl mx-auto space-y-8 px-4">
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+        <div className="max-w-4xl mx-auto space-y-8 px-4 relative z-10">
           <div className="aspect-video sm:aspect-[2/1] rounded-2xl bg-jazz-900/60 animate-pulse-soft skeleton-shimmer" />
-          <Card>
+          <Card className="shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
             <CardBody large>
               <div className="h-9 w-2/3 rounded-lg bg-jazz-800/70 mb-6 animate-pulse-soft skeleton-shimmer" />
               <div className="h-4 w-full rounded-lg bg-jazz-800/70 mb-2 animate-pulse-soft skeleton-shimmer" />
@@ -113,6 +114,7 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
   if (error || !variation) {
     return (
       <SectionWrapper className="theme-section-music-glow">
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         <EmptyState
           icon="🎭"
           title={error ? 'Unable to load variation' : 'Variation not found'}
@@ -128,12 +130,12 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
   }
 
   return (
-    <section className="pb-12 sm:pb-16 lg:pb-24 relative theme-section-music-glow">
+    <section id="variation-detail" className="pt-8 sm:pt-10 lg:pt-12 pb-12 sm:pb-16 lg:pb-24 relative theme-section-music-glow">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10 lg:space-y-12 relative z-10">
         {/* Hero block: image + title + short description */}
         <header className="relative">
           {variation.featuredImage ? (
-            <div className="relative rounded-2xl overflow-hidden border border-gold-900/30 shadow-xl bg-jazz-900/80">
+            <div className="relative rounded-2xl overflow-hidden border border-gold-900/40 shadow-[0_4px_24px_rgba(0,0,0,0.25)] bg-jazz-900/80">
               <div className="relative aspect-video sm:aspect-[2/1] min-h-[220px]">
                 <LazyImage
                   src={variation.featuredImage}
@@ -146,21 +148,21 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
                   {category?.name && category._id && (
                     <Link
                       to={`/categories/${category._id}`}
-                      className="inline-block text-sm sm:text-base text-gold-300/90 hover:text-gold-200 font-medium mb-2 font-sans transition-colors hover:underline underline-offset-2"
+                      className="inline-block text-sm sm:text-base text-gold-300 hover:text-gold-200 font-sans font-medium mb-2 transition-colors duration-300 hover:underline underline-offset-2 focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded px-1 py-0.5"
                     >
                       Part of {category.name} →
                     </Link>
                   )}
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold text-white drop-shadow-md leading-tight">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] leading-tight">
                     {variation.name}
                   </h1>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-gold-900/30 bg-jazz-900/40 p-8 sm:p-10 text-center">
+            <div className="rounded-2xl border border-gold-900/40 bg-jazz-900/40 p-8 sm:p-10 text-center shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
               {category?.name && (
-                <p className="text-sm sm:text-base text-gold-400/90 font-medium mb-2 font-sans">Part of {category.name}</p>
+                <p className="text-sm sm:text-base text-gold-300/95 font-sans font-medium mb-2">Part of {category.name}</p>
               )}
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                 {variation.name}
@@ -169,13 +171,13 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
           )}
         </header>
 
-        {/* Single content card: gallery, description, pricing, CTA */}
-        <Card>
+        {/* Single content card: gallery, description, CTA */}
+        <Card className="shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
           <CardBody large className="space-y-8 sm:space-y-10">
             {/* Gallery: always show section so layout is stable; carousel or placeholder */}
             <div className="relative">
               <div className="theme-divider-shimmer max-w-[8rem] mb-6 sm:mb-8 opacity-80" aria-hidden="true" />
-              <h2 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-4">Gallery</h2>
+              <h2 className="text-lg sm:text-xl font-elegant font-bold mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Gallery</h2>
               {mediaUrls.length > 0 ? (
                 <PerformanceMediaCarousel
                   media={mediaUrls}
@@ -184,10 +186,10 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
                 />
               ) : (
                 <div className="min-h-[240px] sm:min-h-[280px] rounded-xl sm:rounded-2xl border-2 border-dashed border-gold-900/50 bg-jazz-900/30 flex flex-col items-center justify-center py-12 text-center">
-                  <svg className="w-12 h-12 sm:w-14 sm:h-14 text-gold-700/60 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-12 h-12 sm:w-14 sm:h-14 text-gold-600/60 mb-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <p className="text-sm sm:text-base text-gray-400 font-sans">No gallery photos yet</p>
+                  <p className="text-sm sm:text-base text-gray-400 font-sans leading-relaxed">No gallery photos yet</p>
                 </div>
               )}
             </div>
@@ -195,48 +197,6 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
             {variation.longDescription && (
               <DescriptionSection description={variation.longDescription} />
             )}
-
-            {/* Pricing & What's included */}
-            <div className="pt-8 sm:pt-10 border-t border-gold-900/40">
-              <div className="theme-divider-shimmer max-w-[8rem] mb-4 sm:mb-5 opacity-80" aria-hidden="true" />
-              <h2 className="text-lg sm:text-xl font-elegant font-bold text-gold-200 mb-5 sm:mb-6">Pricing &amp; Inclusions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-                {category?.priceRange && (
-                  <div className="flex gap-4 p-5 sm:p-6 rounded-xl border border-gold-900/30 bg-gold-900/10 hover:border-gold-800/40 transition-colors duration-300">
-                    <div className="w-12 h-12 rounded-xl bg-gold-900/40 flex items-center justify-center text-gold-400 flex-shrink-0">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="text-lg font-elegant font-bold text-gold-200 mb-1">Pricing</h3>
-                      <p className="text-xl font-semibold text-gold-300">{category.priceRange}</p>
-                      <p className="text-sm text-gray-400 font-sans mt-0.5">Starting from • Quote based on event details</p>
-                    </div>
-                  </div>
-                )}
-                <div className="flex gap-4 p-5 sm:p-6 rounded-xl border border-gold-900/30 bg-gold-900/10 hover:border-gold-800/40 transition-colors duration-300">
-                  <div className="w-12 h-12 rounded-xl bg-gold-900/40 flex items-center justify-center text-gold-400 flex-shrink-0">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-lg font-elegant font-bold text-gold-200 mb-2">What&apos;s Included</h3>
-                    <ul className="space-y-1.5 text-sm sm:text-base text-gray-300 font-sans">
-                      {['Professional sound system', 'Setup & sound check', 'Performance as agreed', 'Professional attire'].map((item) => (
-                        <li key={item} className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gold-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
           </CardBody>
 
           <CardFooter noTopPadding className="bg-gold-900/25 border-t-2 border-gold-900/40">
@@ -260,8 +220,8 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
               <Button
                 variant="outline"
                 size="lg"
-                className="flex-1 min-w-0"
-                onClick={() => navigate('/contact')}
+                className="flex-1 min-w-0 border-2 border-white/80 text-white hover:bg-white/15 hover:border-white font-sans"
+                onClick={() => navigate(`/contact?interest=${encodeURIComponent(variation?.name ?? '')}`)}
                 aria-label="Contact for more information"
               >
                 <span className="flex items-center justify-center gap-2">

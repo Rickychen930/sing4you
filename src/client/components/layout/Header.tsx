@@ -46,9 +46,9 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   if (isAdmin) return null;
 
   const navLinkBase =
-    'px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-medium rounded-xl transition-all duration-300 min-h-[48px] flex items-center relative';
-  const navLinkActive = 'text-gold-100 bg-gold-900/35 shadow-[0_0_0_1px_rgba(255,194,51,0.2)]';
-  const navLinkInactive = 'text-gray-200 hover:text-gold-200 hover:bg-gold-900/25 hover:shadow-[0_0_0_1px_rgba(255,194,51,0.1)]';
+    'px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-sans font-medium rounded-xl transition-all duration-300 min-h-[48px] flex items-center relative';
+  const navLinkActive = 'text-gold-100 bg-gold-900/35 shadow-[0_0_0_1px_rgba(255,194,51,0.25)]';
+  const navLinkInactive = 'text-gray-200 hover:text-gold-200 hover:bg-gold-900/25 hover:shadow-[0_0_0_1px_rgba(255,194,51,0.15)]';
   const underlineClass =
     'absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-0 bg-gold-400 rounded-full transition-all duration-300 group-hover:w-3/4';
 
@@ -59,12 +59,12 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
           <div className="flex justify-between items-center h-14 sm:h-16 lg:h-18 xl:h-20 relative">
             <Link
               to="/"
-              className="inline-flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg md:text-xl lg:text-2xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent hover:opacity-95 transition-all duration-300 relative drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]"
+              className="inline-flex items-center gap-1.5 sm:gap-2 text-lg sm:text-xl md:text-2xl lg:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent hover:opacity-95 transition-opacity duration-300 relative drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]"
               aria-label="Home — Christina Sings4U"
             >
               <span>Christina Sings4U</span>
               <span
-                className="hidden sm:inline-flex text-gold-300/70 text-lg md:text-xl lg:text-2xl animate-musical-pulse header-musical-note"
+                className="hidden sm:inline-flex text-gold-300/80 text-xl md:text-2xl lg:text-3xl animate-musical-pulse header-musical-note font-musical"
                 aria-hidden="true"
               >
                 ♫
@@ -94,7 +94,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
                   trigger={
                     <button
                       type="button"
-                      className={cn(navLinkBase, navLinkInactive, 'focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900')}
+                      className={cn(navLinkBase, navLinkInactive, 'focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900')}
                       aria-label="Admin menu"
                       aria-haspopup="true"
                       aria-expanded={isAdminMenuOpen}
@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
 
             <button
               type="button"
-              className="flex md:hidden p-2.5 -mr-2 min-w-[48px] min-h-[48px] items-center justify-center text-gray-200 hover:text-gold-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg relative z-[100]"
+              className="flex md:hidden p-2.5 -mr-2 min-w-[48px] min-h-[48px] items-center justify-center text-gray-200 hover:text-gold-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-lg relative z-[100]"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
@@ -183,7 +183,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
               key={to}
               to={to}
               className={cn(
-                'block px-4 py-3.5 rounded-lg text-base sm:text-lg font-medium transition-all duration-300 min-h-[48px] flex items-center touch-manipulation',
+                'block px-4 py-3.5 rounded-lg text-base sm:text-lg font-sans font-medium transition-all duration-300 min-h-[48px] flex items-center touch-manipulation focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900',
                 isActiveRoute(to)
                   ? 'text-gold-200 bg-gold-900/50 shadow-[0_4px_12px_rgba(255,194,51,0.2)]'
                   : 'text-gray-200 hover:text-gold-200 hover:bg-gold-900/30 active:bg-gold-900/40'
