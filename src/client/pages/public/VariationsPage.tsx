@@ -194,8 +194,8 @@ export const VariationsPage: React.FC = () => {
 
       <VariationList
         categoryId={categoryId!}
-        title={`${category.name}`}
-        subtitle={category.description || `Discover our ${category.name} performance options`}
+        title={category.name}
+        subtitle="Choose a variation below to view details and book"
       />
     </>
   );

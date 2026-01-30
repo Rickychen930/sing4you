@@ -6,7 +6,8 @@ import { cn } from '../../utils/helpers';
  *
  * Autoplay: starts muted (browsers allow this), then unmutes on first user
  * click/tap/keypress anywhere. Shows "Tap anywhere to unmute" when playing muted.
- * Default file: /public/background_music.mp3
+ * Default: public/background_music.mp3 served at /background_music.mp3 (Vite public dir).
+ * To avoid cache after replacing the file, set VITE_BACKGROUND_MUSIC_VERSION in .env and bump it.
  *
  * @example
  * <BackgroundMusic src="/background_music.mp3" volume={0.3} autoPlay loop />
@@ -86,8 +87,13 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     }
   }, [currentVolume]);
 
-  // OPTIMIZED: Memoize defaultSrc to prevent unnecessary re-renders
-  const defaultSrcMemo = useMemo(() => src || '/background_music.mp3', [src]);
+  // Public file: public/background_music.mp3 → /background_music.mp3 (Vite serves public/ at root)
+  // Cache-bust: set VITE_BACKGROUND_MUSIC_VERSION in .env and bump when you replace the file
+  const defaultSrcMemo = useMemo(() => {
+    const base = src ?? '/background_music.mp3';
+    const version = import.meta.env.VITE_BACKGROUND_MUSIC_VERSION;
+    return typeof version === 'string' && version.length > 0 ? `${base}?v=${version}` : base;
+  }, [src]);
 
   useEffect(() => {
     if (!disableOnMobile) return;

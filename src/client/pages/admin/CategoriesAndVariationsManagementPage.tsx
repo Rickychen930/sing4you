@@ -449,6 +449,9 @@ export const CategoriesAndVariationsManagementPage: React.FC = () => {
 
   const handleDeleteMedia = async (mediaId: string) => {
     try {
+      if (managingMediaFor) {
+        apiClient.clearCacheEntry(`/api/variations/${managingMediaFor}/media`);
+      }
       await mediaService.delete(mediaId);
       if (managingMediaFor) {
         await handleManageMedia(managingMediaFor);

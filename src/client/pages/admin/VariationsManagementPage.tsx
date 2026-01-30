@@ -210,6 +210,7 @@ export const VariationsManagementPage: React.FC = () => {
 
   const handleDeleteMedia = async (mediaId: string) => {
     try {
+      apiClient.clearCacheEntry(`/api/variations/${editingId}/media`);
       await mediaService.delete(mediaId);
       if (managingMediaFor) {
         await handleManageMedia(managingMediaFor); // Reload media

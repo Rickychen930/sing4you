@@ -75,10 +75,11 @@ export class MediaController {
     } catch (error) {
       const err = error as Error;
       if (err.message === 'Media not found') {
-        res.status(404).json({ success: false, error: err.message });
-      } else {
-        next(error);
+        // Return 200 idempotent so client remove-media doesn't show 404 (e.g. already deleted)
+        res.json({ success: true, message: 'Media deleted or already removed' });
+        return;
       }
+      next(error);
     }
   };
 }
