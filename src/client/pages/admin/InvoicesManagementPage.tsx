@@ -10,12 +10,13 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { invoiceService } from '../../services/invoiceService';
 import { useToastStore } from '../../stores/toastStore';
+import { downloadInvoicePDF } from '../../utils/downloadInvoicePDF';
 import type { IInvoice, IInvoiceLineItem } from '../../../shared/interfaces';
 
 /** Form state: issueDate/dueDate as string for date inputs. */
 type InvoiceFormState = Omit<Partial<IInvoice>, 'issueDate' | 'dueDate'> & { issueDate?: string; dueDate?: string };
 
-const GST_RATE = 0.1;
+const DEFAULT_GST_RATE = 0.1;
 
 function formatAUD(n: number): string {
   return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(n);
@@ -40,12 +41,13 @@ export const InvoicesManagementPage: React.FC = () => {
     clientAddress: '',
     clientEmail: '',
     items: [{ description: '', quantity: 1, unitPrice: 0, gstIncluded: true }],
-    gstRate: GST_RATE,
+    gstRate: DEFAULT_GST_RATE,
     paymentTerms: 'Payment due within 14 days',
     notes: '',
     status: 'draft',
   });
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [pdfDownloading, setPdfDownloading] = useState<string | null>(null);
 
   const loadInvoices = useCallback(async () => {
     try {
@@ -75,17 +77,18 @@ export const InvoicesManagementPage: React.FC = () => {
     if (showForm && !formData.invoiceNumber) loadNextNumber();
   }, [showForm, formData.invoiceNumber, loadNextNumber]);
 
+  const gstRate = formData.gstRate ?? DEFAULT_GST_RATE;
   const computedTotals = React.useMemo(() => {
     const items = formData.items ?? [];
     let subtotal = 0;
     for (const item of items) {
       const line = item.quantity * item.unitPrice;
-      subtotal += item.gstIncluded !== false ? line / (1 + GST_RATE) : line;
+      subtotal += item.gstIncluded !== false ? line / (1 + gstRate) : line;
     }
-    const gstAmount = subtotal * GST_RATE;
+    const gstAmount = subtotal * gstRate;
     const total = subtotal + gstAmount;
     return { subtotal: Math.round(subtotal * 100) / 100, gstAmount: Math.round(gstAmount * 100) / 100, total: Math.round(total * 100) / 100 };
-  }, [formData.items]);
+  }, [formData.items, gstRate]);
 
   const handleCreate = () => {
     setShowForm(true);
@@ -100,7 +103,7 @@ export const InvoicesManagementPage: React.FC = () => {
       clientAddress: '',
       clientEmail: '',
       items: [{ description: '', quantity: 1, unitPrice: 0, gstIncluded: true }],
-      gstRate: GST_RATE,
+      gstRate: DEFAULT_GST_RATE,
       paymentTerms: 'Payment due within 14 days',
       notes: '',
       status: 'draft',
@@ -151,7 +154,7 @@ export const InvoicesManagementPage: React.FC = () => {
         dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
         items,
         ...computedTotals,
-        gstRate: GST_RATE,
+        gstRate: formData.gstRate ?? DEFAULT_GST_RATE,
       };
       await invoiceService.create(payload);
       toast.success('Invoice created');
@@ -173,6 +176,20 @@ export const InvoicesManagementPage: React.FC = () => {
       toast.success('Invoice deleted');
     } catch {
       toast.error('Failed to delete');
+    }
+  };
+
+  const handleDownloadPDF = async (id: string) => {
+    setPdfDownloading(id);
+    try {
+      const invoice = await invoiceService.getById(id);
+      await downloadInvoicePDF(invoice);
+      toast.success('PDF downloaded');
+    } catch (e) {
+      toast.error('Failed to download PDF');
+      if (process.env.NODE_ENV === 'development') console.error(e);
+    } finally {
+      setPdfDownloading(null);
     }
   };
 
@@ -224,9 +241,29 @@ export const InvoicesManagementPage: React.FC = () => {
                   </div>
 
                   <div className="border-t border-gold-900/40 pt-4">
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                       <h3 className="text-sm font-semibold text-gold-300">Line items (GST inclusive)</h3>
-                      <Button type="button" variant="outline" size="sm" onClick={handleAddLine}>+ Add line</Button>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <label htmlFor="gst-rate" className="text-xs text-gray-400">GST %</label>
+                          <Input
+                            id="gst-rate"
+                            type="number"
+                            min={0}
+                            max={100}
+                            step={0.1}
+                            className="w-20"
+                            value={gstRate * 100}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              if (!isNaN(val) && val >= 0 && val <= 100) {
+                                setFormData((p) => ({ ...p, gstRate: val / 100 }));
+                              }
+                            }}
+                          />
+                        </div>
+                        <Button type="button" variant="outline" size="sm" onClick={handleAddLine}>+ Add line</Button>
+                      </div>
                     </div>
                     <div className="space-y-3">
                       {(formData.items ?? []).map((item, i) => (
@@ -250,8 +287,21 @@ export const InvoicesManagementPage: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 text-sm text-gray-400">
-                      Subtotal (ex GST): {formatAUD(computedTotals.subtotal)} · GST (10%): {formatAUD(computedTotals.gstAmount)} · <strong className="text-gold-300">Total: {formatAUD(computedTotals.total)}</strong>
+                    <div className="mt-4 p-4 rounded-lg bg-jazz-900/40 border border-gold-900/30">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                        <div>
+                          <span className="text-gray-400 block text-xs">Subtotal (ex GST)</span>
+                          <span className="font-medium text-gray-200">{formatAUD(computedTotals.subtotal)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-400 block text-xs">GST ({Math.round(gstRate * 100)}%)</span>
+                          <span className="font-medium text-gray-200">{formatAUD(computedTotals.gstAmount)}</span>
+                        </div>
+                        <div className="col-span-2 sm:col-span-2">
+                          <span className="text-gray-400 block text-xs">Total (inc GST)</span>
+                          <span className="text-lg font-bold text-gold-300">{formatAUD(computedTotals.total)}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -289,10 +339,20 @@ export const InvoicesManagementPage: React.FC = () => {
                       <span className="ml-2 text-xs px-2 py-0.5 rounded bg-gold-900/40 text-gold-300">{inv.status ?? 'draft'}</span>
                       <p className="text-sm text-gray-400">{inv.clientName}</p>
                       <p className="text-xs text-gray-500">
-                        Issue: {inv.issueDate ? new Date(inv.issueDate).toLocaleDateString('en-AU') : '—'} · Total: {inv.total != null ? formatAUD(inv.total) : '—'}
+                        Issue: {inv.issueDate ? new Date(inv.issueDate).toLocaleDateString('en-AU') : '—'} · GST: {inv.gstAmount != null ? formatAUD(inv.gstAmount) : '—'} · Total: {inv.total != null ? formatAUD(inv.total) : '—'}
                       </p>
                     </div>
-                    <Button variant="secondary" size="sm" onClick={() => inv._id && setDeleteConfirm(inv._id)}>Delete</Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => inv._id && handleDownloadPDF(inv._id)}
+                        disabled={!!pdfDownloading}
+                      >
+                        {pdfDownloading === inv._id ? <LoadingSpinner size="sm" /> : 'Download PDF'}
+                      </Button>
+                      <Button variant="secondary" size="sm" onClick={() => inv._id && setDeleteConfirm(inv._id)}>Delete</Button>
+                    </div>
                   </CardBody>
                 </Card>
               ))}

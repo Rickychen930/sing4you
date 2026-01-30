@@ -62,8 +62,8 @@ export const PerformancesPage: React.FC = memo(() => {
     '@type': 'CollectionPage',
     '@id': `${siteUrl}/performances#webpage`,
     url: `${siteUrl}/performances`,
-    name: 'Upcoming Performances | Christina Sings4U',
-    description: 'View all upcoming performances and events featuring Christina Sings4U in Sydney and across NSW.',
+    name: 'Performances | Christina Sings4U',
+    description: 'View all performances — past, current, and upcoming — featuring Christina Sings4U in Sydney and across NSW.',
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: performances.length,
@@ -92,9 +92,9 @@ export const PerformancesPage: React.FC = memo(() => {
   return (
     <>
       <SEO
-        title="Upcoming Performances | Live Music Events Sydney"
-        description="View upcoming performances & events featuring Christina Sings4U in Sydney & NSW. Book tickets or contact to book a performance for your event."
-        keywords="upcoming performances Sydney, live music events Sydney, Christina Sings4U concerts, music events NSW, book performance, live singer events, live music Sydney, upcoming concerts Sydney, music performances NSW, event calendar Sydney, professional singer events"
+        title="Performances | Live Music Events Sydney"
+        description="View all performances — past, current & upcoming — featuring Christina Sings4U in Sydney & NSW. Book tickets or contact to book a performance for your event."
+        keywords="performances Sydney, live music events Sydney, Christina Sings4U concerts, music events NSW, book performance, live singer events, live music Sydney, concerts Sydney, music performances NSW, event calendar Sydney, professional singer events"
         url={`${siteUrl}/performances`}
       />
       {performances.length > 0 && <JSONLDSchema schema={collectionPageSchema} />}
@@ -103,12 +103,12 @@ export const PerformancesPage: React.FC = memo(() => {
       </div>
       <SectionWrapper
         id="performances"
-        title="Upcoming Performances"
-        subtitle="Join us for these upcoming events in Sydney and beyond"
+        title="Performances"
+        subtitle="Past, current, and upcoming events in Sydney and beyond"
         className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative theme-section-music-glow"
         divider
       >
-        <DecorativeEffects fireworks stageLights musicalNotes className="opacity-20 z-0" />
+        <DecorativeEffects fireworks festive stageLights musicalNotes sparkles className="performances-page-decorations z-0" />
         <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">

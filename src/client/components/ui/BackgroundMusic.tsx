@@ -87,6 +87,10 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
     }
   }, [currentVolume]);
 
+  const toggleExpand = useCallback(() => {
+    setIsExpanded(prev => !prev);
+  }, []);
+
   // Public file: public/background_music.mp3 → /background_music.mp3 (Vite serves public/ at root)
   // Cache-bust: set VITE_BACKGROUND_MUSIC_VERSION in .env and bump when you replace the file
   const defaultSrcMemo = useMemo(() => {
@@ -292,10 +296,6 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = memo(({
   if (!showControls || !isAvailable || (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin'))) {
     return null;
   }
-
-  const toggleExpand = useCallback(() => {
-    setIsExpanded(prev => !prev);
-  }, []);
 
   // Compact mode: show only icon button, expand on click
   if (compact && !isExpanded) {

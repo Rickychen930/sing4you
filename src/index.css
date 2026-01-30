@@ -1173,6 +1173,65 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(255, 194, 51, 0.2), 0 4px 12px rgba(255, 194, 51, 0.15);
 }
 
+/* ============================================
+   Date & DateTime Input — Calendar Design
+   Jazz/gold theme, readable on dark backgrounds
+   ============================================ */
+input[type="date"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+  accent-color: rgb(255, 194, 51);
+}
+
+/* WebKit: calendar icon — gold themed, larger tap target */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.9;
+  filter: brightness(0) saturate(100%) invert(78%) sepia(52%) saturate(520%) hue-rotate(1deg) brightness(102%) contrast(95%);
+  padding: 8px;
+  margin-left: 4px;
+  margin-right: 2px;
+  border-radius: 8px;
+  background: transparent;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  filter: brightness(0) saturate(100%) invert(85%) sepia(55%) saturate(600%) hue-rotate(1deg) brightness(110%) contrast(95%);
+}
+
+/* WebKit: date display text — better contrast */
+input[type="date"]::-webkit-datetime-edit,
+input[type="datetime-local"]::-webkit-datetime-edit {
+  color: rgb(229, 231, 235);
+}
+
+input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+  padding: 2px 0;
+}
+
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="datetime-local"]::-webkit-datetime-edit-text {
+  color: rgba(255, 194, 51, 0.8);
+  padding: 0 2px;
+}
+
+input[type="date"]:focus::-webkit-datetime-edit,
+input[type="datetime-local"]:focus::-webkit-datetime-edit {
+  color: rgb(255, 255, 255);
+}
+
+/* Firefox: ensure calendar icon visible */
+@supports (-moz-appearance: none) {
+  input[type="date"],
+  input[type="datetime-local"] {
+    padding-inline-end: 2rem;
+  }
+}
+
 /* CRITICAL: Prevent ALL elements from creating scrollbar except html */
 /* Hide scrollbar on body, root, main, sections, and other layout elements */
 /* This ensures only html has the custom styled scrollbar */
@@ -2865,6 +2924,30 @@ select:focus-visible {
 }
 .performances-page-item {
   animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Performances page — more festive decorations (fireworks, sparkles, stage lights) without impacting perf */
+.performances-page-decorations {
+  opacity: 0.55;
+}
+.performances-page-decorations .decorative-firework {
+  width: 6px;
+  height: 6px;
+  animation-duration: 4.5s;
+  background: radial-gradient(circle, rgba(255, 194, 51, 0.95) 0%, rgba(255, 107, 107, 0.65) 35%, rgba(168, 85, 247, 0.75) 70%, transparent 100%);
+}
+.performances-page-decorations .decorative-sparkle {
+  width: 10px;
+  height: 10px;
+}
+.performances-page-decorations .decorative-stage-light {
+  background: radial-gradient(
+    ellipse 100% 60% at center,
+    rgba(255, 194, 51, 0.22) 0%,
+    rgba(255, 107, 107, 0.14) 30%,
+    rgba(168, 85, 247, 0.12) 50%,
+    transparent 70%
+  );
 }
 
 /* Screen reader only class - for accessibility */

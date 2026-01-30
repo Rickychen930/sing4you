@@ -5,6 +5,8 @@ interface DecorativeEffectsProps {
   fireworks?: boolean;
   /** Use fewer firework particles for secondary sections (better perf when multiple sections use fireworks) */
   fireworksLight?: boolean;
+  /** Extra festive: more fireworks, sparkles, mics (for performances etc) */
+  festive?: boolean;
   /** Show musical notes */
   musicalNotes?: boolean;
   /** Show mic icons */
@@ -21,13 +23,17 @@ interface DecorativeEffectsProps {
 export const DecorativeEffects: React.FC<DecorativeEffectsProps> = memo(({
   fireworks = false,
   fireworksLight = false,
+  festive = false,
   musicalNotes = false,
   mics = false,
   stageLights = false,
   sparkles = false,
   className = '',
 }) => {
-  const fireworkCount = fireworksLight ? 3 : 6;
+  const fireworkCount = fireworksLight ? 3 : festive ? 10 : 6;
+  const sparkleCount = festive ? 8 : 4;
+  const showMics = mics || festive;
+  const stageLightCount = festive ? 2 : 1;
   return (
     <div className={`absolute inset-0 pointer-events-none z-0 ${className}`} aria-hidden="true">
       {/* Firework Particles — CSS-only, GPU-accelerated */}
@@ -73,7 +79,7 @@ export const DecorativeEffects: React.FC<DecorativeEffectsProps> = memo(({
       )}
 
       {/* Mic Icons */}
-      {mics && (
+      {showMics && (
         <>
           {[...Array(3)].map((_, i) => (
             <div
@@ -96,27 +102,27 @@ export const DecorativeEffects: React.FC<DecorativeEffectsProps> = memo(({
         </>
       )}
 
-      {/* Stage Lights — 1 per container to reduce cost */}
+      {/* Stage Lights */}
       {stageLights && (
         <>
-          {[...Array(1)].map((_, i) => (
+          {[...Array(stageLightCount)].map((_, i) => (
             <div
               key={`light-${i}`}
               className="decorative-stage-light"
               style={{
-                left: '20%',
-                top: '45%',
-                animationDelay: '0s',
+                left: stageLightCount > 1 ? (i === 0 ? '15%' : '75%') : '20%',
+                top: stageLightCount > 1 ? (i === 0 ? '35%' : '55%') : '45%',
+                animationDelay: `${i * 2}s`,
               } as React.CSSProperties}
             />
           ))}
         </>
       )}
 
-      {/* Sparkles — 4 for better performance when many sections use them */}
+      {/* Sparkles */}
       {sparkles && (
         <>
-          {[...Array(4)].map((_, i) => (
+          {[...Array(sparkleCount)].map((_, i) => (
             <div
               key={`sparkle-${i}`}
               className="decorative-sparkle"

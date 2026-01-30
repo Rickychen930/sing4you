@@ -91,7 +91,7 @@ export const ClientsManagementPage: React.FC = () => {
       toast.success('Client added');
       setShowForm(false);
       loadClients();
-    } catch (e) {
+    } catch {
       toast.error('Failed to add client');
     } finally {
       setSaving(false);

@@ -61,7 +61,7 @@ export const ClientDetailPage: React.FC = () => {
       ]);
       setClient(c);
       setCommunications(comms);
-    } catch (e) {
+    } catch {
       toast.error('Client not found');
       navigate('/admin/clients');
     } finally {
