@@ -51,17 +51,16 @@ export const TrustSection: React.FC = memo(() => {
       subtitle="Professional service you can trust"
       alternate
       divider
-      className="relative"
+      className="relative theme-section-music-glow"
     >
       <DecorativeEffects sparkles className="opacity-20" />
       <div className="mb-10 sm:mb-12 lg:mb-14 relative z-10">
         <TrustBadges variant="section" />
       </div>
-      {/* Decorative line above guarantees */}
-      <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+      <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
         {guarantees.map((guarantee, index) => (
-          <Card key={index} className="h-full flex flex-col hover group">
+          <Card key={index} className="h-full flex flex-col group" hover>
             <CardBody className="text-center flex flex-col flex-grow">
               <div className="relative inline-block mb-4">
                 <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: `${index * 0.3}s` }} aria-hidden="true" />

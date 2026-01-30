@@ -54,14 +54,13 @@ export const BookingProcess: React.FC = memo(() => {
       subtitle="Simple booking process in 4 easy steps"
       alternate
       divider
-      className="relative"
+      className="relative theme-section-music-glow"
     >
-      <DecorativeEffects mics stageLights className="z-0" />
-      {/* Decorative line above steps */}
-      <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+      <DecorativeEffects mics stageLights className="z-0 opacity-20" />
+      <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
         {steps.map((step, index) => (
-          <Card key={index} className="relative h-full flex flex-col hover group">
+          <Card key={index} className="relative h-full flex flex-col group" hover>
             <CardBody className="text-center flex flex-col flex-grow">
               <div className="absolute -top-4 -right-4 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gold-900/60 border-2 border-gold-700/50 flex items-center justify-center z-20">
                 <span className="text-lg sm:text-xl font-elegant font-bold text-gold-200">{step.number}</span>

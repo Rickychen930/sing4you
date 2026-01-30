@@ -10,9 +10,9 @@ export const NotFoundPage: React.FC = () => {
   return (
     <Layout>
       <SEO title="404 - Page Not Found | Christina Sings4U" noindex nofollow />
-      <div className="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 py-12 sm:py-16 lg:py-20 relative">
+      <div className="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 py-12 sm:py-16 lg:py-20 relative theme-section-music-glow">
         <DecorativeEffects fireworks sparkles className="opacity-30" />
-        <Card className="max-w-lg w-full relative z-10">
+        <Card className="max-w-lg w-full relative z-10" hover>
           <CardBody large className="text-center">
             <h1 className="text-6xl sm:text-8xl md:text-9xl font-elegant font-bold bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 bg-clip-text text-transparent leading-none mb-4">
               404

@@ -149,7 +149,8 @@ export const VariationList: React.FC<VariationListProps> = memo(({
   }
 
   return (
-    <SectionWrapper title={title} subtitle={subtitle}>
+    <SectionWrapper title={title} subtitle={subtitle} className="theme-section-music-glow">
+      <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
         {variations.map((variation, index) => (
           <div
@@ -180,25 +181,24 @@ export const VariationList: React.FC<VariationListProps> = memo(({
                       <LazyImage
                         src={variation.featuredImage}
                         alt={variation.name}
-                        className="w-full h-full object-contain bg-black transition-all duration-700 group-hover:scale-105"
+                        className="w-full h-full object-cover bg-black transition-all duration-700 group-hover:scale-105"
                       />
-                      {/* Enhanced gradient overlay with hover effect */}
                       <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent group-hover:from-jazz-900/70 group-hover:via-jazz-900/25 transition-all duration-500" />
-                      {/* Subtle glow on hover */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/10 via-transparent to-transparent pointer-events-none" />
                     </div>
                   )}
                   
-                  <div className={`relative flex flex-col h-full ${variation.featuredImage ? 'p-4 sm:p-5 lg:p-6' : 'p-4 sm:p-5 lg:p-6'}`}>
-                    <div className="relative z-10 flex flex-col h-full">
+                  <div className="relative flex flex-col h-full p-4 sm:p-5 lg:p-6">
+                    <div className="relative z-10 flex flex-col h-full min-h-0">
                       <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-elegant font-bold mb-3 sm:mb-4 lg:mb-5 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300">
                         {variation.name}
                       </h3>
-                      <p className="text-base sm:text-lg text-gray-200 line-clamp-4 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 variation-card-text">
+                      <p className="text-base sm:text-lg text-gray-200 line-clamp-4 leading-relaxed font-sans flex-grow min-h-0 group-hover:text-gray-100 transition-colors duration-300 variation-card-text">
                         {variation.shortDescription}
                       </p>
-                      <div className="mt-auto pt-3 sm:pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-gold-400 group-hover:text-gold-300 transition-colors duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <div className="mt-auto pt-4 sm:pt-5 border-t border-gold-900/30 group-hover:border-gold-700/40 transition-colors duration-300 flex items-center justify-center gap-2 text-gold-400 group-hover:text-gold-300 text-sm sm:text-base font-medium">
+                        <span>View details</span>
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
                       </div>

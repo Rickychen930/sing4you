@@ -190,7 +190,7 @@ export const AboutPage: React.FC = () => {
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-200 leading-relaxed font-sans max-w-3xl mx-auto text-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
             {settings.heroSubtitle}
           </p>
-          <div className="w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto mb-8 sm:mb-10" aria-hidden />
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 max-w-[10rem] sm:max-w-[12rem]" aria-hidden="true" />
           {/* Scroll indicator — encourages engagement */}
           <a
             href="#about-story"

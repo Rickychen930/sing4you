@@ -64,29 +64,31 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
       onMouseEnter={() => pauseOnHover && setIsHovered(true)}
       onMouseLeave={() => pauseOnHover && setIsHovered(false)}
     >
-      {/* Main media */}
-      <div className="relative w-full aspect-video bg-gradient-to-br from-jazz-900/80 to-jazz-800/80 rounded-xl sm:rounded-2xl overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,194,51,0.3)] transition-all duration-500">
+      {/* Main media — explicit min-height so images always have space to render */}
+      <div className="relative w-full min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,194,51,0.3)] transition-all duration-500">
         {/* Enhanced glow on hover */}
-        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/25 via-musical-500/25 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none" aria-hidden />
-        {isVideo(activeMedia) ? (
-          <video
-            key={activeMedia}
-            src={activeMedia}
-            className="w-full h-full object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
-            controls
-            preload="metadata"
-          />
-        ) : (
-          <LazyImage
-            key={activeMedia}
-            src={activeMedia}
-            alt={`Performance media ${safeIndex + 1}`}
-            className="w-full h-full object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
-            fadeIn
-          />
-        )}
+        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/25 via-musical-500/25 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none z-0" aria-hidden />
+        <div className="absolute inset-0 z-[1] flex items-center justify-center bg-black">
+          {isVideo(activeMedia) ? (
+            <video
+              key={activeMedia}
+              src={activeMedia}
+              className="w-full h-full object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
+              controls
+              preload="metadata"
+            />
+          ) : (
+            <LazyImage
+              key={activeMedia}
+              src={activeMedia}
+              alt={`Performance media ${safeIndex + 1}`}
+              className="w-full h-full min-h-[200px] object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
+              fadeIn
+            />
+          )}
+        </div>
         {/* Subtle overlay for better visual depth */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden />
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden />
 
         {/* Controls */}
         {media.length > 1 && (
@@ -94,7 +96,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
             <button
               type="button"
               onClick={goPrev}
-              className="absolute inset-y-0 left-2 sm:left-3 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60"
+              className="absolute inset-y-0 left-2 sm:left-3 z-20 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60"
               aria-label="Previous media"
             >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +106,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
             <button
               type="button"
               onClick={goNext}
-              className="absolute inset-y-0 right-2 sm:right-3 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60"
+              className="absolute inset-y-0 right-2 sm:right-3 z-20 flex items-center justify-center px-1.5 sm:px-2 bg-black/40 hover:bg-black/60 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-gold-500/60"
               aria-label="Next media"
             >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,20 +118,14 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
 
         {/* Counter */}
         {media.length > 1 && (
-          <div className="absolute bottom-3 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-3 px-3 py-1.5 rounded-full bg-black/60 text-xs sm:text-sm text-gray-100 flex items-center gap-1 backdrop-blur-sm">
+          <div className="absolute bottom-3 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-3 z-20 px-3 py-1.5 rounded-full bg-black/60 text-xs sm:text-sm text-gray-100 flex items-center gap-1 backdrop-blur-sm">
             <span className="font-semibold text-gold-300">{safeIndex + 1}</span>
             <span className="text-gray-300">/ {media.length}</span>
           </div>
         )}
       </div>
 
-      {/* Subtle shimmer accent under carousel */}
-      <div
-        className="relative w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto opacity-80 overflow-hidden"
-        aria-hidden
-      >
-        <div className="absolute inset-0 animate-shimmer-musical opacity-70" />
-      </div>
+      <div className="theme-divider-shimmer mx-auto max-w-[10rem] sm:max-w-[12rem] opacity-90" aria-hidden="true" />
 
       {/* Thumbnails */}
       {media.length > 1 && (

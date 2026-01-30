@@ -49,19 +49,24 @@ export const TrustBadges: React.FC<TrustBadgesProps> = memo(({ className, varian
 
   return (
     <div className={cn(
-      'flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-10',
+      'relative',
       variant === 'hero' && 'mt-6 sm:mt-8',
       variant === 'section' && 'mt-4 sm:mt-6',
       className
     )}>
-      {badges.map((badge, index) => (
-        <TrustBadge
-          key={index}
-          icon={badge.icon}
-          value={badge.value}
-          label={badge.label}
-        />
-      ))}
+      {variant === 'section' && (
+        <div className="theme-divider-shimmer mx-auto mb-4 sm:mb-6" aria-hidden="true" />
+      )}
+      <div className="flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-10">
+        {badges.map((badge, index) => (
+          <TrustBadge
+            key={index}
+            icon={badge.icon}
+            value={badge.value}
+            label={badge.label}
+          />
+        ))}
+      </div>
     </div>
   );
 });

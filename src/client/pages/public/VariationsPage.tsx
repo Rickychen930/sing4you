@@ -84,7 +84,8 @@ export const VariationsPage: React.FC = () => {
             <div className="h-5 sm:h-6 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-48 sm:w-64 animate-pulse-soft skeleton-shimmer"></div>
           </div>
         </div>
-        <SectionWrapper>
+        <SectionWrapper className="theme-section-music-glow">
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="animate-fade-in-up variations-page-skeleton-item" style={{ '--animation-delay': `${i * 150}ms` } as React.CSSProperties}>
@@ -112,7 +113,8 @@ export const VariationsPage: React.FC = () => {
           description="The category you're looking for doesn't exist."
           url={`${siteUrl}/categories/${categoryId}`}
         />
-        <SectionWrapper>
+        <SectionWrapper className="theme-section-music-glow">
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
           <div className="text-center py-10 sm:py-12 lg:py-16">
             <div className="text-5xl sm:text-6xl lg:text-7xl mb-3 sm:mb-4 opacity-50">🎵</div>
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-elegant font-bold text-gray-100 mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">Category not found</h2>
@@ -148,21 +150,25 @@ export const VariationsPage: React.FC = () => {
       {/* Hero Section */}
       <SectionWrapper 
         id="variations-hero"
-        className="relative pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-6 lg:pb-8"
+        className="relative pt-8 sm:pt-10 lg:pt-12 pb-6 sm:pb-8 lg:pb-10 theme-section-music-glow"
         title={category.name}
-        subtitle={category.description}
+        subtitle={category.description ? `${category.description} Choose a package below.` : 'Choose a package below to view details and book.'}
         divider
       >
         <DecorativeEffects musicalNotes sparkles className="opacity-30" />
+        <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8 relative z-10" aria-hidden="true" />
         {category.featuredImage && (
           <div className="max-w-4xl mx-auto mt-8 sm:mt-10 lg:mt-12 px-4 sm:px-6">
-            <Card>
+            <Card className="overflow-hidden">
               <CardBody className="p-0 overflow-hidden">
-                <img
-                  src={category.featuredImage}
-                  alt={category.name}
-                  className="w-full h-auto max-h-[420px] sm:max-h-[520px] object-contain"
-                />
+                <div className="relative aspect-[21/9] sm:aspect-[2/1] min-h-[200px] sm:min-h-[280px]">
+                  <img
+                    src={category.featuredImage}
+                    alt={category.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/60 via-transparent to-transparent pointer-events-none" />
+                </div>
               </CardBody>
             </Card>
           </div>
@@ -173,13 +179,14 @@ export const VariationsPage: React.FC = () => {
       {category.media && category.media.length > 0 && (
         <SectionWrapper
           id="variations-gallery"
-          className="pt-2 sm:pt-4 lg:pt-6 pb-6 sm:pb-8 lg:pb-10"
+          className="pt-2 sm:pt-4 lg:pt-6 pb-6 sm:pb-8 lg:pb-10 theme-section-music-glow"
           title={`Highlights from ${category.name}`}
           subtitle="A glimpse of performances in this category"
           divider
         >
           <DecorativeEffects stageLights className="opacity-20" />
-          <div className="max-w-6xl mx-auto px-2 sm:px-4">
+          <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8 relative z-10" aria-hidden="true" />
+          <div className="max-w-6xl mx-auto px-2 sm:px-4 relative z-10">
             <AutoGridGallery
               media={category.media}
               rows={1}              // 1 baris saja agar terasa seperti strip
@@ -194,8 +201,8 @@ export const VariationsPage: React.FC = () => {
 
       <VariationList
         categoryId={categoryId!}
-        title={category.name}
-        subtitle="Choose a variation below to view details and book"
+        title="Available Variations"
+        subtitle="Choose a variation to view details, pricing, and book. Each package can be tailored to your event."
       />
     </>
   );

@@ -29,8 +29,8 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
   divider = false,
 }) => {
   const sectionClassName = useMemo(() => cn(
-    'py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-8 relative overflow-visible',
-    alternate && !className?.includes('bg-') && 'bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-musical-900/25',
+    'py-16 sm:py-20 md:py-24 lg:py-28 xl:py-32 px-4 sm:px-6 lg:px-8 relative overflow-visible',
+    alternate && !className?.includes('bg-') && 'bg-gradient-to-br from-jazz-900/25 via-jazz-800/15 to-musical-900/20',
     className
   ), [alternate, className]);
   
@@ -52,27 +52,28 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = memo(({
       />
       <div className="max-w-7xl mx-auto relative z-10">
         {(title || subtitle) && (
-          <header className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-14">
+          <header className="text-center mb-10 sm:mb-12 md:mb-14 lg:mb-16">
             {title && (
-              <div className="relative inline-block mb-2 sm:mb-3">
+              <div className="relative inline-block">
                 {onTitleClick ? (
                   <button
                     type="button"
                     onClick={onTitleClick}
-                    className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 hover:opacity-90 transition-opacity duration-300"
+                    className="section-title-elegant relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight focus:outline-none focus:ring-2 focus:ring-gold-500/60 focus:ring-offset-2 focus:ring-offset-jazz-900 hover:opacity-90 transition-opacity duration-300"
                     aria-label={title}
                   >
                     {title}
                   </button>
                 ) : (
-                  <h2 className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
+                  <h2 className="section-title-elegant relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold px-4 sm:px-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                     {title}
                   </h2>
                 )}
+                <div className="divider-elegant" aria-hidden />
               </div>
             )}
             {subtitle && (
-              <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 max-w-2xl mx-auto px-4 sm:px-6 font-sans leading-relaxed">
+              <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl mx-auto px-4 sm:px-6 font-sans leading-relaxed mt-4 sm:mt-5">
                 {subtitle}
               </p>
             )}

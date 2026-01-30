@@ -105,10 +105,11 @@ export const PerformancesPage: React.FC = memo(() => {
         id="performances"
         title="Upcoming Performances"
         subtitle="Join us for these upcoming events in Sydney and beyond"
-        className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative"
+        className="bg-gradient-to-br from-jazz-900/30 via-jazz-800/20 to-gold-900/25 relative theme-section-music-glow"
         divider
       >
         <DecorativeEffects fireworks stageLights musicalNotes className="opacity-20" />
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10">
             {[...Array(6)].map((_, i) => (

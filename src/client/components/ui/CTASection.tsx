@@ -62,8 +62,7 @@ export const CTASection: React.FC<CTASectionProps> = memo(({
       />
       {showContactButtons && (
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          {/* Decorative line above CTA */}
-          <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+          <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8" aria-hidden="true" />
           <p className="text-gold-300/90 text-sm sm:text-base font-medium mb-6 sm:mb-8 font-sans">
             Quick response • Professional service • Sydney-wide
           </p>

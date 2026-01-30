@@ -2956,6 +2956,64 @@ select:focus-visible {
     0 0 40px rgba(255, 194, 51, 0.1);
 }
 
+/* ============================================
+   ELEGANT DESIGN SYSTEM — Premium, WOW, Consistent
+   ============================================ */
+
+/* Section title with elegant underline accent */
+.section-title-elegant {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 0.35em;
+}
+.section-title-elegant::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 194, 51, 0.8), rgba(168, 85, 247, 0.6), rgba(255, 194, 51, 0.8), transparent);
+  transition: width 0.4s ease;
+}
+.section-title-elegant:hover::after {
+  width: 100px;
+}
+
+/* Premium card — refined shadow, soft border, inner glow */
+.card-elegant {
+  border: 1px solid rgba(255, 194, 51, 0.2);
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 194, 51, 0.08) inset,
+    0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.card-elegant:hover {
+  border-color: rgba(255, 194, 51, 0.35);
+  box-shadow: 
+    0 20px 48px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 194, 51, 0.15) inset,
+    0 0 32px rgba(255, 194, 51, 0.08);
+}
+
+/* Elegant divider — gold to purple gradient line */
+.divider-elegant {
+  height: 1px;
+  max-width: 120px;
+  margin: 0.75em auto 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 194, 51, 0.6), rgba(168, 85, 247, 0.5), transparent);
+  border-radius: 1px;
+}
+
+/* Premium button base — for consistency */
+.btn-elegant-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 194, 51, 0.35);
+}
+
 /* Neon Glow Effects */
 .neon-glow {
   box-shadow: 

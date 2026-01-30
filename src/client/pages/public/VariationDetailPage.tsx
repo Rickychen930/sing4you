@@ -85,7 +85,7 @@ export const VariationDetailPage: React.FC = () => {
             <div className="h-5 sm:h-6 bg-gradient-to-r from-jazz-800/70 via-jazz-900/70 to-jazz-800/70 rounded-lg w-48 sm:w-64 animate-pulse-soft skeleton-shimmer"></div>
           </div>
         </div>
-        <SectionWrapper>
+        <SectionWrapper className="theme-section-music-glow">
           <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
             <Card>
               <CardBody large>

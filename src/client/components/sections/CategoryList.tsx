@@ -137,8 +137,9 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
   }
 
   return (
-    <SectionWrapper title={title} subtitle={subtitle} className="relative">
+    <SectionWrapper title={title} subtitle={subtitle} className="relative theme-section-music-glow">
       <DecorativeEffects musicalNotes sparkles className="opacity-25" />
+      <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
         {categories.map((category, index) => (
           <div
@@ -167,38 +168,30 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
                     <LazyImage
                       src={category.featuredImage}
                       alt={category.name}
-                      className="w-full h-full object-contain bg-black transition-all duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover bg-black transition-all duration-700 group-hover:scale-105"
                     />
-                    {/* Enhanced gradient overlay with hover effect */}
                     <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent group-hover:from-jazz-900/70 group-hover:via-jazz-900/25 transition-all duration-500" />
-                    {/* Subtle glow on hover */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/10 via-transparent to-transparent pointer-events-none" />
                   </div>
                 )}
                 
-                <div className="p-4 sm:p-5 lg:p-6 relative flex-grow flex flex-col">
-                  <div className="relative z-10 flex-grow flex flex-col">
-                    {/* Title with enhanced visual hierarchy */}
+                <div className="p-4 sm:p-5 lg:p-6 relative flex-grow flex flex-col min-h-0">
+                  <div className="relative z-10 flex-grow flex flex-col min-h-0">
                     <div className="mb-4 sm:mb-5 lg:mb-6">
                       <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight group-hover:drop-shadow-[0_0_12px_rgba(255,194,51,0.4)] transition-all duration-300 category-list-title">
                         {category.name}
                       </h3>
                     </div>
-                    
-                    {/* Description with better spacing and consistent line clamp */}
                     {category.description && (
-                      <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-5 sm:mb-6 lg:mb-7 line-clamp-3 leading-relaxed font-sans flex-grow group-hover:text-gray-100 transition-colors duration-300 category-card-text">
+                      <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-4 sm:mb-5 lg:mb-6 line-clamp-3 leading-relaxed font-sans flex-grow min-h-0 group-hover:text-gray-100 transition-colors duration-300 category-card-text">
                         {category.description}
                       </p>
                     )}
-                    {/* Enhanced arrow indicator */}
-                    <div className="mt-auto pt-3 sm:pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="flex items-center justify-center gap-2 text-gold-400 group-hover:text-gold-300 transition-colors duration-300">
-                        <span className="text-sm sm:text-base font-medium">View Details</span>
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                        </svg>
-                      </div>
+                    <div className="mt-auto pt-4 sm:pt-5 border-t border-gold-900/30 group-hover:border-gold-700/40 transition-colors duration-300 flex items-center justify-center gap-2 text-gold-400 group-hover:text-gold-300 text-sm sm:text-base font-medium">
+                      <span>Explore variations</span>
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
                     </div>
                   </div>
                 </div>

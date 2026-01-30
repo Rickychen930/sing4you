@@ -125,8 +125,8 @@ export const LoginPage: React.FC = () => {
     return (
       <Layout isAdmin>
         <SEO title="Admin Login | Christina Sings4U" />
-        <div className="min-h-screen flex items-center justify-center px-4 py-6 sm:py-8">
-          <div className="text-center">
+        <div className="min-h-screen flex items-center justify-center px-4 py-6 sm:py-8 relative theme-section-music-glow">
+          <div className="text-center relative z-10">
             <LoadingSpinner size="lg" />
             <p className="mt-3 sm:mt-4 text-gray-200 text-xs sm:text-sm lg:text-base">Checking authentication...</p>
           </div>
@@ -138,8 +138,8 @@ export const LoginPage: React.FC = () => {
   return (
     <Layout isAdmin>
       <SEO title="Admin Login | Christina Sings4U" />
-      <div className="min-h-screen py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8 relative">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8 relative theme-section-music-glow">
+        <div className="max-w-7xl mx-auto relative z-10">
           {/* Back Button */}
           <div className="mb-4 sm:mb-5 lg:mb-6">
             <BackButton to="/" label="Back to Home" />
@@ -149,6 +149,7 @@ export const LoginPage: React.FC = () => {
           <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] sm:min-h-[calc(100vh-12rem)]">
             <Card className="w-full max-w-md shadow-2xl relative">
               <CardHeader className="text-center">
+                <div className="theme-divider-shimmer mx-auto mb-4 sm:mb-5 max-w-[8rem]" aria-hidden="true" />
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
                   Admin Login
                 </h1>

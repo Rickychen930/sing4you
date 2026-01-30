@@ -104,13 +104,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
       id="services" 
       title={title} 
       subtitle={subtitle} 
-      className="scroll-smooth relative"
+      className="scroll-smooth relative theme-section-music-glow"
       onTitleClick={() => navigate('/categories')}
       divider
     >
-      <DecorativeEffects musicalNotes sparkles className="z-0" />
-      {/* Decorative line above services */}
-      <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+      <DecorativeEffects musicalNotes sparkles className="z-0 opacity-20" />
+      <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 xl:gap-10 relative z-10">
         {categories.map((category, index) => (
           <div
@@ -139,11 +138,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = memo(({
                     <LazyImage
                       src={category.featuredImage}
                       alt={category.name}
-                      className="w-full h-full object-contain bg-black transition-all duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover bg-black transition-all duration-700 group-hover:scale-105"
                     />
-                    {/* Enhanced gradient overlay with hover effect */}
                     <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/85 via-jazz-900/40 to-transparent group-hover:from-jazz-900/75 group-hover:via-jazz-900/30 transition-all duration-500" />
-                    {/* Subtle glow on hover */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/10 via-transparent to-transparent pointer-events-none" />
                   </div>
                 )}

@@ -7,26 +7,26 @@ import { NAV_ITEMS } from '../../config/nav';
 
 export const Footer: React.FC = memo(() => {
   return (
-    <footer className="relative border-t border-gold-900/40 bg-gradient-to-b from-jazz-900/60 via-jazz-800/80 to-jazz-900 py-12 sm:py-14 lg:py-16 overflow-hidden">
+    <footer className="relative border-t border-gold-900/30 bg-gradient-to-b from-jazz-900/70 via-jazz-800/90 to-jazz-900 py-14 sm:py-16 lg:py-20 overflow-hidden shadow-[0_-4px_24px_rgba(0,0,0,0.2)]">
       {/* Subtle decorative texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none footer-texture" aria-hidden />
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none footer-texture" aria-hidden />
       {/* Subtle corner accents */}
-      <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-gold-500/5 via-transparent to-transparent rounded-br-full pointer-events-none" aria-hidden />
-      <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-musical-500/5 via-transparent to-transparent rounded-tl-full pointer-events-none" aria-hidden />
-      <div className="absolute inset-0 bg-black/30 pointer-events-none" aria-hidden />
+      <div className="absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-gold-500/8 via-transparent to-transparent rounded-br-full pointer-events-none" aria-hidden />
+      <div className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-tl from-musical-500/8 via-transparent to-transparent rounded-tl-full pointer-events-none" aria-hidden />
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" aria-hidden />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10 mb-10 lg:mb-12">
           <div>
-            <h3 className="text-xl sm:text-2xl font-elegant font-bold mb-3 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent">
+            <h3 className="text-xl sm:text-2xl font-elegant font-bold mb-3 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
               Christina Sings4U
             </h3>
-            <p className="text-gray-200 text-sm sm:text-base font-sans leading-relaxed max-w-xs">
+            <p className="text-gray-300 text-sm sm:text-base font-sans leading-relaxed max-w-xs">
               Elegant live vocals for your special moments in Sydney, NSW.
             </p>
           </div>
 
           <nav aria-labelledby="footer-quick-links">
-            <h4 id="footer-quick-links" className="text-base sm:text-lg font-elegant font-bold mb-4 text-gold-200">
+            <h4 id="footer-quick-links" className="text-base sm:text-lg font-elegant font-bold mb-4 text-gold-200/95">
               Quick Links
             </h4>
             <ul className="space-y-2.5">
@@ -34,9 +34,9 @@ export const Footer: React.FC = memo(() => {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-gray-200 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1 group"
+                    className="text-gray-300 hover:text-gold-200 text-sm sm:text-base font-medium transition-colors duration-300 inline-flex items-center gap-2 py-1.5 group rounded-md hover:bg-gold-900/20 px-1 -mx-1"
                   >
-                    <span className="text-gold-500 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
+                    <span className="text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity text-sm">→</span>
                     {label}
                   </Link>
                 </li>

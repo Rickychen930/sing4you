@@ -15,6 +15,7 @@ export const FormProgress: React.FC<FormProgressProps> = memo(({ totalFields, co
 
   return (
     <div className={cn('mb-6 sm:mb-8', className)}>
+      <div className="theme-divider-shimmer max-w-[8rem] mb-4 sm:mb-5" aria-hidden="true" />
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm sm:text-base text-gray-300 font-sans font-medium">
           Form Progress
@@ -23,9 +24,9 @@ export const FormProgress: React.FC<FormProgressProps> = memo(({ totalFields, co
           {completedFields}/{totalFields} fields
         </span>
       </div>
-      <div className="w-full h-2 sm:h-2.5 bg-jazz-900/60 rounded-full overflow-hidden">
+      <div className="w-full h-2 sm:h-2.5 bg-jazz-900/60 rounded-full overflow-hidden border border-gold-900/20 shadow-[0_0_0_1px_rgba(255,194,51,0.08)_inset]">
         <div
-          className="h-full bg-gradient-to-r from-gold-600 via-gold-500 to-gold-400 rounded-full transition-all duration-500 ease-out"
+          className="h-full bg-gradient-to-r from-gold-600 via-gold-500 to-gold-400 rounded-full transition-all duration-500 ease-out shadow-[0_0_12px_rgba(255,194,51,0.25)]"
           style={{ width: `${percentage}%` }}
           role="progressbar"
           aria-valuenow={percentage}

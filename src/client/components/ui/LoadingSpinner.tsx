@@ -89,7 +89,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = memo(({
   if (fullScreen) {
     return (
       <div 
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60"
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-jazz-900/60 via-gold-900/50 to-musical-900/60 relative theme-section-music-glow"
         role="status"
         aria-live="polite"
         aria-label={text || "Loading"}

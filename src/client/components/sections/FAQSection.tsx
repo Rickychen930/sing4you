@@ -155,20 +155,19 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
       title={title}
       subtitle={subtitle}
       alternate
-      className={cn('relative', className)}
+      className={cn('relative theme-section-music-glow', className)}
       divider
     >
       <DecorativeEffects musicalNotes sparkles className="opacity-25" />
       <div className="max-w-4xl mx-auto space-y-3 sm:space-y-4 relative z-10">
-        {/* Decorative line above FAQs */}
-        <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+        <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8" aria-hidden="true" />
         {faqs.map((faq, index) => {
           const isOpen = openIndex === index;
           return (
             <div
               key={index}
               className={cn(
-                'rounded-xl sm:rounded-2xl overflow-hidden border transition-all duration-300',
+                'rounded-xl sm:rounded-2xl border overflow-hidden transition-[border-color,box-shadow] duration-300 ease-out',
                 'bg-gradient-to-br from-jazz-900/60 via-jazz-800/50 to-jazz-900/60',
                 isOpen
                   ? 'border-gold-600/60 shadow-[0_8px_24px_rgba(255,194,51,0.3)]'
@@ -180,44 +179,46 @@ export const FAQSection: React.FC<FAQSectionProps> = memo(({
                 onClick={() => toggleFAQ(index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
                 className={cn(
-                  'w-full px-5 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 text-left flex items-center justify-between gap-4',
-                  'focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-xl sm:rounded-2xl',
-                  'transition-colors duration-300',
-                  isOpen ? 'bg-gold-900/30' : 'bg-transparent hover:bg-gold-900/20'
+                  'w-full px-5 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 text-left flex items-center justify-between gap-4 min-h-[3.5rem] sm:min-h-[4rem]',
+                  'focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-jazz-900 rounded-t-xl sm:rounded-t-2xl',
+                  'transition-colors duration-200',
+                  isOpen ? 'bg-gold-900/30 rounded-b-none' : 'bg-transparent hover:bg-gold-900/20 rounded-b-xl sm:rounded-b-2xl'
                 )}
                 aria-expanded={isOpen}
                 aria-controls={`faq-answer-${index}`}
+                id={`faq-question-${index}`}
               >
-                <h3 className="text-base sm:text-lg lg:text-xl font-elegant font-bold text-gold-200 pr-4 flex-1">
+                <h3 className="text-base sm:text-lg lg:text-xl font-elegant font-bold text-gold-200 pr-4 flex-1 text-left min-w-0">
                   {faq.question}
                 </h3>
-                <div className="flex-shrink-0">
-                  <svg
-                    className={cn(
-                      'w-5 h-5 sm:w-6 sm:h-6 text-gold-400 transition-transform duration-300',
-                      isOpen && 'rotate-180'
-                    )}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
+                <span
+                  className={cn(
+                    'flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-gold-400 transition-transform duration-300 ease-out',
+                    isOpen && 'rotate-180'
+                  )}
+                  aria-hidden="true"
+                >
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
-                </div>
+                </span>
               </button>
               <div
                 id={`faq-answer-${index}`}
                 className={cn(
-                  'overflow-hidden transition-all duration-300 ease-in-out',
-                  isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                  'grid transition-[grid-template-rows] duration-300 ease-out',
+                  isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
                 )}
                 aria-hidden={!isOpen}
+                role="region"
+                aria-labelledby={`faq-question-${index}`}
               >
-                <div className="px-5 sm:px-6 lg:px-8 pb-4 sm:pb-5 lg:pb-6 pt-0">
-                  <p className="text-sm sm:text-base lg:text-lg text-gray-200 leading-relaxed font-sans">
-                    {faq.answer}
-                  </p>
+                <div className="min-h-0 overflow-hidden">
+                  <div className="px-5 sm:px-6 lg:px-8 pb-4 sm:pb-5 lg:pb-6 pt-0">
+                    <p className="text-sm sm:text-base lg:text-lg text-gray-200 leading-relaxed font-sans whitespace-pre-line break-words">
+                      {faq.answer}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

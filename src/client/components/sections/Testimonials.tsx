@@ -90,12 +90,11 @@ export const Testimonials: React.FC = memo(() => {
       id="testimonials"
       title="What Our Clients Say"
       subtitle="Read testimonials from our satisfied clients"
-      className="bg-gradient-to-br from-musical-900/30 via-jazz-900/20 to-gold-900/20 relative overflow-hidden"
+      className="bg-gradient-to-br from-musical-900/30 via-jazz-900/20 to-gold-900/20 relative overflow-hidden theme-section-music-glow"
       divider
     >
       <DecorativeEffects musicalNotes sparkles className="opacity-20" />
-      {/* Decorative line above testimonials */}
-      <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
+      <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
       {testimonials.length === 0 ? (
         <div className="relative z-10">
           <EmptyState
@@ -108,7 +107,7 @@ export const Testimonials: React.FC = memo(() => {
         <div className="relative z-10">
           {aggregateRating && (
             <div className="mb-8 sm:mb-10 lg:mb-12">
-              <Card className="max-w-2xl mx-auto">
+              <Card className="max-w-2xl mx-auto" hover>
                 <CardBody className="text-center">
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
                     <div>

@@ -22,11 +22,11 @@ export const Card: React.FC<CardProps> = memo(({
       role={role}
       aria-label={ariaLabel}
       className={cn(
-        'glass-effect-strong rounded-2xl overflow-hidden relative border border-gold-900/40',
-        'shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.15)_inset]',
-        'transition-all duration-300',
-        hover && 'group hover:border-gold-700/50 hover:shadow-[0_16px_40px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,194,51,0.25)_inset,0_0_24px_rgba(255,194,51,0.12)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer',
-        !hover && 'hover:shadow-[0_12px_36px_rgba(0,0,0,0.52),0_0_0_1px_rgba(255,194,51,0.2)_inset]',
+        'card-elegant glass-effect-strong rounded-2xl overflow-hidden relative',
+        'backdrop-blur-xl bg-jazz-900/50 border border-gold-900/30',
+        'transition-all duration-300 ease-out',
+        hover && 'group hover:border-gold-700/40 hover:-translate-y-1 active:translate-y-0 cursor-pointer hover:shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.2)_inset,0_0_28px_rgba(255,194,51,0.12)]',
+        !hover && 'hover:shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,194,51,0.12)_inset]',
         className
       )}
       {...props}

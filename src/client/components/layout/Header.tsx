@@ -46,25 +46,25 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
   if (isAdmin) return null;
 
   const navLinkBase =
-    'px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-medium rounded-lg transition-all duration-300 min-h-[48px] flex items-center relative';
-  const navLinkActive = 'text-gold-200 bg-gold-900/40';
-  const navLinkInactive = 'text-gray-200 hover:text-gold-200 hover:bg-gold-900/30';
+    'px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-medium rounded-xl transition-all duration-300 min-h-[48px] flex items-center relative';
+  const navLinkActive = 'text-gold-100 bg-gold-900/35 shadow-[0_0_0_1px_rgba(255,194,51,0.2)]';
+  const navLinkInactive = 'text-gray-200 hover:text-gold-200 hover:bg-gold-900/25 hover:shadow-[0_0_0_1px_rgba(255,194,51,0.1)]';
   const underlineClass =
-    'absolute bottom-0 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-gold-400 via-gold-300 to-musical-400 rounded-full transition-all duration-300';
+    'absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-0 bg-gold-400 rounded-full transition-all duration-300 group-hover:w-3/4';
 
   return (
     <>
-      <header className="glass-effect-strong fixed w-full top-0 left-0 right-0 z-50 border-b border-gold-900/40 transition-all duration-300 overflow-visible">
+      <header className="glass-effect-strong fixed w-full top-0 left-0 right-0 z-50 border-b border-gold-900/30 shadow-[0_4px_24px_rgba(0,0,0,0.25)] transition-all duration-300 overflow-visible">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible" aria-label="Main navigation">
           <div className="flex justify-between items-center h-14 sm:h-16 lg:h-18 xl:h-20 relative">
             <Link
               to="/"
-              className="inline-flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg md:text-xl lg:text-2xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent hover:opacity-90 transition-opacity duration-300 relative"
+              className="inline-flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg md:text-xl lg:text-2xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent hover:opacity-95 transition-all duration-300 relative drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]"
               aria-label="Home — Christina Sings4U"
             >
               <span>Christina Sings4U</span>
               <span
-                className="hidden sm:inline-flex text-gold-300/80 text-lg md:text-xl lg:text-2xl animate-musical-pulse header-musical-note"
+                className="hidden sm:inline-flex text-gold-300/70 text-lg md:text-xl lg:text-2xl animate-musical-pulse header-musical-note"
                 aria-hidden="true"
               >
                 ♫
@@ -82,7 +82,7 @@ export const Header: React.FC<HeaderProps> = memo(({ isAdmin = false }) => {
                 >
                   <span className="relative z-10">{label}</span>
                   <span
-                    className={cn(underlineClass, isActiveRoute(to) ? 'w-full' : 'w-0 group-hover:w-full')}
+                    className={cn(underlineClass, isActiveRoute(to) ? 'w-3/4' : 'w-0 group-hover:w-3/4')}
                     aria-hidden
                   />
                 </Link>

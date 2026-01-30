@@ -40,10 +40,10 @@ export const CookieConsent: React.FC = memo(() => {
   return (
     <div
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-[10000] p-4 sm:p-6',
+        'fixed bottom-0 left-0 right-0 z-[10000] p-4 sm:p-6 relative',
         'bg-gradient-to-br from-jazz-900/98 via-jazz-800/98 to-jazz-900/98',
-        'backdrop-blur-lg border-t border-gold-900/50',
-        'shadow-[0_-8px_32px_rgba(0,0,0,0.6)]',
+        'backdrop-blur-lg border-t border-gold-900/40',
+        'shadow-[0_-8px_32px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,194,51,0.08)_inset]',
         'animate-fade-in-up',
         isVisible ? 'translate-y-0' : 'translate-y-full'
       )}
@@ -51,6 +51,7 @@ export const CookieConsent: React.FC = memo(() => {
       aria-label="Cookie consent"
       aria-modal="false"
     >
+      <div className="theme-divider-shimmer mx-auto mb-3 sm:mb-4 max-w-[10rem] opacity-80" aria-hidden="true" />
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
         <div className="flex-1">
           <h3 className="text-base sm:text-lg font-elegant font-bold text-gold-200 mb-2">

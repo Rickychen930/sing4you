@@ -263,11 +263,10 @@ export const ContactPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-12">
         <Breadcrumb items={breadcrumbItems} />
       </div>
-      <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20 relative" divider>
+      <SectionWrapper id="contact" title="Contact Us" subtitle="Get in touch for booking inquiries" className="bg-gradient-to-br from-gold-900/25 via-jazz-900/20 to-musical-900/20 relative theme-section-music-glow" divider>
         <DecorativeEffects mics sparkles className="opacity-30" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Decorative line above contact cards */}
-          <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10" aria-hidden="true" />
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-14 lg:mb-16">
             <a
               href={generateWhatsAppLink()}
@@ -334,10 +333,9 @@ export const ContactPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Decorative line above features */}
-          <div className="w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-musical-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10" aria-hidden="true" />
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-12 lg:mb-14">
-            <Card className="h-full flex flex-col hover group">
+            <Card className="h-full flex flex-col group" hover>
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" aria-hidden="true" />
@@ -351,7 +349,7 @@ export const ContactPage: React.FC = () => {
                 <p className="text-sm sm:text-base text-gray-300 font-sans leading-relaxed">We respond within 2 hours during business hours</p>
               </CardBody>
             </Card>
-            <Card className="h-full flex flex-col hover group">
+            <Card className="h-full flex flex-col group" hover>
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-gold-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '0.5s' }} aria-hidden="true" />
@@ -365,7 +363,7 @@ export const ContactPage: React.FC = () => {
                 <p className="text-sm sm:text-base text-gray-300 font-sans leading-relaxed">We're available for bookings any day of the week</p>
               </CardBody>
             </Card>
-            <Card className="h-full flex flex-col hover group">
+            <Card className="h-full flex flex-col group" hover>
               <CardBody className="text-center flex flex-col flex-grow">
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 rounded-full bg-musical-500/20 blur-xl animate-pulse-soft" style={{ animationDelay: '1s' }} aria-hidden="true" />
@@ -381,8 +379,7 @@ export const ContactPage: React.FC = () => {
             </Card>
           </div>
 
-          {/* Decorative line above form */}
-          <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-8 sm:mb-10" aria-hidden="true" />
+          <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10" aria-hidden="true" />
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7 lg:space-y-8">
             <FormProgress totalFields={formProgress.total} completedFields={formProgress.completed} />
             <Input

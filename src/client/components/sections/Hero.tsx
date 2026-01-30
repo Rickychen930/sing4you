@@ -195,13 +195,7 @@ export const Hero: FC = memo(() => {
       />
       
       <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-scale-in">
-        {/* Decorative line above title */}
-        <div
-          className="relative w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto mb-6 sm:mb-8 overflow-hidden"
-          aria-hidden="true"
-        >
-          <div className="absolute inset-0 animate-shimmer-musical opacity-60" />
-        </div>
+        <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8" aria-hidden="true" />
         <div className="relative inline-block mb-4 sm:mb-5 md:mb-6 animate-fade-in-up hero-glow-delay">
           {/* Subtle decorative accent behind title */}
           <div className="absolute -inset-4 sm:-inset-6 bg-gold-500/5 rounded-full blur-xl opacity-50" aria-hidden />
@@ -216,12 +210,7 @@ export const Hero: FC = memo(() => {
         <p className="text-sm sm:text-base text-gold-300/90 font-medium mt-4 sm:mt-5 mb-2 sm:mb-3 font-sans animate-fade-in-up design-delay-medium">
           Trusted for 500+ events across Sydney — weddings, corporate & private occasions
         </p>
-        <div
-          className="relative w-24 sm:w-32 md:w-40 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent rounded-full mx-auto my-6 sm:my-8 overflow-hidden"
-          aria-hidden
-        >
-          <div className="absolute inset-0 animate-shimmer-musical opacity-60" />
-        </div>
+        <div className="theme-divider-shimmer mx-auto my-6 sm:my-8 max-w-[10rem] sm:max-w-[12rem]" aria-hidden="true" />
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-md sm:max-w-lg mx-auto animate-fade-in-up design-delay-slow">
           <Button
             variant="primary"

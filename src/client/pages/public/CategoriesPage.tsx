@@ -1,9 +1,15 @@
 import React from 'react';
 import { CategoryList } from '../../components/sections/CategoryList';
 import { SEO, JSONLDSchema } from '../../components/ui/SEO';
+import { Breadcrumb } from '../../components/ui/Breadcrumb';
 
 export const CategoriesPage: React.FC = () => {
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
+
+  const breadcrumbItems = [
+    { label: 'Home', path: '/' },
+    { label: 'Performance Categories' },
+  ];
 
   const collectionPageSchema = {
     '@context': 'https://schema.org',
@@ -55,9 +61,15 @@ export const CategoriesPage: React.FC = () => {
         url={`${siteUrl}/categories`}
       />
       <JSONLDSchema schema={collectionPageSchema} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10">
+        <Breadcrumb items={breadcrumbItems} />
+        <p className="mt-4 sm:mt-5 text-base sm:text-lg text-gray-300 font-sans max-w-2xl leading-relaxed">
+          Select a category to see available packages, pricing, and book your perfect performance.
+        </p>
+      </div>
       <CategoryList
         title="Performance Categories"
-        subtitle="Choose the perfect musical experience for your special event"
+        subtitle="Choose the perfect musical experience for your special event. Click a category to see available packages and book."
       />
     </>
   );

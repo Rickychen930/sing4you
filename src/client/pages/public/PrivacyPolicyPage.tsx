@@ -22,9 +22,10 @@ export const PrivacyPolicyPage: React.FC = () => {
         id="privacy-policy"
         title="Privacy Policy"
         subtitle={`Last Updated: ${lastUpdated}`}
-        className="relative"
+        className="relative theme-section-music-glow"
       >
         <DecorativeEffects sparkles className="opacity-20" />
+        <div className="theme-divider-shimmer mx-auto mb-8 sm:mb-10 relative z-10" aria-hidden="true" />
         <Card className="relative z-10">
           <CardBody large>
             <div className="prose prose-invert max-w-none space-y-6 sm:space-y-8">

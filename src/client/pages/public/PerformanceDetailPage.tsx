@@ -161,11 +161,10 @@ export const PerformanceDetailPage: React.FC = () => {
           <BackButton to="/performances" />
         </div>
       </div>
-      <SectionWrapper className="relative" divider>
+      <SectionWrapper className="relative theme-section-music-glow" divider>
         <DecorativeEffects fireworks stageLights musicalNotes className="opacity-25" />
         <div className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12 relative z-10">
-          {/* Decorative line above content */}
-          <div className="w-32 sm:w-40 md:w-48 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent rounded-full mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+          <div className="theme-divider-shimmer mx-auto mb-6 sm:mb-8" aria-hidden="true" />
           {/* Social Share Buttons */}
           <div className="flex justify-end">
             <SocialShareButtons

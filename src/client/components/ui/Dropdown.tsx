@@ -117,7 +117,8 @@ export const Dropdown: React.FC<DropdownProps> = memo(({
     <div
       ref={menuRef}
       className={cn(
-        'fixed z-[9999] bg-jazz-900/98 backdrop-blur-md rounded-lg sm:rounded-xl shadow-lg py-1 border-2 border-gold-900/40 hover:border-gold-800/50 transition-all duration-200',
+        'fixed z-[9999] bg-jazz-900/98 backdrop-blur-xl rounded-lg sm:rounded-xl py-1 border border-gold-900/30',
+        'shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,194,51,0.12)_inset] hover:shadow-[0_16px_48px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,194,51,0.18)_inset] hover:border-gold-800/40 transition-all duration-300',
         'animate-fade-in',
         menuClassName
       )}

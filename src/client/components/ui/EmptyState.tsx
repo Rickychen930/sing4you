@@ -67,6 +67,7 @@ export const EmptyState: React.FC<EmptyStateProps> = memo(({
         <h3 className="text-2xl sm:text-3xl lg:text-4xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
           {title}
         </h3>
+        <div className="divider-elegant mb-4 sm:mb-5 lg:mb-6" aria-hidden="true" />
         {description && (
           <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-7 sm:mb-9 lg:mb-11 leading-relaxed max-w-lg mx-auto font-sans">
             {description}
