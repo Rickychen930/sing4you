@@ -51,9 +51,11 @@ export async function downloadInvoicePDF(invoice: IInvoice): Promise<void> {
   const imgWidth = canvas.width;
   const imgHeight = canvas.height;
   const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-  const imgX = (pdfWidth - imgWidth * ratio) / 2;
-  const imgY = 0;
+  const w = imgWidth * ratio;
+  const h = imgHeight * ratio;
+  const x = (pdfWidth - w) / 2;
+  const y = 0;
 
-  pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+  pdf.addImage(imgData, 'PNG', x, y, w, h);
   pdf.save(`Tax-Invoice-${invoice.invoiceNumber.replace(/\s+/g, '-')}.pdf`);
 }

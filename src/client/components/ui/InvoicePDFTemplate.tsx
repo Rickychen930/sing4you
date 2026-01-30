@@ -10,10 +10,15 @@ function formatDate(d: Date | string | undefined): string {
   return new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-/** Professional Australian Tax Invoice template — ATO compliant, print/PDF ready */
+function formatABN(abn: string): string {
+  const digits = abn.replace(/\D/g, '');
+  if (digits.length !== 11) return abn;
+  return `${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 11)}`;
+}
+
+/** Professional Australian Tax Invoice — ATO compliant, accounting-firm standard */
 export const InvoicePDFTemplate: React.FC<{
   invoice: IInvoice;
-  /** Use for PDF capture: white bg, no shadows */
   forPdf?: boolean;
 }> = ({ invoice, forPdf = false }) => {
   const gstRate = invoice.gstRate ?? 0.1;
@@ -21,150 +26,263 @@ export const InvoicePDFTemplate: React.FC<{
   const subtotal = invoice.subtotal ?? 0;
   const gstAmount = invoice.gstAmount ?? 0;
   const total = invoice.total ?? 0;
+  const isOver1000 = total >= 1000;
+  const status = invoice.status ?? 'draft';
 
-  const containerStyle: React.CSSProperties = forPdf
+  const base = forPdf
     ? {
         width: '210mm',
         minHeight: '297mm',
-        padding: '16mm',
-        backgroundColor: '#ffffff',
-        color: '#111827',
+        padding: '0',
         fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-        fontSize: '11px',
-        lineHeight: 1.4,
+        backgroundColor: '#ffffff',
+        color: '#1f2937',
       }
     : {};
 
   return (
     <div
       data-invoice-pdf="true"
-      style={containerStyle}
-      className={forPdf ? '' : 'bg-white text-gray-900 rounded-lg shadow-lg p-6 sm:p-8 max-w-[210mm] mx-auto'}
+      style={base}
+      className={forPdf ? '' : 'bg-white text-gray-900 rounded-xl shadow-xl overflow-hidden max-w-[210mm] mx-auto'}
     >
-      {/* Header — Tax Invoice title + business */}
-      <div style={{ marginBottom: '20px', borderBottom: '2px solid #1f2937', paddingBottom: '16px' }}>
-        <h1
-          style={{
-            fontSize: forPdf ? '22px' : '24px',
-            fontWeight: 700,
-            margin: 0,
-            color: '#111827',
-            letterSpacing: '0.02em',
-          }}
-        >
-          {invoice.title || 'Tax Invoice'}
-        </h1>
-        <p style={{ fontSize: '10px', color: '#6b7280', marginTop: '4px', marginBottom: 0 }}>
-          Australian Business Number (ABN) required for GST credit claims
-        </p>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', marginBottom: '24px' }}>
-        {/* From (Supplier) */}
-        <div style={{ flex: '1 1 200px' }}>
-          <p style={{ fontWeight: 600, margin: '0 0 6px', fontSize: '10px', color: '#6b7280', textTransform: 'uppercase' }}>
-            From
-          </p>
-          <p style={{ fontWeight: 600, margin: 0, fontSize: '13px' }}>{invoice.businessName}</p>
-          <p style={{ margin: '2px 0 0', fontSize: '11px' }}>ABN: {invoice.abn}</p>
-          {invoice.businessAddress && (
-            <p style={{ margin: '2px 0 0', fontSize: '11px', whiteSpace: 'pre-wrap' }}>{invoice.businessAddress}</p>
-          )}
-        </div>
-
-        {/* To (Buyer) */}
-        <div style={{ flex: '1 1 200px' }}>
-          <p style={{ fontWeight: 600, margin: '0 0 6px', fontSize: '10px', color: '#6b7280', textTransform: 'uppercase' }}>
-            Bill To
-          </p>
-          <p style={{ fontWeight: 600, margin: 0, fontSize: '13px' }}>{invoice.clientName}</p>
-          {invoice.clientAddress && (
-            <p style={{ margin: '2px 0 0', fontSize: '11px', whiteSpace: 'pre-wrap' }}>{invoice.clientAddress}</p>
-          )}
-          {invoice.clientEmail && (
-            <p style={{ margin: '2px 0 0', fontSize: '11px' }}>{invoice.clientEmail}</p>
-          )}
-        </div>
-
-        {/* Invoice details */}
-        <div style={{ flex: '0 0 auto', textAlign: 'right' }}>
-          <p style={{ margin: '0 0 4px', fontSize: '11px' }}>
-            <strong>Invoice No:</strong> {invoice.invoiceNumber}
-          </p>
-          <p style={{ margin: '0 0 4px', fontSize: '11px' }}>
-            <strong>Issue Date:</strong> {formatDate(invoice.issueDate)}
-          </p>
-          {invoice.dueDate && (
-            <p style={{ margin: 0, fontSize: '11px' }}>
-              <strong>Due Date:</strong> {formatDate(invoice.dueDate)}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Line items table */}
-      <table
+      {/* Header — Professional bar */}
+      <div
         style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          marginBottom: '20px',
-          fontSize: '11px',
+          background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)',
+          color: '#ffffff',
+          padding: forPdf ? '20px 24px' : '24px 28px',
         }}
       >
-        <thead>
-          <tr style={{ backgroundColor: '#f3f4f6', borderBottom: '2px solid #1f2937' }}>
-            <th style={{ textAlign: 'left', padding: '10px 12px', fontWeight: 600 }}>Description</th>
-            <th style={{ textAlign: 'center', padding: '10px 12px', fontWeight: 600 }}>Qty</th>
-            <th style={{ textAlign: 'right', padding: '10px 12px', fontWeight: 600 }}>Unit Price</th>
-            <th style={{ textAlign: 'right', padding: '10px 12px', fontWeight: 600 }}>Amount (inc GST)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(invoice.items ?? []).map((item: IInvoiceLineItem, i: number) => {
-            const lineTotal = item.quantity * item.unitPrice;
-            return (
-              <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                <td style={{ padding: '10px 12px' }}>{item.description}</td>
-                <td style={{ padding: '10px 12px', textAlign: 'center' }}>{item.quantity}</td>
-                <td style={{ padding: '10px 12px', textAlign: 'right' }}>{formatAUD(item.unitPrice)}</td>
-                <td style={{ padding: '10px 12px', textAlign: 'right' }}>{formatAUD(lineTotal)}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      {/* Totals — ATO: GST must be shown separately */}
-      <div style={{ marginLeft: 'auto', width: '240px', fontSize: '11px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #e5e7eb' }}>
-          <span>Subtotal (ex GST)</span>
-          <span>{formatAUD(subtotal)}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #e5e7eb' }}>
-          <span>GST ({gstPct}%)</span>
-          <span>{formatAUD(gstAmount)}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontWeight: 700, fontSize: '14px' }}>
-          <span>Total (inc GST)</span>
-          <span>{formatAUD(total)}</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: forPdf ? '20px' : '22px', fontWeight: 700, letterSpacing: '-0.02em' }}>
+              {invoice.businessName}
+            </h1>
+            <p style={{ margin: '4px 0 0', fontSize: forPdf ? '11px' : '12px', opacity: 0.9 }}>
+              ABN {formatABN(invoice.abn)}
+            </p>
+            {invoice.businessAddress && (
+              <p style={{ margin: '2px 0 0', fontSize: forPdf ? '10px' : '11px', opacity: 0.85, whiteSpace: 'pre-wrap' }}>
+                {invoice.businessAddress}
+              </p>
+            )}
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div
+              style={{
+                fontSize: forPdf ? '18px' : '20px',
+                fontWeight: 700,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+              }}
+            >
+              {invoice.title || 'Tax Invoice'}
+            </div>
+            <p style={{ margin: '6px 0 0', fontSize: forPdf ? '10px' : '11px', opacity: 0.9 }}>
+              Issued in Australia · Valid for GST
+            </p>
+            {status && status !== 'draft' && (
+              <span
+                style={{
+                  display: 'inline-block',
+                  marginTop: '8px',
+                  padding: '2px 8px',
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  borderRadius: '4px',
+                  backgroundColor: status === 'paid' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(255, 194, 51, 0.3)',
+                }}
+              >
+                {status}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {invoice.paymentTerms && (
-        <p style={{ marginTop: '20px', fontSize: '10px', color: '#6b7280' }}>
-          <strong>Payment terms:</strong> {invoice.paymentTerms}
-        </p>
-      )}
-      {invoice.notes && (
-        <p style={{ marginTop: '8px', fontSize: '10px', color: '#6b7280', whiteSpace: 'pre-wrap' }}>
-          <strong>Notes:</strong> {invoice.notes}
-        </p>
-      )}
+      <div style={{ padding: forPdf ? '24px 24px 28px' : '28px 32px 32px' }}>
+        {/* Invoice meta + Bill To */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '24px',
+            marginBottom: '28px',
+          }}
+        >
+          <div>
+            <table style={{ borderCollapse: 'collapse', fontSize: forPdf ? '11px' : '12px' }}>
+              <tbody>
+                <tr>
+                  <td style={{ padding: '2px 12px 2px 0', color: '#6b7280', fontWeight: 500, width: '100px' }}>
+                    Invoice No
+                  </td>
+                  <td style={{ padding: '2px 0', fontWeight: 600 }}>{invoice.invoiceNumber}</td>
+                </tr>
+                <tr>
+                  <td style={{ padding: '2px 12px 2px 0', color: '#6b7280', fontWeight: 500 }}>Issue Date</td>
+                  <td style={{ padding: '2px 0' }}>{formatDate(invoice.issueDate)}</td>
+                </tr>
+                {invoice.dueDate && (
+                  <tr>
+                    <td style={{ padding: '2px 12px 2px 0', color: '#6b7280', fontWeight: 500 }}>Due Date</td>
+                    <td style={{ padding: '2px 0' }}>{formatDate(invoice.dueDate)}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div
+            style={{
+              padding: '12px 16px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+            }}
+          >
+            <p style={{ margin: 0, fontSize: forPdf ? '9px' : '10px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Bill To
+            </p>
+            <p style={{ margin: '6px 0 0', fontWeight: 600, fontSize: forPdf ? '12px' : '13px' }}>{invoice.clientName}</p>
+            {invoice.clientAddress && (
+              <p style={{ margin: '4px 0 0', fontSize: forPdf ? '10px' : '11px', color: '#475569', whiteSpace: 'pre-wrap' }}>
+                {invoice.clientAddress}
+              </p>
+            )}
+            {invoice.clientEmail && (
+              <p style={{ margin: '2px 0 0', fontSize: forPdf ? '10px' : '11px', color: '#475569' }}>
+                {invoice.clientEmail}
+              </p>
+            )}
+            {isOver1000 && (
+              <p style={{ margin: '8px 0 0', fontSize: forPdf ? '9px' : '10px', color: '#64748b' }}>
+                Buyer identity shown (invoice ≥ $1,000)
+              </p>
+            )}
+          </div>
+        </div>
 
-      {/* ATO compliance footer */}
-      <p style={{ marginTop: '24px', fontSize: '9px', color: '#9ca3af' }}>
-        This tax invoice is valid for GST purposes. Total price includes GST where applicable. Issued in Australia.
-      </p>
+        {/* Line items — ATO: description, quantity, price */}
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: forPdf ? '11px' : '12px',
+            marginBottom: '24px',
+          }}
+        >
+          <thead>
+            <tr style={{ backgroundColor: '#1e3a5f', color: '#ffffff' }}>
+              <th style={{ textAlign: 'left', padding: '12px 14px', fontWeight: 600 }}>Description</th>
+              <th style={{ textAlign: 'center', padding: '12px 14px', fontWeight: 600, width: '70px' }}>Qty</th>
+              <th style={{ textAlign: 'right', padding: '12px 14px', fontWeight: 600, width: '100px' }}>Unit Price</th>
+              <th style={{ textAlign: 'right', padding: '12px 14px', fontWeight: 600, width: '110px' }}>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(invoice.items ?? []).map((item: IInvoiceLineItem, i: number) => {
+              const lineTotal = item.quantity * item.unitPrice;
+              return (
+                <tr key={i} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                  <td style={{ padding: '12px 14px' }}>{item.description}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{item.quantity}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'right' }}>{formatAUD(item.unitPrice)}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 500 }}>{formatAUD(lineTotal)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {/* Totals — ATO: GST shown separately */}
+        <div
+          style={{
+            marginLeft: 'auto',
+            width: forPdf ? '260px' : '280px',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid #e2e8f0', fontSize: forPdf ? '11px' : '12px' }}>
+            <span style={{ color: '#475569' }}>Subtotal (ex GST)</span>
+            <span style={{ fontWeight: 500 }}>{formatAUD(subtotal)}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid #e2e8f0', fontSize: forPdf ? '11px' : '12px' }}>
+            <span style={{ color: '#475569' }}>GST ({gstPct}%)</span>
+            <span style={{ fontWeight: 500 }}>{formatAUD(gstAmount)}</span>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '14px 16px',
+              backgroundColor: '#1e3a5f',
+              color: '#ffffff',
+              fontWeight: 700,
+              fontSize: forPdf ? '14px' : '16px',
+            }}
+          >
+            <span>Total (inc GST)</span>
+            <span>{formatAUD(total)}</span>
+          </div>
+        </div>
+
+        {/* ATO: "Total price includes GST" — extent of taxable sale */}
+        <p
+          style={{
+            marginTop: '12px',
+            fontSize: forPdf ? '10px' : '11px',
+            color: '#64748b',
+            fontStyle: 'italic',
+          }}
+        >
+          Total price includes GST. All amounts are taxable supplies unless otherwise stated.
+        </p>
+
+        {/* Payment terms */}
+        {invoice.paymentTerms && (
+          <div style={{ marginTop: '24px', padding: '14px 18px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <p style={{ margin: 0, fontSize: forPdf ? '10px' : '11px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+              Payment
+            </p>
+            <p style={{ margin: '6px 0 0', fontSize: forPdf ? '11px' : '12px' }}>{invoice.paymentTerms}</p>
+            <p style={{ margin: '8px 0 0', fontSize: forPdf ? '10px' : '11px', color: '#64748b' }}>
+              Please use invoice number <strong>{invoice.invoiceNumber}</strong> as payment reference.
+            </p>
+          </div>
+        )}
+
+        {invoice.notes && (
+          <p style={{ marginTop: '16px', fontSize: forPdf ? '10px' : '11px', color: '#475569', whiteSpace: 'pre-wrap' }}>
+            <strong>Notes:</strong> {invoice.notes}
+          </p>
+        )}
+
+        {/* Footer */}
+        <div
+          style={{
+            marginTop: '32px',
+            paddingTop: '20px',
+            borderTop: '1px solid #e2e8f0',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}
+        >
+          <p style={{ margin: 0, fontSize: forPdf ? '9px' : '10px', color: '#94a3b8', maxWidth: '400px' }}>
+            This document is a valid Australian Tax Invoice for GST purposes. Issued in accordance with A New Tax System
+            (Goods and Services Tax) Act 1999. GSTR 2013/1.
+          </p>
+          <p style={{ margin: 0, fontSize: forPdf ? '11px' : '12px', fontWeight: 600, color: '#1e3a5f' }}>
+            Thank you for your business
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
