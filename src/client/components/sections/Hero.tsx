@@ -132,7 +132,7 @@ export const Hero: FC = memo(() => {
             muted
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain"
             aria-label="Background video"
             aria-hidden="true"
             onError={() => {
@@ -146,7 +146,7 @@ export const Hero: FC = memo(() => {
             <img
               src={heroSettings.backgroundImage}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-contain"
               onError={() => {
                 setImageError(true);
               }}

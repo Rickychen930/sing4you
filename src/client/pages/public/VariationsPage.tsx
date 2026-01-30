@@ -165,7 +165,7 @@ export const VariationsPage: React.FC = () => {
                   <img
                     src={category.featuredImage}
                     alt={category.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/60 via-transparent to-transparent pointer-events-none" />
                 </div>

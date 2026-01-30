@@ -168,7 +168,7 @@ export const CategoryList: React.FC<CategoryListProps> = memo(({
                     <LazyImage
                       src={category.featuredImage}
                       alt={category.name}
-                      className="w-full h-full object-cover bg-black transition-all duration-700 group-hover:scale-105"
+                      className="w-full h-full object-contain bg-black transition-all duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-jazz-900/80 via-jazz-900/40 to-transparent group-hover:from-jazz-900/70 group-hover:via-jazz-900/25 transition-all duration-500" />
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold-500/10 via-transparent to-transparent pointer-events-none" />

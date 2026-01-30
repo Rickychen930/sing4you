@@ -81,7 +81,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
               key={activeMedia}
               src={activeMedia}
               alt={`Performance media ${safeIndex + 1}`}
-              className="w-full h-full min-h-[200px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              className="w-full h-full min-h-[200px] object-contain transition-transform duration-700 group-hover:scale-[1.02]"
               loading="eager"
               decoding="async"
             />
@@ -146,7 +146,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
               {isVideo(url) ? (
                 <video
                   src={url}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-contain"
                   muted
                   playsInline
                   preload="metadata"
@@ -157,7 +157,7 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
                   alt={`Thumbnail ${index + 1}`}
                   width={112}
                   height={80}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-contain"
                   loading="eager"
                   decoding="async"
                   fetchPriority={index < 4 ? 'high' : undefined}

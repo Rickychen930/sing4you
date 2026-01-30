@@ -138,7 +138,7 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
                 <LazyImage
                   src={variation.featuredImage}
                   alt={variation.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   fadeIn
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />

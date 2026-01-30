@@ -891,6 +891,8 @@ canvas {
 img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  /* Default: contain agar gambar tidak terpotong */
+  object-fit: contain;
   /* Removed will-change: auto - not needed for static images */
   /* Prevent layout shift */
   max-width: 100%;
@@ -907,8 +909,8 @@ video {
   /* Prevent layout shift */
   max-width: 100%;
   height: auto;
-  /* Optimize video rendering */
-  object-fit: cover;
+  /* Optimize video rendering — contain agar tidak terpotong */
+  object-fit: contain;
 }
 
 /* Prevent layout shifts */
