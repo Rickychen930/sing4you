@@ -96,27 +96,27 @@ export const DecorativeEffects: React.FC<DecorativeEffectsProps> = memo(({
         </>
       )}
 
-      {/* Stage Lights */}
+      {/* Stage Lights — 1 per container to reduce cost */}
       {stageLights && (
         <>
-          {[...Array(2)].map((_, i) => (
+          {[...Array(1)].map((_, i) => (
             <div
               key={`light-${i}`}
               className="decorative-stage-light"
               style={{
-                left: i === 0 ? '10%' : '80%',
-                top: `${40 + i * 20}%`,
-                animationDelay: `${i * 4}s`,
+                left: '20%',
+                top: '45%',
+                animationDelay: '0s',
               } as React.CSSProperties}
             />
           ))}
         </>
       )}
 
-      {/* Sparkles */}
+      {/* Sparkles — 4 for better performance when many sections use them */}
       {sparkles && (
         <>
-          {[...Array(8)].map((_, i) => (
+          {[...Array(4)].map((_, i) => (
             <div
               key={`sparkle-${i}`}
               className="decorative-sparkle"

@@ -1,6 +1,5 @@
 import React, { useState, useCallback, memo, useEffect } from 'react';
 import { cn } from '../../utils/helpers';
-import { LazyImage } from './LazyImage';
 
 interface PerformanceMediaCarouselProps {
   media: string[];
@@ -64,26 +63,27 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
       onMouseEnter={() => pauseOnHover && setIsHovered(true)}
       onMouseLeave={() => pauseOnHover && setIsHovered(false)}
     >
-      {/* Main media — explicit min-height so images always have space to render */}
-      <div className="relative w-full min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,194,51,0.3)] transition-all duration-500">
+      {/* Main media — explicit min-height so images always have space to render; bg so first slide visible before load */}
+      <div className="relative w-full min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] aspect-video bg-jazz-900/90 rounded-xl sm:rounded-2xl overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,194,51,0.3)] transition-all duration-500">
         {/* Enhanced glow on hover */}
         <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/25 via-musical-500/25 to-gold-500/25 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none z-0" aria-hidden />
-        <div className="absolute inset-0 z-[1] flex items-center justify-center bg-black">
+        <div className="absolute inset-0 z-[1] flex items-center justify-center bg-jazz-900/90">
           {isVideo(activeMedia) ? (
             <video
               key={activeMedia}
               src={activeMedia}
-              className="w-full h-full object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
+              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
               controls
               preload="metadata"
             />
           ) : (
-            <LazyImage
+            <img
               key={activeMedia}
               src={activeMedia}
               alt={`Performance media ${safeIndex + 1}`}
-              className="w-full h-full min-h-[200px] object-contain bg-black transition-transform duration-700 group-hover:scale-[1.02]"
-              fadeIn
+              className="w-full h-full min-h-[200px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              loading="eager"
+              decoding="async"
             />
           )}
         </div>
@@ -127,16 +127,16 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
 
       <div className="theme-divider-shimmer mx-auto max-w-[10rem] sm:max-w-[12rem] opacity-90" aria-hidden="true" />
 
-      {/* Thumbnails */}
+      {/* Thumbnails — eager load all; explicit size so image paints; fallback bg if load fails */}
       {media.length > 1 && (
         <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-1 sm:pb-2 -mx-1 sm:-mx-2 px-1 sm:px-2">
           {media.map((url, index) => (
             <button
-              key={url}
+              key={`${url}-${index}`}
               type="button"
               onClick={() => goTo(index)}
               className={cn(
-                'relative flex-shrink-0 w-20 h-14 sm:w-28 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 group/thumb',
+                'relative flex-shrink-0 w-20 h-14 sm:w-28 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 group/thumb bg-jazz-800/80',
                 index === safeIndex
                   ? 'border-gold-400 shadow-[0_0_16px_rgba(255,194,51,0.7)] scale-105'
                   : 'border-gold-900/40 hover:border-gold-500/70 hover:scale-105 hover:shadow-[0_0_12px_rgba(255,194,51,0.4)]'
@@ -146,21 +146,25 @@ export const PerformanceMediaCarousel: React.FC<PerformanceMediaCarouselProps> =
               {isVideo(url) ? (
                 <video
                   src={url}
-                  className="w-full h-full object-contain bg-black"
+                  className="absolute inset-0 w-full h-full object-cover"
                   muted
                   playsInline
                   preload="metadata"
                 />
               ) : (
-                <LazyImage
+                <img
                   src={url}
-                  alt={`Performance media thumbnail ${index + 1}`}
-                  className="w-full h-full object-contain bg-black"
-                  fadeIn={false}
+                  alt={`Thumbnail ${index + 1}`}
+                  width={112}
+                  height={80}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority={index < 4 ? 'high' : undefined}
                 />
               )}
               {isVideo(url) && (
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
                   <span className="text-white text-xs sm:text-sm font-semibold">Video</span>
                 </div>
               )}

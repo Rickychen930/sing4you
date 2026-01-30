@@ -27,11 +27,10 @@ export const Layout: React.FC<LayoutProps> = memo(({ children, isAdmin = false }
       {!isAdmin && <div className="theme-vignette" aria-hidden />}
       {!isAdmin && (
         <DecorativeEffects
-          fireworks
+          fireworksLight
           musicalNotes
-          stageLights
           sparkles
-          className="fixed inset-0 z-0 opacity-100"
+          className="fixed inset-0 z-0 opacity-60"
         />
       )}
 

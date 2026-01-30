@@ -154,11 +154,6 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
                   <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold text-white drop-shadow-md leading-tight">
                     {variation.name}
                   </h1>
-                  {variation.shortDescription && (
-                    <p className="mt-2 text-base sm:text-lg text-gray-200 line-clamp-2 font-sans max-w-2xl">
-                      {variation.shortDescription}
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -170,11 +165,6 @@ export const VariationDetail: React.FC<VariationDetailProps> = memo(({ variation
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-elegant font-bold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent leading-tight">
                 {variation.name}
               </h1>
-              {variation.shortDescription && (
-                <p className="mt-4 text-base sm:text-lg text-gray-200 font-sans max-w-2xl mx-auto">
-                  {variation.shortDescription}
-                </p>
-              )}
             </div>
           )}
         </header>

@@ -175,12 +175,12 @@ export const Hero: FC = memo(() => {
       <div className="absolute inset-x-0 bottom-0 h-40 sm:h-48 md:h-56 bg-gradient-to-t from-black/95 via-black/80 to-transparent pointer-events-none z-[2]" aria-hidden />
       {/* Left stage spotlight */}
       <div
-        className="absolute -bottom-10 sm:-bottom-12 left-[-10%] sm:left-[-6%] w-40 sm:w-56 md:w-64 h-64 sm:h-80 md:h-[22rem] bg-gradient-to-t from-gold-500/55 via-gold-400/20 to-transparent opacity-80 sm:opacity-90 blur-3xl sm:blur-4xl rotate-[-10deg] pointer-events-none z-[2]"
+        className="absolute -bottom-10 sm:-bottom-12 left-[-10%] sm:left-[-6%] w-40 sm:w-56 md:w-64 h-64 sm:h-80 md:h-[22rem] bg-gradient-to-t from-gold-500/55 via-gold-400/20 to-transparent opacity-80 sm:opacity-90 blur-2xl rotate-[-10deg] pointer-events-none z-[2]"
         aria-hidden
       />
       {/* Right stage spotlight */}
       <div
-        className="absolute -bottom-10 sm:-bottom-12 right-[-10%] sm:right-[-6%] w-40 sm:w-56 md:w-64 h-64 sm:h-80 md:h-[22rem] bg-gradient-to-t from-musical-500/55 via-musical-400/20 to-transparent opacity-80 sm:opacity-90 blur-3xl sm:blur-4xl rotate-[10deg] pointer-events-none z-[2]"
+        className="absolute -bottom-10 sm:-bottom-12 right-[-10%] sm:right-[-6%] w-40 sm:w-56 md:w-64 h-64 sm:h-80 md:h-[22rem] bg-gradient-to-t from-musical-500/55 via-musical-400/20 to-transparent opacity-80 sm:opacity-90 blur-2xl rotate-[10deg] pointer-events-none z-[2]"
         aria-hidden
       />
 

@@ -170,8 +170,7 @@
     /* Force hardware acceleration for smooth scrolling */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    /* Optimize scroll performance - only set will-change when needed */
-    contain: layout style paint;
+    /* Avoid contain: layout — can cause layout to break (patah-patah) */
   }
   
   /* Prevent root element from creating scrollbar */
@@ -243,11 +242,7 @@
     /* Only allow overflow if explicitly needed (like mobile menu) */
   }
   
-  /* Prevent elements with max-height from creating scrollbar unless explicitly needed */
-  /* Exception: Mobile menu, dialogs, and code blocks can scroll */
-  *[class*="max-h"]:not(#mobile-menu):not([role="dialog"]):not(pre):not(.overflow-auto):not(.overflow-y-auto):not(.overflow-scroll) {
-    overflow: visible !important;
-  }
+  /* Don't force overflow:visible on max-h elements — it breaks cards, carousels, rounded corners */
   
   /* Mobile menu can have scrollbar if needed, but prevent it from affecting main scroll */
   #mobile-menu {
@@ -268,7 +263,7 @@
       radial-gradient(ellipse 70% 40% at 85% 75%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
-    animation: gentlePulse 26s ease-in-out infinite;
+    animation: gentlePulse 40s ease-in-out infinite;
     transform: translateZ(0);
     backface-visibility: hidden;
     contain: strict;
@@ -278,6 +273,7 @@
   
   /* REMOVED musicalGlow animation - too expensive for performance */
   
+  /* Static pattern only — no animation to avoid full-screen repaint (was causing lag) */
   body::after {
     content: '';
     position: fixed;
@@ -285,8 +281,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    /* Subtle musical texture pattern - optimized for performance */
-    background-image: 
+    background-image:
       repeating-linear-gradient(
         45deg,
         transparent,
@@ -302,26 +297,13 @@
         rgba(168, 85, 247, 0.01) 12px
       );
     background-size: 40px 40px, 60px 60px;
-    /* SLOWER animation for better performance */
-    animation: musicalPatternMove 80s linear infinite;
     pointer-events: none;
     z-index: 0;
     opacity: 0.5;
-    /* Optimize rendering */
     contain: strict;
     transform: translateZ(0);
     backface-visibility: hidden;
-    /* Prevent pseudo-element from creating scrollbar */
     overflow: hidden;
-  }
-  
-  @keyframes musicalPatternMove {
-    0% {
-      background-position: 0% 0%, 0% 0%;
-    }
-    100% {
-      background-position: 40px 40px, 60px 60px;
-    }
   }
   
   /* Subtle musical note pattern overlay - performance optimized */
@@ -1473,7 +1455,7 @@ body::-webkit-scrollbar {
     rgba(168, 85, 247, 0.05) 40%,
     transparent 70%
   );
-  animation: themeSectionMusicGlow 12s ease-in-out infinite;
+  animation: themeSectionMusicGlow 24s ease-in-out infinite;
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
@@ -1499,7 +1481,7 @@ body::-webkit-scrollbar {
     transparent 100%
   );
   background-size: 200% 100%;
-  animation: themeDividerShimmer 10s ease-in-out infinite;
+  animation: themeDividerShimmer 18s ease-in-out infinite;
   transform: translateZ(0);
   contain: strict;
 }
@@ -1630,24 +1612,24 @@ body::-webkit-scrollbar {
   }
 }
 
+/* Stage light: no blur (filter:blur is very expensive); use soft gradient only */
 .decorative-stage-light {
   position: absolute;
   pointer-events: none;
-  width: 280px;
-  height: 280px;
+  width: 320px;
+  height: 200px;
   border-radius: 50%;
   background: radial-gradient(
-    ellipse 100% 50% at center,
-    rgba(255, 194, 51, 0.25) 0%,
-    rgba(168, 85, 247, 0.18) 30%,
+    ellipse 100% 60% at center,
+    rgba(255, 194, 51, 0.12) 0%,
+    rgba(168, 85, 247, 0.08) 40%,
     transparent 70%
   );
-  filter: blur(45px);
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: strict;
-  animation: stageLightSweep 18s ease-in-out infinite;
-  opacity: 0.15;
+  animation: stageLightSweep 22s ease-in-out infinite;
+  opacity: 0.2;
 }
 
 /* Sparkle Stars — visible, perf-safe */
