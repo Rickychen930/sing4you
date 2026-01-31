@@ -6,14 +6,18 @@ import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
 import { ImageUpload } from '../../components/ui/ImageUpload';
 import { MultipleImageUpload } from '../../components/ui/MultipleImageUpload';
+import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { SEO } from '../../components/ui/SEO';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { performanceService } from '../../services/performanceService';
+import { categoryService } from '../../services/categoryService';
+import { variationService } from '../../services/variationService';
 import { apiClient } from '../../services/api';
 import { useToastStore } from '../../stores/toastStore';
-import type { IPerformance } from '../../../shared/interfaces';
+import { getPerformanceCategoryName, getPerformanceVariantName } from '../../utils/helpers';
+import type { IPerformance, ICategory, IVariation } from '../../../shared/interfaces';
 
 export const PerformancesManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -33,7 +37,11 @@ export const PerformancesManagementPage: React.FC = () => {
     description: '',
     featuredImage: '',
     media: [],
+    categoryId: '',
+    variationId: '',
   });
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [variations, setVariations] = useState<IVariation[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
@@ -48,7 +56,29 @@ export const PerformancesManagementPage: React.FC = () => {
       loadPerformances();
       hasLoadedRef.current = true;
     }
-  }, []); // Empty deps - only load once
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    categoryService.getAll(false).then((data) => {
+      if (isMounted) setCategories(data);
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!formData.categoryId) {
+      setVariations([]);
+      return;
+    }
+    let isMounted = true;
+    variationService.getByCategoryId(formData.categoryId).then((data) => {
+      if (isMounted) setVariations(data);
+    }).catch(() => {
+      if (isMounted) setVariations([]);
+    });
+    return () => { isMounted = false; };
+  }, [formData.categoryId]);
 
   const loadPerformances = async (forceRefresh: boolean = false) => {
     try {
@@ -91,6 +121,8 @@ export const PerformancesManagementPage: React.FC = () => {
       description: '',
       featuredImage: '',
       media: [],
+      categoryId: '',
+      variationId: '',
     });
   };
 
@@ -108,6 +140,8 @@ export const PerformancesManagementPage: React.FC = () => {
       description: performance.description || '',
       featuredImage: performance.featuredImage || '',
       media: performance.media || [],
+      categoryId: performance.categoryId || '',
+      variationId: performance.variationId || '',
     });
   };
 
@@ -143,12 +177,17 @@ export const PerformancesManagementPage: React.FC = () => {
     setSaving(true);
     setError('');
 
+    const payload: Partial<IPerformance> = {
+      ...formData,
+      categoryId: formData.categoryId || undefined,
+      variationId: formData.variationId || undefined,
+    };
     try {
       if (editingId) {
-        await performanceService.update(editingId, formData);
+        await performanceService.update(editingId, payload);
         toast.success('Performance updated successfully!');
       } else {
-        await performanceService.create(formData);
+        await performanceService.create(payload);
         toast.success('Performance created successfully!');
       }
       // Clear cache and reload data
@@ -282,6 +321,29 @@ export const PerformancesManagementPage: React.FC = () => {
                       onChange={(e) => setFormData((prev) => ({ ...prev, ticketLink: e.target.value }))}
                       placeholder="https://..."
                     />
+                    <div className="rounded-xl border border-gold-800/40 bg-gold-900/10 p-3 sm:p-4 space-y-3 sm:space-y-4">
+                      <p className="font-sans font-semibold text-gold-300 text-sm">Category & Variant</p>
+                      <Select
+                        label="Category (optional)"
+                        options={[
+                          { value: '', label: '— No category —' },
+                          ...categories.map((c) => ({ value: c._id ?? '', label: c.name })),
+                        ]}
+                        value={formData.categoryId || ''}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, categoryId: e.target.value, variationId: '' }))}
+                      />
+                      {variations.length > 0 && (
+                        <Select
+                          label="Variant (optional)"
+                          options={[
+                            { value: '', label: '— No variant —' },
+                            ...variations.map((v) => ({ value: v._id ?? '', label: v.name })),
+                          ]}
+                          value={formData.variationId || ''}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, variationId: e.target.value }))}
+                        />
+                      )}
+                    </div>
                     <ImageUpload
                       label="Featured Image (Hero image for performance)"
                       value={formData.featuredImage || ''}
@@ -344,6 +406,20 @@ export const PerformancesManagementPage: React.FC = () => {
                             <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent mb-1">
                               {performance.eventName}
                             </h3>
+                            {(getPerformanceCategoryName(performance) || getPerformanceVariantName(performance)) && (
+                              <div className="flex flex-wrap gap-1.5 mb-2">
+                                {getPerformanceCategoryName(performance) && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full border border-gold-700/50 bg-gold-900/30 text-gold-200 text-xs font-sans font-medium">
+                                    {getPerformanceCategoryName(performance)}
+                                  </span>
+                                )}
+                                {getPerformanceVariantName(performance) && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full border border-gold-600/40 bg-gold-800/20 text-gold-100 text-xs font-sans font-medium">
+                                    {getPerformanceVariantName(performance)}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                             <p className="text-xs sm:text-sm text-gray-300 mb-1">
                               <span className="font-semibold">Venue:</span> {performance.venueName}
                             </p>

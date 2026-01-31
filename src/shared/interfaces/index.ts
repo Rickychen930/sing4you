@@ -46,8 +46,22 @@ export interface IPerformance {
   description?: string; // Detailed description of the performance
   featuredImage?: string; // Main/hero image for the performance
   media?: string[]; // Gallery of images/videos from the performance
+  categoryId?: string;
+  variationId?: string;
+  /** Populated category (from API) */
+  category?: ICategory;
+  /** Populated variation (from API) */
+  variation?: IVariation;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface IPerformancePaginated {
+  data: IPerformance[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface ITestimonial {

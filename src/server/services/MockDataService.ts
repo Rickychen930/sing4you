@@ -95,11 +95,35 @@ export class MockDataService {
     return true;
   }
 
-  // Performances
+  // Performances — all, sorted newest first (date desc)
   static getAllPerformances(): IPerformance[] {
-    // Only return upcoming performances (date >= now) - same as getUpcoming
+    return this.performancesBase
+      .map(p => {
+        const { daysOffset, ...performance } = p;
+        return {
+          ...performance,
+          date: this.getDateFromNow(daysOffset),
+        } as IPerformance;
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  static getPerformancesPaginated(
+    page: number = 1,
+    limit: number = 9
+  ): { data: IPerformance[]; total: number; page: number; limit: number; totalPages: number } {
+    const all = this.getAllPerformances();
+    const total = all.length;
+    const p = Math.max(1, page);
+    const l = Math.max(1, Math.min(50, limit));
+    const skip = (p - 1) * l;
+    const data = all.slice(skip, skip + l);
+    const totalPages = Math.ceil(total / l) || 1;
+    return { data, total, page: p, limit: l, totalPages };
+  }
+
+  static getUpcomingPerformances(): IPerformance[] {
     const now = new Date();
-    // Treat "upcoming" as today or later (ignore time-of-day)
     now.setHours(0, 0, 0, 0);
     return this.performancesBase
       .map(p => {
@@ -111,11 +135,6 @@ export class MockDataService {
       })
       .filter(p => new Date(p.date) >= now)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }
-
-  static getUpcomingPerformances(): IPerformance[] {
-    // Same as getAllPerformances - both return only upcoming performances
-    return this.getAllPerformances();
   }
 
   static getPerformanceById(id: string): IPerformance | null {
@@ -147,7 +166,6 @@ export class MockDataService {
     
     const newPerformanceBase = {
       _id: Date.now().toString(),
-      // Keep 0 for "today", allow negative for past dates, fallback to default only if invalid
       daysOffset: Number.isFinite(daysFromNow) ? daysFromNow : defaultDaysOffset,
       eventName: data.eventName || '',
       venueName: data.venueName || '',
@@ -158,6 +176,8 @@ export class MockDataService {
       description: data.description,
       featuredImage: data.featuredImage,
       media: data.media || [],
+      categoryId: data.categoryId,
+      variationId: data.variationId,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

@@ -171,6 +171,7 @@ router.get('/api/sections/:id', sectionController.getById);
 // Performances
 router.get('/api/performances', performanceController.getAll);
 router.get('/api/performances/upcoming', performanceController.getUpcoming);
+router.get('/api/performances/paginated', performanceController.getPaginated);
 router.get('/api/performances/:id', performanceController.getById);
 
 // Testimonials

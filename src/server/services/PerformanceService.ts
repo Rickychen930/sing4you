@@ -1,7 +1,7 @@
 import { PerformanceModel } from '../models/PerformanceModel';
 import { Database } from '../config/database';
 import { MockDataService } from './MockDataService';
-import type { IPerformance } from '../../shared/interfaces';
+import type { IPerformance, IPerformancePaginated } from '../../shared/interfaces';
 
 export class PerformanceService {
   private useMockData(): boolean {
@@ -13,6 +13,13 @@ export class PerformanceService {
       return MockDataService.getAllPerformances();
     }
     return await PerformanceModel.findAll();
+  }
+
+  public async getPaginated(page: number = 1, limit: number = 9): Promise<IPerformancePaginated> {
+    if (this.useMockData()) {
+      return MockDataService.getPerformancesPaginated(page, limit);
+    }
+    return await PerformanceModel.findPaginated(page, limit);
   }
 
   public async getUpcoming(): Promise<IPerformance[]> {

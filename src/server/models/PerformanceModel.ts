@@ -42,17 +42,50 @@ const performanceSchema = new Schema<IPerformance>(
       type: [String],
       default: [],
     },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Category',
+      default: null,
+    },
+    variationId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Variation',
+      default: null,
+    },
   },
   {
     timestamps: true,
   }
 );
 
+performanceSchema.index({ date: -1 });
 performanceSchema.index({ date: 1 });
 performanceSchema.index({ city: 1 });
 
+function getIdFromRef(ref: unknown): string | undefined {
+  if (!ref) return undefined;
+  if (typeof ref === 'string') return ref;
+  if (typeof ref === 'object' && ref !== null && '_id' in ref) return String((ref as { _id: unknown })._id);
+  return undefined;
+}
+
 export class PerformanceModel {
   private static model: Model<IPerformance>;
+
+  private static normalizePopulated(
+    p: IPerformance & { categoryId?: unknown; variationId?: unknown }
+  ): IPerformance {
+    const { categoryId, variationId, ...rest } = p;
+    const catObj = categoryId && typeof categoryId === 'object' && categoryId !== null && 'name' in categoryId ? categoryId : undefined;
+    const varObj = variationId && typeof variationId === 'object' && variationId !== null && 'name' in variationId ? variationId : undefined;
+    return {
+      ...rest,
+      categoryId: getIdFromRef(categoryId) ?? (rest as Partial<IPerformance>).categoryId,
+      variationId: getIdFromRef(variationId) ?? (rest as Partial<IPerformance>).variationId,
+      category: catObj as IPerformance['category'],
+      variation: varObj as IPerformance['variation'],
+    } as IPerformance;
+  }
 
   public static getModel(): Model<IPerformance> {
     if (!this.model) {
@@ -64,9 +97,45 @@ export class PerformanceModel {
   public static async findAll(): Promise<IPerformance[]> {
     try {
       const model = this.getModel();
-      return await model.find().sort({ date: 1 }).lean();
+      const data = await model
+        .find()
+        .populate('categoryId', 'name slug')
+        .populate('variationId', 'name slug')
+        .sort({ date: -1, createdAt: -1 })
+        .lean();
+      return (data as (IPerformance & { categoryId?: unknown; variationId?: unknown })[]).map((p) =>
+        PerformanceModel.normalizePopulated(p)
+      );
     } catch {
       return [];
+    }
+  }
+
+  public static async findPaginated(
+    page: number = 1,
+    limit: number = 9
+  ): Promise<{ data: IPerformance[]; total: number; page: number; limit: number; totalPages: number }> {
+    try {
+      const model = this.getModel();
+      const skip = (Math.max(1, page) - 1) * limit;
+      const [data, total] = await Promise.all([
+        model
+          .find()
+          .populate('categoryId', 'name slug')
+          .populate('variationId', 'name slug')
+          .sort({ date: -1, createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        model.countDocuments(),
+      ]);
+      const totalPages = Math.ceil(total / limit) || 1;
+      const normalized = (data as IPerformance[]).map((p: IPerformance & { categoryId?: unknown; variationId?: unknown }) =>
+        PerformanceModel.normalizePopulated(p)
+      );
+      return { data: normalized, total, page: Math.max(1, page), limit, totalPages };
+    } catch {
+      return { data: [], total: 0, page: 1, limit, totalPages: 0 };
     }
   }
 
@@ -75,7 +144,15 @@ export class PerformanceModel {
       const model = this.getModel();
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return await model.find({ date: { $gte: today } }).sort({ date: 1 }).lean();
+      const data = await model
+        .find({ date: { $gte: today } })
+        .populate('categoryId', 'name slug')
+        .populate('variationId', 'name slug')
+        .sort({ date: 1 })
+        .lean();
+      return (data as (IPerformance & { categoryId?: unknown; variationId?: unknown })[]).map((p) =>
+        PerformanceModel.normalizePopulated(p)
+      );
     } catch {
       return [];
     }
@@ -84,11 +161,16 @@ export class PerformanceModel {
   public static async findById(id: string): Promise<IPerformance | null> {
     try {
       const model = this.getModel();
-      // Validate ObjectId format
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return null;
       }
-      return await model.findById(id).lean();
+      const doc = await model
+        .findById(id)
+        .populate('categoryId', 'name slug')
+        .populate('variationId', 'name slug')
+        .lean();
+      if (!doc) return null;
+      return PerformanceModel.normalizePopulated(doc as IPerformance & { categoryId?: unknown; variationId?: unknown });
     } catch {
       return null;
     }

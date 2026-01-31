@@ -1,9 +1,14 @@
 import { apiClient } from './api';
-import type { IPerformance } from '../../shared/interfaces';
+import type { IPerformance, IPerformancePaginated } from '../../shared/interfaces';
 
 export class PerformanceService {
   async getAll(useCache: boolean = true): Promise<IPerformance[]> {
     return apiClient.get<IPerformance[]>('/api/performances', useCache);
+  }
+
+  async getPaginated(page: number = 1, limit: number = 9, useCache: boolean = false): Promise<IPerformancePaginated> {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    return apiClient.get<IPerformancePaginated>(`/api/performances/paginated?${params}`, useCache);
   }
 
   async getUpcoming(): Promise<IPerformance[]> {

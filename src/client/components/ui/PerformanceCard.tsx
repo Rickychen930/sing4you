@@ -2,9 +2,9 @@ import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { IPerformance } from '../../../shared/interfaces';
 import { formatAustralianDateTime } from '../../../shared/utils/date';
+import { getPerformanceCategoryName, getPerformanceVariantName, cn } from '../../utils/helpers';
 import { Card, CardBody, CardFooter } from './Card';
 import { Button } from './Button';
-import { cn } from '../../utils/helpers';
 import { LazyImage } from './LazyImage';
 
 interface PerformanceCardProps {
@@ -63,9 +63,29 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
         
         <div className={`relative flex-grow flex flex-col ${performance.featuredImage ? 'p-4 sm:p-5 lg:p-6' : 'p-4 sm:p-5 lg:p-6'}`}>
           <div className="relative z-10 flex-grow flex flex-col">
-            <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-elegant font-bold mb-4 sm:mb-5 lg:mb-6 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-300 leading-tight performance-card-title">
+            <h3 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-elegant font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-100 bg-clip-text text-transparent relative transition-all duration-300 leading-tight performance-card-title">
               {performance.eventName}
             </h3>
+            {(getPerformanceCategoryName(performance) || getPerformanceVariantName(performance)) && (
+              <div className="flex flex-wrap gap-2 mb-3 sm:mb-4">
+                {getPerformanceCategoryName(performance) && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-gold-700/50 bg-gold-900/30 text-gold-200 text-xs sm:text-sm font-sans font-medium shadow-sm">
+                    <svg className="w-3.5 h-3.5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    {getPerformanceCategoryName(performance)}
+                  </span>
+                )}
+                {getPerformanceVariantName(performance) && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-gold-600/40 bg-gold-800/20 text-gold-100 text-xs sm:text-sm font-sans font-medium">
+                    <svg className="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                    {getPerformanceVariantName(performance)}
+                  </span>
+                )}
+              </div>
+            )}
             <div className="space-y-3 sm:space-y-4 lg:space-y-5 text-base sm:text-lg flex-grow">
               <div className="flex items-start gap-2 sm:gap-3 lg:gap-4 group/item">
                 <span className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 flex-shrink-0 rounded-lg bg-gold-900/40 flex items-center justify-center text-gold-400 transition-transform duration-300 group-hover/item:scale-105" aria-hidden>
@@ -142,16 +162,19 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = memo(({ performan
     </Card>
   );
 }, (prevProps, nextProps) => {
-  // Only re-render if performance data changes
+  const a = prevProps.performance;
+  const b = nextProps.performance;
   return (
-    prevProps.performance._id === nextProps.performance._id &&
-    prevProps.performance.eventName === nextProps.performance.eventName &&
-    prevProps.performance.venueName === nextProps.performance.venueName &&
-    prevProps.performance.city === nextProps.performance.city &&
-    prevProps.performance.state === nextProps.performance.state &&
-    prevProps.performance.date === nextProps.performance.date &&
-    prevProps.performance.time === nextProps.performance.time &&
-    prevProps.performance.featuredImage === nextProps.performance.featuredImage &&
+    a._id === b._id &&
+    a.eventName === b.eventName &&
+    a.venueName === b.venueName &&
+    a.city === b.city &&
+    a.state === b.state &&
+    a.date === b.date &&
+    a.time === b.time &&
+    a.featuredImage === b.featuredImage &&
+    getPerformanceCategoryName(a) === getPerformanceCategoryName(b) &&
+    getPerformanceVariantName(a) === getPerformanceVariantName(b) &&
     prevProps.className === nextProps.className
   );
 });

@@ -15,9 +15,12 @@ import { DescriptionSection } from '../../components/sections/DescriptionSection
 import { PerformanceMediaCarousel } from '../../components/ui/PerformanceMediaCarousel';
 import { useToastStore } from '../../stores/toastStore';
 import { performanceService } from '../../services/performanceService';
-import type { IPerformance } from '../../../shared/interfaces';
+import { variationService } from '../../services/variationService';
+import type { IPerformance, IVariation } from '../../../shared/interfaces';
 import { formatAustralianDateTime } from '../../../shared/utils/date';
+import { getPerformanceCategoryName, getPerformanceVariantName } from '../../utils/helpers';
 import { LazyImage } from '../../components/ui/LazyImage';
+import { Select } from '../../components/ui/Select';
 
 export const PerformanceDetailPage: React.FC = () => {
   const { performanceId } = useParams<{ performanceId: string }>();
@@ -25,6 +28,8 @@ export const PerformanceDetailPage: React.FC = () => {
   const toast = useToastStore((state) => state);
   const [performance, setPerformance] = useState<IPerformance | null>(null);
   const [loading, setLoading] = useState(true);
+  const [variations, setVariations] = useState<IVariation[]>([]);
+  const [selectedVariationId, setSelectedVariationId] = useState<string>('');
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://christina-sings4you.com.au';
 
   useEffect(() => {
@@ -39,6 +44,21 @@ export const PerformanceDetailPage: React.FC = () => {
       try {
         const performanceData = await performanceService.getById(performanceId);
         setPerformance(performanceData);
+        if (performanceData.categoryId) {
+          try {
+            const vars = await variationService.getByCategoryId(performanceData.categoryId);
+            setVariations(vars);
+            if (performanceData.variationId) {
+              setSelectedVariationId(performanceData.variationId);
+            } else if (vars.length > 0) {
+              setSelectedVariationId(vars[0]._id ?? '');
+            }
+          } catch {
+            setVariations([]);
+          }
+        } else {
+          setVariations([]);
+        }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to load performance';
         if (process.env.NODE_ENV === 'development') {
@@ -185,6 +205,59 @@ export const PerformanceDetailPage: React.FC = () => {
                   {performance.eventName}
                 </h1>
                 
+                {/* Category & Variant — synced with card and admin */}
+                {(getPerformanceCategoryName(performance) || getPerformanceVariantName(performance) || variations.length > 0) && (
+                  <div className="mb-6 sm:mb-7 lg:mb-8 p-4 sm:p-5 rounded-xl border border-gold-800/40 bg-gold-900/10 backdrop-blur-sm">
+                    <p className="font-sans font-semibold text-gold-300 text-sm sm:text-base mb-3">Category & Variant</p>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      {getPerformanceCategoryName(performance) && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gold-700/50 bg-gold-900/30 text-gold-200 text-sm font-sans font-medium">
+                          <svg className="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                          {getPerformanceCategoryName(performance)}
+                        </span>
+                      )}
+                      {getPerformanceVariantName(performance) && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gold-600/40 bg-gold-800/20 text-gold-100 text-sm font-sans font-medium">
+                          <svg className="w-4 h-4 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                          </svg>
+                          {getPerformanceVariantName(performance)}
+                        </span>
+                      )}
+                    </div>
+                    {variations.length > 1 && (
+                      <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
+                        <div className="flex-1 max-w-sm">
+                          <Select
+                            label="Pilih variant lain"
+                            options={[
+                              { value: '', label: '— Pilih variant —' },
+                              ...variations.map((v) => ({ value: v._id ?? '', label: v.name })),
+                            ]}
+                            value={selectedVariationId}
+                            onChange={(e) => setSelectedVariationId(e.target.value)}
+                            helperText="Lihat detail variant yang tersedia"
+                          />
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="md"
+                          disabled={!selectedVariationId}
+                          onClick={() => {
+                            const v = variations.find((x) => x._id === selectedVariationId);
+                            if (v?._id) navigate(`/variations/${v._id}`);
+                          }}
+                          className="sm:mb-0.5"
+                        >
+                          Lihat detail variant
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Performance Details */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mb-6 sm:mb-7 lg:mb-8">
                   <div className="flex items-start gap-3 sm:gap-4">

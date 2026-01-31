@@ -18,6 +18,17 @@ export class PerformanceController {
     }
   };
 
+  public getPaginated = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const page = Math.max(1, parseInt(String(req.query.page), 10) || 1);
+      const limit = Math.min(50, Math.max(1, parseInt(String(req.query.limit), 10) || 9));
+      const result = await this.performanceService.getPaginated(page, limit);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public getUpcoming = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const performances = await this.performanceService.getUpcoming();
