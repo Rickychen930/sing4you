@@ -60,8 +60,8 @@ export class MediaService {
       // Handle connection refused error
       console.error('Upload error:', error);
       const errorMessage = import.meta.env.DEV
-        ? 'Tidak dapat terhubung ke server. Pastikan server berjalan di http://localhost:3001'
-        : 'Tidak dapat terhubung ke server. Silakan coba lagi nanti.';
+        ? 'Cannot connect to server. Please ensure the server is running at http://localhost:3001'
+        : 'Cannot connect to server. Please try again later.';
       throw new Error(errorMessage);
     }
 

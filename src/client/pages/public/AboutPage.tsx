@@ -139,7 +139,7 @@ export const AboutPage: React.FC = () => {
         <Breadcrumb items={breadcrumbItems} />
       </div>
 
-      {/* Hero Section — align dengan Home Hero: overlay tunggal, typography design system */}
+      {/* Hero Section — aligned with Home Hero: single overlay, typography design system */}
       <section 
         id="about-hero" 
         className="relative w-full flex items-center justify-center overflow-visible -mt-16 lg:-mt-20 pt-16 lg:pt-20 min-h-[60vh] sm:min-h-[70vh] theme-section-music-glow"

@@ -7,8 +7,8 @@ interface UseScrollRevealIOOptions {
 }
 
 /**
- * Hook untuk scroll reveal menggunakan Intersection Observer
- * Lebih performant daripada scroll event listener
+ * Hook for scroll reveal using Intersection Observer.
+ * More performant than scroll event listener.
  */
 export const useScrollRevealIO = (options: UseScrollRevealIOOptions = {}) => {
   const {

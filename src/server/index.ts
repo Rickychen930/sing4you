@@ -49,7 +49,7 @@ const PORT = Number(process.env.PORT) || 3001;
 const allowedOrigins = [
   process.env.CLIENT_URL || 'http://localhost:5173',
   process.env.SITE_URL || 'https://christina-sings4you.com.au',
-  // Domain utama: https://christina-sings4you.com.au (dengan hyphen)
+  // Main domain: https://christina-sings4you.com.au (with hyphen)
   'https://christina-sings4you.com.au',
   'https://www.christina-sings4you.com.au',
   // Add http versions for development/testing (if needed)

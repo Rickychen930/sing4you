@@ -231,14 +231,14 @@ export const PerformanceDetailPage: React.FC = () => {
                       <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
                         <div className="flex-1 max-w-sm">
                           <Select
-                            label="Pilih variant lain"
-                            options={[
-                              { value: '', label: '— Pilih variant —' },
+label="Choose another variant"
+                          options={[
+                              { value: '', label: '— Choose variant —' },
                               ...variations.map((v) => ({ value: v._id ?? '', label: v.name })),
                             ]}
                             value={selectedVariationId}
                             onChange={(e) => setSelectedVariationId(e.target.value)}
-                            helperText="Lihat detail variant yang tersedia"
+                            helperText="View available variant details"
                           />
                         </div>
                         <Button
@@ -251,7 +251,7 @@ export const PerformanceDetailPage: React.FC = () => {
                           }}
                           className="sm:mb-0.5"
                         >
-                          Lihat detail variant
+                          View variant details
                         </Button>
                       </div>
                     )}

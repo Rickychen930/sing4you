@@ -175,7 +175,7 @@ export const VariationsPage: React.FC = () => {
         )}
       </SectionWrapper>
 
-      {/* Mini gallery untuk kategori – 1 baris, auto-play (seperti strip berjalan) */}
+      {/* Mini gallery for category – single row, auto-play */}
       {category.media && category.media.length > 0 && (
         <SectionWrapper
           id="variations-gallery"
@@ -189,11 +189,11 @@ export const VariationsPage: React.FC = () => {
           <div className="max-w-6xl mx-auto px-2 sm:px-4 relative z-10">
             <AutoGridGallery
               media={category.media}
-              rows={1}              // 1 baris saja agar terasa seperti strip
-              columns={4}           // 4 item per halaman di desktop
-              autoPlay              // aktifkan auto-play antar halaman
+              rows={1}              // Single row for strip-like feel
+              columns={4}           // 4 items per page on desktop
+              autoPlay              // Enable auto-play between pages
               autoPlayIntervalMs={5000}
-              showBullets={false}   // tanpa bullet di Variations page
+              showBullets={false}   // No bullets on Variations page
             />
           </div>
         </SectionWrapper>

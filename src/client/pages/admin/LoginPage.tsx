@@ -176,7 +176,7 @@ export const LoginPage: React.FC = () => {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="nama@example.com"
+                      placeholder="name@example.com"
                       disabled={isLoading}
                       autoComplete="email"
                       error={error && !password ? error : undefined}

@@ -5,15 +5,15 @@ import { LazyImage } from './LazyImage';
 interface AutoGridGalleryProps {
   media: string[];
   className?: string;
-  /** Berapa baris yang ingin ditampilkan (desktop) */
+  /** Number of rows to display (desktop) */
   rows?: number;
-  /** Berapa kolom (desktop). Default 3 mengikuti gallery About. */
+  /** Number of columns (desktop). Default 3 to match About gallery. */
   columns?: number;
-  /** Aktifkan auto-play antar halaman grid */
+  /** Enable auto-play between grid pages */
   autoPlay?: boolean;
-  /** Interval auto-play dalam ms */
+  /** Auto-play interval in ms */
   autoPlayIntervalMs?: number;
-  /** Tampilkan bullet pagination di bawah grid */
+  /** Show bullet pagination below grid */
   showBullets?: boolean;
 }
 
@@ -38,7 +38,7 @@ export const AutoGridGallery: React.FC<AutoGridGalleryProps> = ({
 
   const [currentPage, setCurrentPage] = useState(0);
 
-  // Reset ke halaman pertama jika jumlah media berubah
+  // Reset to first page when media count changes
   useEffect(() => {
     // Use setTimeout to avoid synchronous setState in effect
     const timer = setTimeout(() => {
@@ -47,7 +47,7 @@ export const AutoGridGallery: React.FC<AutoGridGalleryProps> = ({
     return () => clearTimeout(timer);
   }, [media?.length, itemsPerPage]);
 
-  // Auto-play antar halaman (grid berganti sendiri)
+  // Auto-play between pages (grid advances automatically)
   useEffect(() => {
     if (!autoPlay || pageCount <= 1) return;
 
@@ -79,7 +79,7 @@ export const AutoGridGallery: React.FC<AutoGridGalleryProps> = ({
 
   return (
     <div className={cn('space-y-4 sm:space-y-5', className)}>
-      {/* Grid utama – ukuran mirip gallery About */}
+      {/* Main grid – size similar to About gallery */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
         {pageMedia.map((url, index) => (
           <div

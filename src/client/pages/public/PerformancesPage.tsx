@@ -172,7 +172,7 @@ export const PerformancesPage: React.FC = memo(() => {
               >
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
                   <p className="text-sm sm:text-base text-gray-300 font-sans order-2 sm:order-1">
-                    Menampilkan <span className="font-semibold text-gold-300">{performances.length}</span> dari <span className="font-semibold text-gold-300">{total}</span> performance
+                    Showing <span className="font-semibold text-gold-300">{performances.length}</span> of <span className="font-semibold text-gold-300">{total}</span> performances
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 order-1 sm:order-2">
                     <Button

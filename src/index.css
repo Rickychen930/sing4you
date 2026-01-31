@@ -555,10 +555,10 @@
   }
 }
 
-/* Fallback untuk elemen yang tidak ter-trigger oleh Intersection Observer */
-/* CSS fallback akan di-handle oleh JS, tapi kita tetap punya backup */
+/* Fallback for elements not triggered by Intersection Observer */
+/* CSS fallback is handled by JS, but we keep a backup */
 @media (prefers-reduced-motion: no-preference) {
-  /* Fallback animation akan trigger jika JS tidak bekerja */
+  /* Fallback animation triggers if JS is not working */
   .scroll-reveal-io:not(.revealed) {
     /* Will be handled by JS fallback */
   }
@@ -896,7 +896,7 @@ canvas {
 img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  /* Default: contain agar gambar tidak terpotong */
+  /* Default: contain so image is not cropped */
   object-fit: contain;
   /* Removed will-change: auto - not needed for static images */
   /* Prevent layout shift */
@@ -914,7 +914,7 @@ video {
   /* Prevent layout shift */
   max-width: 100%;
   height: auto;
-  /* Optimize video rendering — contain agar tidak terpotong */
+  /* Optimize video rendering — contain so video is not cropped */
   object-fit: contain;
 }
 
@@ -1478,7 +1478,7 @@ body::-webkit-scrollbar {
   overflow: hidden;
 }
 
-/* Section divider — garis gradient antar section */
+/* Section divider — gradient line between sections */
 .theme-section-divider {
   height: 1px;
   max-width: 32rem;
@@ -1653,7 +1653,7 @@ body::-webkit-scrollbar {
   transform: translateZ(0);
 }
 
-/* Mic Icon Decoration — dengan glow subtle */
+/* Mic Icon Decoration — with subtle glow */
 @keyframes micGlow {
   0%, 100% {
     opacity: 0.25;
